@@ -9,8 +9,8 @@ env:
   FORCE_COLOR: 3
 
 jobs:
-  run-all:
-    name: Run All
+  run-all-tests:
+    name: Run all tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -40,10 +40,10 @@ jobs:
           yarn install:system-deps
 
       - name: Run tests
-        run: yarn test:all
+        run: yarn test
 
       - name: Upload test-results
-        if: ${{ failure() }}
+        if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: test-results

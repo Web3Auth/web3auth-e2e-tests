@@ -9,6 +9,6 @@ logs
 # Node.js
 node_modules
 
-# Generated artifacts
-test-secrets/
+# Test artifacts
+secrets/
 test-results/
