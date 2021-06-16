@@ -1,0 +1,13 @@
+# Misc
+.DS_Store
+.AppleDouble
+.LSOverride
+logs
+*.log
+.env.*
+
+# Node.js
+node_modules
+
+# Test artifacts
+test-results/

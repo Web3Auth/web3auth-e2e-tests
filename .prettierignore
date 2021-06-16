@@ -1,0 +1,5 @@
+# Test artifacts
+**/chromium.json
+**/firefox.json
+**/webkit.json
+test-results/

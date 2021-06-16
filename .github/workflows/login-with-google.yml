@@ -1,0 +1,89 @@
+name: Google Login
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 14
+  FORCE_COLOR: 3
+  STATUS_SERVICE_ID: 39
+
+jobs:
+  run-tests:
+    name: Run Google Login tests
+    strategy:
+      matrix:
+        include:
+          - browser: chromium
+            os: macos-latest
+          - browser: webkit
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Get Yarn cache directory
+        id: get-yarn-cache-dir
+        run: echo "::set-output name=path::$(yarn cache dir)"
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.get-yarn-cache-dir.outputs.path }}
+          key: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-
+
+      - name: Install Node.js dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Ubuntu dependencies
+        if: startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Download remote browser snapshots
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google/ login-with-google/ --recursive
+
+      - name: Run tests
+        run: yarn run playwright test --config login-with-google/index.config.ts --project ${{ matrix.browser }}
+
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
+          path: test-results/
+          if-no-files-found: ignore
+
+  update-status:
+    name: Update Google Login status
+    needs: run-tests
+    if: ${{ success() || failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update status
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: https://torusstatus.com/api/services/${{ env.STATUS_SERVICE_ID }}
+          bearerToken: ${{ secrets.STATUS_API_TOKEN }}
+          method: PATCH
+          data: >-
+            {
+              "online": ${{ needs.run-tests.result == 'success' }},
+              "latency": 3000000,
+              "issue": "NA"
+            }

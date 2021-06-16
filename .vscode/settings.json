@@ -1,0 +1,25 @@
+{
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "files.insertFinalNewline": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "node_modules": true,
+    "yarn.lock": true
+  },
+  "[markdown]": {
+    "editor.wordWrap": "off"
+  },
+  "cSpell.words": [
+    "creds",
+    "deps",
+    "gmail",
+    "isrefinement",
+    "networkidle",
+    "openlogin",
+    "passwordless",
+    "tkey",
+    "toruslabs"
+  ]
+}
