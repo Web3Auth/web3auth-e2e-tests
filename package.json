@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "install:system-deps": "playwright install-deps",
     "test": "playwright test",
     "test:all": "playwright test --browser=all",
     "test:chrome": "playwright test --headed --browser=chromium",
