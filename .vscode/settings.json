@@ -9,8 +9,10 @@
     "yarn.lock": true
   },
   "cSpell.words": [
+    "creds",
     "deps",
     "networkidle",
+    "openlogin",
     "toruslabs"
   ]
 }
