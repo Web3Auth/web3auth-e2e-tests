@@ -8,3 +8,6 @@ logs
 
 # Node.js
 node_modules
+
+# Local state
+.local/
