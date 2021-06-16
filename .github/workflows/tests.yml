@@ -35,7 +35,9 @@ jobs:
             ${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: |
+          yarn install --frozen-lockfile
+          yarn playwright install-deps
 
       - name: Run tests
         run: yarn test:all
