@@ -26,6 +26,18 @@ test.only("focus this test", async ({ page }) => {
 
 When you've done writing the test, change `test.only` to `test` to turn off focus mode.
 
+### Select elements
+
+Prefer text or accessibility selectors:
+
+```ts
+await page.click("text=Welcome onboard");
+await page.click('button:has-text("Get Started")');
+await page.click('[aria-label="Continue with Facebook"]');
+```
+
+Reference: [Playwright selectors](https://playwright.dev/docs/selectors/#quick-guide).
+
 <!-- Links -->
 
 [torus]: https://tor.us
