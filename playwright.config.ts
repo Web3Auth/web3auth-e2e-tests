@@ -12,7 +12,6 @@ const playwrightConfig: PlaywrightTestConfig = {
     // Report failure(s)
     screenshot: "only-on-failure",
     video: "retry-with-video",
-    trace: "retry-with-trace",
   },
 };
 
