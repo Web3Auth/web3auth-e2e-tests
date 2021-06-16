@@ -36,7 +36,7 @@ await page.click('button:has-text("Get Started")');
 await page.click('[aria-label="Continue with Facebook"]');
 ```
 
-Reference: [Playwright selectors](https://playwright.dev/docs/selectors/#quick-guide).
+See [full list of selectors](https://playwright.dev/docs/selectors/#quick-guide).
 
 <!-- Links -->
 
