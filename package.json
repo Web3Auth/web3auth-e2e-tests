@@ -1,0 +1,23 @@
+{
+  "name": "@toruslabs/e2e-tests",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:all": "playwright test --browser=all",
+    "test:chrome": "playwright test --headed --browser=chromium",
+    "test:firefox": "playwright test --headed --browser=firefox",
+    "test:safari": "playwright test --headed --browser=webkit"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.12.2",
+    "playwright": "^1.12.2"
+  },
+  "devDependencies": {
+    "@tsconfig/node14": "^1.0.1",
+    "@types/node": "^15.12.2",
+    "prettier": "^2.3.1",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
+  }
+}
