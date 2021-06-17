@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { test } from "../base";
 import { signInWithGoogle } from "../utils";
 
-test("Login with Google+Password, Cancel share transfer(s), Delete device share(s), Logout", async ({
+test("Login with Google+Password, Cancel share transfer request(s), Delete device share(s), Logout", async ({
   page,
   browserName,
   profile,
@@ -28,13 +28,17 @@ test("Login with Google+Password, Cancel share transfer(s), Delete device share(
     timeout: 2 * 60 * 1000,
   });
 
-  // Cancel all share transfer requests (if any)
-  while (true) {
-    await page.waitForTimeout(1000);
-    if (await page.isVisible("text=New login detected"))
-      await page.click('button:has-text("Cancel")');
-    else break;
-  }
+  // Cancel share transfer (when popup)
+  let shouldStopCancelShareTransfer = false;
+  const cancelShareTransfer = new Promise<void>(async (resolve) => {
+    while (!shouldStopCancelShareTransfer) {
+      try {
+        if (await page.isVisible("text=New login detected"))
+          await page.click('button:has-text("Cancel")', { force: true });
+      } catch {}
+    }
+    resolve();
+  });
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
@@ -52,17 +56,19 @@ test("Login with Google+Password, Cancel share transfer(s), Delete device share(
       '.info-box:has(:text("Desktop")):below(:text("Device(s)")) >> :nth-match(button, 2)'
     );
 
-    // Should have deleted successfully in <2 minutes
-    await page.waitForSelector("text=successfully deleted", {
+    // Should have either succeed or fail in <2 minutes
+    // TODO: Select using aria-label
+    await page.waitForSelector(".system-bar-container", {
       timeout: 2 * 60 * 1000,
     });
-    await page.click(
-      // TODO: Select using aria-label
-      '.system-bar-container:has(:text("successfully deleted")) >> button'
-    );
+    await page.click(".system-bar-container >> button");
   }
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
   expect(page.url()).toBe("https://app.openlogin.com/");
+
+  // Stop cancelling share transfer
+  shouldStopCancelShareTransfer = true;
+  await cancelShareTransfer;
 });
