@@ -36,10 +36,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.get-yarn-cache-dir.outputs.path }}
-          key: "${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-\
+          key: "${{ matrix.os }}-node-${{ env.NODE_VERSION }}-yarn-\
             ${{ hashFiles('**/yarn.lock') }}"
           restore-keys: |
-            ${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-
+            ${{ matrix.os }}-node-${{ env.NODE_VERSION }}-yarn-
 
       - name: Install dependencies
         run: |
