@@ -3,8 +3,8 @@ import { TestArgs } from "./base";
 
 const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
   forbidOnly: !!process.env.CI,
-  timeout: 5 * 60 * 1000,
-  retries: 2,
+  timeout: process.env.CI ? 5 * 60 * 1000 : 0,
+  retries: process.env.CI ? 2 : 0,
   workers: 1,
   use: {
     // Emulate browsing in San Francisco, CA, USA
@@ -13,7 +13,8 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
     geolocation: { latitude: 37.773972, longitude: -122.431297 },
     // Report failure(s)
     screenshot: "only-on-failure",
-    video: "retry-with-video",
+    video: process.env.CI ? "retry-with-video" : "retain-on-failure",
+    trace: process.env.CI ? "off" : "retain-on-failure",
   },
   projects: [
     {

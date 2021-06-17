@@ -4,15 +4,12 @@
   "files.insertFinalNewline": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+  "[markdown]": {
+    "editor.wordWrap": "off"
+  },
   "files.exclude": {
     "node_modules": true,
     "yarn.lock": true
   },
-  "cSpell.words": [
-    "creds",
-    "deps",
-    "networkidle",
-    "openlogin",
-    "toruslabs"
-  ]
+  "cSpell.words": ["creds", "deps", "networkidle", "openlogin", "toruslabs"]
 }

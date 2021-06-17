@@ -47,7 +47,7 @@ jobs:
           yarn install:system-deps
 
       - name: Run tests
-        run: yarn test --project=${{ matrix.project }}
+        run: yarn test:headless --project=${{ matrix.project }}
 
       - name: Upload test-results
         if: ${{ failure() }}

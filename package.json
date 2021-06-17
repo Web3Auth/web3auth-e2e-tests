@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "install:system-deps": "playwright install-deps",
-    "test": "playwright test",
-    "test:headed": "playwright test --headed"
+    "test:headless": "playwright test",
+    "test:headed": "playwright test --headed",
+    "trace": "playwright show-trace"
   },
   "dependencies": {
     "@playwright/test": "^1.12.2",

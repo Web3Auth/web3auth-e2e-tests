@@ -29,11 +29,12 @@ Each user starts with an initial state and use different features in Torus produ
 
 ### Scripts
 
-| Script                | Description                                                                       |
-| --------------------- | --------------------------------------------------------------------------------- |
-| `install:system-deps` | Install system dependencies that may be required to run tests in certain browsers |
-| `test`                | Run tests in headless mode (for CI)                                               |
-| `test:headed`         | Run tests in headed mode (for development)                                        |
+| Script                                   | Description                                                                       |
+| ---------------------------------------- | --------------------------------------------------------------------------------- |
+| `install:system-deps`                    | Install system dependencies that may be required to run tests in certain browsers |
+| `test:headless --project=<project-name>` | Run tests in headless mode (no GUI, for CI)                                       |
+| `test:headed --project=<project-name>`   | Run tests in headed mode (with GUI, for development)                              |
+| `trace <path-to-trace.zip>`              | Trace test result (for development)                                               |
 
 ### Add new test
 
