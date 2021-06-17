@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "../base";
-import { signInWithGoogle } from "../utils";
+import { signInWithGoogle, useAutoCancelShareTransfer } from "../utils";
 
 test("Login with Google+Password, Cancel share transfer request(s), Delete device share(s), Logout", async ({
   page,
@@ -28,17 +28,8 @@ test("Login with Google+Password, Cancel share transfer request(s), Delete devic
     timeout: 2 * 60 * 1000,
   });
 
-  // Cancel share transfer (when popup)
-  let shouldStopCancelShareTransfer = false;
-  const cancelShareTransfer = new Promise<void>(async (resolve) => {
-    while (!shouldStopCancelShareTransfer) {
-      try {
-        if (await page.isVisible("text=New login detected"))
-          await page.click('button:has-text("Cancel")', { force: true });
-      } catch {}
-    }
-    resolve();
-  });
+  // Start cancelling share transfer request(s) (if any)
+  const stopCancellingShareTransfer = useAutoCancelShareTransfer(page);
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
@@ -68,7 +59,6 @@ test("Login with Google+Password, Cancel share transfer request(s), Delete devic
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
   expect(page.url()).toBe("https://app.openlogin.com/");
 
-  // Stop cancelling share transfer
-  shouldStopCancelShareTransfer = true;
-  await cancelShareTransfer;
+  // Teardown
+  await stopCancellingShareTransfer();
 });

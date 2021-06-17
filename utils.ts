@@ -1,5 +1,23 @@
 import { Page } from "@playwright/test";
 
+export function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
+  let stopped = false;
+  const promise = new Promise<void>(async (resolve) => {
+    while (!stopped) {
+      try {
+        if (await page.isVisible("text=New login detected"))
+          await page.click('button:has-text("Cancel")', { force: true });
+      } catch {}
+    }
+    resolve();
+  });
+
+  return async () => {
+    stopped = true;
+    await promise;
+  };
+}
+
 export async function signInWithGoogle({
   email,
   page,
