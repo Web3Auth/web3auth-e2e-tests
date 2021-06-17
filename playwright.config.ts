@@ -30,6 +30,21 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
         },
       },
     },
+    {
+      name: "google-on-safari",
+      use: {
+        storageState: "state/google-on-safari.json",
+        browserName: "webkit",
+        profile: {
+          google: {
+            email: "connie.washington.1981@gmail.com",
+          },
+          openlogin: {
+            password: "$gIv$uInnBpSh1Bc",
+          },
+        },
+      },
+    },
   ],
 };
 
