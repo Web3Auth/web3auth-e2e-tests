@@ -2,8 +2,13 @@ import { test as baseTest } from "@playwright/test";
 
 export interface TestArgs {
   profile: {
-    google?: { email: string };
-    openlogin?: { password: string };
+    google?: {
+      email: string;
+      password: string;
+    };
+    openlogin?: {
+      password: string;
+    };
   };
 }
 
