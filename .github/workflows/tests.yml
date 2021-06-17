@@ -50,8 +50,8 @@ jobs:
         run: yarn test:headless --project=${{ matrix.project }}
 
       - name: Upload test-results
-        if: ${{ failure() }}
+        if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          name: test-results
+          name: test-results-${{ matrix.project }}
           path: test-results/

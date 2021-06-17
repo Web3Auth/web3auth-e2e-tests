@@ -4,7 +4,7 @@ import { TestArgs } from "./base";
 const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
   forbidOnly: !!process.env.CI,
   timeout: process.env.CI ? 5 * 60 * 1000 : 0,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 3 : 0,
   workers: 1,
   use: {
     // Emulate browsing in San Francisco, CA, USA
