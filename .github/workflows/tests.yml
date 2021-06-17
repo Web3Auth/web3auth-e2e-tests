@@ -13,7 +13,12 @@ jobs:
     name: Run all tests
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+        include:
+          - os: macos-11
+            project: A
+          - os: macos-10.15
+            project: A
+      max-parallel: 1
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -43,7 +48,7 @@ jobs:
           yarn install:system-deps
 
       - name: Run tests
-        run: yarn test
+        run: yarn test --project=${{ matrix.project }}
 
       - name: Upload test-results
         if: ${{ failure() }}
