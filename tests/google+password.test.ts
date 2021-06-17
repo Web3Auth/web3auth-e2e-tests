@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { test } from "../base";
 import { signInWithGoogle } from "../utils";
 
-test("Login with Google + Password, Cancel share transfer, Delete device share, Logout", async ({
+test("Login with Google+Password, Cancel share transfer(s), Delete device share(s), Logout", async ({
   page,
   browserName,
   profile,
