@@ -14,9 +14,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-11
-            project: A
           - os: macos-10.15
+            project: A
+          - os: ubuntu-20.04
             project: A
       max-parallel: 1
     runs-on: ${{ matrix.os }}
