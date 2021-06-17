@@ -16,9 +16,9 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
   },
   projects: [
     {
-      name: "A",
+      name: "google-on-chrome",
       use: {
-        storageState: "state/a.json",
+        storageState: "state/google-on-chrome.json",
         browserName: "chromium",
         profile: {
           google: {
