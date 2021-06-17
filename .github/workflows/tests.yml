@@ -18,7 +18,6 @@ jobs:
             project: carter
           - os: macos-10.15
             project: washington
-      max-parallel: 1
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
