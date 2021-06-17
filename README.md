@@ -6,13 +6,11 @@ End-to-end testing of [Torus] products.
 
 ### Scripts
 
-| Script         | Description                                                          |
-| -------------- | -------------------------------------------------------------------- |
-| `test`         | Run all tests in Chrome headless                                     |
-| `test:all`     | Run all tests in all browsers (Chrome, Firefox, and Safari) headless |
-| `test:chrome`  | Run all tests in headed Chrome                                       |
-| `test:firefox` | Run all tests in headed Firefox                                      |
-| `test:safari`  | Run all tests in headed Safari                                       |
+| Script                | Description                                                                       |
+| --------------------- | --------------------------------------------------------------------------------- |
+| `install:system-deps` | Install system dependencies that may be required to run tests in certain browsers |
+| `test`                | Run tests in headless mode                                                        |
+| `test:headed`         | Run tests in headed mode                                                          |
 
 ### Add new test
 

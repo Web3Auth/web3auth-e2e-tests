@@ -5,10 +5,7 @@
   "scripts": {
     "install:system-deps": "playwright install-deps",
     "test": "playwright test",
-    "test:all": "playwright test --browser=all",
-    "test:chrome": "playwright test --headed --browser=chromium",
-    "test:firefox": "playwright test --headed --browser=firefox",
-    "test:safari": "playwright test --headed --browser=webkit"
+    "test:headed": "playwright test --headed"
   },
   "dependencies": {
     "@playwright/test": "^1.12.2",

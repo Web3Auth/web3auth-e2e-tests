@@ -1,6 +1,7 @@
 import { PlaywrightTestConfig } from "@playwright/test";
+import { TestArgs } from "./base";
 
-const playwrightConfig: PlaywrightTestConfig = {
+const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
   forbidOnly: !!process.env.CI,
   timeout: 5 * 60 * 1000,
   retries: 2,
@@ -13,6 +14,23 @@ const playwrightConfig: PlaywrightTestConfig = {
     screenshot: "only-on-failure",
     video: "retry-with-video",
   },
+  projects: [
+    {
+      name: "A",
+      use: {
+        storageState: "state/a.json",
+        browserName: "chromium",
+        profile: {
+          google: {
+            email: "clyde.m.carter@gmail.com",
+          },
+          openlogin: {
+            password: "A6vFtb*MLVW0W&rz",
+          },
+        },
+      },
+    },
+  ],
 };
 
 export default playwrightConfig;

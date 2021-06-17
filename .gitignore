@@ -10,4 +10,5 @@ logs
 node_modules
 
 # Test artifacts
+.local/
 test-results/
