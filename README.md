@@ -2,6 +2,29 @@
 
 End-to-end testing of [Torus] products.
 
+## Projects
+
+Tests are designed into projects. Each project represents a user who is using one or several Torus products.
+Each user starts with an initial state and use different features in Torus product(s):
+
+### `carter`
+
+**State**
+
+- Device: macOS + Chrome
+- OpenLogin account: Google + Password
+- Not signed into OpenLogin (no device share)
+- Signed into Google
+
+### `washington`
+
+**State**
+
+- Device: macOS + Safari
+- OpenLogin account: Google + Password
+- Not signed into OpenLogin (no device share)
+- Signed into Google
+
 ## Development
 
 ### Scripts
@@ -9,8 +32,8 @@ End-to-end testing of [Torus] products.
 | Script                | Description                                                                       |
 | --------------------- | --------------------------------------------------------------------------------- |
 | `install:system-deps` | Install system dependencies that may be required to run tests in certain browsers |
-| `test`                | Run tests in headless mode                                                        |
-| `test:headed`         | Run tests in headed mode                                                          |
+| `test`                | Run tests in headless mode (for CI)                                               |
+| `test:headed`         | Run tests in headed mode (for development)                                        |
 
 ### Add new test
 

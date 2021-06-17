@@ -15,13 +15,9 @@ jobs:
       matrix:
         include:
           - os: macos-10.15
-            project: google-on-chrome
+            project: carter
           - os: macos-10.15
-            project: google-on-safari
-          - os: windows-2019
-            project: google-on-chrome
-          - os: ubuntu-20.04
-            project: google-on-chrome
+            project: washington
       max-parallel: 1
     runs-on: ${{ matrix.os }}
     steps:

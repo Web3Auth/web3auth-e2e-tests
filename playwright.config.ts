@@ -17,9 +17,9 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
   },
   projects: [
     {
-      name: "google-on-chrome",
+      name: "carter",
       use: {
-        storageState: "state/google-on-chrome.json",
+        storageState: "state/carter.json",
         browserName: "chromium",
         profile: {
           google: {
@@ -33,9 +33,9 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
       },
     },
     {
-      name: "google-on-safari",
+      name: "washington",
       use: {
-        storageState: "state/google-on-safari.json",
+        storageState: "state/washington.json",
         browserName: "webkit",
         profile: {
           google: {
