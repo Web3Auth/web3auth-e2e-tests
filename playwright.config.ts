@@ -40,9 +40,9 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
       },
     },
     {
-      name: "washington",
+      name: "washington-0",
       use: {
-        storageState: "state/washington.json",
+        storageState: "state/washington-0.json",
         browserName: "webkit",
         openloginURL,
         user: {
@@ -69,6 +69,23 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
           },
           openlogin: {
             password: "sR0D2s@AV@4z",
+          },
+        },
+      },
+    },
+    {
+      name: "washington-1",
+      use: {
+        storageState: "state/washington-1.json",
+        browserName: "chromium",
+        openloginURL,
+        user: {
+          discord: {
+            email: "connie.washington.1981@gmail.com",
+            password: "aeLici1ie",
+          },
+          openlogin: {
+            password: "WIw0pkR!P$G9",
           },
         },
       },

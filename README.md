@@ -31,10 +31,15 @@ Each user starts with an initial state and use different features in Torus produ
 - Signed into Discord
 - Everything else is similar to [`carter-0`](#carter0)
 
-### `washington`
+### `washington-0`
 
 - Device: macOS + Safari
 - Everything else is similar to [`carter-0`](#carter0)
+
+### `washington-1`
+
+- Device: Windows + Chrome
+- Everything else is similar to [`carter-1`](#carter1)
 
 ## Development
 
