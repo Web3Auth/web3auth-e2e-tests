@@ -31,7 +31,9 @@ test("Login with Discord+Password, Cancel share transfer request(s), Delete devi
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.isVisible(`text=${user.discord.email}`)).toBeTruthy();
+  expect(await page.innerText(`text=${user.discord.email}`)).toBe(
+    user.discord.email
+  );
 
   // Delete all device shares
   while (
