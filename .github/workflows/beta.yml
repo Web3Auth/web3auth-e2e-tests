@@ -1,13 +1,13 @@
-name: app.openlogin.com
+name: beta.openlogin.com
 
 on:
   push:
     branches: [master]
 
 env:
+  TEST_ENV: beta
   NODE_VERSION: 14
   FORCE_COLOR: 3
-  TEST_ENV: beta
 
 jobs:
   run-all-tests:
