@@ -16,6 +16,9 @@ export interface TestArgs {
       email: string;
       password: string;
     };
+    passwordless?: {
+      gmail: string;
+    };
     openlogin?: {
       password: string;
     };

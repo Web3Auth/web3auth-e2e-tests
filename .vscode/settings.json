@@ -11,5 +11,13 @@
     "node_modules": true,
     "yarn.lock": true
   },
-  "cSpell.words": ["creds", "deps", "networkidle", "openlogin", "toruslabs"]
+  "cSpell.words": [
+    "creds",
+    "deps",
+    "gmail",
+    "networkidle",
+    "openlogin",
+    "passwordless",
+    "toruslabs"
+  ]
 }

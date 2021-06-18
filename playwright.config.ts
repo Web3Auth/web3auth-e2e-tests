@@ -74,6 +74,22 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
       },
     },
     {
+      name: "carter-2",
+      use: {
+        storageState: "state/carter-2.json",
+        browserName: "firefox",
+        openloginURL,
+        user: {
+          passwordless: {
+            gmail: "clyde.m.carter@gmail.com",
+          },
+          openlogin: {
+            password: "rMzYXm9f>6t^bba3",
+          },
+        },
+      },
+    },
+    {
       name: "washington-1",
       use: {
         storageState: "state/washington-1.json",

@@ -34,6 +34,18 @@ Each user starts with an initial state and use different features in Torus produ
 - Signed into Discord
 - Everything else is similar to [`carter-0`](#carter0)
 
+### `carter-2`
+
+- Device: macOS + Firefox
+- OpenLogin account: Passwordless (Gmail) + Device
+- Signed into OpenLogin
+- Signed into Google
+
+**Usage flow**
+
+- Login with Passwordless + Device.
+- Logout.
+
 ### `washington-0`
 
 - Device: macOS + Safari
