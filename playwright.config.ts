@@ -23,9 +23,9 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
   },
   projects: [
     {
-      name: "carter",
+      name: "carter-0",
       use: {
-        storageState: "state/carter.json",
+        storageState: "state/carter-0.json",
         browserName: "chromium",
         openloginURL,
         user: {
@@ -52,6 +52,23 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
           },
           openlogin: {
             password: "$gIv$uInnBpSh1Bc",
+          },
+        },
+      },
+    },
+    {
+      name: "carter-1",
+      use: {
+        storageState: "state/carter-1.json",
+        browserName: "firefox",
+        openloginURL,
+        user: {
+          discord: {
+            email: "clyde.m.carter@gmail.com",
+            password: "ahshahX9Ki",
+          },
+          openlogin: {
+            password: "sR0D2s@AV@4z",
           },
         },
       },

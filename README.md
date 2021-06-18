@@ -7,7 +7,7 @@ End-to-end testing of [Torus] products.
 Tests are designed into projects. Each project represents a user who is using one or several Torus products.
 Each user starts with an initial state and use different features in Torus product(s):
 
-### `carter`
+### `carter-0`
 
 **State**
 
@@ -23,10 +23,18 @@ Each user starts with an initial state and use different features in Torus produ
 - Cancel all share transfer requests.
 - Logout.
 
+### `carter-1`
+
+- Device: Linux + Firefox
+- OpenLogin account: Discord + Password
+- Not signed into OpenLogin (no device share)
+- Signed into Discord
+- Everything else is similar to [`carter-0`](#carter0)
+
 ### `washington`
 
 - Device: macOS + Safari
-- Everything else is similar to [`carter`](#carter)
+- Everything else is similar to [`carter-0`](#carter0)
 
 ## Development
 

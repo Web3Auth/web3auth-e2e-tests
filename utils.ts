@@ -46,3 +46,11 @@ export async function signInWithGoogle({
     while (page.url().startsWith("https://accounts.google.com"))
       await page.waitForTimeout(100);
 }
+
+export async function signInWithDiscord(page: Page) {
+  await page.waitForURL("https://discord.com/oauth2/**");
+  await Promise.all([
+    page.waitForNavigation(),
+    page.click('button:has-text("Authorize")'),
+  ]);
+}

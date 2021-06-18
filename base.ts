@@ -7,6 +7,10 @@ export interface TestArgs {
       email: string;
       password: string;
     };
+    discord?: {
+      email: string;
+      password: string;
+    };
     openlogin?: {
       password: string;
     };

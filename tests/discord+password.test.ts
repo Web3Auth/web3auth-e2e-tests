@@ -1,20 +1,20 @@
 import { expect } from "@playwright/test";
 import { test } from "../base";
-import { signInWithGoogle, useAutoCancelShareTransfer } from "../utils";
+import { signInWithDiscord, useAutoCancelShareTransfer } from "../utils";
 
-test("Login with Google+Password, Cancel share transfer request(s), Delete device share(s), Logout", async ({
+test("Login with Discord+Password, Cancel share transfer request(s), Delete device share(s), Logout", async ({
   page,
-  browserName,
   openloginURL,
   user,
 }) => {
-  if (!user.google || !user.openlogin) return test.skip();
+  if (openloginURL !== "https://app.openlogin.com") return test.skip();
+  if (!user.discord || !user.openlogin) return test.skip();
 
   // Login with Google
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click('button:has-text("Continue with Google")');
-  await signInWithGoogle({ email: user.google.email, page, browserName });
+  await page.click(".row div:nth-child(3) .app-btn"); // TODO: Select using aria-label
+  await signInWithDiscord(page);
 
   // Enter password
   await page.waitForURL(`${openloginURL}/tkey-input#**`);
@@ -31,7 +31,7 @@ test("Login with Google+Password, Cancel share transfer request(s), Delete devic
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.isVisible(`text=${user.google.email}`)).toBeTruthy();
+  expect(await page.isVisible(`text=${user.discord.email}`)).toBeTruthy();
 
   // Delete all device shares
   while (
