@@ -40,7 +40,6 @@ test("Login with Passwordless, Logout", async ({
     gmailPage.click('a:has-text("Confirm my email")'),
   ]);
   await confirmationPage.waitForSelector("text=Done");
-  await Promise.all([confirmationPage.close(), gmailPage.close()]);
 
   // Should be signed in in <1 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
