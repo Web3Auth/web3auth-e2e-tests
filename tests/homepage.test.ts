@@ -1,8 +1,9 @@
-import { test, expect } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "../base";
 
 test.describe("On homepage,", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("https://app.openlogin.com");
+  test.beforeEach(async ({ page, openloginURL }) => {
+    await page.goto(openloginURL);
   });
 
   test(`title should be "OpenLogin"`, async ({ page }) => {

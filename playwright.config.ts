@@ -1,6 +1,11 @@
 import { PlaywrightTestConfig } from "@playwright/test";
 import { TestArgs } from "./base";
 
+const openloginURL =
+  process.env.TEST_ENV === "beta"
+    ? "https://beta.openlogin.com"
+    : "https://app.openlogin.com";
+
 const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
   forbidOnly: !!process.env.CI,
   timeout: process.env.CI ? 5 * 60 * 1000 : 0,
@@ -22,7 +27,8 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
       use: {
         storageState: "state/carter.json",
         browserName: "chromium",
-        profile: {
+        openloginURL,
+        user: {
           google: {
             email: "clyde.m.carter@gmail.com",
             password: "ahshahX9Ki",
@@ -38,7 +44,8 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
       use: {
         storageState: "state/washington.json",
         browserName: "webkit",
-        profile: {
+        openloginURL,
+        user: {
           google: {
             email: "connie.washington.1981@gmail.com",
             password: "aeLici1ie",

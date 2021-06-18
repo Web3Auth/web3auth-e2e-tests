@@ -1,12 +1,13 @@
 name: app.openlogin.com
 
 on:
-  schedule:
-    - cron: "0 1 * * *" # 1:00AM everyday
+  push:
+    branches: [master]
 
 env:
   NODE_VERSION: 14
   FORCE_COLOR: 3
+  TEST_ENV: beta
 
 jobs:
   run-all-tests:

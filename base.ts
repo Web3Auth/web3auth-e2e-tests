@@ -1,7 +1,8 @@
 import { test as baseTest } from "@playwright/test";
 
 export interface TestArgs {
-  profile: {
+  openloginURL: string;
+  user: {
     google?: {
       email: string;
       password: string;
@@ -13,5 +14,6 @@ export interface TestArgs {
 }
 
 export const test = baseTest.extend<TestArgs>({
-  profile: {},
+  openloginURL: "https://app.openlogin.com",
+  user: {},
 });

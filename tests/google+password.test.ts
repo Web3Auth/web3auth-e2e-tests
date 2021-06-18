@@ -5,26 +5,24 @@ import { signInWithGoogle, useAutoCancelShareTransfer } from "../utils";
 test("Login with Google+Password, Cancel share transfer request(s), Delete device share(s), Logout", async ({
   page,
   browserName,
-  profile,
+  openloginURL,
+  user,
 }) => {
-  if (!profile.google || !profile.openlogin) return;
+  if (!user.google || !user.openlogin) return;
 
   // Login with Google
-  await page.goto("https://app.openlogin.com");
+  await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   await page.click('button:has-text("Continue with Google")');
-  await signInWithGoogle({ email: profile.google.email, page, browserName });
+  await signInWithGoogle({ email: user.google.email, page, browserName });
 
   // Enter password
-  await page.waitForURL("https://app.openlogin.com/tkey-input#**");
-  await page.fill(
-    '[placeholder="Account password"]',
-    profile.openlogin.password
-  );
+  await page.waitForURL(`${openloginURL}/tkey-input#**`);
+  await page.fill('[placeholder="Account password"]', user.openlogin.password);
   await page.click('button:has-text("Confirm")');
 
   // Should be signed in in <2 minutes
-  await page.waitForURL("https://app.openlogin.com/wallet/home", {
+  await page.waitForURL(`${openloginURL}/wallet/home`, {
     timeout: 2 * 60 * 1000,
   });
 
@@ -33,7 +31,7 @@ test("Login with Google+Password, Cancel share transfer request(s), Delete devic
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.isVisible(`text=${profile.google.email}`)).toBeTruthy();
+  expect(await page.isVisible(`text=${user.google.email}`)).toBeTruthy();
 
   // Delete all device shares
   while (
@@ -57,7 +55,7 @@ test("Login with Google+Password, Cancel share transfer request(s), Delete devic
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
-  expect(page.url()).toBe("https://app.openlogin.com/");
+  expect(page.url()).toBe(`${openloginURL}/`);
 
   // Teardown
   await stopCancellingShareTransfer();
