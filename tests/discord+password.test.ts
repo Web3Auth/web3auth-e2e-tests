@@ -7,7 +7,6 @@ test("Login with Discord+Password, Cancel share transfer request(s), Delete devi
   openloginURL,
   user,
 }) => {
-  if (openloginURL !== "https://app.openlogin.com") return test.skip();
   if (!user.discord || !user.openlogin) return test.skip();
 
   // Login with Google
