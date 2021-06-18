@@ -41,6 +41,14 @@ Each user starts with an initial state and use different features in Torus produ
 - Device: Windows + Chrome
 - Everything else is similar to [`carter-1`](#carter1)
 
+### `rick-0`
+
+- Device: Linux + Chrome
+- OpenLogin account: Facebook + Password
+- Not signed into OpenLogin (no device share)
+- Signed into Facebook
+- Everything else is similar to [`carter-0`](#carter0)
+
 ## Development
 
 ### Scripts

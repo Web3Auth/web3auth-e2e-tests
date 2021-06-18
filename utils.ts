@@ -54,3 +54,17 @@ export async function signInWithDiscord(page: Page) {
     page.click('button:has-text("Authorize")'),
   ]);
 }
+
+export async function signInWithFacebook({
+  page,
+  name,
+}: {
+  name: string;
+  page: Page;
+}) {
+  await page.waitForURL("https://www.facebook.com/**");
+  await Promise.all([
+    page.waitForNavigation(),
+    page.click(`button:has-text("Continue as ${name}")`),
+  ]);
+}

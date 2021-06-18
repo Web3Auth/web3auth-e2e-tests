@@ -1,0 +1,157 @@
+{
+  "cookies": [
+    {
+      "sameSite": "None",
+      "name": "sb",
+      "value": "V2TMYH76Yw8uu3xVcHJ48QoC",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1687079967.61158,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "Lax",
+      "name": "wd",
+      "value": "1280x720",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1624612748,
+      "httpOnly": false,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "datr",
+      "value": "V2TMYMdCRB0sPj7G9klxfsY_",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1687079768.793431,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "ATN",
+      "value": "1.1624007769.9853503133940350846.AYKPE7yBprJ4iCIOmHg",
+      "domain": ".atdmt.com",
+      "path": "/",
+      "expires": 1687079769.084693,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "locale",
+      "value": "en_US",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1624612747,
+      "httpOnly": false,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "dpr",
+      "value": "2",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1624612779,
+      "httpOnly": false,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "c_user",
+      "value": "100069833761622",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1655543965.611728,
+      "httpOnly": false,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "xs",
+      "value": "24%3AxVb_fk2OoAjAPg%3A2%3A1624007966%3A-1%3A-1",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1655543965.611776,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "fr",
+      "value": "1ylkZWt7fEugnCQqB.AWWzwJobEjCBF02X3X8FX-lIhSA.BgzGRX.ng.AAA.0.0.BgzGUe.AWV4aP5H-9c",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1631783963.61183,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "spin",
+      "value": "r.1003995000_b.trunk_t.1624007968_s.1_v.2_",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1624097968.457856,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "test_cookie",
+      "value": "CheckForPermission",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "expires": 1624008869.769908,
+      "httpOnly": false,
+      "secure": true
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.facebook.com",
+      "localStorage": [
+        {
+          "name": "Session",
+          "value": "bx8qdr:1624008014497"
+        },
+        {
+          "name": "falco_queue_immediately^$f1f3dd9531c2de4",
+          "value": "{\"items\":[{\"name\":\"web_time_spent_navigation\",\"policy\":{\"r\":1},\"time\":1624007979496.9,\"extra\":\"{\\\"cause\\\":\\\"unload\\\",\\\"custom_data_json\\\":\\\"{\\\\\\\"source_pa\\\\\\\":\\\\\\\"{\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\":{\\\\\\\\\\\\\\\"bookmark_id\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"tp-comet.welcome\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"bookmark_type_name\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"session\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"bx8qdr:xx8xo4:02qvqf\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"subsession\\\\\\\\\\\\\\\":1,\\\\\\\\\\\\\\\"tap_point\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"via_cold_start\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"timestamp\\\\\\\\\\\\\\\":1624007968517,\\\\\\\\\\\\\\\"trace_policy\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"comet.welcome\\\\\\\\\\\\\\\"}}\\\\\\\",\\\\\\\"source_pav2\\\\\\\":\\\\\\\"WelcomeDashboardCometRoot.react,comet.welcome,via_cold_start,1624007968517,818813,\\\\\\\",\\\\\\\"source_uri\\\\\\\":\\\\\\\"/?sk=welcome\\\\\\\",\\\\\\\"source_imp_id\\\\\\\":\\\\\\\"0YqXlD2eUJDVzOuK7\\\\\\\",\\\\\\\"source_visitation_id\\\\\\\":\\\\\\\"comet.welcome:02qvqf:1:1624007968.518\\\\\\\"}\\\",\\\"sid_raw\\\":\\\"bx8qdr:xx8xo4:02qvqf\\\",\\\"source_path\\\":\\\"comet.welcome\\\"}\"}],\"ts\":1624007979497}"
+        },
+        {
+          "name": "hb_timestamp",
+          "value": "1624007969052"
+        },
+        {
+          "name": "falco_queue_log^$f2d8628d33503b8",
+          "value": "{\"items\":[{\"name\":\"ods_web_batch\",\"policy\":{\"r\":1,\"s\":1},\"time\":1624007975413.6,\"extra\":\"{\\\"batch\\\":{\\\"1344\\\":{\\\"falco.fabric.www.C3\\\":{\\\"planes.banzai.write\\\":[27,null],\\\"planes.bladerunner.write\\\":[12,null]}},\\\"1678\\\":{\\\"www_client_navigations\\\":{\\\"NAVIGATE\\\":[1,null]}},\\\"2966\\\":{\\\"mqtt_ws_client\\\":{\\\"219994525426954.ws_connect_attempt\\\":[100,null],\\\"ws_connect_attempt\\\":[100,null],\\\"219994525426954.protocol.publish./br_sr\\\":[100,null],\\\"protocol.publish./br_sr\\\":[100,null],\\\"219994525426954.protocol.onmessagearrived\\\":[100,null],\\\"protocol.onmessagearrived\\\":[100,null],\\\"219994525426954.message_arrived./sr_res\\\":[100,null],\\\"message_arrived./sr_res\\\":[100,null]},\\\"BladeRunnerClient\\\":{\\\"socket_send_request\\\":[9,null],\\\"mqtt_publish_success\\\":[1,null],\\\"mqtt_state_connected\\\":[1,null],\\\"socket_process_batch\\\":[28,null],\\\"send_to_handler\\\":[18,null],\\\"socket_send_data_ack\\\":[0,null],\\\"received_status_1.FBGQLS:ACTOR_GATEWAY_ENROLL_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:ACTOR_GATEWAY_ENROLL_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:FRIEND_REQUEST_CONFIRM_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:FRIEND_REQUEST_CONFIRM_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:BATCH_NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:BATCH_NOTIFICATION_STATE_CHANGE_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:USER_ACTIVITY_UPDATE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:USER_ACTIVITY_UPDATE_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[2,null],\\\"status_latency.FBGQLS:NOTIFICATION_STATE_CHANGE_SUBSCRIBE.1.s\\\":[2,null],\\\"received_status_1.FBGQLS:RTWEB_CALL_BLOCKED_SETTING_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:RTWEB_CALL_BLOCKED_SETTING_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:FRIEND_REQUEST_RECEIVE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:FRIEND_REQUEST_RECEIVE_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_3.FBGQLS:FRIEND_REQUEST_RECEIVE_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[2,null],\\\"received_status_3.FBGQLS:ACTOR_GATEWAY_ENROLL_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:USER_ACTIVITY_UPDATE_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:FRIEND_REQUEST_CONFIRM_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:RTWEB_CALL_BLOCKED_SETTING_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:BATCH_NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[1,null]},\\\"feed_ads\\\":{\\\"ghlTestUBT.init\\\":[1,null],\\\"ghlTestUBT.done.false.false\\\":[1,null]}},\\\"3185\\\":{\\\"mw_graphql\\\":{\\\"init_sync.success\\\":[1,null]},\\\"mw_ls\\\":{\\\"init_sync.success\\\":[1,null]}},\\\"3589\\\":{\\\"dgw_web_client\\\":{\\\"WebStream.stream_establishment_pending\\\":[1,null],\\\"WebStream.stream_establishment_success\\\":[1,null],\\\"WebStream.ack_sent\\\":[7,null]}}}}\"}],\"ts\":1624007979488.9}"
+        },
+        {
+          "name": "CacheStorageVersion",
+          "value": "3b"
+        },
+        {
+          "name": "RTC_CALL_SUMMARY_summary",
+          "value": "{\"__t\":1624007978530,\"__v\":{}}"
+        },
+        {
+          "name": "banzai:last_storage_flush",
+          "value": "1624007970035.3"
+        },
+        {
+          "name": "signal_flush_timestamp",
+          "value": "1624007969078"
+        },
+        {
+          "name": "falco_queue_critical^$f1f09925b64f5",
+          "value": "{\"items\":[{\"name\":\"ods_web_batch\",\"policy\":{\"r\":1,\"s\":1},\"time\":1624007979496.5,\"extra\":\"{\\\"batch\\\":{\\\"1344\\\":{\\\"falco.fabric.www.C3\\\":{\\\"planes.bladerunner.write\\\":[1,null],\\\"planes.banzai.write\\\":[2,null]}},\\\"3589\\\":{\\\"dgw_web_client\\\":{\\\"WebStream.ack_sent\\\":[1,null]}}}}\"}],\"ts\":1624007979496.6}"
+        }
+      ]
+    }
+  ]
+}

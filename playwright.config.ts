@@ -90,6 +90,24 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
         },
       },
     },
+    {
+      name: "rick-0",
+      use: {
+        storageState: "state/rick-0.json",
+        browserName: "chromium",
+        openloginURL,
+        user: {
+          facebook: {
+            name: "Rick",
+            email: "lweycjnfml_1623990130@tfbnw.net",
+            password: "Hello123@",
+          },
+          openlogin: {
+            password: "-RKEu8x2L.)rmbH",
+          },
+        },
+      },
+    },
   ],
 };
 

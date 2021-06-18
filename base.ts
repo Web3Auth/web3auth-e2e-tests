@@ -11,6 +11,11 @@ export interface TestArgs {
       email: string;
       password: string;
     };
+    facebook?: {
+      name: string;
+      email: string;
+      password: string;
+    };
     openlogin?: {
       password: string;
     };

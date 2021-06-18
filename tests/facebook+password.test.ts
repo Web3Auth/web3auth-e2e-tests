@@ -1,19 +1,20 @@
 import { expect } from "@playwright/test";
 import { test } from "../base";
-import { signInWithDiscord, useAutoCancelShareTransfer } from "../utils";
+import { signInWithFacebook, useAutoCancelShareTransfer } from "../utils";
 
-test("Login with Discord+Password, Cancel share transfer request(s), Delete device share(s), Logout", async ({
+test("Login with Facebook+Password, Cancel share transfer request(s), Delete device share(s), Logout", async ({
   page,
   openloginURL,
   user,
 }) => {
-  if (!user.discord || !user.openlogin) return test.skip();
+  if (openloginURL !== "https://beta.openlogin.com") return test.skip();
+  if (!user.facebook || !user.openlogin) return test.skip();
 
-  // Login with Discord
+  // Login with Facebook
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click(".row div:nth-child(3) .app-btn"); // TODO: Select using aria-label
-  await signInWithDiscord(page);
+  await page.click('[aria-label="login with facebook"]');
+  await signInWithFacebook({ page, name: user.facebook.name });
 
   // Enter password
   await page.waitForURL(`${openloginURL}/tkey-input#**`);
@@ -30,8 +31,8 @@ test("Login with Discord+Password, Cancel share transfer request(s), Delete devi
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.innerText(`text=${user.discord.email}`)).toBe(
-    user.discord.email
+  expect(await page.innerText(`text=${user.facebook.email}`)).toBe(
+    user.facebook.email
   );
 
   // Delete all device shares
