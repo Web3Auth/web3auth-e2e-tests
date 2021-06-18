@@ -1,8 +1,8 @@
 name: beta.openlogin.com
 
 on:
-  push:
-    branches: [master]
+  schedule:
+    - cron: "0 4 * * *" # 4:00AM everyday
   workflow_dispatch:
 
 env:
