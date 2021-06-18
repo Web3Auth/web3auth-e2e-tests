@@ -2,6 +2,9 @@
 
 End-to-end testing of [Torus] products.
 
+[![app.openlogin.com](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/app.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/app.yml)
+[![beta.openlogin.com](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/beta.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/beta.yml)
+
 ## Projects
 
 Tests are designed into projects. Each project represents a user who is using one or several Torus products.
