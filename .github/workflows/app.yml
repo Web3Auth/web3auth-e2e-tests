@@ -3,6 +3,7 @@ name: app.openlogin.com
 on:
   schedule:
     - cron: "0 1 * * *" # 1:00AM everyday
+  workflow_dispatch:
 
 env:
   NODE_VERSION: 14

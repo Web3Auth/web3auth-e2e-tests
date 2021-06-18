@@ -3,6 +3,7 @@ name: beta.openlogin.com
 on:
   push:
     branches: [master]
+  workflow_dispatch:
 
 env:
   TEST_ENV: beta
