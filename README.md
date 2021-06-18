@@ -16,14 +16,17 @@ Each user starts with an initial state and use different features in Torus produ
 - Not signed into OpenLogin (no device share)
 - Signed into Google
 
+**Usage flow**
+
+- Login with Google + Password.
+- Delete all device shares.
+- Cancel all share transfer requests.
+- Logout.
+
 ### `washington`
 
-**State**
-
 - Device: macOS + Safari
-- OpenLogin account: Google + Password
-- Not signed into OpenLogin (no device share)
-- Signed into Google
+- Everything else is similar to [`carter`](#carter)
 
 ## Development
 
