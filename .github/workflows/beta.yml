@@ -26,6 +26,8 @@ jobs:
             project: washington-1
           - os: ubuntu-20.04
             project: rick-0
+          - os: windows-2019
+            project: tyler-0
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout

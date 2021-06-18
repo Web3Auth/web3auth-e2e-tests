@@ -49,6 +49,11 @@ Each user starts with an initial state and use different features in Torus produ
 - Signed into Facebook
 - Everything else is similar to [`carter-0`](#carter0)
 
+### `tyler-0`
+
+- Device: Windows + Firefox
+- Everything else is similar to [`rick-0`](#rick0)
+
 ## Development
 
 ### Scripts

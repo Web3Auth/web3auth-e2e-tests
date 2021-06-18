@@ -108,6 +108,24 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
         },
       },
     },
+    {
+      name: "tyler-0",
+      use: {
+        storageState: "state/tyler-0.json",
+        browserName: "firefox",
+        openloginURL,
+        user: {
+          facebook: {
+            name: "Tyler",
+            email: "cwmaykrxgq_1623990130@tfbnw.net",
+            password: "Hello123@",
+          },
+          openlogin: {
+            password: "S}Q7j+[vrPLxZ98",
+          },
+        },
+      },
+    },
   ],
 };
 
