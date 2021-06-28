@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@playwright/test": "^1.12.2",
-    "playwright": "^1.12.2"
+    "playwright": "^1.12.3"
   },
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",
