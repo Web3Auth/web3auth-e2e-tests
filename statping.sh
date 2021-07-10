@@ -20,8 +20,8 @@ fi
 # Value is the service_id on statping
 TESTS=( "homepage:38"
         "google:39"
-        "passwordless:40"
-        "facebook:41"
+        "passwordless:41"
+        "facebook:40"
         "discord:42" )
 
 for value in "${TESTS[@]}" ; do
@@ -29,18 +29,34 @@ for value in "${TESTS[@]}" ; do
     SERVICE_ID="${value##*:}"
     printf "TEST: %s, SERVICE_ID: %s.\n" "$TEST" "$SERVICE_ID"
 
-    STARTTIME=$(date +%s)
-    RESULT=$(npx playwright test --retries=3 $TEST)
-    ENDTIME=$(date +%s)
+    # playwright --retries always fails
+    # run it in a loop instead
+    test_succeeded=false
+    for i in 1 2 3
+    do
+        exec {stdout_copy}>&1
+        STARTTIME=$(date +%s)
+        RESULT=$(npx playwright test $TEST | tee /dev/fd/"$stdout_copy" | wc -l)
+        ENDTIME=$(date +%s)
+        exec {stdout_copy}>&-
+        echo "${RESULT}"
+        if [[ "$RESULT" =~ .*"failed".* ]]; then
+            echo "Test failed. Retrying..."
+            continue
+        fi
+
+        test_succeeded=true
+        break
+    done
+
     LATENCY=$((($ENDTIME - $STARTTIME) * 1000000))
-    echo "${RESULT}"
-    if [[ "$RESULT" =~ .*"failed".* ]]; then
-        echo FAIL
-        printf -v data '{"online": false, "LATENCY":%d, "issue":"Test Failed"}' ${LATENCY}
-        curl -X PATCH -H "Authorization: Bearer $STATPING_API_SECRET" -H "Content-Type: application/json" -d "${data}"  "$STATPING_INSTANCE/api/services/$SERVICE_ID"
-    else
+    if [ "$test_succeeded" = true ] ; then
         echo OK
         printf -v data '{"online": true, "LATENCY":%d, "issue":"NA"}' "${LATENCY}"
+        curl -X PATCH -H "Authorization: Bearer $STATPING_API_SECRET" -H "Content-Type: application/json" -d "${data}"  "$STATPING_INSTANCE/api/services/$SERVICE_ID"
+    else
+        echo FAIL
+        printf -v data '{"online": false, "LATENCY":%d, "issue":"Test Failed"}' ${LATENCY}
         curl -X PATCH -H "Authorization: Bearer $STATPING_API_SECRET" -H "Content-Type: application/json" -d "${data}"  "$STATPING_INSTANCE/api/services/$SERVICE_ID"
     fi
 done

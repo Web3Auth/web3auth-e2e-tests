@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.10.0-focal
+FROM mcr.microsoft.com/playwright:focal
 
 RUN mkdir /e2e
 ADD . /e2e/
