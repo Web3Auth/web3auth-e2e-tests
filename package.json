@@ -9,7 +9,7 @@
     "trace": "playwright show-trace"
   },
   "dependencies": {
-    "@playwright/test": "^1.12.2",
+    "@playwright/test": "^1.12.3",
     "playwright": "^1.12.3"
   },
   "devDependencies": {
