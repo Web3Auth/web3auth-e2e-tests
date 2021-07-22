@@ -18,7 +18,9 @@ jobs:
         os: [macos-latest, windows-latest, ubuntu-latest]
         exclude:
           - browser: webkit
-            os: [windows-latest, ubuntu-latest]
+            os: windows-latest
+          - browser: webkit
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
