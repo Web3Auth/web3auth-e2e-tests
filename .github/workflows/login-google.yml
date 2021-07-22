@@ -14,13 +14,9 @@ jobs:
     name: Google Login tests
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        browser: [chromium, firefox, webkit]
-        exclude:
-          - os: windows-latest
-            browser: webkit
-          - os: ubuntu-latest
-            browser: webkit
+        include:
+          - browser: chromium
+            os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -39,22 +35,21 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.get-yarn-cache-dir.outputs.path }}
-          key: "${{ matrix.os }}-node-${{ env.NODE_VERSION }}-yarn-\
-            ${{ hashFiles('**/yarn.lock') }}"
-          restore-keys: |
-            ${{ matrix.os }}-node-${{ env.NODE_VERSION }}-yarn-
+          key: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-
 
       - name: Install Node.js dependencies
         run: yarn install --frozen-lockfile
 
-      - if: matrix.os == 'ubuntu-latest'
-        name: Install Ubuntu dependencies
-        run: yarn run playwright install-deps
+      - name: Install Ubuntu dependencies
+        if: startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
 
       - name: Run tests
-        run: yarn run playwright test --config homepage.config.ts --browser ${{ matrix.browser }}
+        run: |
+          yarn run playwright test --config google.config.ts --project ${{ matrix.browser }}
 
-      - name: Upload test-results
+      - name: Upload test results
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
@@ -63,9 +58,9 @@ jobs:
           if-no-files-found: ignore
 
   report-success:
+    name: Google Login is alive
     needs: run-tests
     if: ${{ success() }}
-    name: Google Login is alive
     runs-on: ubuntu-latest
     steps:
       - name: Update status
@@ -82,9 +77,9 @@ jobs:
             }
 
   report-failure:
+    name: Google Login is down
     needs: run-tests
     if: ${{ failure() }}
-    name: Google Login is down
     runs-on: ubuntu-latest
     steps:
       - name: Update status

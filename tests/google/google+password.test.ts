@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { test } from "../base";
-import { signInWithGoogle, useAutoCancelShareTransfer } from "../utils";
+import { test } from "../../base";
+import { signInWithGoogle, useAutoCancelShareTransfer } from "../../utils";
 
 test("Login with Google+Password, Cancel share transfer request(s), Delete device share(s), Logout", async ({
   page,
