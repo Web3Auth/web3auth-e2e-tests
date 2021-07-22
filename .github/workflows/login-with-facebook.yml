@@ -69,7 +69,7 @@ jobs:
         with:
           url: https://torusstatus.com/api/services/${{ env.STATUS_SERVICE_ID }}
           bearerToken: ${{ secrets.STATUS_API_TOKEN }}
-          method: POST
+          method: PATCH
           data: >-
             {
               "online": ${{ needs.run-tests.result == 'success' }},
