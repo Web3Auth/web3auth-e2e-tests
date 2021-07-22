@@ -37,6 +37,22 @@ const playwrightConfig: PlaywrightTestConfig<TestArgs> = {
         },
       },
     },
+    {
+      name: "webkit",
+      use: {
+        browserName: "webkit",
+        storageState: "state/washington-0.json",
+        user: {
+          google: {
+            email: "connie.washington.1981@gmail.com",
+            password: "aeLici1ie",
+          },
+          openlogin: {
+            password: "$gIv$uInnBpSh1Bc",
+          },
+        },
+      },
+    },
   ],
 };
 
