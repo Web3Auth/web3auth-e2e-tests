@@ -1,19 +1,18 @@
 import { expect } from "@playwright/test";
-import { test } from "../base";
-import { signInWithFacebook, useAutoCancelShareTransfer } from "../utils";
+import { test } from "../../base";
+import { signInWithFacebook, useAutoCancelShareTransfer } from "../../utils";
 
 test("Login with Facebook+Password, Cancel share transfer request(s), Delete device share(s), Logout", async ({
   page,
   openloginURL,
   user,
 }) => {
-  if (openloginURL !== "https://beta.openlogin.com") return test.skip();
   if (!user.facebook || !user.openlogin) return test.skip();
 
   // Login with Facebook
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click('[aria-label="login with facebook"]');
+  await page.click(".row:nth-child(2) div:nth-child(1) .app-btn"); // TODO: Select using aria-label
   await signInWithFacebook({ page, name: user.facebook.name });
 
   // Enter password

@@ -1,0 +1,153 @@
+{
+  "cookies": [
+    {
+      "sameSite": "None",
+      "name": "dbln",
+      "value": "%7B%22100069788079481%22%3A%22PQxejIL7%22%7D",
+      "domain": ".facebook.com",
+      "path": "/login/device-based/",
+      "expires": 1690032304.736232,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "sb",
+      "value": "7HD5YHznkPB8bZVuAptGkR8P",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1690032294.587242,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "Lax",
+      "name": "wd",
+      "value": "1280x720",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1627564909,
+      "httpOnly": false,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "datr",
+      "value": "7HD5YOx1RlDMgCQLUZp1oNpO",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1690032110.153705,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "ATN",
+      "value": "1.1626960110.8468848177875830404.AYIzFRikLaMmuUv1VL0",
+      "domain": ".atdmt.com",
+      "path": "/",
+      "expires": 1690032110.713789,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "dpr",
+      "value": "2",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1627565091,
+      "httpOnly": false,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "c_user",
+      "value": "100069788079481",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1658496290.587401,
+      "httpOnly": false,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "xs",
+      "value": "37%3Aas6zQA3bm7oSsg%3A2%3A1626960292%3A-1%3A-1",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1658496290.587457,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "fr",
+      "value": "1dwezd8uY86ZU9uTH.AWVdbcFgDo_4jd0MaeT6Cvr18yM.Bg-XDs.Eo.AAA.0.0.Bg-XGj.AWUDF1ZpeVw",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1634736286.587511,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "test_cookie",
+      "value": "CheckForPermission",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "expires": 1626961197.410791,
+      "httpOnly": false,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "spin",
+      "value": "r.1004143167_b.trunk_t.1626960297_s.1_v.2_",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1627050297.465601,
+      "httpOnly": true,
+      "secure": true
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.facebook.com",
+      "localStorage": [
+        {
+          "name": "Session",
+          "value": "c1q4th:1626960344836"
+        },
+        {
+          "name": "falco_queue_log^$f1d9e9ae99d0c",
+          "value": "{\"items\":[{\"name\":\"ods_web_batch\",\"policy\":{\"r\":1,\"s\":1},\"time\":1626960302827.1,\"extra\":\"{\\\"batch\\\":{\\\"144\\\":{\\\"feed_ads\\\":{\\\"CometHomeRightSideEgo.empty_first_unit\\\":[2,null]}},\\\"1344\\\":{\\\"falco.fabric.www.C3\\\":{\\\"planes.banzai.write\\\":[33,null],\\\"planes.bladerunner.write\\\":[13,null]}},\\\"1678\\\":{\\\"www_client_navigations\\\":{\\\"NAVIGATE\\\":[1,null]}},\\\"2966\\\":{\\\"feed_ads\\\":{\\\"ghlTestUBT.init\\\":[1,null],\\\"ghlTestUBT.done.false.false\\\":[1,null]},\\\"BladeRunnerClient\\\":{\\\"socket_send_request\\\":[9,null],\\\"mqtt_publish_success\\\":[1,null],\\\"mqtt_state_connected\\\":[1,null],\\\"socket_process_batch\\\":[28,null],\\\"send_to_handler\\\":[18,null],\\\"socket_send_data_ack\\\":[0,null],\\\"received_status_1.FBGQLS:FRIEND_REQUEST_RECEIVE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:FRIEND_REQUEST_RECEIVE_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:BATCH_NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:BATCH_NOTIFICATION_STATE_CHANGE_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[2,null],\\\"status_latency.FBGQLS:NOTIFICATION_STATE_CHANGE_SUBSCRIBE.1.s\\\":[2,null],\\\"received_status_1.FBGQLS:USER_ACTIVITY_UPDATE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:USER_ACTIVITY_UPDATE_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:RTWEB_CALL_BLOCKED_SETTING_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:RTWEB_CALL_BLOCKED_SETTING_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:FRIEND_REQUEST_CONFIRM_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:FRIEND_REQUEST_CONFIRM_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:ACTOR_GATEWAY_ENROLL_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:ACTOR_GATEWAY_ENROLL_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_3.FBGQLS:NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[2,null],\\\"received_status_3.FBGQLS:FRIEND_REQUEST_RECEIVE_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:BATCH_NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:RTWEB_CALL_BLOCKED_SETTING_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:FRIEND_REQUEST_CONFIRM_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:ACTOR_GATEWAY_ENROLL_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:USER_ACTIVITY_UPDATE_SUBSCRIBE\\\":[1,null]}},\\\"3185\\\":{\\\"mw_graphql\\\":{\\\"init_sync.success\\\":[1,null]},\\\"mw_ls\\\":{\\\"init_sync.success\\\":[1,null]}},\\\"3589\\\":{\\\"dgw_web_client\\\":{\\\"GroupedWebStream.ack_received\\\":[4,null],\\\"GroupedWebStream.data_received\\\":[5,null],\\\"GroupedWebStream.ack_sent\\\":[5,null]}}}}\"},{\"name\":\"ods_web_batch\",\"policy\":{\"r\":1,\"s\":1},\"time\":1626960309332.8,\"extra\":\"{\\\"batch\\\":{\\\"1344\\\":{\\\"falco.fabric.www.C3\\\":{\\\"planes.bladerunner.write\\\":[1,null],\\\"planes.banzai.write\\\":[6,null]}},\\\"2966\\\":{\\\"BladeRunnerClient\\\":{\\\"socket_send_request\\\":[1,null],\\\"mqtt_publish_success\\\":[1,null],\\\"socket_process_batch\\\":[3,null],\\\"send_to_handler\\\":[2,null],\\\"socket_send_data_ack\\\":[0,null],\\\"received_status_1.FBGQLS:JOINABLE_VIDEO_CHATS_ROOM_CREATE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:JOINABLE_VIDEO_CHATS_ROOM_CREATE_SUBSCRIBE.0.s\\\":[1,null],\\\"received_status_3.FBGQLS:JOINABLE_VIDEO_CHATS_ROOM_CREATE_SUBSCRIBE\\\":[1,null]},\\\"mqtt_ws_client\\\":{\\\"219994525426954.protocol.publish./br_sr\\\":[100,null],\\\"protocol.publish./br_sr\\\":[100,null],\\\"219994525426954.message_arrived./sr_res\\\":[100,null],\\\"message_arrived./sr_res\\\":[100,null]}},\\\"3589\\\":{\\\"dgw_web_client\\\":{\\\"GroupedWebStream.ack_received\\\":[1,null],\\\"GroupedWebStream.data_received\\\":[1,null],\\\"GroupedWebStream.ack_sent\\\":[1,null]}}}}\"}],\"ts\":1626960309829.2}"
+        },
+        {
+          "name": "hb_timestamp",
+          "value": "1626960296778"
+        },
+        {
+          "name": "falco_queue_immediately^$f16b63ebc8e7d24",
+          "value": "{\"items\":[{\"name\":\"web_time_spent_navigation\",\"policy\":{\"r\":1},\"time\":1626960309836.3,\"extra\":\"{\\\"cause\\\":\\\"unload\\\",\\\"custom_data_json\\\":\\\"{\\\\\\\"source_pa\\\\\\\":\\\\\\\"{\\\\\\\\\\\\\\\"0\\\\\\\\\\\\\\\":{\\\\\\\\\\\\\\\"bookmark_id\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"4748854339\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"bookmark_type_name\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"session\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"c1q4th:ibme1c:fvay4i\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"subsession\\\\\\\\\\\\\\\":1,\\\\\\\\\\\\\\\"tap_point\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"via_cold_start\\\\\\\\\\\\\\\",\\\\\\\\\\\\\\\"timestamp\\\\\\\\\\\\\\\":1626960295615,\\\\\\\\\\\\\\\"trace_policy\\\\\\\\\\\\\\\":\\\\\\\\\\\\\\\"comet.home\\\\\\\\\\\\\\\"}}\\\\\\\",\\\\\\\"source_pav2\\\\\\\":\\\\\\\"CometHomeRoot.react,comet.home,via_cold_start,1626960295615,991795,4748854339\\\\\\\",\\\\\\\"source_uri\\\\\\\":\\\\\\\"/\\\\\\\",\\\\\\\"source_imp_id\\\\\\\":\\\\\\\"0SMWztzYMoW9HNi0a\\\\\\\",\\\\\\\"source_visitation_id\\\\\\\":\\\\\\\"comet.home:fvay4i:1:1626960295.616\\\\\\\"}\\\",\\\"sid_raw\\\":\\\"c1q4th:ibme1c:fvay4i\\\",\\\"source_path\\\":\\\"comet.home\\\"}\"},{\"name\":\"web_time_spent_bit_array\",\"policy\":{\"r\":1},\"time\":1626960309836.6,\"extra\":\"{\\\"sid_raw\\\":\\\"c1q4th:ibme1c:fvay4i\\\",\\\"start_time\\\":1626960304,\\\"tos_array\\\":[31,0],\\\"tos_cum\\\":13,\\\"tos_id\\\":\\\"fvay4i\\\",\\\"tos_len\\\":6,\\\"tos_seq\\\":1}\"}],\"ts\":1626960309836.6}"
+        },
+        {
+          "name": "CacheStorageVersion",
+          "value": "3b"
+        },
+        {
+          "name": "RTC_CALL_SUMMARY_summary",
+          "value": "{\"__t\":1626960309044,\"__v\":{}}"
+        },
+        {
+          "name": "banzai:last_storage_flush",
+          "value": "1626960297736.1"
+        },
+        {
+          "name": "signal_flush_timestamp",
+          "value": "1626960296819"
+        }
+      ]
+    }
+  ]
+}
