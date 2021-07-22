@@ -2,8 +2,8 @@
 
 End-to-end testing of [Torus] products.
 
-[![app.openlogin.com](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/app.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/app.yml)
-[![beta.openlogin.com](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/beta.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/beta.yml)
+[![Homepage](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/homepage.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/homepage.yml)
+[![Google Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-google.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-google.yml)
 
 ## Projects
 
