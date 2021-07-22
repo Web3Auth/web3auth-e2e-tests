@@ -63,7 +63,7 @@ jobs:
   report-success:
     needs: run-tests
     if: ${{ success() }}
-    name: Report Homepage is alive
+    name: Homepage is alive
     runs-on: ubuntu-latest
     steps:
       - name: Update status
@@ -72,7 +72,7 @@ jobs:
           url: https://torusstatus.com/api/services/38
           bearerToken: ${{ secrets.STATUS_API_TOKEN }}
           method: POST
-          data: |
+          data: >-
             {
               "online": true,
               "latency": 3000000,
@@ -82,7 +82,7 @@ jobs:
   report-failure:
     needs: run-tests
     if: ${{ failure() }}
-    name: Report Homepage is down
+    name: Homepage is down
     runs-on: ubuntu-latest
     steps:
       - name: Update status
@@ -91,7 +91,7 @@ jobs:
           url: https://torusstatus.com/api/services/38
           bearerToken: ${{ secrets.STATUS_API_TOKEN }}
           method: POST
-          data: |
+          data: >-
             {
               "online": false,
               "latency": 3000000,
