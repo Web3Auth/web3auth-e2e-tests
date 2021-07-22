@@ -42,10 +42,12 @@ jobs:
           restore-keys: |
             ${{ matrix.os }}-node-${{ env.NODE_VERSION }}-yarn-
 
-      - name: Install dependencies
-        run: |
-          yarn install --frozen-lockfile
-          yarn install:system-deps
+      - name: Install Node.js dependencies
+        run: yarn install --frozen-lockfile
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Install Ubuntu dependencies
+        run: yarn run playwright install-deps
 
       - name: Run tests
         run: yarn run playwright test --config homepage.config.ts --browser ${{ matrix.browser }}
@@ -54,6 +56,6 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.project }}-results
+          name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           if-no-files-found: ignore
