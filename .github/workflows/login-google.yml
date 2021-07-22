@@ -1,4 +1,4 @@
-name: Homepage
+name: Google Login
 
 on:
   schedule:
@@ -11,7 +11,7 @@ env:
 
 jobs:
   run-tests:
-    name: Homepage tests
+    name: Google Login tests
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
@@ -65,13 +65,13 @@ jobs:
   report-success:
     needs: run-tests
     if: ${{ success() }}
-    name: Homepage is alive
+    name: Google Login is alive
     runs-on: ubuntu-latest
     steps:
       - name: Update status
         uses: fjogeleit/http-request-action@master
         with:
-          url: https://torusstatus.com/api/services/38
+          url: https://torusstatus.com/api/services/39
           bearerToken: ${{ secrets.STATUS_API_TOKEN }}
           method: POST
           data: >-
@@ -84,13 +84,13 @@ jobs:
   report-failure:
     needs: run-tests
     if: ${{ failure() }}
-    name: Homepage is down
+    name: Google Login is down
     runs-on: ubuntu-latest
     steps:
       - name: Update status
         uses: fjogeleit/http-request-action@master
         with:
-          url: https://torusstatus.com/api/services/38
+          url: https://torusstatus.com/api/services/39
           bearerToken: ${{ secrets.STATUS_API_TOKEN }}
           method: POST
           data: >-
