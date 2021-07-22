@@ -1,0 +1,59 @@
+name: Homepage
+
+on:
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 14
+  FORCE_COLOR: 3
+
+jobs:
+  run-tests:
+    name: Run Homepage tests
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        browser: [chromium, firefox, webkit]
+        exclude:
+          - os: windows-latest
+            browser: webkit
+          - os: ubuntu-latest
+            browser: webkit
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Get Yarn cache directory
+        id: get-yarn-cache-dir
+        run: echo "::set-output name=path::$(yarn cache dir)"
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.get-yarn-cache-dir.outputs.path }}
+          key: "${{ matrix.os }}-node-${{ env.NODE_VERSION }}-yarn-\
+            ${{ hashFiles('**/yarn.lock') }}"
+          restore-keys: |
+            ${{ matrix.os }}-node-${{ env.NODE_VERSION }}-yarn-
+
+      - name: Install dependencies
+        run: |
+          yarn install --frozen-lockfile
+          yarn install:system-deps
+
+      - name: Run tests
+        run: yarn run playwright test --config homepage.config.ts --browser ${{ matrix.browser }}
+
+      - name: Upload test-results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.project }}-results
+          path: test-results/
+          if-no-files-found: ignore
