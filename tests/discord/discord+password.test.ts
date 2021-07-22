@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { test } from "../base";
-import { signInWithDiscord, useAutoCancelShareTransfer } from "../utils";
+import { test } from "../../base";
+import { signInWithDiscord, useAutoCancelShareTransfer } from "../../utils";
 
 test("Login with Discord+Password, Cancel share transfer request(s), Delete device share(s), Logout", async ({
   page,
@@ -12,7 +12,7 @@ test("Login with Discord+Password, Cancel share transfer request(s), Delete devi
   // Login with Discord
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click(".row div:nth-child(3) .app-btn"); // TODO: Select using aria-label
+  await page.click(".row:nth-child(2) div:nth-child(3) .app-btn"); // TODO: Select using aria-label
   await signInWithDiscord(page);
 
   // Enter password
