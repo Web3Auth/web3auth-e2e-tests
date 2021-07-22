@@ -11,16 +11,14 @@ env:
 
 jobs:
   run-tests:
-    name: Homepage tests
+    name: Run Homepage tests
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
         browser: [chromium, firefox, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
         exclude:
-          - os: windows-latest
-            browser: webkit
-          - os: ubuntu-latest
-            browser: webkit
+          - browser: webkit
+            os: [windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -39,22 +37,20 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.get-yarn-cache-dir.outputs.path }}
-          key: "${{ matrix.os }}-node-${{ env.NODE_VERSION }}-yarn-\
-            ${{ hashFiles('**/yarn.lock') }}"
-          restore-keys: |
-            ${{ matrix.os }}-node-${{ env.NODE_VERSION }}-yarn-
+          key: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-
 
       - name: Install Node.js dependencies
         run: yarn install --frozen-lockfile
 
-      - if: matrix.os == 'ubuntu-latest'
-        name: Install Ubuntu dependencies
-        run: yarn run playwright install-deps
+      - name: Install Ubuntu dependencies
+        if: startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
 
       - name: Run tests
         run: yarn run playwright test --config homepage.config.ts --browser ${{ matrix.browser }}
 
-      - name: Upload test-results
+      - name: Upload test results
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
@@ -62,40 +58,21 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
-  report-success:
+  update-status:
+    name: Update Homepage status
     needs: run-tests
-    if: ${{ success() }}
-    name: Homepage is alive
+    if: ${{ success() || failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Update status
         uses: fjogeleit/http-request-action@master
         with:
-          url: https://torusstatus.com/api/services/38
+          url: https://torusstatus.com/api/services/39
           bearerToken: ${{ secrets.STATUS_API_TOKEN }}
           method: POST
           data: >-
             {
-              "online": true,
-              "latency": 3000000,
-              "issue": "NA"
-            }
-
-  report-failure:
-    needs: run-tests
-    if: ${{ failure() }}
-    name: Homepage is down
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update status
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: https://torusstatus.com/api/services/38
-          bearerToken: ${{ secrets.STATUS_API_TOKEN }}
-          method: POST
-          data: >-
-            {
-              "online": false,
+              "online": ${{ needs.run-tests.result == 'success' }},
               "latency": 3000000,
               "issue": "NA"
             }
