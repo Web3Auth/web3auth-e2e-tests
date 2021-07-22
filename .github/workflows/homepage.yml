@@ -8,6 +8,7 @@ on:
 env:
   NODE_VERSION: 14
   FORCE_COLOR: 3
+  STATUS_SERVICE_ID: 38
 
 jobs:
   run-tests:
@@ -69,7 +70,7 @@ jobs:
       - name: Update status
         uses: fjogeleit/http-request-action@master
         with:
-          url: https://torusstatus.com/api/services/39
+          url: https://torusstatus.com/api/services/${{ env.STATUS_SERVICE_ID }}
           bearerToken: ${{ secrets.STATUS_API_TOKEN }}
           method: POST
           data: >-

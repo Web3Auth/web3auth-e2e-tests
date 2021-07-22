@@ -8,10 +8,11 @@ on:
 env:
   NODE_VERSION: 14
   FORCE_COLOR: 3
+  STATUS_SERVICE_ID: 39
 
 jobs:
   run-tests:
-    name: Google Login tests
+    name: Run Google Login tests
     strategy:
       matrix:
         include:
@@ -57,40 +58,21 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
-  report-success:
-    name: Google Login is alive
+  update-status:
+    name: Update Google Login status
     needs: run-tests
-    if: ${{ success() }}
+    if: ${{ success() || failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Update status
         uses: fjogeleit/http-request-action@master
         with:
-          url: https://torusstatus.com/api/services/39
+          url: https://torusstatus.com/api/services/${{ env.STATUS_SERVICE_ID }}
           bearerToken: ${{ secrets.STATUS_API_TOKEN }}
           method: POST
           data: >-
             {
-              "online": true,
-              "latency": 3000000,
-              "issue": "NA"
-            }
-
-  report-failure:
-    name: Google Login is down
-    needs: run-tests
-    if: ${{ failure() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update status
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: https://torusstatus.com/api/services/39
-          bearerToken: ${{ secrets.STATUS_API_TOKEN }}
-          method: POST
-          data: >-
-            {
-              "online": false,
+              "online": ${{ needs.run-tests.result == 'success' }},
               "latency": 3000000,
               "issue": "NA"
             }

@@ -3,7 +3,7 @@
 End-to-end testing of [Torus] products.
 
 [![Homepage](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/homepage.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/homepage.yml)
-[![Google Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-google.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-google.yml)
+[![Google Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-google.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-google.yml)
 
 ## Projects
 
