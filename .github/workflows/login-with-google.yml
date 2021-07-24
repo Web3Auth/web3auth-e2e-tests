@@ -49,7 +49,7 @@ jobs:
         run: yarn run playwright install-deps ${{ matrix.browser }}
 
       - name: Run tests
-        run: yarn run playwright test --config google.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config login-with-google/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
         if: ${{ always() }}
