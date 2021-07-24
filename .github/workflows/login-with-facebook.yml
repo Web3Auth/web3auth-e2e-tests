@@ -18,6 +18,8 @@ jobs:
         include:
           - browser: chromium
             os: windows-latest
+          - browser: firefox
+            os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout

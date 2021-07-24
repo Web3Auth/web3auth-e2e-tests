@@ -1,0 +1,220 @@
+{
+  "cookies": [
+    {
+      "name": "ATN",
+      "value": "1.1627105150.9807255621115414617.AYLXhvtUVb5P9CHXCBg",
+      "domain": ".atdmt.com",
+      "path": "/",
+      "expires": 1690177150,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "None"
+    },
+    {
+      "name": "test_cookie",
+      "value": "CheckForPermission",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "expires": 1627106147,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.501864871.1627105256",
+      "domain": ".openlogin.com",
+      "path": "/",
+      "expires": 1690177349,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ga_GW89S7YC7F",
+      "value": "GS1.1.1627105255.1.1.1627105372.0",
+      "domain": ".openlogin.com",
+      "path": "/",
+      "expires": 1690177372,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "None"
+    },
+    {
+      "name": "datr",
+      "value": "faf7YM88cBk9tBsZZrUgtSQ9",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1690177150,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "locale",
+      "value": "en_US",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1627709963,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "dpr",
+      "value": "2",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1627709963,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "wd",
+      "value": "1280x720",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1627709963,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sb",
+      "value": "faf7YPS-7SM_I2FjXEbG_TTG",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1690177243,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "c_user",
+      "value": "100069554569122",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1658641239,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "xs",
+      "value": "22%3AQ1p9OO3WmjcZQw%3A2%3A1627105241%3A-1%3A-1",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1658641239,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "fr",
+      "value": "1o0UtpJGbQfsk83vR.AWUdXNX70WWnfwboye6fb4-DKu0.Bg-6d9.uO.AAA.0.0.Bg-6fY.AWVLgJq4Bzk",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1634881235,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "spin",
+      "value": "r.1004155105_b.trunk_t.1627105247_s.1_v.2_",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1627195247,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "presence",
+      "value": "EDvF3EtimeF1627105263EuserFA21B69554569122A2EstateFDutF0CEchF_7bCC",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1629697263,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.facebook.com",
+      "localStorage": [
+        {
+          "name": "_SearchBootstrapCache_GlobalTypeaheadBootstrapKeywords",
+          "value": "{\"queryVariables\":{\"first\":2000},\"response\":{\"viewer\":{\"bootstrap_keywords\":{\"edges\":[{\"node\":{\"keyword_text\":\"lisa alfieedefiabb sadansen\",\"item_logging_id\":\"2021-07-23:VTt0Tb\",\"item_logging_info\":\"{\\\"source\\\":\\\"entity_bootstrap_connected_user_suggestion\\\",\\\"kwEntConnected\\\":true,\\\"category\\\":\\\"user\\\",\\\"kwEntId\\\":100069554569122,\\\"kwEntIds\\\":[100069554569122],\\\"structured_suggestion_type\\\":3,\\\"high_confidence_code\\\":0,\\\"high_confidence_id\\\":null,\\\"disambiguation_codes\\\":null,\\\"direct_nav_type\\\":6,\\\"direct_nav_id\\\":100069554569122,\\\"suggestion_keys\\\":{\\\"keys\\\":[\\\"-3028624762172924517\\\"],\\\"default_key\\\":\\\"5492217064723336208\\\",\\\"tier\\\":200}}\",\"sts_info\":{\"__fragments\":{\"getSearchCometKeywordDataSourceStructuredInfoForEntry_structuredTypeaheadInfo\":{\"direct_nav_result\":{\"ent_id\":\"100069554569122\",\"img_url\":\"https://scontent-xsp1-3.xx.fbcdn.net/v/t1.30497-1/cp0/p50x50/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-3&_nc_sid=41a7af&_nc_ohc=nyKhkR6NhPQAX-6iwLD&_nc_oc=AQkcQY14ZM03xSuIWBM5EQwo3nE1oSwTXPPdK4Qe4RRfgyK5EecChca2v6TN1nlI59c&_nc_ht=scontent-xsp1-3.xx&oh=1e0439e17acc718740255ea044fe359d&oe=61214522\",\"link_url\":\"https://www.facebook.com/profile.php?id=100069554569122\",\"entity_type\":\"user\",\"snippet\":\"You\",\"title\":\"Lisa Alfieedefiabb Sadansen\",\"type\":\"FRIEND\"},\"high_confidence_result\":null,\"disambiguation_result\":null}},\"__id\":\"client:root:viewer:bootstrap_keywords(first:2000):edges:0:node:sts_info\"},\"suggestion_keys\":{\"tier\":200,\"keys\":[\"-3028624762172924517\"],\"default_key\":\"5492217064723336208\"}}}]}}},\"timestamp\":1627105245831}"
+        },
+        {
+          "name": "banzai:last_storage_flush",
+          "value": "1627105246466"
+        },
+        {
+          "name": "CacheStorageVersion",
+          "value": "3b"
+        },
+        {
+          "name": "falco_queue_log^$f19874056b9f91e",
+          "value": "{\"items\":[{\"name\":\"perf\",\"policy\":{\"r\":1,\"s\":1},\"time\":1627105262126,\"extra\":\"{\\\"marker_id\\\":195562276,\\\"action_id\\\":12524,\\\"instance_id\\\":0,\\\"sample_rate\\\":1,\\\"method\\\":\\\"random_sampling\\\",\\\"duration_ns\\\":\\\"0\\\",\\\"points\\\":[{\\\"name\\\":\\\"client_oauth_dialog_init_impression\\\",\\\"timeSinceStart\\\":1627105262125,\\\"data\\\":{\\\"string\\\":{\\\"logger_id\\\":\\\"31710254-eca9-4c26-8554-092bbd58aa9e\\\"},\\\"int\\\":{\\\"response_start_time\\\":985,\\\"cbt_delta\\\":0}}}],\\\"metadata\\\":{\\\"application_analytics\\\":{\\\"time_since_qpl_module_init\\\":1},\\\"memory_stats\\\":{\\\"total_mem\\\":null},\\\"network_stats\\\":{},\\\"sitedata_info\\\":{\\\"client_push_phase\\\":\\\"C3\\\",\\\"client_revision\\\":1004155105,\\\"server_revision\\\":1004155105},\\\"locale_info\\\":{\\\"locale\\\":\\\"en_GB\\\",\\\"isRTL\\\":0}},\\\"marker_type\\\":1,\\\"flags\\\":1,\\\"annotations\\\":{\\\"gdp_type\\\":\\\"gdp_v4\\\",\\\"join_id\\\":\\\"31710254-eca9-4c26-8554-092bbd58aa9e\\\",\\\"source\\\":\\\"client\\\"},\\\"annotations_int\\\":{\\\"client_funnel_version\\\":1,\\\"cbt\\\":1627105262122},\\\"annotations_bool\\\":{\\\"qpl_e2e__align_points\\\":true}}\"},{\"name\":\"ods_web_batch\",\"policy\":{\"r\":1,\"s\":1},\"time\":1627105251904,\"extra\":\"{\\\"batch\\\":{\\\"144\\\":{\\\"feed_ads\\\":{\\\"CometHomeRightSideEgo.empty_first_unit\\\":[2,null]}},\\\"1344\\\":{\\\"falco.fabric.www.C3\\\":{\\\"planes.banzai.write\\\":[30,null],\\\"planes.bladerunner.write\\\":[13,null]}},\\\"1678\\\":{\\\"www_client_navigations\\\":{\\\"NAVIGATE\\\":[1,null]}},\\\"2966\\\":{\\\"feed_ads\\\":{\\\"ghlTestUBT.init\\\":[1,null],\\\"ghlTestUBT.done.false.false\\\":[1,null]},\\\"BladeRunnerClient\\\":{\\\"mqtt_state_connected\\\":[1,null],\\\"socket_send_request\\\":[9,null],\\\"mqtt_publish_success\\\":[9,null],\\\"socket_process_batch\\\":[28,null],\\\"send_to_handler\\\":[18,null],\\\"socket_send_data_ack\\\":[0,null],\\\"received_status_1.FBGQLS:FRIEND_REQUEST_RECEIVE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:FRIEND_REQUEST_RECEIVE_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:FRIEND_REQUEST_CONFIRM_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:FRIEND_REQUEST_CONFIRM_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:USER_ACTIVITY_UPDATE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:USER_ACTIVITY_UPDATE_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:BATCH_NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:BATCH_NOTIFICATION_STATE_CHANGE_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:ACTOR_GATEWAY_ENROLL_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:ACTOR_GATEWAY_ENROLL_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_1.FBGQLS:NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[2,null],\\\"status_latency.FBGQLS:NOTIFICATION_STATE_CHANGE_SUBSCRIBE.1.s\\\":[1,null],\\\"status_latency.FBGQLS:NOTIFICATION_STATE_CHANGE_SUBSCRIBE.0.s\\\":[1,null],\\\"received_status_1.FBGQLS:RTWEB_CALL_BLOCKED_SETTING_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:RTWEB_CALL_BLOCKED_SETTING_SUBSCRIBE.0.s\\\":[1,null],\\\"received_status_3.FBGQLS:BATCH_NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:FRIEND_REQUEST_CONFIRM_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:ACTOR_GATEWAY_ENROLL_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:FRIEND_REQUEST_RECEIVE_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:USER_ACTIVITY_UPDATE_SUBSCRIBE\\\":[1,null],\\\"received_status_3.FBGQLS:NOTIFICATION_STATE_CHANGE_SUBSCRIBE\\\":[2,null],\\\"received_status_3.FBGQLS:RTWEB_CALL_BLOCKED_SETTING_SUBSCRIBE\\\":[1,null]}},\\\"3185\\\":{\\\"mw_graphql\\\":{\\\"init_sync.success\\\":[1,null]},\\\"mw_ls\\\":{\\\"init_sync.success\\\":[1,null]}},\\\"3589\\\":{\\\"dgw_web_client\\\":{\\\"GroupedWebStream.ack_received\\\":[5,null],\\\"GroupedWebStream.data_received\\\":[6,null],\\\"GroupedWebStream.ack_sent\\\":[6,null]}}}}\"},{\"name\":\"looper_binary_classification_label\",\"policy\":{\"r\":1,\"s\":1},\"time\":1627105262430,\"extra\":\"{\\\"trace\\\":\\\"556651a4-a92c-46e7-bb8d-123d1802e2c9\\\",\\\"use_case_name\\\":\\\"notifications_jewel_click\\\",\\\"label\\\":\\\"tentatively_negative\\\"}\"},{\"name\":\"ods_web_batch\",\"policy\":{\"r\":1,\"s\":1},\"time\":1627105267334,\"extra\":\"{\\\"batch\\\":{\\\"110\\\":{\\\"basegraphqlsubscription_migration\\\":{\\\"web_notification_receive_subscribe.subscribe.sstt\\\":[1,null],\\\"web_notification_receive_subscribe.subscribe.total\\\":[1,null]}},\\\"1344\\\":{\\\"falco.fabric.www.C3\\\":{\\\"planes.banzai.write\\\":[11,null],\\\"planes.bladerunner.write\\\":[1,null]}},\\\"2231\\\":{\\\"ChannelManager\\\":{\\\"transportPromise.cleanup\\\":[1,null],\\\"startChannelManager.cleanup\\\":[1,null],\\\"configure.cleanup\\\":[2,null],\\\"_indicateLbInfoUpdated.cleanup\\\":[2,null],\\\"init.cleanup\\\":[1,null],\\\"getConfig.cleanup\\\":[7,null],\\\"_getConfig.cleanup\\\":[8,null],\\\"enterState.cleanup\\\":[4,null],\\\"_enterState.cleanup\\\":[4,null],\\\"isShutdown.cleanup\\\":[6,null],\\\"shouldIdle.cleanup\\\":[2,null],\\\"_enter_reconnect.cleanup\\\":[1,null],\\\"_getInfo.cleanup\\\":[1,null],\\\"exitState.cleanup\\\":[3,null],\\\"_enter_init.cleanup\\\":[1,null],\\\"_mqttInit.cleanup\\\":[1,null],\\\"_initMonitors.cleanup\\\":[1,null],\\\"_exit_init.cleanup\\\":[2,null]}},\\\"2966\\\":{\\\"BladeRunnerClient\\\":{\\\"socket_send_request\\\":[1,null],\\\"mqtt_publish_success\\\":[1,null],\\\"mqtt_state_connected\\\":[1,null],\\\"socket_process_batch\\\":[3,null],\\\"send_to_handler\\\":[2,null],\\\"socket_send_data_ack\\\":[0,null],\\\"received_status_1.FBGQLS:WEB_NOTIFICATION_RECEIVE_SUBSCRIBE\\\":[1,null],\\\"status_latency.FBGQLS:WEB_NOTIFICATION_RECEIVE_SUBSCRIBE.1.s\\\":[1,null],\\\"received_status_3.FBGQLS:WEB_NOTIFICATION_RECEIVE_SUBSCRIBE\\\":[1,null]},\\\"ChannelManager\\\":{\\\"transport_chosen.CORSTransport\\\":[1,null]},\\\"facebar_bootloader\\\":{\\\"facebar_bootloader_response_arrived\\\":[1,null]}},\\\"3589\\\":{\\\"dgw_web_client\\\":{\\\"GroupedWebStream.ack_received\\\":[2,null],\\\"GroupedWebStream.data_received\\\":[3,null],\\\"GroupedWebStream.ack_sent\\\":[3,null]}}}}\"},{\"name\":\"ods_web_batch\",\"policy\":{\"r\":1,\"s\":1},\"time\":1627105273618,\"extra\":\"{\\\"batch\\\":{\\\"1344\\\":{\\\"falco.fabric.www.C3\\\":{\\\"planes.banzai.write\\\":[1,null]}},\\\"2231\\\":{\\\"ChannelManager\\\":{\\\"isShutdown.cleanup\\\":[2,null],\\\"shouldIdle.cleanup\\\":[2,null]}}}}\"},{\"name\":\"dgw_client\",\"policy\":{\"r\":1},\"time\":1627105278230,\"extra\":\"{\\\"event\\\":\\\"Transport closed abnormally\\\",\\\"logging_id\\\":null,\\\"dgw_version\\\":\\\"4\\\",\\\"error\\\":\\\"Websocket connection failure with code 1006\\\",\\\"uuid\\\":\\\"100069554569122\\\",\\\"dgw_component\\\":\\\"WebSocketTransport\\\",\\\"destination_tier\\\":\\\"realtime\\\",\\\"sg_transport_id\\\":\\\"c160d19e-7c81-4c3c-8543-17cbc63ce2d0\\\"}\"},{\"name\":\"dgw_client\",\"policy\":{\"r\":1},\"time\":1627105278852,\"extra\":\"{\\\"event\\\":\\\"open\\\",\\\"logging_id\\\":null,\\\"dgw_version\\\":\\\"4\\\",\\\"error\\\":null,\\\"uuid\\\":\\\"100069554569122\\\",\\\"dgw_component\\\":\\\"WebSocketTransport\\\",\\\"destination_tier\\\":\\\"realtime\\\",\\\"sg_transport_id\\\":\\\"394c8c69-6888-4318-a13b-ebce6cb719b1\\\"}\"},{\"name\":\"dgw_client\",\"policy\":{\"r\":1},\"time\":1627105278855,\"extra\":\"{\\\"event\\\":\\\"establishing Stream loggingId: \\\",\\\"logging_id\\\":null,\\\"dgw_version\\\":\\\"4\\\",\\\"error\\\":null,\\\"uuid\\\":\\\"100069554569122\\\",\\\"dgw_component\\\":\\\"WebStreamGroup\\\",\\\"destination_tier\\\":\\\"realtime\\\",\\\"sg_transport_id\\\":\\\"394c8c69-6888-4318-a13b-ebce6cb719b1\\\"}\"}],\"ts\":1627105278855}"
+        },
+        {
+          "name": "hb_timestamp",
+          "value": "1627105246608"
+        },
+        {
+          "name": "Session",
+          "value": "fm0j8x:1627105295816"
+        },
+        {
+          "name": "RTC_CALL_SUMMARY_summary",
+          "value": "{\"__t\":1627105254663,\"__v\":{}}"
+        },
+        {
+          "name": "falco_queue_critical^$f379384962b80c4",
+          "value": "{\"items\":[{\"name\":\"ods_web_batch\",\"policy\":{\"r\":1,\"s\":1},\"time\":1627105278866,\"extra\":\"{\\\"batch\\\":{\\\"1344\\\":{\\\"falco.fabric.www.C3\\\":{\\\"planes.banzai.write\\\":[2,null]}},\\\"2231\\\":{\\\"ChannelManager\\\":{\\\"isShutdown.cleanup\\\":[1,null],\\\"shouldIdle.cleanup\\\":[1,null]}},\\\"2966\\\":{\\\"BladeRunnerClient\\\":{\\\"mqtt_state_disconnected\\\":[1,null],\\\"stream_closed_will_retry\\\":[1,null],\\\"socket_send_request\\\":[1,null],\\\"send_to_handler\\\":[1,null],\\\"socket_send_data_ack\\\":[0,null],\\\"received_status_4.FBGQLS:WEB_NOTIFICATION_RECEIVE_SUBSCRIBE\\\":[1,null]}},\\\"3589\\\":{\\\"dgw_web_client\\\":{\\\"WebSocketTransport.transport_close_with_error\\\":[1,null]}}}}\"}],\"ts\":1627105278866}"
+        },
+        {
+          "name": "signal_flush_timestamp",
+          "value": "1627105246651"
+        }
+      ]
+    },
+    {
+      "origin": "https://app.openlogin.com",
+      "localStorage": [
+        {
+          "name": "openlogin-openlogin-dapp",
+          "value": "{\"openlogin\":{\"redirectUrl\":\"https://app.openlogin.com/wallet/home\",\"touchIDPreference\":\"disabled\",\"customLoginConfig\":{},\"privateKey\":\"\",\"clientId\":\"\",\"logoutRedirectUrl\":\"\",\"currentLoginProvider\":\"\",\"skipTKey\":false,\"getWalletKey\":false,\"appState\":\"\",\"siteMetadata\":{\"icon\":\"\",\"name\":\"app.openlogin.com\",\"url\":\"https://app.openlogin.com\",\"date\":\"2021-07-24T05:41:00.814Z\"},\"selectedLanguage\":\"\",\"whiteLabel\":{}}}"
+        },
+        {
+          "name": "bb0ba8510e930298da77d2b89ad49961590208b5fd8b67d7a74c12880a52792f",
+          "value": "{\"share\":{\"share\":\"49387b0823f827e1f18ff4d3280138d8cfe5135c2c9ea966db30e29ced6b93c6\",\"shareIndex\":\"93ddcc72aa9e1a2fad4cca7409eab7150dd06df8e811fb4890cfbb03f168c2f3\"},\"polynomialID\":\"02bb0ba8510e930298da77d2b89ad49961590208b5fd8b67d7a74c12880a52792f|03cbe7e3697a8f0d0113ef6b769ce5414bef0c6108f49d3db190715bc8b085943f\"}"
+        },
+        {
+          "name": "loglevel:torus-direct-web-sdk",
+          "value": "SILENT"
+        },
+        {
+          "name": "pidModule",
+          "value": "{\"pidModule\":{\"_pidStore\":{\"9dc70cfd907df1f5ffbe9e1268587b5211944f075f56d4432ac8f738be17875a\":{\"_clientId\":\"openlogin\",\"loginProvider\":\"facebook\",\"redirectUrl\":\"https://app.openlogin.com/wallet/home\",\"relogin\":true,\"extraLoginOptions\":{}}},\"_timestamps\":{\"9dc70cfd907df1f5ffbe9e1268587b5211944f075f56d4432ac8f738be17875a\":1627105260789},\"timeout\":600000}}"
+        },
+        {
+          "name": "loglevel:torus.js",
+          "value": "SILENT"
+        },
+        {
+          "name": "deviceModule",
+          "value": "{\"deviceModule\":{\"isTouchIDRegistered\":false,\"lastLoggedInVerifier\":\"tkey-facebook\",\"verifierToLastLoggedInVerifierID\":{\"tkey-facebook\":\"109638814697937\"},\"touchIDVerifierIDMap\":{},\"onboardingMap\":{\"tkey-facebook\\u001c109638814697937\":true},\"walletTKeyOnboardingMap\":{\"facebook\\u001c109638814697937\":true},\"credIdCache\":[],\"credIdMapCache\":{}}}"
+        },
+        {
+          "name": "loglevel",
+          "value": "TRACE"
+        }
+      ]
+    }
+  ]
+}
