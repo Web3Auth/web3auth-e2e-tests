@@ -50,24 +50,29 @@ export async function signInWithGoogle({
   }
 }
 
+export async function signInWithFacebook({
+  page,
+  name,
+}: {
+  page: Page;
+  name: string;
+}): Promise<boolean> {
+  try {
+    await page.waitForURL("https://www.facebook.com/**");
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click(`button:has-text("Continue as ${name}")`),
+    ]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function signInWithDiscord(page: Page) {
   await page.waitForURL("https://discord.com/oauth2/**");
   await Promise.all([
     page.waitForNavigation(),
     page.click('button:has-text("Authorize")'),
-  ]);
-}
-
-export async function signInWithFacebook({
-  page,
-  name,
-}: {
-  name: string;
-  page: Page;
-}) {
-  await page.waitForURL("https://www.facebook.com/**");
-  await Promise.all([
-    page.waitForNavigation(),
-    page.click(`button:has-text("Continue as ${name}")`),
   ]);
 }
