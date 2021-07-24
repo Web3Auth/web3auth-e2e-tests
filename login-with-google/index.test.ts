@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { test } from "./index.base";
-import { signInWithGoogle } from "../utils";
+import { test } from "./index.lib";
+import { signInWithGoogle } from "../index.utils";
 
 test("Login with Google+Device", async ({
   page,

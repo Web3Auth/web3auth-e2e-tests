@@ -3,7 +3,7 @@ import {
   PlaywrightTestConfig,
   PlaywrightWorkerOptions,
 } from "@playwright/test";
-import { TestArgs } from "./index.base";
+import { TestArgs } from "./index.lib";
 import indexConfig from "../index.config";
 
 const projects: Array<

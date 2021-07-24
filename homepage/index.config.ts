@@ -1,4 +1,3 @@
-import path from "path";
 import {
   PlaywrightTestConfig,
   PlaywrightWorkerOptions,
@@ -9,26 +8,17 @@ import indexConfig from "../index.config";
 const projects: Array<
   Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
-  {
-    browserName: "firefox",
-    user: { email: "clyde.m.carter@gmail.com" },
-  },
-  {
-    browserName: "chromium",
-    user: { email: "connie.washington.1981@gmail.com" },
-  },
+  { browserName: "chromium" },
+  { browserName: "firefox" },
+  { browserName: "webkit" },
 ];
 
 const config: PlaywrightTestConfig<TestArgs> = {
   ...indexConfig,
   testDir: __dirname,
-  projects: projects.map(({ browserName, user }) => ({
+  projects: projects.map(({ browserName }) => ({
     name: browserName,
-    use: {
-      browserName,
-      storageState: path.resolve(__dirname, `${browserName}.json`),
-      user,
-    },
+    use: { browserName },
   })),
 };
 

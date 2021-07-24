@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { test } from "../../base";
+import { test } from "./index.lib";
 
 test.describe("On homepage,", () => {
   test.beforeEach(async ({ page, openloginURL }) => {

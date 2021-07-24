@@ -1,2 +1,5 @@
 # Test artifacts
-state/
+**/chromium.json
+**/firefox.json
+**/webkit.json
+test-results/
