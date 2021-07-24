@@ -6,6 +6,7 @@ End-to-end testing of [Torus] products.
 [![Google Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-google.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-google.yml)
 [![Facebook Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-facebook.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-facebook.yml)
 [![Discord Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-discord.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-discord.yml)
+[![Passwordless Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-passwordless.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-passwordless.yml)
 
 ## Development
 
