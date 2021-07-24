@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - browser: chromium
-            os: windows-latest
+          - browser: firefox
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -47,7 +47,7 @@ jobs:
         run: yarn run playwright install-deps ${{ matrix.browser }}
 
       - name: Run tests
-        run: yarn run playwright test --config discord.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config login-with-discord/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
         if: ${{ always() }}
@@ -58,7 +58,7 @@ jobs:
           if-no-files-found: ignore
 
   update-status:
-    name: Update DIscord Login status
+    name: Update Discord Login status
     needs: run-tests
     if: ${{ success() || failure() }}
     runs-on: ubuntu-latest

@@ -69,10 +69,15 @@ export async function signInWithFacebook({
   }
 }
 
-export async function signInWithDiscord(page: Page) {
-  await page.waitForURL("https://discord.com/oauth2/**");
-  await Promise.all([
-    page.waitForNavigation(),
-    page.click('button:has-text("Authorize")'),
-  ]);
+export async function signInWithDiscord(page: Page): Promise<boolean> {
+  try {
+    await page.waitForURL("https://discord.com/oauth2/**");
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click('button:has-text("Authorize")'),
+    ]);
+    return true;
+  } catch {
+    return false;
+  }
 }
