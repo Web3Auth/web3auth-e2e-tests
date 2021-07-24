@@ -16,7 +16,7 @@ test("Login with Facebook+Device", async ({ page, openloginURL, user }) => {
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.innerText(`text=${user.email}`)).toBe(user.email);
+  expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
