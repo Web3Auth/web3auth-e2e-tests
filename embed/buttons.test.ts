@@ -14,15 +14,18 @@ const buttonsTest = test.extend<{ iframe: Frame }>({
   },
 });
 
-buttonsTest(
-  "Click on 'Google' should do Google login",
-  async ({ page, iframe }) => {
-    const [popup] = await Promise.all([
-      page.waitForEvent("popup"),
-      iframe.click('button:has-text("Continue with Google")'),
-    ]);
-    await popup.waitForNavigation({ waitUntil: "networkidle" });
-    const url = new URL(popup.url());
-    expect(url.hostname).toBe("accounts.google.com");
-  }
-);
+buttonsTest.describe("In Login modal,", () => {
+  buttonsTest.skip(({ browserName }) => browserName === "firefox");
+  buttonsTest(
+    "click on 'Google' should do Google login",
+    async ({ page, iframe }) => {
+      const [popup] = await Promise.all([
+        page.waitForEvent("popup"),
+        iframe.click('button:has-text("Continue with Google")'),
+      ]);
+      await popup.waitForNavigation({ waitUntil: "networkidle" });
+      const url = new URL(popup.url());
+      expect(url.hostname).toBe("accounts.google.com");
+    }
+  );
+});

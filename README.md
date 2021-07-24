@@ -3,6 +3,7 @@
 End-to-end testing of [Torus] products.
 
 [![Homepage](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/homepage.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/homepage.yml)
+[![Embed](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/embed.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/embed.yml)
 [![Google Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-google.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-google.yml)
 [![Facebook Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-facebook.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-facebook.yml)
 [![Discord Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-discord.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/login-with-discord.yml)
