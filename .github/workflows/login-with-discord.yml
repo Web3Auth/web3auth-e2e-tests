@@ -16,6 +16,8 @@ jobs:
     strategy:
       matrix:
         include:
+          - browser: chromium
+            os: ubuntu-latest
           - browser: firefox
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
