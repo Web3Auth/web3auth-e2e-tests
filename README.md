@@ -19,9 +19,9 @@ End-to-end testing of [Torus] products.
 | `test --config=<test-dir>/index.config.ts --project=<chromium\|firefox\|webkit> --headed` | Run tests in headed mode (with GUI, for development) |
 | `trace <path-to-trace.zip>`                                                               | Trace test results (for development)                 |
 
-### Add new test
+### Add a test to an existing test suite
 
-Add a new file `<name>.test.ts` to `tests` directory:
+Add a new file `<name>.test.ts` to the test suite's directory:
 
 ```ts
 test.only("focus this test", async ({ page }) => {
@@ -30,6 +30,10 @@ test.only("focus this test", async ({ page }) => {
 ```
 
 When you've done writing the test, change `test.only` to `test` to turn off focus mode.
+
+### Create a new test suite
+
+Duplicate `homepage/` and `.github/workflows/homepage.yml`, rename and update the tests.
 
 ### Select elements
 
