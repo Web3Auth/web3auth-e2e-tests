@@ -1,20 +1,13 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
-import { signInWithGoogle } from "../index.utils";
+import { signInWithFacebook } from "../../index.utils";
 
-test("Login with Google+Device", async ({
-  page,
-  browserName,
-  openloginURL,
-  user,
-}) => {
-  // Login with Google
+test("Login with Facebook+Device", async ({ page, openloginURL, user }) => {
+  // Login with Facebook
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click('button:has-text("Continue with Google")');
-  test.fixme(
-    !(await signInWithGoogle({ page, browserName, email: user.email }))
-  );
+  await page.click(".row:nth-child(2) div:nth-child(1) .app-btn"); // TODO: Select using aria-label
+  test.fixme(!(await signInWithFacebook({ page, name: user.name })));
 
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {

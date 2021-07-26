@@ -1,4 +1,4 @@
-name: Discord Login
+name: OpenLogin - Facebook Login
 
 on:
   schedule:
@@ -8,18 +8,18 @@ on:
 env:
   NODE_VERSION: 14
   FORCE_COLOR: 3
-  STATUS_SERVICE_ID: 42
+  STATUS_SERVICE_ID: 40
 
 jobs:
   run-tests:
-    name: Run Discord Login tests
+    name: Run OpenLogin - Facebook Login tests
     strategy:
       matrix:
         include:
           - browser: chromium
-            os: ubuntu-latest
+            os: windows-latest
           - browser: firefox
-            os: ubuntu-latest
+            os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -56,10 +56,10 @@ jobs:
           aws-region: us-east-1
 
       - name: Download remote browser snapshots
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-discord/ login-with-discord/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-facebook/ openlogin/login-with-facebook/ --recursive
 
       - name: Run tests
-        run: yarn run playwright test --config login-with-discord/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/login-with-facebook/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
         if: ${{ always() }}
@@ -70,7 +70,7 @@ jobs:
           if-no-files-found: ignore
 
   update-status:
-    name: Update Discord Login status
+    name: Update OpenLogin - Facebook Login status
     needs: run-tests
     if: ${{ success() || failure() }}
     runs-on: ubuntu-latest

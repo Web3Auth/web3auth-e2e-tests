@@ -1,4 +1,4 @@
-name: Google Login
+name: OpenLogin - Homepage
 
 on:
   schedule:
@@ -8,18 +8,20 @@ on:
 env:
   NODE_VERSION: 14
   FORCE_COLOR: 3
-  STATUS_SERVICE_ID: 39
+  STATUS_SERVICE_ID: 38
 
 jobs:
   run-tests:
-    name: Run Google Login tests
+    name: Run OpenLogin - Homepage tests
     strategy:
       matrix:
-        include:
-          - browser: chromium
-            os: macos-latest
+        browser: [chromium, firefox, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        exclude:
           - browser: webkit
-            os: macos-latest
+            os: windows-latest
+          - browser: webkit
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -48,18 +50,8 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: yarn run playwright install-deps ${{ matrix.browser }}
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Download remote browser snapshots
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google/ login-with-google/ --recursive
-
       - name: Run tests
-        run: yarn run playwright test --config login-with-google/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/homepage/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
         if: ${{ always() }}
@@ -70,7 +62,7 @@ jobs:
           if-no-files-found: ignore
 
   update-status:
-    name: Update Google Login status
+    name: Update OpenLogin - Homepage status
     needs: run-tests
     if: ${{ success() || failure() }}
     runs-on: ubuntu-latest

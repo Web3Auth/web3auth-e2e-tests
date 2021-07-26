@@ -2,20 +2,18 @@ import {
   PlaywrightTestConfig,
   PlaywrightWorkerOptions,
 } from "@playwright/test";
-import { TestArgs } from "./index.lib";
-import indexConfig from "../index.config";
+import indexConfig from "../../index.config";
 
-const projects: Array<
-  Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
-> = [
+const projects: Array<Pick<PlaywrightWorkerOptions, "browserName">> = [
   { browserName: "chromium" },
   { browserName: "firefox" },
   { browserName: "webkit" },
 ];
 
-const config: PlaywrightTestConfig<TestArgs> = {
+const config: PlaywrightTestConfig = {
   ...indexConfig,
   testDir: __dirname,
+  globalSetup: require.resolve("./index.setup"),
   projects: projects.map(({ browserName }) => ({
     name: browserName,
     use: { browserName },

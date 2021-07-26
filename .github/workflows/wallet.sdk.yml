@@ -1,4 +1,4 @@
-name: Facebook Login
+name: Wallet - SDK
 
 on:
   schedule:
@@ -8,18 +8,19 @@ on:
 env:
   NODE_VERSION: 14
   FORCE_COLOR: 3
-  STATUS_SERVICE_ID: 40
 
 jobs:
   run-tests:
-    name: Run Facebook Login tests
+    name: Run Wallet - SDK tests
     strategy:
       matrix:
-        include:
-          - browser: chromium
+        browser: [chromium, firefox, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        exclude:
+          - browser: webkit
             os: windows-latest
-          - browser: firefox
-            os: windows-latest
+          - browser: webkit
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -48,18 +49,8 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: yarn run playwright install-deps ${{ matrix.browser }}
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Download remote browser snapshots
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-facebook/ login-with-facebook/ --recursive
-
       - name: Run tests
-        run: yarn run playwright test --config login-with-facebook/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config wallet/sdk/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
         if: ${{ always() }}
@@ -68,22 +59,3 @@ jobs:
           name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           if-no-files-found: ignore
-
-  update-status:
-    name: Update Facebook Login status
-    needs: run-tests
-    if: ${{ success() || failure() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update status
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: https://torusstatus.com/api/services/${{ env.STATUS_SERVICE_ID }}
-          bearerToken: ${{ secrets.STATUS_API_TOKEN }}
-          method: PATCH
-          data: >-
-            {
-              "online": ${{ needs.run-tests.result == 'success' }},
-              "latency": 3000000,
-              "issue": "NA"
-            }

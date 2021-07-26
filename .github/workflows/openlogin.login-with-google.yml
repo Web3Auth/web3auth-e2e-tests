@@ -1,4 +1,4 @@
-name: Passwordless Login
+name: OpenLogin - Google Login
 
 on:
   schedule:
@@ -8,15 +8,17 @@ on:
 env:
   NODE_VERSION: 14
   FORCE_COLOR: 3
-  STATUS_SERVICE_ID: 41
+  STATUS_SERVICE_ID: 39
 
 jobs:
   run-tests:
-    name: Run Passwordless Login tests
+    name: Run OpenLogin - Google Login tests
     strategy:
       matrix:
         include:
-          - browser: firefox
+          - browser: chromium
+            os: macos-latest
+          - browser: webkit
             os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
@@ -54,10 +56,10 @@ jobs:
           aws-region: us-east-1
 
       - name: Download remote browser snapshots
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-passwordless/ login-with-passwordless/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google/ openlogin/login-with-google/ --recursive
 
       - name: Run tests
-        run: yarn run playwright test --config login-with-passwordless/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
         if: ${{ always() }}
@@ -68,7 +70,7 @@ jobs:
           if-no-files-found: ignore
 
   update-status:
-    name: Update Passwordless Login status
+    name: Update OpenLogin - Google Login status
     needs: run-tests
     if: ${{ success() || failure() }}
     runs-on: ubuntu-latest

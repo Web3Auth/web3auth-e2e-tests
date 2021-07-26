@@ -1,13 +1,20 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
-import { signInWithDiscord } from "../index.utils";
+import { signInWithGoogle } from "../../index.utils";
 
-test("Login with Discord+Device", async ({ page, openloginURL, user }) => {
-  // Login with Discord
+test("Login with Google+Device", async ({
+  page,
+  browserName,
+  openloginURL,
+  user,
+}) => {
+  // Login with Google
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click(".row:nth-child(2) div:nth-child(3) .app-btn"); // TODO: Select using aria-label
-  test.fixme(!(await signInWithDiscord(page)));
+  await page.click('button:has-text("Continue with Google")');
+  test.fixme(
+    !(await signInWithGoogle({ page, browserName, email: user.email }))
+  );
 
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {

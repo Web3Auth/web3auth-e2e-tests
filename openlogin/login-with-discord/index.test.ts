@@ -1,13 +1,13 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
-import { signInWithFacebook } from "../index.utils";
+import { signInWithDiscord } from "../../index.utils";
 
-test("Login with Facebook+Device", async ({ page, openloginURL, user }) => {
-  // Login with Facebook
+test("Login with Discord+Device", async ({ page, openloginURL, user }) => {
+  // Login with Discord
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click(".row:nth-child(2) div:nth-child(1) .app-btn"); // TODO: Select using aria-label
-  test.fixme(!(await signInWithFacebook({ page, name: user.name })));
+  await page.click(".row:nth-child(2) div:nth-child(3) .app-btn"); // TODO: Select using aria-label
+  test.fixme(!(await signInWithDiscord(page)));
 
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
