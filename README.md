@@ -44,7 +44,7 @@ When you've done writing the test, change `test.only` to `test` to turn off focu
 
 ### Create a new test suite
 
-Duplicate `homepage/` and `.github/workflows/homepage.yml`, rename and update the tests.
+Duplicate `openlogin/homepage/` and `.github/workflows/openlogin.homepage.yml`, rename and update the tests.
 
 ### Select elements
 

@@ -15,7 +15,9 @@ async function confirmEmail({
     await page.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=from%3Atorus+subject%3A(verify+your+email)+after%3A${timestamp}&isrefinement=true`
     );
+    await page.waitForSelector("a[title='Gmail']", { state: "attached" });
 
+    // Try click on the verify link
     const maxReloads = 20;
     let reloads = 0;
     while (reloads < maxReloads) {
@@ -34,7 +36,9 @@ async function confirmEmail({
 
     const [popup] = await Promise.all([
       page.waitForEvent("popup"),
-      page.click('a:has-text("Confirm my email")'),
+      page.click(
+        'table[role="content-container"] a:has-text("Confirm my email")'
+      ),
     ]);
     await popup.waitForSelector("text=Done");
     await popup.close();
@@ -65,11 +69,11 @@ test("Login with Passwordless+Device", async ({
 
   // Confirm email
   test.fixme(
-    await confirmEmail({
+    !(await confirmEmail({
       context,
       timestamp,
       resend: () => page.click("text=Resend"),
-    })
+    }))
   );
 
   // Should be signed in in <2 minutes
