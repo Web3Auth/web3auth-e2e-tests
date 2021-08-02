@@ -430,10 +430,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@playwright/test@^1.12.3":
-  version "1.12.3"
-  resolved "https://registry.yarnpkg.com/@playwright/test/-/test-1.12.3.tgz#178e5d84e4c97c339dd315bd265ab1af39275ef0"
-  integrity sha512-e8i8rMqd1nhdyW2ELShOc5F2EiLIcZs+2LRglrCAy/nzftpLdAqfsk6gp29n8N5KExIlzpKdoQ5QBviqGzT9DA==
+"@playwright/test@^1.13.1":
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/@playwright/test/-/test-1.13.1.tgz#a040020d81227cf33fbe71b918578ed3b6e5bc8c"
+  integrity sha512-i8se6FK65hdbTzGMWnvPEaFoCh7DQ0XLKmaf2rWnh+ufhn4Ad/1jhdK8c6s4Mo87veTfd6N60fKCAWjyhbHyCg==
   dependencies:
     "@babel/code-frame" "^7.12.13"
     "@babel/core" "^7.14.0"
