@@ -63,6 +63,4 @@ jobs:
           bearerToken: ${{ secrets.STATUS_API_TOKEN }}
           method: PATCH
           data: >-
-            {
-              "online": ${{ needs.run-tests.result == 'success' }},
-            }
+            { "online": ${{ needs.run-tests.result == 'success' }} }
