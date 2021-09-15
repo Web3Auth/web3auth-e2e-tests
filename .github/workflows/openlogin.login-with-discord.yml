@@ -20,38 +20,55 @@ jobs:
           - browser: firefox
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
+    outputs:
+      conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
+      - id: setup-node
+        name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: yarn
+        continue-on-error: true
 
-      - name: Install Node.js dependencies
+      - id: yarn-install
+        name: Install Node.js dependencies
+        if: steps.setup-node.outcome == 'success'
         run: yarn install --frozen-lockfile
+        continue-on-error: true
 
-      - name: Install Ubuntu dependencies
-        if: startsWith(matrix.os, 'ubuntu')
+      - id: yarn-install-deps
+        name: Install Ubuntu dependencies
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
         run: yarn run playwright install-deps ${{ matrix.browser }}
+        continue-on-error: true
 
-      - name: Configure AWS credentials
+      - id: configure-aws
+        name: Configure AWS credentials
+        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+        continue-on-error: true
 
-      - name: Download remote browser snapshots
+      - id: download-state
+        name: Download remote browser snapshots
+        if: steps.configure-aws.outcome == 'success'
         run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-discord/ openlogin/login-with-discord/ --recursive
+        continue-on-error: true
 
-      - name: Run tests
+      - id: run-tests
+        name: Run tests
+        if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config openlogin/login-with-discord/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
-        if: ${{ always() }}
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
@@ -61,7 +78,7 @@ jobs:
   update-status:
     name: Update OpenLogin - Discord status
     needs: run-tests
-    if: ${{ success() || failure() }}
+    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
     runs-on: ubuntu-latest
     steps:
       - name: Update status

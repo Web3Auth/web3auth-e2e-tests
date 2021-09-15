@@ -36,17 +36,21 @@ jobs:
           cache: yarn
         continue-on-error: true
 
-      - name: Install Node.js dependencies
+      - id: yarn-install
+        name: Install Node.js dependencies
         if: steps.setup-node.outcome == 'success'
         run: yarn install --frozen-lockfile
+        continue-on-error: true
 
-      - name: Install Ubuntu dependencies
-        if: steps.setup-node.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+      - id: yarn-install-deps
+        name: Install Ubuntu dependencies
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
         run: yarn run playwright install-deps ${{ matrix.browser }}
+        continue-on-error: true
 
       - id: run-tests
         name: Run tests
-        if: steps.setup-node.outcome == 'success'
+        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
         run: yarn run playwright test --config openlogin/homepage/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
