@@ -22,6 +22,8 @@ jobs:
           - browser: webkit
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
+    outputs:
+      conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -42,7 +44,8 @@ jobs:
         if: steps.setup-node.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
         run: yarn run playwright install-deps ${{ matrix.browser }}
 
-      - name: Run tests
+      - id: run-tests
+        name: Run tests
         if: steps.setup-node.outcome == 'success'
         run: yarn run playwright test --config openlogin/homepage/index.config.ts --project ${{ matrix.browser }}
 
@@ -57,7 +60,7 @@ jobs:
   update-status:
     name: Update OpenLogin - Homepage status
     needs: run-tests
-    if: success() || failure()
+    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
     runs-on: ubuntu-latest
     steps:
       - name: Update status
