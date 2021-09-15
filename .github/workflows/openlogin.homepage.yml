@@ -26,24 +26,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
+      - id: setup-node
+        name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: yarn
+        continue-on-error: true
 
       - name: Install Node.js dependencies
+        if: steps.setup-node.outcome == 'success'
         run: yarn install --frozen-lockfile
 
       - name: Install Ubuntu dependencies
-        if: startsWith(matrix.os, 'ubuntu')
+        if: steps.setup-node.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
         run: yarn run playwright install-deps ${{ matrix.browser }}
 
       - name: Run tests
+        if: steps.setup-node.outcome == 'success'
         run: yarn run playwright test --config openlogin/homepage/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
-        if: ${{ always() }}
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
@@ -53,7 +57,7 @@ jobs:
   update-status:
     name: Update OpenLogin - Homepage status
     needs: run-tests
-    if: ${{ success() || failure() }}
+    if: success() || failure()
     runs-on: ubuntu-latest
     steps:
       - name: Update status
