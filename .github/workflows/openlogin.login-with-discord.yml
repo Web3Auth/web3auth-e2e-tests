@@ -47,16 +47,16 @@ jobs:
       - name: Download remote browser snapshots
         run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-discord/ openlogin/login-with-discord/ --recursive
 
-      # - name: Run tests
-      #   run: yarn run playwright test --config openlogin/login-with-discord/index.config.ts --project ${{ matrix.browser }}
+      - name: Run tests
+        run: yarn run playwright test --config openlogin/login-with-discord/index.config.ts --project ${{ matrix.browser }}
 
-      # - name: Upload test results
-      #   if: ${{ always() }}
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
-      #     path: test-results/
-      #     if-no-files-found: ignore
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
+          path: test-results/
+          if-no-files-found: ignore
 
   update-status:
     name: Update OpenLogin - Discord status
