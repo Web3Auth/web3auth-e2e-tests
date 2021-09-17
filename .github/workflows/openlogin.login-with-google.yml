@@ -7,7 +7,6 @@ on:
 
 env:
   NODE_VERSION: 14
-  FORCE_COLOR: 3
   STATUS_SERVICE_ID: 39
 
 jobs:
@@ -21,58 +20,65 @@ jobs:
           - browser: webkit
             os: macos-latest
     runs-on: ${{ matrix.os }}
+    outputs:
+      conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
+      - id: setup-node
+        name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
+        continue-on-error: true
 
-      - name: Get Yarn cache directory
-        id: get-yarn-cache-dir
-        run: echo "::set-output name=path::$(yarn cache dir)"
-
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.get-yarn-cache-dir.outputs.path }}
-          key: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-yarn-
-
-      - name: Install Node.js dependencies
+      - id: yarn-install
+        name: Install Node.js dependencies
+        if: steps.setup-node.outcome == 'success'
         run: yarn install --frozen-lockfile
+        continue-on-error: true
 
-      # - name: Install Ubuntu dependencies
-      #   if: startsWith(matrix.os, 'ubuntu')
-      #   run: yarn run playwright install-deps ${{ matrix.browser }}
+      - id: yarn-install-deps
+        name: Install Ubuntu dependencies
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
+        continue-on-error: true
 
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: us-east-1
+      - id: configure-aws
+        name: Configure AWS credentials
+        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+        continue-on-error: true
 
-      # - name: Download remote browser snapshots
-      #   run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google/ openlogin/login-with-google/ --recursive
+      - id: download-state
+        name: Download remote browser snapshots
+        if: steps.configure-aws.outcome == 'success'
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google/ openlogin/login-with-google/ --recursive
+        continue-on-error: true
 
-      # - name: Run tests
-      #   run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
+      - id: run-tests
+        name: Run tests
+        if: steps.download-state.outcome == 'success'
+        run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
 
-      # - name: Upload test results
-      #   if: ${{ always() }}
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
-      #     path: test-results/
-      #     if-no-files-found: ignore
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
+          path: test-results/
+          if-no-files-found: ignore
 
   update-status:
     name: Update OpenLogin - Google Login status
     needs: run-tests
-    if: ${{ success() || failure() }}
+    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
     runs-on: ubuntu-latest
     steps:
       - name: Update status
@@ -81,9 +87,6 @@ jobs:
           url: https://torusstatus.com/api/services/${{ env.STATUS_SERVICE_ID }}
           bearerToken: ${{ secrets.STATUS_API_TOKEN }}
           method: PATCH
+          timeout: 10000
           data: >-
-            {
-              "online": ${{ needs.run-tests.result == 'success' }},
-              "latency": 3000000,
-              "issue": "NA"
-            }
+            { "online": ${{ needs.run-tests.result == 'success' }} }
