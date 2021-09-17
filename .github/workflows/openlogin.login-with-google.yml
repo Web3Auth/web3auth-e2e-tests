@@ -15,8 +15,8 @@ jobs:
     strategy:
       matrix:
         include:
-          # - browser: chromium
-          #   os: macos-latest
+          - browser: chromium
+            os: macos-latest
           - browser: webkit
             os: macos-latest
     runs-on: ${{ matrix.os }}
