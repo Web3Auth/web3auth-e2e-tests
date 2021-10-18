@@ -61,7 +61,9 @@ export async function signInWithFacebook({
     await page.waitForURL("https://www.facebook.com/**");
     await Promise.all([
       page.waitForNavigation(),
-      page.click(`button:has-text("Continue"), [aria-label="Continue"]`),
+      page.click(
+        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${name}"]`
+      ),
     ]);
     return true;
   } catch {
