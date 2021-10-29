@@ -36,3 +36,21 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: lighthouse
+
+      - name: sync s3
+        uses: jakejarvis/s3-sync-action@master
+        env:
+          SOURCE_DIR: lighthouse
+          AWS_REGION: us-east-1
+          AWS_S3_BUCKET: lighthouse.tor.us
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: invalidate
+        uses: chetan/invalidate-cloudfront-action@master
+        env:
+          DISTRIBUTION: E36M6XHGBP2LD7
+          PATHS: "/*"
+          AWS_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
