@@ -6,7 +6,7 @@ test("Login with Discord+Device", async ({ page, openloginURL, user }) => {
   // Login with Discord
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click(".row:nth-child(2) div:nth-child(3) .app-btn"); // TODO: Select using aria-label
+  await page.click('[aria-label="login with discord"]');
   test.fixme(!(await signInWithDiscord(page)));
 
   // Should be signed in in <2 minutes
