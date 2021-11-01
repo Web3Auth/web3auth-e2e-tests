@@ -32,7 +32,6 @@ export async function signInWithGoogle({
     await page.click(`text=${email}`);
     if (browserName === "chromium") {
       // On Chromium, Google sometimes re-ask for user's consent
-      await page.waitForNavigation();
       if (
         page
           .url()
