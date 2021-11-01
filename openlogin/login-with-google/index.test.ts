@@ -11,7 +11,7 @@ test("Login with Google+Device", async ({
   // Login with Google
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click('button:has-text("Continue with Google")');
+  await page.click('[aria-label="Continue with existing Google"]');
   test.fixme(
     !(await signInWithGoogle({ page, browserName, email: user.email }))
   );
