@@ -6,7 +6,7 @@ test("Login with Facebook+Device", async ({ page, openloginURL, user }) => {
   // Login with Facebook
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click(".row:nth-child(2) div:nth-child(1) .app-btn"); // TODO: Select using aria-label
+  await page.click('[aria-label="login with facebook"]');
   test.fixme(!(await signInWithFacebook({ page, name: user.name })));
 
   // Should be signed in in <2 minutes
