@@ -59,13 +59,13 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-facebook/ openlogin/login-with-facebook/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-facebook-2fa/ openlogin/login-with-facebook-2fa/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-facebook/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/login-with-facebook-2fa/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
         if: always()
