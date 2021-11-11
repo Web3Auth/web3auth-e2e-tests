@@ -18,6 +18,14 @@ const projects: Array<
       backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString()
     },
   },
+  {
+    browserName: "firefox",
+    user: {
+      email: "npqlzgpcyx_1624264537@tfbnw.net",
+      name: "Rick",
+      backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString()
+    },
+  },
 ];
 
 const config: PlaywrightTestConfig<TestArgs> = {
