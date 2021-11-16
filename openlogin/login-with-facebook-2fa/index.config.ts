@@ -7,6 +7,8 @@ import { TestArgs } from "./index.lib";
 import indexConfig from "../../index.config";
 import { readFileSync } from "fs";
 
+const backupPhrase = readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString()
+
 const projects: Array<
   Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
@@ -15,7 +17,7 @@ const projects: Array<
     user: {
       email: "npqlzgpcyx_1624264537@tfbnw.net",
       name: "Rick",
-      backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString()
+      backupPhrase
     },
   },
   {
@@ -23,7 +25,7 @@ const projects: Array<
     user: {
       email: "npqlzgpcyx_1624264537@tfbnw.net",
       name: "Rick",
-      backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString()
+      backupPhrase
     },
   },
 ];
