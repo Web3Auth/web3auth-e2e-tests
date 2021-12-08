@@ -84,9 +84,10 @@ jobs:
       - name: Update status
         uses: fjogeleit/http-request-action@master
         with:
-          url: https://torusstatus.com/api/services/${{ env.STATUS_SERVICE_ID }}
-          bearerToken: ${{ secrets.STATUS_API_TOKEN }}
+          url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.GOOGLE_COMPONENT_ID }}
+          customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
           method: PATCH
+          contentType: 'application/json'
           timeout: 10000
           data: >-
-            { "online": ${{ needs.run-tests.result == 'success' }} }
+            { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
