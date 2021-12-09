@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { confirmEmail } from "../utils";
+import { confirmEmail } from "../../index.utils";
 import { test } from "./index.lib";
 
 test("Login with Passwordless+Device", async ({

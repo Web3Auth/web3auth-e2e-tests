@@ -1,5 +1,5 @@
 const { expect } = require('@playwright/test');
-import { confirmEmail } from "../utils";
+import { confirmEmail } from "../../index.utils";
 import { test } from "./index.lib";
 
 test('new v2 user can log in correctly', async ({
