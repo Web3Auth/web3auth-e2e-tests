@@ -6,14 +6,12 @@ import {
 import { TestArgs } from "./index.lib";
 import indexConfig from "../../index.config";
 
-const testUserEmail = `testuser${process.env.GITHUB_JOB}@tor.us`
-
 const projects: Array<
 Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
   {
     browserName: "chromium",
-    user: { email: testUserEmail }
+    user: { email: `testuser${process.env.TEST_RUN_ID}@openlogin.com` }
   },
 ];
 
