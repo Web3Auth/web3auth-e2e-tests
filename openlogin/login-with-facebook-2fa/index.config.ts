@@ -19,11 +19,7 @@ const projects: Array<
   {
     browserName: "chromium",
     user
-  },
-  {
-    browserName: "firefox",
-    user
-  },
+  }
 ];
 
 const config: PlaywrightTestConfig<TestArgs> = {
