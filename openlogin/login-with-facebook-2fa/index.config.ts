@@ -8,8 +8,8 @@ import indexConfig from "../../index.config";
 import { readFileSync } from "fs";
 
 const user = {
-  email: "npqlzgpcyx_1624264537@tfbnw.net",
-  name: "Rick",
+  email: "chdrotfhac_1624264537@tbfnw.net",
+  name: "Jennifer",
   backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString()
 }
 
