@@ -7,7 +7,6 @@ on:
 
 env:
   NODE_VERSION: 14
-  STATUS_SERVICE_ID: 38
 
 jobs:
   run-tests:
