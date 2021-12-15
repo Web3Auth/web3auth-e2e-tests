@@ -1,4 +1,4 @@
-name: OpenLogin - Facebook Login
+name: OpenLogin - Facebook with 2fa Login
 
 on:
   schedule:
@@ -11,7 +11,7 @@ env:
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Facebook Login tests
+    name: Run OpenLogin - Facebook Login with 2fa tests
     strategy:
       matrix:
         include:
