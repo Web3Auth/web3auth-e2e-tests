@@ -1,12 +1,12 @@
-import { expect } from "@playwright/test";
+const { expect } = require('@playwright/test');
 import { confirmEmail } from "../../index.utils";
 import { test } from "./index.lib";
 
-test("Login with Passwordless+Device", async ({
+test('new v2 user can log in correctly', async ({
   context,
   page,
   openloginURL,
-  user,
+  user
 }) => {
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
