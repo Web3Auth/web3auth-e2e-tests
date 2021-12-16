@@ -16,6 +16,8 @@ End-to-end testing of [Torus] products.
 
 [![OpenLogin - Passwordless Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-passwordless.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-passwordless.yml)
 
+[![OpenLogin - New V2 User Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.new-v2-user-login.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.new-v2-user-login.yml)
+
 ### Wallet
 
 [![Wallet - SDK](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/wallet.sdk.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/wallet.sdk.yml)
