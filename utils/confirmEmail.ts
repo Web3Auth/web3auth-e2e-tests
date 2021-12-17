@@ -1,18 +1,40 @@
 import { BrowserContext } from "playwright";
 
-async function confirmEmail({
+interface Filter {
+  [key: string]: string | number | undefined
+}
+
+const generateFilterStr = (filter: Filter) => {
+  const filterItems = Object.entries(filter)
+  return filterItems.reduce((filterStr, [filterName,filterVal], currIdx) => {
+    if(filterVal === undefined) return filterStr
+
+    const prefix = currIdx === 0 ? '' : '+'
+    return filterStr + `${prefix}${filterName}:${filterVal}`
+  }, '')
+}
+
+export async function confirmEmail({
   context,
   timestamp,
+  to,
   resend,
 }: {
   context: BrowserContext;
   timestamp: number;
+  to?: string;
   resend: () => Promise<void>;
 }) {
   const page = await context.newPage();
   try {
+    const mailFilterStr = generateFilterStr({
+      from: 'torus',
+      subject: '(verify+your+email)',
+      after: timestamp,
+      to
+    })
     await page.goto(
-      `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=from%3Atorus+subject%3A(verify+your+email)+after%3A${timestamp}&isrefinement=true`
+      `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );
     await page.waitForSelector("a[title='Gmail']", { state: "attached" });
 
