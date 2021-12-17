@@ -2,7 +2,7 @@ const { expect } = require('@playwright/test');
 import { confirmEmail } from "../../utils";
 import { test } from "./index.lib";
 
-test('new v2 user can log in correctly', async ({
+test('existing v2 user can log in correctly', async ({
   context,
   page,
   openloginURL,
@@ -23,6 +23,7 @@ test('new v2 user can log in correctly', async ({
     !(await confirmEmail({
       context,
       timestamp,
+      to: user.email,
       resend: () => page.click("text=Resend"),
     }))
   );

@@ -11,7 +11,11 @@ Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
   {
     browserName: "chromium",
-    user: { email: `testuser${process.env.TEST_RUN_ID}@openlogin.com` }
+    user: { email: `testuser.existing1@openlogin.com` }
+  },
+  {
+    browserName: "firefox",
+    user: { email: `testuser.existing2@openlogin.com` }
   },
 ];
 

@@ -1,4 +1,4 @@
-name: OpenLogin - New V2 User Login
+name: OpenLogin - Existing V2 User Login
 
 on:
   schedule:
@@ -10,7 +10,7 @@ env:
 
 jobs:
   run-tests:
-    name: Run OpenLogin - New V2 User Login tests
+    name: Run OpenLogin - Existing V2 User Login tests
     strategy:
       matrix:
         include:
@@ -56,13 +56,13 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/new-v2-user-login/ openlogin/new-v2-user-login/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/existing-v2-user-login/ openlogin/existing-v2-user-login/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/new-v2-user-login/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/existing-v2-user-login/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
         if: always()
