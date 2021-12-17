@@ -1,6 +1,7 @@
-import { BrowserContext, Page, PlaywrightWorkerOptions } from "@playwright/test";
+import { Page, PlaywrightWorkerOptions } from "@playwright/test";
+import confirmEmail from "./confirmEmail";
 
-export function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
+function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
   const promise = new Promise<void>(async (resolve) => {
     while (!stopped) {
@@ -18,7 +19,7 @@ export function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   };
 }
 
-export async function signInWithGoogle({
+async function signInWithGoogle({
   page,
   browserName,
   email,
@@ -49,7 +50,7 @@ export async function signInWithGoogle({
   }
 }
 
-export async function signInWithFacebook({
+async function signInWithFacebook({
   page,
   name,
 }: {
@@ -70,7 +71,7 @@ export async function signInWithFacebook({
   }
 }
 
-export async function signInWithDiscord(page: Page): Promise<boolean> {
+async function signInWithDiscord(page: Page): Promise<boolean> {
   try {
     await page.waitForURL("https://discord.com/oauth2/**");
     await Promise.all([
@@ -83,54 +84,12 @@ export async function signInWithDiscord(page: Page): Promise<boolean> {
   }
 }
 
-export async function confirmEmail({
-  context,
-  timestamp,
-  resend,
-}: {
-  context: BrowserContext;
-  timestamp: number;
-  resend: () => Promise<void>;
-}) {
-  const page = await context.newPage();
-  try {
-    await page.goto(
-      `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=from%3Atorus+subject%3A(verify+your+email)+after%3A${timestamp}&isrefinement=true`
-    );
-    await page.waitForSelector("a[title='Gmail']", { state: "attached" });
-
-    // Try click on the verify link
-    const maxReloads = 20;
-    let reloads = 0;
-    while (reloads < maxReloads) {
-      try {
-        reloads++;
-        await page.click('div[role="link"] >> text=Verify your email', {
-          timeout: 2000,
-        });
-        break;
-      } catch {
-        if (reloads % 5 === 0) await resend();
-        await page.reload();
-      }
-    }
-    if (reloads >= maxReloads) return false;
-
-    const [popup] = await Promise.all([
-      page.waitForEvent("popup"),
-      page.click(
-        'table[role="content-container"] a:has-text("Confirm my email")'
-      ),
-    ]);
-    await popup.waitForSelector("text=Done");
-    await popup.close();
-
-    return true;
-  } catch {
-    return false;
-  } finally {
-    await page.close();
-  }
+export {
+  useAutoCancelShareTransfer,
+  signInWithGoogle,
+  signInWithFacebook,
+  signInWithDiscord,
+  confirmEmail
 }
 
 export async function deleteCurrentDeviceShare (page: Page) {
