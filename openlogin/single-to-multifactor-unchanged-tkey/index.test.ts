@@ -2,7 +2,7 @@ const { expect } = require('@playwright/test');
 import { confirmEmail } from "../../index.utils";
 import { test } from "./index.lib";
 
-test('new v2 user can log in correctly', async ({
+test('user upgrading from 1/1 to 2/n can log in correctly', async ({
   context,
   page,
   openloginURL,
