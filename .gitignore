@@ -13,4 +13,5 @@ node_modules
 **/chromium.json
 **/firefox.json
 **/webkit.json
+**/backup-phrase.txt
 test-results/
