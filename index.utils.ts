@@ -132,3 +132,10 @@ export async function confirmEmail({
     await page.close();
   }
 }
+
+export async function deleteCurrentDeviceShare (page: Page) {
+  await Promise.all([
+    page.click('[aria-label="delete device share"]:right-of(:text("current"))'),
+    page.waitForSelector('text=Device share successfully deleted')
+  ])
+}

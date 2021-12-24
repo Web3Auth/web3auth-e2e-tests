@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
-import { signInWithFacebook } from "../../index.utils";
+import { deleteCurrentDeviceShare, signInWithFacebook } from "../../index.utils";
 
 test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
   await page.goto(openloginURL);
@@ -23,6 +23,13 @@ test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
   expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
+
+  /**
+   * Delete current device share
+   * This prevents new device shares being added on every test run,
+   * slowing down our tests
+   */
+  await deleteCurrentDeviceShare(page)
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
