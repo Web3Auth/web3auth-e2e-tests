@@ -8,8 +8,8 @@ import indexConfig from "../../index.config";
 import { readFileSync } from "fs";
 
 const user = {
-  email: "chdrotfhac_1624264537@tfbnw.net",
-  name: "Jennifer",
+  email: "pfhqffxzrq_1640060261@tfbnw.net",
+  name: "Lisa",
   backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString()
 }
 
@@ -17,7 +17,7 @@ const projects: Array<
   Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
   {
-    browserName: "chromium",
+    browserName: "firefox",
     user
   }
 ];
