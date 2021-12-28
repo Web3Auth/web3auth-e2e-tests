@@ -84,17 +84,18 @@ async function signInWithDiscord(page: Page): Promise<boolean> {
   }
 }
 
+async function deleteCurrentDeviceShare (page: Page) {
+  await Promise.all([
+    page.click('[aria-label="delete device share"]:right-of(:text("current"))'),
+    page.waitForSelector('text=Device share successfully deleted')
+  ])
+}
+
 export {
   useAutoCancelShareTransfer,
   signInWithGoogle,
   signInWithFacebook,
   signInWithDiscord,
-  confirmEmail
-}
-
-export async function deleteCurrentDeviceShare (page: Page) {
-  await Promise.all([
-    page.click('[aria-label="delete device share"]:right-of(:text("current"))'),
-    page.waitForSelector('text=Device share successfully deleted')
-  ])
+  confirmEmail,
+  deleteCurrentDeviceShare
 }
