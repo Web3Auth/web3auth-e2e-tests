@@ -22,6 +22,11 @@ export async function confirmEmail({
 }: {
   context: BrowserContext;
   timestamp: number;
+  /**
+   * Specify this property for passwordless tests since they
+   * utilise the same email inbox and thus we need to filter
+   * by recipient in order to click the correct magic link
+   */
   to?: string;
   resend: () => Promise<void>;
 }) {
