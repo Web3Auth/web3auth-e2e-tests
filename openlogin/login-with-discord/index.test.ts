@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
-import { signInWithDiscord } from "../../index.utils";
+import { signInWithDiscord } from "../../utils";
 
 test("Login with Discord+Device", async ({ page, openloginURL, user }) => {
   // Login with Discord
