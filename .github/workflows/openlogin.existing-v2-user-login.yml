@@ -16,8 +16,6 @@ jobs:
         include:
           - browser: chromium
             os: macos-latest
-          - browser: firefox
-            os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout

@@ -13,10 +13,6 @@ Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
     browserName: "chromium",
     user: { email: `testuser.existing1@openlogin.com` }
   },
-  {
-    browserName: "firefox",
-    user: { email: `testuser.existing2@openlogin.com` }
-  },
 ];
 
 const config: PlaywrightTestConfig = {
