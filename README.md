@@ -12,13 +12,9 @@ End-to-end testing of [Torus] products.
 
 [![OpenLogin - Facebook Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-facebook.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-facebook.yml)
 
-[![OpenLogin - Facebook with 2fa Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-facebook-2fa.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-facebook-2fa.yml)
-
 [![OpenLogin - Discord Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-discord.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-discord.yml)
 
 [![OpenLogin - Passwordless Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-passwordless.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-passwordless.yml)
-
-[![OpenLogin - Existing V2 User Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.existing-v2-user-login.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.existing-v2-user-login.yml)
 
 [![OpenLogin - New V2 User Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.new-v2-user-login.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.new-v2-user-login.yml)
 
