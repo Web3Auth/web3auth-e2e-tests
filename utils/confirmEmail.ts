@@ -50,7 +50,7 @@ export async function confirmEmail({
       try {
         reloads++;
         await page.click('div[role="link"] >> text=Verify your email', {
-          timeout: 2000,
+          timeout: 2500,
         });
         break;
       } catch {
