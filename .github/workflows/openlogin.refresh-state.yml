@@ -1,0 +1,74 @@
+name: Refresh Login State - Google
+
+on:
+  push:
+    branches:
+      - feat/refresh-state
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 14
+
+jobs:
+  run-tests:
+    name: Run Refresh authentication state
+    strategy:
+      matrix:
+        include:
+          - browser: chromium
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    outputs:
+      conclusion: ${{ steps.run-tests.conclusion }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - id: setup-node
+        name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
+        continue-on-error: true
+
+      - id: yarn-install
+        name: Install Node.js dependencies
+        if: steps.setup-node.outcome == 'success'
+        run: yarn install --frozen-lockfile
+        continue-on-error: true
+
+      - id: yarn-install-deps
+        name: Install Ubuntu dependencies
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
+        continue-on-error: true
+
+      - id: configure-aws
+        name: Configure AWS credentials
+        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+        continue-on-error: true
+
+      - id: download-state
+        name: Download remote browser snapshots
+        if: steps.configure-aws.outcome == 'success'
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google/ openlogin/refresh-state/ --recursive
+        continue-on-error: true
+
+      - id: run-tests
+        name: Run tests
+        if: steps.download-state.outcome == 'success'
+        run: yarn run playwright test --config openlogin/refresh-state/index.config.ts --project ${{ matrix.browser }}
+
+      - id: upload-state
+        name: Upload state to S3
+        if: steps.run-tests.outcome == 'success'
+        run: aws s3 cp openlogin/refresh-state/chromium.json s3://torus-e2e-tests/openlogin/login-with-google/
+        continue-on-error: true
