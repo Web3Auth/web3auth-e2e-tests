@@ -1,6 +1,9 @@
 name: OpenLogin - Google Login
 
 on:
+  push:
+    branches:
+      - feat/refresh-state
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
@@ -66,6 +69,12 @@ jobs:
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
 
+      - id: upload-state
+        name: Upload logged-in state to S3 on 10:00 UTC+8 everyday
+        if: github.event.schedule == '0 2 * * *' && steps.run-tests.outcome == 'success'
+        run: aws s3 cp openlogin/login-with-google/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-google/
+        continue-on-error: true
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v2
@@ -86,7 +95,7 @@ jobs:
           url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.GOOGLE_COMPONENT_ID }}
           customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
           method: PATCH
-          contentType: 'application/json'
+          contentType: "application/json"
           timeout: 10000
           data: >-
             { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }

@@ -29,3 +29,10 @@ test("Login with Google+Device", async ({
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
   expect(page.url()).toBe(`${openloginURL}/`);
 });
+
+// Save signed-in state to storage
+test.afterEach(async ({ page, browserName }) => {
+  await page
+    .context()
+    .storageState({ path: `${__dirname}/${browserName}.json` });
+});
