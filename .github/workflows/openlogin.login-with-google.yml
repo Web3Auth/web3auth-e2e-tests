@@ -1,9 +1,6 @@
 name: OpenLogin - Google Login
 
 on:
-  push:
-    branches:
-      - feat/refresh-state
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
