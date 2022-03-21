@@ -17,7 +17,7 @@ test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
   await page.click('button:has-text("Confirm")');
 
   await page.waitForURL(`${openloginURL}/wallet/home`, {
-    timeout: 2 * 60 * 1000,
+    timeout: 5 * 60 * 1000,
   });
 
   // Go to Account page
@@ -29,7 +29,7 @@ test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
    * This prevents new device shares being added on every test run,
    * slowing down our tests
    */
-  await deleteCurrentDeviceShare(page)
+  await deleteCurrentDeviceShare(page);
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
