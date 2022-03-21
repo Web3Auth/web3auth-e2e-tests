@@ -3,6 +3,8 @@ import { test } from "./index.lib";
 import { deleteCurrentDeviceShare, signInWithFacebook } from "../../utils";
 
 test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
+  test.setTimeout(process.env.CI ? 15 * 60 * 1000 : 0);
+
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   await page.click('[aria-label="login with facebook"]');
@@ -17,7 +19,7 @@ test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
   await page.click('button:has-text("Confirm")');
 
   await page.waitForURL(`${openloginURL}/wallet/home`, {
-    timeout: 5 * 60 * 1000,
+    timeout: 10 * 60 * 1000,
   });
 
   // Go to Account page
