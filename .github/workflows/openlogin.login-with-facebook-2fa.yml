@@ -2,7 +2,7 @@ name: OpenLogin - Facebook with 2fa Login
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/20 * * * *"
   workflow_dispatch:
 
 env:
