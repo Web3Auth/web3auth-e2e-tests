@@ -1,12 +1,12 @@
-const { expect } = require('@playwright/test');
+const { expect } = require("@playwright/test");
 import { confirmEmail } from "../../utils";
 import { test } from "./index.lib";
 
-test('new v2 user can log in correctly', async ({
+test("new v2 user can log in correctly", async ({
   context,
   page,
   openloginURL,
-  user
+  user,
 }) => {
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
@@ -27,6 +27,18 @@ test('new v2 user can log in correctly', async ({
     }))
   );
 
+  try {
+    console.log("before 2fa warning");
+    await page.waitForSelector("text=Enable 2 Factor Authentication (2FA)", {
+      timeout: 10000,
+    });
+    console.log("2fa warning came@@##$$$$");
+    await page.click('button:has-text("Maybe next time")');
+    console.log("clicked next time");
+  } catch {
+    console.log("No 2fa warning came......");
+  }
+
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     timeout: 2 * 60 * 1000,
@@ -39,4 +51,11 @@ test('new v2 user can log in correctly', async ({
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
   expect(page.url()).toBe(`${openloginURL}/`);
+});
+
+// Save signed-in state to storage
+test.afterEach(async ({ page, browserName }) => {
+  await page
+    .context()
+    .storageState({ path: `${__dirname}/${browserName}.json` });
 });
