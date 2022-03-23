@@ -28,16 +28,11 @@ test("new v2 user can log in correctly", async ({
   );
 
   try {
-    console.log("before 2fa warning");
     await page.waitForSelector("text=Enable 2 Factor Authentication (2FA)", {
       timeout: 10000,
     });
-    console.log("2fa warning came@@##$$$$");
     await page.click('button:has-text("Maybe next time")');
-    console.log("clicked next time");
-  } catch {
-    console.log("No 2fa warning came......");
-  }
+  } catch {}
 
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
