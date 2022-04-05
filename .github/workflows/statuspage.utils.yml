@@ -1,0 +1,21 @@
+name: Status page utils
+
+on:
+  push:
+    branches:
+      - utils/statuspage
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 14
+
+jobs:
+  update-status:
+    name: Status page
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ secrets.STATUS_PAGE_API_KEY }} > test.txt
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          path: test.txt
