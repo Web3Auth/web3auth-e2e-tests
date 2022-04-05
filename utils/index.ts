@@ -93,11 +93,17 @@ async function ensureDeviceShareDeleted(page: Page) {
     ) {
       await page.reload();
     } else {
+      // inner try/catch block to handle a scenario where there is no timeout/error
+      // but still did not  get successful message, reload the page and return false
       try {
         await page.waitForSelector("text=Device share successfully deleted");
         isDeleted = true;
-      } catch {}
+      } catch {
+        await page.reload();
+      }
     }
+    // catch to handle timeout scenario after clicking "Remove share" button
+    // close delete share conformation dialog and reload the page
   } catch {
     await page.click('[aria-label="Close Delete Share Dialog"]');
     await page.reload();
