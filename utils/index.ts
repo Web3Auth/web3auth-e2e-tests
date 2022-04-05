@@ -84,12 +84,46 @@ async function signInWithDiscord(page: Page): Promise<boolean> {
   }
 }
 
+async function ensureDeviceShareDeleted(page: Page) {
+  var isDeleted = false;
+  try {
+    await page.click('button:has-text("Remove share")');
+    if (
+      await page.locator("text=Device share deletion unsuccessful").isVisible()
+    ) {
+      await page.reload();
+    } else {
+      // inner try/catch block to handle a scenario where there is no timeout/error
+      // but still did not  get successful message, reload the page and return false
+      try {
+        await page.waitForSelector("text=Device share successfully deleted");
+        isDeleted = true;
+      } catch {
+        await page.reload();
+      }
+    }
+    // catch to handle timeout scenario after clicking "Remove share" button
+    // close delete share conformation dialog and reload the page
+  } catch {
+    await page.click('[aria-label="Close Delete Share Dialog"]');
+    await page.reload();
+  }
+  return isDeleted;
+}
+
 async function deleteCurrentDeviceShare(page: Page) {
-  await Promise.all([
-    page.click('[aria-label="delete device share"]:right-of(:text("current"))'),
-    page.click('button:has-text("Remove share")'),
-    page.waitForSelector("text=Device share successfully deleted"),
-  ]);
+  var deviceShares = page.locator('[aria-label="delete device share"]');
+  var countShares = await deviceShares.count();
+  while (countShares > 0) {
+    await deviceShares.first().click();
+    let isDeleted = await ensureDeviceShareDeleted(page);
+    if (isDeleted) {
+      countShares = countShares - 1;
+    } else {
+      deviceShares = page.locator('[aria-label="delete device share"]');
+      countShares = await deviceShares.count();
+    }
+  }
 }
 
 export {

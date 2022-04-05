@@ -15,7 +15,10 @@ test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
   });
 
   // fill and submit backup phrase
-  await page.fill("[placeholder='Enter backup phrase']", user.backupPhrase);
+  await page.fill(
+    "[placeholder='Enter backup phrase']",
+    user.backupPhrase.trim()
+  );
   await page.click('button:has-text("Confirm")');
 
   await page.waitForURL(`${openloginURL}/wallet/home`, {
