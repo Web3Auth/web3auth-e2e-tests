@@ -12,7 +12,7 @@ jobs:
       matrix:
         include:
           - browser: firefox
-            os: ubuntu-latest
+            os: windows-latest
     runs-on: ${{ matrix.os }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
@@ -65,6 +65,7 @@ jobs:
         name: Upload logged-in state once a day
         run: |
           last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/login-with-google/${{ matrix.browser }}.json | awk '{print $1}')
+          if [[ ]]
           yesterday=$(date --date="1 days ago" +'%Y-%m-%d')
           if [[ "$last_updated" > "$yesterday" ]]
           then
