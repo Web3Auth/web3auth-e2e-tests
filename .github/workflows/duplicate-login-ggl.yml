@@ -1,7 +1,6 @@
 name: Duplicate - Google Login
 
-on:
-  workflow_dispatch: push
+on: [push]
 
 env:
   NODE_VERSION: 14
