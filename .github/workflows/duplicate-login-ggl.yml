@@ -66,11 +66,17 @@ jobs:
         run: |
           last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/login-with-google/${{ matrix.browser }}.json | awk '{print $1}')
           yesterday=$(date --date="1 days ago" +'%Y-%m-%d')
-          if ("$last_updated" > "$yesterday")
-          then
-              echo "State is still new, no need to update"
-          else
-              echo "State is old, need to refresh"
-              aws s3 cp openlogin/login-with-google/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-google/
-          fi
+          # if ("$last_updated" > "$yesterday")
+          # then
+          #     echo "State is still new, no need to update"
+          # else
+          #     echo "State is old, need to refresh"
+          #     aws s3 cp openlogin/login-with-google/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-google/
+          # fi
+        if: ('$last_updated' > '$yesterday')
+        run: echo "State is still new, no need to update"
+        if: ('$last_updated' <= '$yesterday')
+        run: |
+          echo "State is old, need to refresh"
+          aws s3 cp openlogin/login-with-google/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-google/
         continue-on-error: true
