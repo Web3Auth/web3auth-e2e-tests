@@ -1,0 +1,85 @@
+name: Duplicate - Google Login
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 14
+
+jobs:
+  run-tests:
+    name: Run Duplicate - Google Login tests
+    strategy:
+      matrix:
+        include:
+          - browser: chromium
+            os: [macos-latest, windows-latest, ubuntu-latest]
+          - browser: webkit
+            os: [windows-latest, ubuntu-latest]
+          - browser: firefox
+            os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    outputs:
+      conclusion: ${{ steps.run-tests.conclusion }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - id: setup-node
+        name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
+        continue-on-error: true
+
+      - id: yarn-install
+        name: Install Node.js dependencies
+        if: steps.setup-node.outcome == 'success'
+        run: yarn install --frozen-lockfile
+        continue-on-error: true
+
+      - id: yarn-install-deps
+        name: Install Ubuntu dependencies
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
+        continue-on-error: true
+
+      - id: configure-aws
+        name: Configure AWS credentials
+        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+        continue-on-error: true
+
+      - id: download-state
+        name: Download remote browser snapshots
+        if: steps.configure-aws.outcome == 'success'
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google/ openlogin/login-with-google/ --recursive
+        continue-on-error: true
+
+      - id: run-tests
+        name: Run tests
+        if: steps.download-state.outcome == 'success'
+        run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
+
+      - id: upload-state
+        name: Upload logged-in state once a day
+        run: |
+          last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/login-with-google/${{ matrix.browser }}.json | awk '{print $1}')
+          yesterday=$(date -v-1d +'%Y-%m-%d')
+          echo "Last Updated: $last_updated, Yesterday: $yesterday"
+
+          if [[ "$last_updated" > "$yesterday" ]]
+          then
+              echo "State is still new, no need to update"
+          else
+              echo "State is old, need to refresh"
+              aws s3 cp openlogin/login-with-google/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-google/
+          fi
+        continue-on-error: true
