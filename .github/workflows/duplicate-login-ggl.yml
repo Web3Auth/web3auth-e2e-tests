@@ -11,12 +11,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - browser: chromium
-            os: [macos-latest, windows-latest, ubuntu-latest]
-          - browser: webkit
-            os: [windows-latest, ubuntu-latest]
           - browser: firefox
-            os: [windows-latest, ubuntu-latest]
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
