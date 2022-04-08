@@ -73,8 +73,6 @@ jobs:
           #     echo "State is old, need to refresh"
           #     aws s3 cp openlogin/login-with-google/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-google/
           # fi
-        if: ('$last_updated' > '$yesterday')
-        run: echo "State is still new, no need to update"
         if: ('$last_updated' <= '$yesterday')
         run: |
           echo "State is old, need to refresh"
