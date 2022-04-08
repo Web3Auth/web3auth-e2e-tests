@@ -1,9 +1,7 @@
 name: Duplicate - Google Login
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
-  workflow_dispatch:
+  workflow_dispatch: push
 
 env:
   NODE_VERSION: 14
