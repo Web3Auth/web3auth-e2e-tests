@@ -16,7 +16,7 @@ jobs:
       matrix:
         include:
           - browser: chromium
-            os: windows-latest
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
@@ -66,21 +66,15 @@ jobs:
         run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
 
       - id: upload-state
-        name: Upload logged-in state once a day
-        run: |
-          last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/login-with-google/${{ matrix.browser }}.json | awk '{print $1}')
-          echo "Last Updated: $last_updated"
-          lastweek=$(date --date="7 days ago" +'%Y-%m-%d')
-          echo "lastweek: $lastweek"
-
-          if [[ "$last_updated" > "$lastweek" ]]
-          then
-              echo "State is still new, no need to update"
-          else
-              echo "State is old, need to refresh"
-              aws s3 cp openlogin/login-with-google/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-google/
-          fi
-        shell: bash
+        name: Upload logged-in state once a week
+        uses: ./.github/actions/upload-state/
+        with:
+          os: ${{ matrix.os }}
+          browser: ${{ matrix.browser }}
+          path: openlogin/login-with-google
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-1
         continue-on-error: true
 
       - name: Upload test results
