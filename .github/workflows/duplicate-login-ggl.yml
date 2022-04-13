@@ -12,11 +12,11 @@ jobs:
       matrix:
         include:
           - browser: chromium
-            os: macos-latest
-          - browser: firefox
             os: windows-latest
-          - browser: webkit
+          - browser: firefox
             os: ubuntu-latest
+          - browser: webkit
+            os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
