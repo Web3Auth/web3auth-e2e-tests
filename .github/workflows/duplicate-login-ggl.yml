@@ -1,4 +1,4 @@
-name: Duplicate - Google Login
+name: Duplicate - Existing V2 User Login tests
 
 on: [push]
 
@@ -7,19 +7,17 @@ env:
 
 jobs:
   run-tests:
-    name: Run Duplicate - Google Login tests
+    name: Run Duplicate - Existing V2 User Login tests
     strategy:
       matrix:
         include:
-          - browser: firefox
-            os: windows-latest
           - browser: chromium
             os: macos-latest
+          - browser: firefox
+            os: windows-latest
           - browser: webkit
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
-    outputs:
-      conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -57,18 +55,18 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google/ openlogin/login-with-google/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/existing-v2-user-login/ openlogin/existing-v2-user-login/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/existing-v2-user-login/index.config.ts --project ${{ matrix.browser }}
 
       - id: upload-state
         name: Upload logged-in state once a day
         run: |
-          last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/login-with-google/${{ matrix.browser }}.json | awk '{print $1}')
+          last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/existing-v2-user-login/${{ matrix.browser }}.json | awk '{print $1}')
           echo "Last Updated: $last_updated"
           if [[ ${{ matrix.os }} == 'macos-latest' ]]
           then
@@ -82,7 +80,7 @@ jobs:
               echo "State is still new, no need to update"
           else
               echo "State is old, need to refresh"
-              aws s3 cp openlogin/login-with-google/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-google/
+              aws s3 cp openlogin/existing-v2-user-login/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/existing-v2-user-login/
           fi
         shell: bash
         continue-on-error: true
