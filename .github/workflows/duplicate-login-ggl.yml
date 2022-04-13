@@ -70,7 +70,12 @@ jobs:
         run: |
           last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/login-with-google/${{ matrix.browser }}.json | awk '{print $1}')
           echo "Last Updated: $last_updated"
-          lastweek=$(date --date="7 days ago" +'%Y-%m-%d')
+          if [[ ${{ matrix.browser }} == 'macos-latest' ]]
+          then
+              lastweek=$(date -v-7d +'%Y-%m-%d')
+          else
+              lastweek=$(date --date="7 days ago" +'%Y-%m-%d')
+          fi
           echo "lastweek: $lastweek"
 
           if [[ "$last_updated" > "$lastweek" ]]
