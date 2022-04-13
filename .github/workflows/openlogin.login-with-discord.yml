@@ -13,11 +13,8 @@ jobs:
     name: Run OpenLogin - Discord Login tests
     strategy:
       matrix:
-        include:
-          - browser: chromium
-            os: ubuntu-latest
-          - browser: firefox
-            os: ubuntu-latest
+        browser: [chromium, firefox, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
@@ -86,7 +83,7 @@ jobs:
           url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.DISCORD_COMPONENT_ID }}
           customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
           method: PATCH
-          contentType: 'application/json'
+          contentType: "application/json"
           timeout: 10000
           data: >-
             { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }

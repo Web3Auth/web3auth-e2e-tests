@@ -13,11 +13,8 @@ jobs:
     name: Run OpenLogin - Google Login tests
     strategy:
       matrix:
-        include:
-          - browser: chromium
-            os: macos-latest
-          - browser: webkit
-            os: macos-latest
+        browser: [chromium, firefox, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
