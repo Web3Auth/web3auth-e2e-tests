@@ -28,6 +28,13 @@ test("Login with Passwordless+Device", async ({
     }))
   );
 
+  try {
+    await page.waitForSelector("text=Enable 2 Factor Authentication (2FA)", {
+      timeout: 10000,
+    });
+    await page.click('button:has-text("Maybe next time")');
+  } catch {}
+
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     timeout: 2 * 60 * 1000,

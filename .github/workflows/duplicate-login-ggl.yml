@@ -1,4 +1,4 @@
-name: Duplicate - Facebook Login tests
+name: Duplicate - New V2 User Login tests
 
 on: [push]
 
@@ -7,19 +7,17 @@ env:
 
 jobs:
   run-tests:
-    name: Run Duplicate - Facebook Login tests
+    name: Run Duplicate - New V2 User Login tests
     strategy:
       matrix:
         include:
           - browser: chromium
             os: windows-latest
           - browser: firefox
-            os: ubuntu-latest
-          - browser: webkit
             os: macos-latest
+          - browser: webkit
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
-    outputs:
-      conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -57,10 +55,12 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-facebook/ openlogin/login-with-facebook/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/new-v2-user-login/ openlogin/new-v2-user-login/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
+        env:
+          TEST_RUN_ID: ${{ matrix.os }}.${{ matrix.browser }}.${{ github.run_id }}.${{ github.run_attempt }}
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-facebook/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/new-v2-user-login/index.config.ts --project ${{ matrix.browser }}

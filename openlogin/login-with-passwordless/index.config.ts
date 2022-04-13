@@ -15,7 +15,7 @@ const projects: Array<
   },
   {
     browserName: "chromium",
-    user: { email: "connie.washington.1981@gmail.com" },
+    user: { email: "testuser.existing1@openlogin.com" },
   },
   {
     browserName: "webkit",
