@@ -9,8 +9,9 @@ jobs:
   run-tests:
     name: Run Duplicate - Passwordless Login tests
     strategy:
-      browser: [chromium, firefox, webkit]
-      os: [macos-latest, windows-latest, ubuntu-latest]
+      matrix:
+        browser: [chromium, firefox, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
