@@ -10,16 +10,26 @@ import { readFileSync } from "fs";
 const user = {
   email: "hosdyduxvg_1640060261@tfbnw.net",
   name: "Sharon",
-  backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString()
-}
+  backupPhrase: readFileSync(
+    path.resolve(__dirname, "backup-phrase.txt")
+  ).toString(),
+};
 
 const projects: Array<
   Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
   {
     browserName: "firefox",
-    user
-  }
+    user,
+  },
+  {
+    browserName: "chromium",
+    user,
+  },
+  {
+    browserName: "webkit",
+    user,
+  },
 ];
 
 const config: PlaywrightTestConfig<TestArgs> = {
