@@ -13,14 +13,6 @@ const projects: Array<
     browserName: "chromium",
     user: { email: `testuser.existing1@openlogin.com` },
   },
-  {
-    browserName: "firefox",
-    user: { email: `testuser.existing1@openlogin.com` },
-  },
-  {
-    browserName: "webkit",
-    user: { email: `testuser.existing1@openlogin.com` },
-  },
 ];
 
 const config: PlaywrightTestConfig = {

@@ -13,6 +13,14 @@ const projects: Array<
     browserName: "firefox",
     user: { email: "connie.washington.1981@gmail.com" },
   },
+  {
+    browserName: "chromium",
+    user: { email: "connie.washington.1981@gmail.com" },
+  },
+  {
+    browserName: "webkit",
+    user: { email: "connie.washington.1981@gmail.com" },
+  },
 ];
 
 const config: PlaywrightTestConfig<TestArgs> = {
