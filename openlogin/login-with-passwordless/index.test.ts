@@ -13,7 +13,6 @@ test("Login with Passwordless+Device", async ({
 
   // Login with Passwordless
   const timestamp = Math.floor(Date.now() / 1000);
-  console.log(`USER: ${user.email}`);
   await page.fill('[placeholder="Email"]', user.email);
   await page.click('button:has-text("Continue with Email")');
   await page.waitForSelector("text=email has been sent");
