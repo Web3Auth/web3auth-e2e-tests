@@ -1,4 +1,4 @@
-name: Duplicate - Passwordless Login tests
+name: Duplicate - Existing V2 User Login tests
 
 on: [push]
 
@@ -7,14 +7,12 @@ env:
 
 jobs:
   run-tests:
-    name: Run Duplicate - Passwordless Login tests
+    name: Run Duplicate - Existing V2 User Login tests
     strategy:
       matrix:
         browser: [chromium, firefox, webkit]
         os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
-    outputs:
-      conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -52,10 +50,10 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-passwordless/ openlogin/login-with-passwordless/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/existing-v2-user-login/ openlogin/existing-v2-user-login/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-passwordless/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/existing-v2-user-login/index.config.ts --project ${{ matrix.browser }}
