@@ -1,4 +1,4 @@
-name: Duplicate - Google Login tests
+name: Duplicate - Passwordless Login tests
 
 on: [push]
 
@@ -7,7 +7,7 @@ env:
 
 jobs:
   run-tests:
-    name: Run Duplicate - Google Login tests
+    name: Run Duplicate - Passwordless Login tests
     strategy:
       matrix:
         browser: [chromium, firefox, webkit]
@@ -52,10 +52,10 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google/ openlogin/login-with-google/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-passwordless/ openlogin/login-with-passwordless/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/login-with-passwordless/index.config.ts --project ${{ matrix.browser }}
