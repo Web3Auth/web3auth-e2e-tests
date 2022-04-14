@@ -1,4 +1,4 @@
-name: Duplicate - Discord Login tests
+name: Duplicate - Facebook Login tests
 
 on: [push]
 
@@ -7,7 +7,7 @@ env:
 
 jobs:
   run-tests:
-    name: Run Duplicate - Discord Login tests
+    name: Run Duplicate - Facebook Login tests
     strategy:
       matrix:
         browser: [chromium, firefox, webkit]
@@ -52,10 +52,10 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-discord/ openlogin/login-with-discord/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-facebook/ openlogin/login-with-facebook/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-discord/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/login-with-facebook/index.config.ts --project ${{ matrix.browser }}
