@@ -12,7 +12,6 @@ test("existing v2 user can log in correctly", async ({
   await page.click('button:has-text("Get Started")');
 
   // Login with Passwordless
-  console.log(`user email: ${user.email}`);
   const timestamp = Math.floor(Date.now() / 1000);
   await page.fill('[placeholder="Email"]', user.email);
   await page.click('button:has-text("Continue with Email")');
