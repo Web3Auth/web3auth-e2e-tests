@@ -10,8 +10,16 @@ const projects: Array<
   Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
   {
+    browserName: "chromium",
+    user: { email: "connie.washington.1981@gmail.com" },
+  },
+  {
     browserName: "firefox",
-    user: { email: "pandey.shubham9381@gmail.com" },
+    user: { email: "connie.washington.1981@gmail.com" },
+  },
+  {
+    browserName: "webkit",
+    user: { email: "connie.washington.1981@gmail.com" },
   },
 ];
 
