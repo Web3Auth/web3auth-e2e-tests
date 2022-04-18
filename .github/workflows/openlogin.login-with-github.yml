@@ -1,10 +1,9 @@
 name: OpenLogin - Github Login
 
-on: [push]
-# on:
-#   schedule:
-#     - cron: "*/15 * * * *"
-#   workflow_dispatch:
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
 
 env:
   NODE_VERSION: 14
@@ -64,10 +63,10 @@ jobs:
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config openlogin/login-with-github/index.config.ts --project ${{ matrix.browser }}
 
-      # - name: Upload test results
-      #   if: always()
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
-      #     path: test-results/
-      #     if-no-files-found: ignore
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
+          path: test-results/
+          if-no-files-found: ignore
