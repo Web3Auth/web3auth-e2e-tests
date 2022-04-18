@@ -1,6 +1,6 @@
 name: OpenLogin - Github Login
 
-# on: [push]
+on: [push]
 # on:
 #   schedule:
 #     - cron: "*/15 * * * *"
