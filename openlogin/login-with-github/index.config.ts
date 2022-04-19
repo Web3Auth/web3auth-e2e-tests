@@ -15,11 +15,11 @@ const projects: Array<
   },
   {
     browserName: "firefox",
-    user: { email: "connie.washington.1981@gmail.com" },
+    user: { email: "tafgithub1@gmail.com" },
   },
   {
     browserName: "webkit",
-    user: { email: "connie.washington.1981@gmail.com" },
+    user: { email: "tafgithub2@gmail.com" },
   },
 ];
 
