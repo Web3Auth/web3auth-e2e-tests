@@ -126,6 +126,19 @@ async function deleteCurrentDeviceShare(page: Page) {
   }
 }
 
+export const env_map = {
+  PROD: "https://app.openlogin.com",
+  STAGING: "https://beta.openlogin.com",
+};
+
+function randomString(length: number) {
+  var chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var result = "";
+  for (var i = length; i > 0; --i)
+    result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
+
 export {
   useAutoCancelShareTransfer,
   signInWithGoogle,
@@ -133,4 +146,6 @@ export {
   signInWithDiscord,
   confirmEmail,
   deleteCurrentDeviceShare,
+  env_map,
+  randomString,
 };
