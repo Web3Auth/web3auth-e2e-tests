@@ -1,4 +1,4 @@
-name: OpenLogin - Passwordless Login
+name: OpenLogin - Github Login
 
 on:
   schedule:
@@ -7,15 +7,15 @@ on:
 
 env:
   NODE_VERSION: 16
+  PLATFORM: PROD
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Passwordless Login tests
+    name: Run OpenLogin - Github Login tests
     strategy:
       matrix:
-        include:
-          - browser: firefox
-            os: macos-latest
+        browser: [chromium, firefox, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
@@ -56,29 +56,13 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-passwordless/ openlogin/login-with-passwordless/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-github/ openlogin/login-with-github/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-passwordless/index.config.ts --project ${{ matrix.browser }}
-
-      - id: upload-state
-        name: Upload logged-in state once a day
-        run: |
-          last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/login-with-passwordless/${{ matrix.browser }}.json | awk '{print $1}')
-          yesterday=$(date -v-1d +'%Y-%m-%d')
-          echo "Last Updated: $last_updated, Yesterday: $yesterday"
-
-          if [[ "$last_updated" > "$yesterday" ]]
-          then
-              echo "State is still new, no need to update"
-          else
-              echo "State is old, need to refresh"
-              aws s3 cp openlogin/login-with-passwordless/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-passwordless/
-          fi
-        continue-on-error: true
+        run: yarn run playwright test --config openlogin/login-with-github/index.config.ts --project ${{ matrix.browser }}
 
       - name: Upload test results
         if: always()
@@ -87,20 +71,3 @@ jobs:
           name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           if-no-files-found: ignore
-
-  update-status:
-    name: Update OpenLogin - Passwordless Login status
-    needs: run-tests
-    if: success() || failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update status
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.PASSWORDLESS_COMPONENT_ID }}
-          customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-          method: PATCH
-          contentType: "application/json"
-          timeout: 10000
-          data: >-
-            { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
