@@ -1,6 +1,5 @@
 import { Page, PlaywrightWorkerOptions } from "@playwright/test";
-import { confirmEmail, getBackupPhrase } from "./confirmEmail";
-import { BrowserContext } from "playwright";
+import { confirmEmail } from "./confirmEmail";
 import * as fs from "fs";
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
@@ -159,20 +158,12 @@ async function setup2FA(page: Page, flow: string) {
     await page.click(".v-input--selection-controls__ripple");
     await page.click('button:has-text("Save current device")');
   }
-  /////
   await page.click('button:has-text("View advanced option")');
-  // Click button:has-text("Download my recovery phrase")
   const [download] = await Promise.all([
     page.waitForEvent("download"),
     page.click('button:has-text("Download my recovery phrase")'),
   ]);
-  /////
 
-  // await page.click('button:has-text("View advanced option")');
-  // const [download] = await Promise.all([
-  //   page.waitForEvent("download"),
-  //   page.click('button:has-text("Download my recovery phrase")'),
-  // ]);
   const shareFile = await download.path();
   const backupPhrase = fs.readFileSync(shareFile, "utf8");
   if (flow == "Login") {
