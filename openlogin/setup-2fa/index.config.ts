@@ -13,19 +13,34 @@ const projects: Array<
   {
     browserName: "chromium",
     user: {
-      email: `testuser${randomString(10) + randomString(10)}@openlogin.com`,
+      email_2fa_login: `testuser${
+        randomString(10) + randomString(10)
+      }@openlogin.com`,
+      email_2fa_settings: `testuser${
+        randomString(10) + randomString(10)
+      }@openlogin.com`,
     },
   },
   {
     browserName: "firefox",
     user: {
-      email: `testuser${randomString(10) + randomString(10)}@openlogin.com`,
+      email_2fa_login: `testuser${
+        randomString(10) + randomString(10)
+      }@openlogin.com`,
+      email_2fa_settings: `testuser${
+        randomString(10) + randomString(10)
+      }@openlogin.com`,
     },
   },
   {
     browserName: "webkit",
     user: {
-      email: `testuser${randomString(10) + randomString(10)}@openlogin.com`,
+      email_2fa_login: `testuser${
+        randomString(10) + randomString(10)
+      }@openlogin.com`,
+      email_2fa_settings: `testuser${
+        randomString(10) + randomString(10)
+      }@openlogin.com`,
     },
   },
 ];

@@ -141,34 +141,45 @@ function randomString(length: number) {
   return result;
 }
 
-async function setup2FAFromLogin(
-  page: Page,
-  user: string,
-  context: BrowserContext
-) {
-  await page.click('button:has-text("Set up 2FA")');
-  await page.click(".v-input--selection-controls__ripple");
-  await page.click('button:has-text("Continue")');
-  // await page.fill('[placeholder="Email"]', user);
-  // await page.click(':nth-match(button:has-text("Continue"), 2)');
+async function setup2FA(page: Page, flow: string) {
+  if (flow == "Login") {
+    await page.click('button:has-text("Set up 2FA")');
+    await page.click(".v-input--selection-controls__ripple");
+    await page.click('button:has-text("Continue")');
+  } else {
+    page.click('button:has-text("Maybe next time")');
+    await Promise.all([
+      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
+      page.click('div[role="list"] >> :nth-match(div:has-text("Account"), 2)'),
+    ]);
+    await Promise.all([
+      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
+      page.click('button:has-text("Enable 2FA")'),
+    ]);
+    await page.click(".v-input--selection-controls__ripple");
+    await page.click('button:has-text("Save current device")');
+  }
+  /////
   await page.click('button:has-text("View advanced option")');
-  // await page.click(".setup_recovery-box");
-  // await page.click(':nth-match(button:has-text("Continue"), 2)');
-  // await page.press("textarea", "Meta+v");
-  // [aria-label="Displaying share.txt"]
-  // const timestamp = Math.floor(Date.now() / 1000);
-  // const backupPhrase = await getBackupPhrase({
-  //   context,
-  //   timestamp,
-  //   resend: () => page.click("text=Resend"),
-  // });
+  // Click button:has-text("Download my recovery phrase")
   const [download] = await Promise.all([
     page.waitForEvent("download"),
     page.click('button:has-text("Download my recovery phrase")'),
   ]);
+  /////
+
+  // await page.click('button:has-text("View advanced option")');
+  // const [download] = await Promise.all([
+  //   page.waitForEvent("download"),
+  //   page.click('button:has-text("Download my recovery phrase")'),
+  // ]);
   const shareFile = await download.path();
   const backupPhrase = fs.readFileSync(shareFile, "utf8");
-  await page.click(':nth-match(button:has-text("Continue"), 2)');
+  if (flow == "Login") {
+    await page.click(':nth-match(button:has-text("Continue"), 2)');
+  } else {
+    await page.click('button:has-text("Continue")');
+  }
 
   if (backupPhrase) {
     await page.fill("textarea", backupPhrase);
@@ -192,5 +203,5 @@ export {
   deleteCurrentDeviceShare,
   env_map,
   randomString,
-  setup2FAFromLogin,
+  setup2FA,
 };
