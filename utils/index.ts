@@ -1,5 +1,7 @@
 import { Page, PlaywrightWorkerOptions } from "@playwright/test";
-import confirmEmail from "./confirmEmail";
+import { confirmEmail, getBackupPhrase } from "./confirmEmail";
+import { BrowserContext } from "playwright";
+import * as fs from "fs";
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
@@ -126,7 +128,7 @@ async function deleteCurrentDeviceShare(page: Page) {
   }
 }
 
-export const env_map = {
+const env_map = {
   PROD: "https://app.openlogin.com",
   STAGING: "https://beta.openlogin.com",
 };
@@ -139,6 +141,48 @@ function randomString(length: number) {
   return result;
 }
 
+async function setup2FAFromLogin(
+  page: Page,
+  user: string,
+  context: BrowserContext
+) {
+  await page.click('button:has-text("Set up 2FA")');
+  await page.click(".v-input--selection-controls__ripple");
+  await page.click('button:has-text("Continue")');
+  // await page.fill('[placeholder="Email"]', user);
+  // await page.click(':nth-match(button:has-text("Continue"), 2)');
+  await page.click('button:has-text("View advanced option")');
+  // await page.click(".setup_recovery-box");
+  // await page.click(':nth-match(button:has-text("Continue"), 2)');
+  // await page.press("textarea", "Meta+v");
+  // [aria-label="Displaying share.txt"]
+  // const timestamp = Math.floor(Date.now() / 1000);
+  // const backupPhrase = await getBackupPhrase({
+  //   context,
+  //   timestamp,
+  //   resend: () => page.click("text=Resend"),
+  // });
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    page.click('button:has-text("Download my recovery phrase")'),
+  ]);
+  const shareFile = await download.path();
+  const backupPhrase = fs.readFileSync(shareFile, "utf8");
+  await page.click(':nth-match(button:has-text("Continue"), 2)');
+
+  if (backupPhrase) {
+    await page.fill("textarea", backupPhrase);
+    await page.click('button:has-text("Verify")');
+    await Promise.all([
+      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/home' }*/),
+      page.click('button:has-text("Done")'),
+    ]);
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export {
   useAutoCancelShareTransfer,
   signInWithGoogle,
@@ -148,4 +192,5 @@ export {
   deleteCurrentDeviceShare,
   env_map,
   randomString,
+  setup2FAFromLogin,
 };
