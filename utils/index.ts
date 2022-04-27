@@ -146,7 +146,7 @@ async function setup2FA(page: Page, flow: string) {
     await page.click(".v-input--selection-controls__ripple");
     await page.click('button:has-text("Continue")');
   } else {
-    page.click('button:has-text("Maybe next time")');
+    page.click('button:has-text("Maybe next time")', { timeout: 10 * 1000 });
     await Promise.all([
       page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
       page.click('div[role="list"] >> :nth-match(div:has-text("Account"), 2)'),
