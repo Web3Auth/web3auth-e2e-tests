@@ -140,13 +140,27 @@ function randomString(length: number) {
   return result;
 }
 
+function randomNumber() {
+  return Math.floor(Math.random() * 10);
+}
+
 async function setup2FA(page: Page, flow: string) {
   if (flow == "Login") {
     await page.click('button:has-text("Set up 2FA")');
     await page.click(".v-input--selection-controls__ripple");
     await page.click('button:has-text("Continue")');
   } else {
-    page.click('button:has-text("Maybe next time")', { timeout: 10 * 1000 });
+    var isNextTimeClicked = false;
+    while (!isNextTimeClicked) {
+      try {
+        page.click('button:has-text("Maybe next time")', {
+          timeout: 10 * 1000,
+        });
+        isNextTimeClicked = true;
+      } catch {
+        page.reload();
+      }
+    }
     await Promise.all([
       page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
       page.click('div[role="list"] >> :nth-match(div:has-text("Account"), 2)'),
@@ -197,4 +211,5 @@ export {
   env_map,
   randomString,
   setup2FA,
+  randomNumber,
 };

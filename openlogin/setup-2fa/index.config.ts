@@ -5,7 +5,7 @@ import {
 } from "@playwright/test";
 import { TestArgs } from "./index.lib";
 import indexConfig from "../../index.config";
-import { randomString } from "../../utils/index";
+import { randomString, randomNumber } from "../../utils/index";
 
 const projects: Array<
   Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
@@ -14,10 +14,10 @@ const projects: Array<
     browserName: "chromium",
     user: {
       email_2fa_login: `testuser${
-        randomString(10) + randomString(10)
+        randomString(randomNumber()) + randomString(randomNumber())
       }@openlogin.com`,
       email_2fa_settings: `testuser${
-        randomString(10) + randomString(10)
+        randomString(randomNumber()) + randomString(randomNumber())
       }@openlogin.com`,
     },
   },
@@ -25,10 +25,10 @@ const projects: Array<
     browserName: "firefox",
     user: {
       email_2fa_login: `testuser${
-        randomString(10) + randomString(10)
+        randomString(randomNumber()) + randomString(randomNumber())
       }@openlogin.com`,
       email_2fa_settings: `testuser${
-        randomString(10) + randomString(10)
+        randomString(randomNumber()) + randomString(randomNumber())
       }@openlogin.com`,
     },
   },
@@ -36,10 +36,10 @@ const projects: Array<
     browserName: "webkit",
     user: {
       email_2fa_login: `testuser${
-        randomString(10) + randomString(10)
+        randomString(randomNumber()) + randomString(randomNumber())
       }@openlogin.com`,
       email_2fa_settings: `testuser${
-        randomString(10) + randomString(10)
+        randomString(randomNumber()) + randomString(randomNumber())
       }@openlogin.com`,
     },
   },
