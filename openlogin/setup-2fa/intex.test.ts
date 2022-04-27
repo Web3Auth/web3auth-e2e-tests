@@ -4,7 +4,7 @@ import { confirmEmail } from "../../utils";
 import { setup2FA } from "../../utils";
 
 test.describe("Setup 2FA", () => {
-  test("Setup 2FA from Login", async ({ browser, openloginURL, user }) => {
+  test.only("Setup 2FA from Login", async ({ browser, openloginURL, user }) => {
     const context = await browser.newContext({ acceptDownloads: true });
     const page = await context.newPage();
     await page.goto(openloginURL);
