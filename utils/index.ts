@@ -167,12 +167,14 @@ async function setup2FA(page: Page, flow: string) {
     //   console.log(isNextTimeClicked);
     // }
     await Promise.all([
-      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
-      page.click('div[role="list"] >> :nth-match(div:has-text("Account"), 2)'),
+      await page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
+      await page.click(
+        'div[role="list"] >> :nth-match(div:has-text("Account"), 2)'
+      ),
     ]);
     await Promise.all([
-      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
-      page.click('button:has-text("Enable 2FA")'),
+      await page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
+      await page.click('button:has-text("Enable 2FA")'),
     ]);
     await page.click(".v-input--selection-controls__ripple");
     await page.click('button:has-text("Save current device")');
@@ -181,8 +183,8 @@ async function setup2FA(page: Page, flow: string) {
     timeout: 10 * 1000,
   });
   const [download] = await Promise.all([
-    page.waitForEvent("download"),
-    page.click('button:has-text("Download my recovery phrase")'),
+    await page.waitForEvent("download"),
+    await page.click('button:has-text("Download my recovery phrase")'),
   ]);
 
   const shareFile = await download.path();
@@ -197,8 +199,8 @@ async function setup2FA(page: Page, flow: string) {
     await page.fill("textarea", backupPhrase);
     await page.click('button:has-text("Verify")');
     await Promise.all([
-      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/home' }*/),
-      page.click('button:has-text("Done")'),
+      await page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/home' }*/),
+      await page.click('button:has-text("Done")'),
     ]);
     return true;
   } else {
