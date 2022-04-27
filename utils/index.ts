@@ -150,17 +150,22 @@ async function setup2FA(page: Page, flow: string) {
     await page.click(".v-input--selection-controls__ripple");
     await page.click('button:has-text("Continue")');
   } else {
-    var isNextTimeClicked = false;
-    while (!isNextTimeClicked) {
-      try {
-        page.click('button:has-text("Maybe next time")', {
-          timeout: 10 * 1000,
-        });
-        isNextTimeClicked = true;
-      } catch {
-        page.reload();
-      }
-    }
+    await page.click('button:has-text("Maybe next time")');
+    // var isNextTimeClicked = false;
+    // while (!isNextTimeClicked) {
+    //   console.log(isNextTimeClicked);
+    //   console.log("iterating over");
+
+    //   try {
+    //     await page.click('button:has-text("Maybe next time")');
+    //     console.log("FOUND, making it true");
+    //     isNextTimeClicked = true;
+    //   } catch (err) {
+    //     console.log("Error occured");
+    //     page.reload();
+    //   }
+    //   console.log(isNextTimeClicked);
+    // }
     await Promise.all([
       page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
       page.click('div[role="list"] >> :nth-match(div:has-text("Account"), 2)'),
