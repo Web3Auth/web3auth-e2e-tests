@@ -49,6 +49,7 @@ jobs:
         if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
         run: yarn run playwright test --config openlogin/homepage/index.config.ts --project ${{ matrix.browser }}
 
-      - name: Alert to telegram channel
-        if: steps.run-tests.result == 'success'
+      - id: telegram-alert
+        name: Alert to telegram channel
+        if: steps.run-tests.outcome == 'success'
         run: curl "https://api.telegram.org/bot5392115831:AAEThkvZV6doDUKIPM6oX03sHGHAcpVwwL4/sendMessage?chat_id=-1001736258812&text=Home_page%20test%20result%20"
