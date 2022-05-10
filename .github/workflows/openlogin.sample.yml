@@ -52,4 +52,4 @@ jobs:
       - id: telegram-alert
         name: Alert to telegram channel
         if: steps.run-tests.outcome == 'success'
-        run: curl "https://api.telegram.org/bot5392115831:AAEThkvZV6doDUKIPM6oX03sHGHAcpVwwL4/sendMessage?chat_id=-1001736258812&text=Home page%0ATest result=Passed%0AOS="$matrix.os"%0Abrowser="$matrix.browser
+        run: curl https://api.telegram.org/bot5392115831:AAEThkvZV6doDUKIPM6oX03sHGHAcpVwwL4/sendMessage?chat_id=-1001736258812&text=Home page%0ATest result=Passed%0AOS=$matrix.os%0Abrowser=$matrix.browser
