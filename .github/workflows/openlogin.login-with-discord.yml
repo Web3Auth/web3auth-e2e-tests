@@ -66,6 +66,11 @@ jobs:
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config openlogin/login-with-discord/index.config.ts --project ${{ matrix.browser }}
 
+      - id: telegram-alert
+        name: Alert to telegram channel
+        if: steps.run-tests.outcome != 'success'
+        run: curl "https://api.telegram.org/bot5392115831:AAEThkvZV6doDUKIPM6oX03sHGHAcpVwwL4/sendMessage?chat_id=-1001742900419&text=LoginWithDiscord%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v2
@@ -86,7 +91,7 @@ jobs:
           url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.DISCORD_COMPONENT_ID }}
           customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
           method: PATCH
-          contentType: 'application/json'
+          contentType: "application/json"
           timeout: 10000
           data: >-
             { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }

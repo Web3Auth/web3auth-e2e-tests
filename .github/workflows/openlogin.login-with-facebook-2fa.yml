@@ -62,6 +62,11 @@ jobs:
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config openlogin/login-with-facebook-2fa/index.config.ts --project ${{ matrix.browser }}
 
+      - id: telegram-alert
+        name: Alert to telegram channel
+        if: steps.run-tests.outcome != 'success'
+        run: curl "https://api.telegram.org/bot5392115831:AAEThkvZV6doDUKIPM6oX03sHGHAcpVwwL4/sendMessage?chat_id=-1001742900419&text=LoginWithFacebook2FA%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v2
