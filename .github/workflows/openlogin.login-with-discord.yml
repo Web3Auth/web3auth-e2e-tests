@@ -69,7 +69,7 @@ jobs:
       - id: telegram-alert
         name: Alert to telegram channel
         if: steps.run-tests.outcome != 'success'
-        run: curl "https://api.telegram.org/bot5392115831:AAEThkvZV6doDUKIPM6oX03sHGHAcpVwwL4/sendMessage?chat_id=-1001742900419&text=LoginWithDiscord%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
+        run: curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithDiscord%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
 
       - name: Upload test results
         if: always()
