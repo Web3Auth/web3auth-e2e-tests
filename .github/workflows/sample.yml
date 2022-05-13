@@ -51,5 +51,5 @@ jobs:
 
       - id: telegram-alert
         name: Alert to telegram channel
-        if: steps.run-tests.outcome != 'success'
+        if: steps.run-tests.outcome == 'success'
         run: curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Homepage%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
