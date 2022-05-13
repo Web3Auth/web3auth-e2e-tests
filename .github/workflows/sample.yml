@@ -1,0 +1,55 @@
+name: OpenLogin - Sample
+
+on: push
+
+env:
+  NODE_VERSION: 16
+
+jobs:
+  run-tests:
+    name: Run OpenLogin - Sample tests
+    strategy:
+      matrix:
+        browser: [chromium]
+        os: [macos-latest]
+        exclude:
+          - browser: webkit
+            os: windows-latest
+          - browser: webkit
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    outputs:
+      conclusion: ${{ steps.run-tests.conclusion }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - id: setup-node
+        name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
+        continue-on-error: true
+
+      - id: yarn-install
+        name: Install Node.js dependencies
+        if: steps.setup-node.outcome == 'success'
+        run: yarn install --frozen-lockfile
+        continue-on-error: true
+
+      - id: yarn-install-deps
+        name: Install Ubuntu dependencies
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
+        continue-on-error: true
+
+      - id: run-tests
+        name: Run tests
+        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
+        run: yarn run playwright test --config openlogin/homepage/index.config.ts --project ${{ matrix.browser }}
+
+      - id: telegram-alert
+        name: Alert to telegram channel
+        if: steps.run-tests.outcome != 'success'
+        run: curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Homepage%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
