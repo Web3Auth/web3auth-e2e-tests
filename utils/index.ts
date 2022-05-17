@@ -145,65 +145,55 @@ function randomNumber() {
 }
 
 async function setup2FA(page: Page, flow: string) {
-  if (flow == "Login") {
-    await page.click('button:has-text("Set up 2FA")');
-    await page.click(".v-input--selection-controls__ripple");
-    await page.click('button:has-text("Continue")');
-  } else {
-    await page.click('button:has-text("Maybe next time")');
-    // var isNextTimeClicked = false;
-    // while (!isNextTimeClicked) {
-    //   console.log(isNextTimeClicked);
-    //   console.log("iterating over");
-
-    //   try {
-    //     await page.click('button:has-text("Maybe next time")');
-    //     console.log("FOUND, making it true");
-    //     isNextTimeClicked = true;
-    //   } catch (err) {
-    //     console.log("Error occured");
-    //     page.reload();
-    //   }
-    //   console.log(isNextTimeClicked);
-    // }
-    await Promise.all([
-      await page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
-      await page.click(
-        'div[role="list"] >> :nth-match(div:has-text("Account"), 2)'
-      ),
+  try {
+    if (flow == "Login") {
+      await page.click('button:has-text("Set up 2FA")');
+      await page.click(".v-input--selection-controls__ripple");
+      await page.click('button:has-text("Continue")');
+    } else {
+      await Promise.all([
+        page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/home' }*/),
+        page.click('button:has-text("Maybe next time")'),
+      ]);
+      // Click text=Account
+      await Promise.all([
+        page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
+        // page.click("text=Account"),
+        page.click(
+          'div[role="list"] >> :nth-match(div:has-text("Account"), 2)'
+        ),
+      ]);
+      // Click button:has-text("Enable 2FA")
+      await Promise.all([
+        page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
+        page.click('button:has-text("Enable 2FA")'),
+      ]);
+      // Click .v-input--selection-controls__ripple
+      await page.click(".v-input--selection-controls__ripple");
+      // Click button:has-text("Save current device")
+      await page.click('button:has-text("Save current device")');
+    }
+    await page.click('button:has-text("View advanced option")');
+    const [download] = await Promise.all([
+      page.waitForEvent("download"),
+      page.click('button:has-text("Download my recovery phrase")'),
     ]);
-    await Promise.all([
-      await page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
-      await page.click('button:has-text("Enable 2FA")'),
-    ]);
-    await page.click(".v-input--selection-controls__ripple");
-    await page.click('button:has-text("Save current device")');
-  }
-  await page.click('button:has-text("View advanced option")', {
-    timeout: 10 * 1000,
-  });
-  const [download] = await Promise.all([
-    await page.waitForEvent("download"),
-    await page.click('button:has-text("Download my recovery phrase")'),
-  ]);
+    const shareFile = await download.path();
+    const backupPhrase = fs.readFileSync(shareFile, "utf8");
+    if (flow == "Login") {
+      await page.click(':nth-match(button:has-text("Continue"), 2)');
+    } else {
+      await page.click('button:has-text("Continue")');
+    }
 
-  const shareFile = await download.path();
-  const backupPhrase = fs.readFileSync(shareFile, "utf8");
-  if (flow == "Login") {
-    await page.click(':nth-match(button:has-text("Continue"), 2)');
-  } else {
-    await page.click('button:has-text("Continue")');
-  }
-
-  if (backupPhrase) {
     await page.fill("textarea", backupPhrase);
     await page.click('button:has-text("Verify")');
     await Promise.all([
-      await page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/home' }*/),
-      await page.click('button:has-text("Done")'),
+      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/home' }*/),
+      page.click('button:has-text("Done")'),
     ]);
     return true;
-  } else {
+  } catch {
     return false;
   }
 }
