@@ -156,11 +156,7 @@ async function setup2FA(page: Page, flow: string) {
     //     page.click('button:has-text("Maybe next time")'),
     //   ]);
     //   // Click text=Account
-    await Promise.all([
-      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
-      // page.click("text=Account"),
-      page.click('div[role="list"] >> :nth-match(div:has-text("Account"), 2)'),
-    ]);
+
     // Click button:has-text("Enable 2FA")
     await Promise.all([
       page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),

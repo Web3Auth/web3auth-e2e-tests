@@ -26,6 +26,13 @@ test.describe("Setup 2FA", () => {
       }))
     );
 
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      timeout: 2 * 60 * 1000,
+    });
+    await Promise.all([
+      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
+      page.click('div[role="list"] div:has-text("Account")'),
+    ]);
     expect(await setup2FA(page, "Login")).toBeTruthy();
     // Should be signed in in <2 minutes
     await page.waitForURL(`${openloginURL}/wallet/home`, {
@@ -65,6 +72,13 @@ test.describe("Setup 2FA", () => {
       }))
     );
 
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      timeout: 2 * 60 * 1000,
+    });
+    await Promise.all([
+      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/account' }*/),
+      page.click('div[role="list"] div:has-text("Account")'),
+    ]);
     expect(await setup2FA(page, "Settings")).toBeTruthy();
     // Should be signed in in <2 minutes
     await page.waitForURL(`${openloginURL}/wallet/home`, {
