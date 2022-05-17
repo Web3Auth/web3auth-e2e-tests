@@ -56,7 +56,7 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-discord-beta/ openlogin/login-with-discord-beta/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-discord-beta/ openlogin/login-with-discord/ --recursive
         continue-on-error: true
 
       - id: run-tests
