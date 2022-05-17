@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         browser: [chromium, firefox, webkit]
-        os: [ubuntu-latest]
+        os: [macos-latest]
     runs-on: ${{ matrix.os }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
