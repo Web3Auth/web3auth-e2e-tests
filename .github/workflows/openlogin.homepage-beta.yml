@@ -1,4 +1,4 @@
-name: OpenLogin - Homepage
+name: OpenLogin - Homepage- BETA
 
 on:
   schedule:
@@ -7,11 +7,11 @@ on:
 
 env:
   NODE_VERSION: 16
-  PLATFORM: PROD
+  PLATFORM: STAGING
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Homepage tests
+    name: Run OpenLogin - Homepage tests- BETA
     strategy:
       matrix:
         browser: [chromium, firefox, webkit]
