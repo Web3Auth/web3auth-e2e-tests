@@ -81,7 +81,7 @@ async function signInWithDiscord(page: Page): Promise<boolean> {
     await page.waitForURL("https://discord.com/oauth2/**");
     await Promise.all([
       page.waitForNavigation(),
-      page.click("text=/Authori.e/"),
+      page.click('button:has-text("Authorise"), button:has-text("Authorize")'),
     ]);
     return true;
   } catch {
