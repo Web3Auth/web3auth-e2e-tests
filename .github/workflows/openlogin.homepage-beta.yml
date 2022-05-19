@@ -1,10 +1,9 @@
 name: OpenLogin - Homepage- BETA
 
 on:
-  push
-  # schedule:
-  #   - cron: "*/15 * * * *"
-  # workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
 
 env:
   NODE_VERSION: 16
@@ -62,19 +61,19 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
-  # update-status:
-  #   name: Update OpenLogin - Homepage status
-  #   needs: run-tests
-  #   if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Update status
-  #       uses: fjogeleit/http-request-action@master
-  #       with:
-  #         url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.HOME_PAGE_COMPONENT_ID }}
-  #         customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-  #         method: PATCH
-  #         contentType: "application/json"
-  #         timeout: 10000
-  #         data: >-
-  #           { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
+  update-status:
+    name: Update OpenLogin - Homepage status
+    needs: run-tests
+    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update status
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.HOME_PAGE_COMPONENT_ID }}
+          customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
+          method: PATCH
+          contentType: "application/json"
+          timeout: 10000
+          data: >-
+            { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
