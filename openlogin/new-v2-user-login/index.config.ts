@@ -7,11 +7,11 @@ import { TestArgs } from "./index.lib";
 import indexConfig from "../../index.config";
 
 const projects: Array<
-Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
+  Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
   {
     browserName: "chromium",
-    user: { email: `testuser${process.env.TEST_RUN_ID}@openlogin.com` }
+    user: { email: `testuser${process.env.TEST_RUN_ID}@openlogin.com` },
   },
 ];
 
@@ -23,7 +23,7 @@ const config: PlaywrightTestConfig = {
     use: {
       browserName,
       storageState: path.resolve(__dirname, `${browserName}.json`),
-      user
+      user,
     },
   })),
 };

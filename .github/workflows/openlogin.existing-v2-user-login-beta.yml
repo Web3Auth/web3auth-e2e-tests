@@ -1,17 +1,18 @@
-name: OpenLogin - Existing V2 User Login
+name: OpenLogin - Existing V2 User Login- BETA
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
-  workflow_dispatch:
+  push
+  # schedule:
+  #   - cron: "*/15 * * * *"
+  # workflow_dispatch:
 
 env:
   NODE_VERSION: 16
-  PLATFORM: PROD
+  PLATFORM: STAGING
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Existing V2 User Login tests
+    name: Run OpenLogin - Existing V2 User Login tests- BETA
     strategy:
       matrix:
         include:
@@ -55,7 +56,7 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/existing-v2-user-login/ openlogin/existing-v2-user-login/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/existing-v2-user-login-beta/ openlogin/existing-v2-user-login/ --recursive
         continue-on-error: true
 
       - id: run-tests
@@ -66,7 +67,7 @@ jobs:
       - id: upload-state
         name: Upload logged-in state once a day
         run: |
-          last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/existing-v2-user-login/${{ matrix.browser }}.json | awk '{print $1}')
+          last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/existing-v2-user-login-beta/${{ matrix.browser }}.json | awk '{print $1}')
           yesterday=$(date -v-1d +'%Y-%m-%d')
           echo "Last Updated: $last_updated, Yesterday: $yesterday"
 
@@ -75,7 +76,7 @@ jobs:
               echo "State is still new, no need to update"
           else
               echo "State is old, need to refresh"
-              aws s3 cp openlogin/existing-v2-user-login/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/existing-v2-user-login/
+              aws s3 cp openlogin/existing-v2-user-login/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/existing-v2-user-login-beta/
           fi
         continue-on-error: true
 
