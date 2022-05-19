@@ -1,17 +1,18 @@
-name: OpenLogin - New V2 User Login
+name: OpenLogin - New V2 User Login- BETA
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
-  workflow_dispatch:
+  push
+  # schedule:
+  #   - cron: "*/15 * * * *"
+  # workflow_dispatch:
 
 env:
   NODE_VERSION: 16
-  PLATFORM: PROD
+  PLATFORM: STAGING
 
 jobs:
   run-tests:
-    name: Run OpenLogin - New V2 User Login tests
+    name: Run OpenLogin - New V2 User Login tests- BETA
     strategy:
       matrix:
         include:
