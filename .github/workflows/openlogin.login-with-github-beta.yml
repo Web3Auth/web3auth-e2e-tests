@@ -15,8 +15,9 @@ jobs:
     name: Run OpenLogin - Github Login tests- BETA
     strategy:
       matrix:
-        browser: firefox
-        os: macos-latest
+        include:
+          - browser: firefox
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
