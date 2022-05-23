@@ -1,0 +1,89 @@
+name: OpenLogin - Google Login- CYAN
+
+on:
+  push
+  # schedule:
+  #   - cron: "*/15 * * * *"
+  # workflow_dispatch:
+
+env:
+  NODE_VERSION: 16
+  PLATFORM: CYAN
+
+jobs:
+  run-tests:
+    name: Run OpenLogin - Google Login tests- CYAN
+    strategy:
+      matrix:
+        include:
+          - browser: webkit
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    outputs:
+      conclusion: ${{ steps.run-tests.conclusion }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - id: setup-node
+        name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
+        continue-on-error: true
+
+      - id: yarn-install
+        name: Install Node.js dependencies
+        if: steps.setup-node.outcome == 'success'
+        run: yarn install --frozen-lockfile
+        continue-on-error: true
+
+      - id: yarn-install-deps
+        name: Install Ubuntu dependencies
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
+        continue-on-error: true
+
+      - id: configure-aws
+        name: Configure AWS credentials
+        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+        continue-on-error: true
+
+      - id: download-state
+        name: Download remote browser snapshots
+        if: steps.configure-aws.outcome == 'success'
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google-cyan/ openlogin/login-with-google/ --recursive
+        continue-on-error: true
+
+      - id: run-tests
+        name: Run tests
+        if: steps.download-state.outcome == 'success'
+        run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
+
+      - id: upload-state
+        name: Upload logged-in state once a week
+        uses: ./.github/actions/upload-state/
+        with:
+          os: ${{ matrix.os }}
+          browser: ${{ matrix.browser }}
+          s3_path: openlogin/login-with-google-cyan
+          local_path: openlogin/login-with-google
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-1
+        continue-on-error: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
+          path: test-results/
+          if-no-files-found: ignore
+
