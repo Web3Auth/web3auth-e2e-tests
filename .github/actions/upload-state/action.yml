@@ -7,8 +7,11 @@ inputs:
   browser:
     description: "Web browser"
     required: true
-  path:
-    description: "Path of state file"
+  s3_path:
+    description: "Path of state file on s3"
+    required: true
+  local_path:
+    description: "Path of state file locally"
     required: true
   expiry_duration:
     description: "Expiry duration (in days) of state"
@@ -43,7 +46,7 @@ runs:
         fi
         echo "Checkpoint: $checkpoint"
 
-        last_updated=$(aws s3 ls s3://torus-e2e-tests/${{ inputs.path }}/${{ inputs.browser }}.json | awk '{print $1}')
+        last_updated=$(aws s3 ls s3://torus-e2e-tests/${{ inputs.s3_path }}/${{ inputs.browser }}.json | awk '{print $1}')
         echo "Last updated: $last_updated"
 
         if [[ "$last_updated" > "$checkpoint" ]]
@@ -51,6 +54,6 @@ runs:
               echo "State is still new, no need to update"
         else
             echo "State is old, need to refresh"
-            aws s3 cp ${{ inputs.path }}/${{ inputs.browser }}.json s3://torus-e2e-tests/${{ inputs.path }}/
+            aws s3 cp ${{ inputs.local_path }}/${{ inputs.browser }}.json s3://torus-e2e-tests/${{ inputs.s3_path }}/
         fi
       shell: bash

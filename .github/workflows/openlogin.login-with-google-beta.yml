@@ -1,9 +1,10 @@
 name: OpenLogin - Google Login- BETA
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
-  workflow_dispatch:
+  push
+  # schedule:
+  #   - cron: "*/15 * * * *"
+  # workflow_dispatch:
 
 env:
   NODE_VERSION: 16
@@ -65,20 +66,32 @@ jobs:
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
 
-      - id: upload-state
-        name: Upload logged-in state once a day
-        run: |
-          last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/login-with-google-beta/${{ matrix.browser }}.json | awk '{print $1}')
-          yesterday=$(date -v-1d +'%Y-%m-%d')
-          echo "Last Updated: $last_updated, Yesterday: $yesterday"
+      # - id: upload-state
+      #   name: Upload logged-in state once a day
+      #   run: |
+      #     last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/login-with-google-beta/${{ matrix.browser }}.json | awk '{print $1}')
+      #     yesterday=$(date -v-1d +'%Y-%m-%d')
+      #     echo "Last Updated: $last_updated, Yesterday: $yesterday"
 
-          if [[ "$last_updated" > "$yesterday" ]]
-          then
-              echo "State is still new, no need to update"
-          else
-              echo "State is old, need to refresh"
-              aws s3 cp openlogin/login-with-google/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-google-beta/
-          fi
+      #     if [[ "$last_updated" > "$yesterday" ]]
+      #     then
+      #         echo "State is still new, no need to update"
+      #     else
+      #         echo "State is old, need to refresh"
+      #         aws s3 cp openlogin/login-with-google/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/login-with-google-beta/
+      #     fi
+      #   continue-on-error: true
+      - id: upload-state
+        name: Upload logged-in state once a week
+        uses: ./.github/actions/upload-state/
+        with:
+          os: ${{ matrix.os }}
+          browser: ${{ matrix.browser }}
+          s3_path: openlogin/login-with-google-beta
+          local_path: openlogin/login-with-google
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-1
         continue-on-error: true
 
       - name: Upload test results
