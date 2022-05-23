@@ -1,6 +1,11 @@
 import { Page, PlaywrightWorkerOptions } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
 
+const env_map = {
+  PROD: "https://app.openlogin.com",
+  STAGING: "https://beta.openlogin.com",
+};
+
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
   const promise = new Promise<void>(async (resolve) => {
@@ -76,7 +81,7 @@ async function signInWithDiscord(page: Page): Promise<boolean> {
     await page.waitForURL("https://discord.com/oauth2/**");
     await Promise.all([
       page.waitForNavigation(),
-      page.click('button:has-text("Authorize")'),
+      page.click('button:has-text("Authorise"), button:has-text("Authorize")'),
     ]);
     return true;
   } catch {
@@ -133,4 +138,5 @@ export {
   signInWithDiscord,
   confirmEmail,
   deleteCurrentDeviceShare,
+  env_map,
 };

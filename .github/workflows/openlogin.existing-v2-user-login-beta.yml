@@ -1,4 +1,4 @@
-name: OpenLogin - Discord Login
+name: OpenLogin - Existing V2 User Login- BETA
 
 on:
   schedule:
@@ -7,21 +7,17 @@ on:
 
 env:
   NODE_VERSION: 16
-  PLATFORM: PROD
+  PLATFORM: STAGING
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Discord Login tests
+    name: Run OpenLogin - Existing V2 User Login tests- BETA
     strategy:
       matrix:
         include:
           - browser: chromium
-            os: ubuntu-latest
-          - browser: firefox
-            os: ubuntu-latest
+            os: macos-latest
     runs-on: ${{ matrix.os }}
-    outputs:
-      conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -59,18 +55,25 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-discord/ openlogin/login-with-discord/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/existing-v2-user-login-beta/ openlogin/existing-v2-user-login/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-discord/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config openlogin/existing-v2-user-login/index.config.ts --project ${{ matrix.browser }}
 
-      - id: telegram-alert
-        name: Alert to telegram channel
-        if: steps.run-tests.outcome != 'success'
-        run: curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithDiscord%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
+      - id: upload-state
+        name: Upload logged-in state once a week
+        uses: ./.github/actions/upload-state/
+        with:
+          os: ${{ matrix.os }}
+          browser: ${{ matrix.browser }}
+          s3_path: openlogin/existing-v2-user-login-beta
+          local_path: openlogin/existing-v2-user-login
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-1
         continue-on-error: true
 
       - name: Upload test results
@@ -80,20 +83,3 @@ jobs:
           name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           if-no-files-found: ignore
-
-  update-status:
-    name: Update OpenLogin - Discord status
-    needs: run-tests
-    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update status
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.DISCORD_COMPONENT_ID }}
-          customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-          method: PATCH
-          contentType: "application/json"
-          timeout: 10000
-          data: >-
-            { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }

@@ -1,4 +1,4 @@
-name: OpenLogin - Homepage
+name: OpenLogin - Homepage- BETA
 
 on:
   schedule:
@@ -7,11 +7,11 @@ on:
 
 env:
   NODE_VERSION: 16
-  PLATFORM: PROD
+  PLATFORM: STAGING
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Homepage tests
+    name: Run OpenLogin - Homepage tests- BETA
     strategy:
       matrix:
         browser: [chromium, firefox, webkit]
@@ -53,12 +53,6 @@ jobs:
         if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
         run: yarn run playwright test --config openlogin/homepage/index.config.ts --project ${{ matrix.browser }}
 
-      - id: telegram-alert
-        name: Alert to telegram channel
-        if: steps.run-tests.outcome != 'success'
-        run: curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Homepage%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
-        continue-on-error: true
-
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v2
@@ -66,20 +60,3 @@ jobs:
           name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           if-no-files-found: ignore
-
-  update-status:
-    name: Update OpenLogin - Homepage status
-    needs: run-tests
-    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update status
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.HOME_PAGE_COMPONENT_ID }}
-          customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-          method: PATCH
-          contentType: "application/json"
-          timeout: 10000
-          data: >-
-            { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }

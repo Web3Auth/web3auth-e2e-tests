@@ -7,6 +7,7 @@ on:
 
 env:
   NODE_VERSION: 16
+  PLATFORM: PROD
 
 jobs:
   run-tests:
@@ -78,7 +79,8 @@ jobs:
         with:
           os: ${{ matrix.os }}
           browser: ${{ matrix.browser }}
-          path: openlogin/login-with-google
+          s3_path: openlogin/login-with-google
+          local_path: openlogin/login-with-google
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: us-east-1
