@@ -1,10 +1,9 @@
 name: OpenLogin - Google Login- CYAN
 
 on:
-  push
-  # schedule:
-  #   - cron: "*/15 * * * *"
-  # workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
 
 env:
   NODE_VERSION: 16
