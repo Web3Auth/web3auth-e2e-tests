@@ -1,0 +1,88 @@
+name: OpenLogin - New V2 User Login- BETA
+
+on:
+  push
+  # schedule:
+  #   - cron: "*/15 * * * *"
+  # workflow_dispatch:
+
+env:
+  NODE_VERSION: 16
+  PLATFORM: CYAN
+
+jobs:
+  run-tests:
+    name: Run OpenLogin - New V2 User Login tests- BETA
+    strategy:
+      matrix:
+        include:
+          - browser: chromium
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - id: setup-node
+        name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
+        continue-on-error: true
+
+      - id: yarn-install
+        name: Install Node.js dependencies
+        if: steps.setup-node.outcome == 'success'
+        run: yarn install --frozen-lockfile
+        continue-on-error: true
+
+      - id: yarn-install-deps
+        name: Install Ubuntu dependencies
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
+        continue-on-error: true
+
+      - id: configure-aws
+        name: Configure AWS credentials
+        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+        continue-on-error: true
+
+      - id: download-state
+        name: Download remote browser snapshots
+        if: steps.configure-aws.outcome == 'success'
+        run: aws s3 cp s3://torus-e2e-tests/openlogin/new-v2-user-login/ openlogin/new-v2-user-login/ --recursive
+        continue-on-error: true
+
+      - id: run-tests
+        name: Run tests
+        env:
+          TEST_RUN_ID: ${{ matrix.os }}.${{ matrix.browser }}.${{ github.run_id }}.${{ github.run_attempt }}
+        if: steps.download-state.outcome == 'success'
+        run: yarn run playwright test --config openlogin/new-v2-user-login/index.config.ts --project ${{ matrix.browser }}
+
+      - id: upload-state
+        name: Upload logged-in state once a week
+        uses: ./.github/actions/upload-state/
+        with:
+          os: ${{ matrix.os }}
+          browser: ${{ matrix.browser }}
+          s3_path: openlogin/new-v2-user-login
+          local_path: openlogin/new-v2-user-login
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-1
+        continue-on-error: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
+          path: test-results/
+          if-no-files-found: ignore

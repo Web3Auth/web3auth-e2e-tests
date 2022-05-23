@@ -4,6 +4,7 @@ import confirmEmail from "./confirmEmail";
 const env_map = {
   PROD: "https://app.openlogin.com",
   STAGING: "https://beta.openlogin.com",
+  CYAN: "https://cyan.openlogin.com"
 };
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
