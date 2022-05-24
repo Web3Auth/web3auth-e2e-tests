@@ -13,12 +13,25 @@ jobs:
     name: Run OpenLogin - Google Login tests
     strategy:
       matrix:
+        local_path: [openlogin/login-with-google]
+        os: [maos-latest]
         include:
           - browser: chromium
-            os: macos-latest
+            env: PROD
+            s3_path: openlogin/login-with-google
           - browser: webkit
-            os: macos-latest
+            env: PROD
+            s3_path: openlogin/login-with-google
+          - browser: webkit
+            env: CYAN
+            s3_path: openlogin/login-with-google-cyan
+          - browser: chromium
+            env: STAGING
+            s3_path: openlogin/login-with-google-beta
+
     runs-on: ${{ matrix.os }}
+    env:
+      PLATFORM: ${{ matrix.env }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
     steps:
@@ -58,13 +71,13 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-google/ openlogin/login-with-google/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/${{ matrix.s3_path }}/ ${{ matrix.local_path }}/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-google/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config ${{ matrix.local_path }}/index.config.ts --project ${{ matrix.browser }}
 
       - id: telegram-alert
         name: Alert to telegram channel
@@ -78,11 +91,13 @@ jobs:
         with:
           os: ${{ matrix.os }}
           browser: ${{ matrix.browser }}
-          path: openlogin/login-with-google
+          s3_path: ${{ matrix.s3_path }}
+          local_path: ${{ matrix.local_path }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: us-east-1
         continue-on-error: true
+
 
       - name: Upload test results
         if: always()
@@ -92,19 +107,19 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
-  update-status:
-    name: Update OpenLogin - Google Login status
-    needs: run-tests
-    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update status
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.GOOGLE_COMPONENT_ID }}
-          customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-          method: PATCH
-          contentType: "application/json"
-          timeout: 10000
-          data: >-
-            { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
+  # update-status:
+  #   name: Update OpenLogin - Google Login status
+  #   needs: run-tests
+  #   if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Update status
+  #       uses: fjogeleit/http-request-action@master
+  #       with:
+  #         url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.GOOGLE_COMPONENT_ID }}
+  #         customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
+  #         method: PATCH
+  #         contentType: "application/json"
+  #         timeout: 10000
+  #         data: >-
+  #           { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
