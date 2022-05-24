@@ -16,28 +16,34 @@ jobs:
     strategy:
       matrix:
         local_path: [openlogin/login-with-github]
-        env: [PROD, STAGING, CYAN]
-        browser: [firefox]
-        os: [macos-latest]
+        env: [PROD]
+        browser: [firefox, chromium, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
         include:
           - s3_path: openlogin/login-with-github-cyan
+            local_path: openlogin/login-with-github
+            os: macos-latest
+            browser: firefox
             env: CYAN
           - s3_path: openlogin/login-with-github-beta
+            local_path: openlogin/login-with-github
+            os: macos-latest
+            browser: firefox
             env: STAGING
           - s3_path: openlogin/login-with-github
             env: PROD       
-          - os: windows-latest
-            browser: webkit
-            env: PROD
-          - os: windows-latest
-            browser: chromium
-            env: PROD
-          - os: ubuntu-latest
-            browser: webkit
-            env: PROD
-          - os: ubuntu-latest
-            browser: chromium
-            env: PROD
+          # - os: windows-latest
+          #   browser: webkit
+          #   env: PROD
+          # - os: windows-latest
+          #   browser: chromium
+          #   env: PROD
+          # - os: ubuntu-latest
+          #   browser: webkit
+          #   env: PROD
+          # - os: ubuntu-latest
+          #   browser: chromium
+          #   env: PROD
 
 
     runs-on: ${{ matrix.os }}
