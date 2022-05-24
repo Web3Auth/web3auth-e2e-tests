@@ -27,30 +27,18 @@ jobs:
           - s3_path: openlogin/login-with-github
             env: PROD       
           - os: windows-latest
-            env: webkit
+            browser: webkit
             env: PROD
           - os: windows-latest
-            env: chromium
+            browser: chromium
             env: PROD
           - os: ubuntu-latest
-            env: webkit
+            browser: webkit
             env: PROD
           - os: ubuntu-latest
-            env: chromium
+            browser: chromium
             env: PROD
-        # exclude:
-        #   - env: STAGING
-        #     os: windows-latest
-        #     browser: chromium 
-        #   - env: CYAN
-        #     os: windows-latest
-        #     browser: webkit 
-        #   - env: STAGING
-        #     os: ubuntu-latest
-        #     browser: chromium 
-        #   - env: CYAN
-        #     os: ubuntu-latest
-        #     browser: webkit 
+
 
     runs-on: ${{ matrix.os }}
     env:
