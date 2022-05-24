@@ -16,20 +16,17 @@ jobs:
       matrix:
         local_path: [openlogin/login-with-google]
         os: [maos-latest]
-        env: [PROD, STAGING, CYAN]
+        env: [PROD]
+        browser: [chromium, webkit]
         include:
-          - browser: chromium
+          - s3_path: openlogin/login-with-google
             env: PROD
-            s3_path: openlogin/login-with-google
-          - browser: webkit
-            env: PROD
-            s3_path: openlogin/login-with-google
-          - browser: webkit
+          - s3_path: openlogin/login-with-google-cyan
+            browser: webkit
             env: CYAN
-            s3_path: openlogin/login-with-google-cyan
-          - browser: chromium
+          - s3_path: openlogin/login-with-google-beta
+            browser: chromium
             env: STAGING
-            s3_path: openlogin/login-with-google-beta
 
     runs-on: ${{ matrix.os }}
     env:
