@@ -16,6 +16,7 @@ jobs:
       matrix:
         local_path: [openlogin/login-with-google]
         os: [maos-latest]
+        env: [PROD, STAGING, CYAN]
         include:
           - browser: chromium
             env: PROD
