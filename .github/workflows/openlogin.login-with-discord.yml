@@ -15,11 +15,9 @@ jobs:
       matrix:
         local_path: [openlogin/login-with-discord]
         env: [PROD, STAGING, CYAN]
+        browser: [firefox, chromium]
+        os: [ubuntu-latest]
         include:
-          - browser: chromium
-            os: ubuntu-latest
-          - browser: firefox
-            os: ubuntu-latest
           - s3_path: openlogin/login-with-discord-cyan
             env: CYAN
           - s3_path: openlogin/login-with-discord-beta
@@ -27,9 +25,9 @@ jobs:
           - s3_path: openlogin/login-with-discord
             env: PROD
         exclude:
-          - env: CYAN
-            browser: chromium
+          - browser: chromium
             os: ubuntu-latest
+            env: CYAN
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}
@@ -94,19 +92,19 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
-  # update-status:
-  #   name: Update OpenLogin - Discord status
-  #   needs: run-tests
-  #   if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Update status
-  #       uses: fjogeleit/http-request-action@master
-  #       with:
-  #         url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.DISCORD_COMPONENT_ID }}
-  #         customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-  #         method: PATCH
-  #         contentType: "application/json"
-  #         timeout: 10000
-  #         data: >-
-  #           { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
+  update-status:
+    name: Update OpenLogin - Discord status
+    needs: run-tests
+    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update status
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.DISCORD_COMPONENT_ID }}
+          customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
+          method: PATCH
+          contentType: "application/json"
+          timeout: 10000
+          data: >-
+            { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
