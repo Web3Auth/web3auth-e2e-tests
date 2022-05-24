@@ -64,7 +64,7 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/${{ matrix.s3_path }}/ openlogin/${{ matrix.local_path }}/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/${{ matrix.s3_path }}/ ${{ matrix.local_path }}/ --recursive
         continue-on-error: true
 
       - id: run-tests

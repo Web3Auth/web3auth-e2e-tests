@@ -13,12 +13,26 @@ jobs:
     name: Run OpenLogin - Discord Login tests
     strategy:
       matrix:
+        local_path: [openlogin/login-with-discord]
+        env: [PROD, STAGING, CYAN]
         include:
           - browser: chromium
             os: ubuntu-latest
           - browser: firefox
             os: ubuntu-latest
+          - s3_path: openlogin/login-with-discord-cyan
+            env: CYAN
+          - s3_path: openlogin/login-with-discord-beta
+            env: STAGING
+          - s3_path: openlogin/login-with-discord
+            env: PROD
+        exclude:
+          - env: CYAN
+            browser: chromium
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
+    env:
+      PLATFORM: ${{ matrix.env }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
     steps:
@@ -58,13 +72,13 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/login-with-discord/ openlogin/login-with-discord/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/${{ matrix.s3_path }}/ ${{ matrix.local_path }}/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-discord/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config ${{ matrix.local_path }}/index.config.ts --project ${{ matrix.browser }}
 
       - id: telegram-alert
         name: Alert to telegram channel
@@ -80,19 +94,19 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
-  update-status:
-    name: Update OpenLogin - Discord status
-    needs: run-tests
-    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update status
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.DISCORD_COMPONENT_ID }}
-          customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-          method: PATCH
-          contentType: "application/json"
-          timeout: 10000
-          data: >-
-            { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
+  # update-status:
+  #   name: Update OpenLogin - Discord status
+  #   needs: run-tests
+  #   if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Update status
+  #       uses: fjogeleit/http-request-action@master
+  #       with:
+  #         url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.DISCORD_COMPONENT_ID }}
+  #         customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
+  #         method: PATCH
+  #         contentType: "application/json"
+  #         timeout: 10000
+  #         data: >-
+  #           { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
