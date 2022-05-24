@@ -19,6 +19,7 @@ jobs:
         include:
           - browser: chromium
             os: ubuntu-latest
+            env: [PROD, STAGING]
           - browser: firefox
             os: ubuntu-latest
           - s3_path: openlogin/login-with-discord-cyan
@@ -27,10 +28,6 @@ jobs:
             env: STAGING
           - s3_path: openlogin/login-with-discord
             env: PROD
-        exclude:
-          - env: CYAN
-            browser: chromium
-            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}
