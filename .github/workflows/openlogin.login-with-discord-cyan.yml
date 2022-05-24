@@ -19,7 +19,10 @@ jobs:
         include:
           - browser: chromium
             os: ubuntu-latest
-            env: [PROD, STAGING]
+            env: PROD
+          - browser: chromium
+            os: ubuntu-latest
+            env: STAGING
           - browser: firefox
             os: ubuntu-latest
           - s3_path: openlogin/login-with-discord-cyan
