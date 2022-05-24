@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         local_path: [openlogin/login-with-google]
-        os: [maos-latest]
+        os: [macos-latest]
         env: [PROD]
         browser: [chromium, webkit]
         include:
@@ -23,9 +23,11 @@ jobs:
             env: PROD
           - s3_path: openlogin/login-with-google-cyan
             browser: webkit
+            os: macos-latest
             env: CYAN
           - s3_path: openlogin/login-with-google-beta
             browser: chromium
+            os: macos-latest
             env: STAGING
 
     runs-on: ${{ matrix.os }}
