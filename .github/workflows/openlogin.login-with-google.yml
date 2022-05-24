@@ -14,20 +14,22 @@ jobs:
     strategy:
       matrix:
         local_path: [openlogin/login-with-google]
-        os: [maos-latest]
+        os: [macos-latest]
+        env: [PROD]
+        browser: [chromium, webkit]
         include:
-          - browser: chromium
+          - s3_path: openlogin/login-with-google
             env: PROD
-            s3_path: openlogin/login-with-google
-          - browser: webkit
-            env: PROD
-            s3_path: openlogin/login-with-google
-          - browser: webkit
+          - s3_path: openlogin/login-with-google-cyan
+            local_path: openlogin/login-with-google
+            browser: webkit
+            os: macos-latest
             env: CYAN
-            s3_path: openlogin/login-with-google-cyan
-          - browser: chromium
+          - s3_path: openlogin/login-with-google-beta
+            local_path: openlogin/login-with-google
+            browser: chromium
+            os: macos-latest
             env: STAGING
-            s3_path: openlogin/login-with-google-beta
 
     runs-on: ${{ matrix.os }}
     env:
@@ -107,19 +109,19 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
-  # update-status:
-  #   name: Update OpenLogin - Google Login status
-  #   needs: run-tests
-  #   if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Update status
-  #       uses: fjogeleit/http-request-action@master
-  #       with:
-  #         url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.GOOGLE_COMPONENT_ID }}
-  #         customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-  #         method: PATCH
-  #         contentType: "application/json"
-  #         timeout: 10000
-  #         data: >-
-  #           { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
+  update-status:
+    name: Update OpenLogin - Google Login status
+    needs: run-tests
+    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update status
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.GOOGLE_COMPONENT_ID }}
+          customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
+          method: PATCH
+          contentType: "application/json"
+          timeout: 10000
+          data: >-
+            { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
