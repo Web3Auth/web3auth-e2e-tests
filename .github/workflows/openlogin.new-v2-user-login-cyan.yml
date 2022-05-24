@@ -1,23 +1,28 @@
-name: OpenLogin - New V2 User Login- CYAN
+name: OpenLogin - New V2 User Login
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
-  workflow_dispatch:
+  push
+  # schedule:
+  #   - cron: "*/15 * * * *"
+  # workflow_dispatch:
 
 env:
   NODE_VERSION: 16
-  PLATFORM: CYAN
 
 jobs:
   run-tests:
-    name: Run OpenLogin - New V2 User Login tests- CYAN
+    name: Run OpenLogin - New V2 User Login tests
     strategy:
       matrix:
-        include:
-          - browser: chromium
-            os: macos-latest
+        os: [macos-latest]
+        browser: [chromium]
+        local_path: [openlogin/new-v2-user-login]
+        s3_path: [openlogin/new-v2-user-login]
+        env: [PROD, STAGING, CYAN]
+
     runs-on: ${{ matrix.os }}
+    env:
+      PLATFORM: ${{ matrix.env }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -55,7 +60,7 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/new-v2-user-login/ openlogin/new-v2-user-login/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/${{ matrix.s3_path }}/ ${{ matrix.local_path }}/ --recursive
         continue-on-error: true
 
       - id: run-tests
@@ -63,7 +68,13 @@ jobs:
         env:
           TEST_RUN_ID: ${{ matrix.os }}.${{ matrix.browser }}.${{ github.run_id }}.${{ github.run_attempt }}
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/new-v2-user-login/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config ${{ matrix.local_path }}/index.config.ts --project ${{ matrix.browser }}
+
+      # - id: telegram-alert
+      #   name: Alert to telegram channel
+      #   if: steps.run-tests.outcome != 'success'
+      #   run: curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithNewV2User%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
+      #   continue-on-error: true
 
       - id: upload-state
         name: Upload logged-in state once a week
@@ -71,8 +82,8 @@ jobs:
         with:
           os: ${{ matrix.os }}
           browser: ${{ matrix.browser }}
-          s3_path: openlogin/new-v2-user-login
-          local_path: openlogin/new-v2-user-login
+          s3_path: ${{ matrix.s3_path }}
+          local_path: ${{ matrix.local_path }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: us-east-1
