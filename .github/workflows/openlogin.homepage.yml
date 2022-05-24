@@ -8,7 +8,6 @@ on:
 
 env:
   NODE_VERSION: 16
-  PLATFORM: ${{ matrix.env }}
 
 jobs:
   run-tests:
@@ -24,6 +23,8 @@ jobs:
           - browser: webkit
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
+    env:
+      PLATFORM: ${{ matrix.env }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
     steps:
