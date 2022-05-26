@@ -172,8 +172,8 @@ async function setup2FA(page: Page, flow: string) {
       page.waitForEvent("download"),
       page.click('button:has-text("Download my recovery phrase")'),
     ]);
-    const shareFile = await download.path();
-    const backupPhrase = fs.readFileSync(shareFile, "utf8");
+    const downloadedFile = await download.path();
+    const backupPhrase = fs.readFileSync(downloadedFile, "utf8");
     // if (flow == "Login") {
     // await page.click(':nth-match(button:has-text("Continue"), 2)');
     // } else {

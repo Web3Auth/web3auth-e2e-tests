@@ -33,7 +33,7 @@ export async function confirmEmail({
   const page = await context.newPage();
   try {
     const mailFilterStr = generateFilterStr({
-      from: "torus",
+      from: "Web3Auth",
       subject: "(verify+your+email)",
       after: timestamp,
       to,
