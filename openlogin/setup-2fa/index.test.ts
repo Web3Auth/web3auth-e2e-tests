@@ -9,13 +9,13 @@ test.describe("Setup 2FA", () => {
     const page = await context.newPage();
     await page.goto(openloginURL);
     await page.click('button:has-text("Get Started")');
-
+    let testUser = user.email_2fa_login
     // Login with Passwordless
     const timestamp = Math.floor(Date.now() / 1000);
-    await page.fill('[placeholder="Email"]', user.email_2fa_login);
+    await page.fill('[placeholder="Email"]', testUser);
     await page.click('button:has-text("Continue with Email")');
     await page.waitForSelector("text=email has been sent");
-    expect(await page.isVisible(`text=${user.email_2fa_login}`)).toBeTruthy();
+    expect(await page.isVisible(`text=${testUser}`)).toBeTruthy();
 
     // Confirm email
     test.fixme(

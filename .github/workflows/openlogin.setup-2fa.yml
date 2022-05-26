@@ -17,9 +17,15 @@ jobs:
       matrix:
         local_path: [openlogin/setup-2fa]
         s3_path: [openlogin/setup-2fa]
-        browser: [chromium, firefox, webkit]
         os: [macos-latest]
         env: [PROD, STAGING, CYAN]
+        include:
+          - browser: firefox
+            env: PROD
+          - browser: chromium
+            env: STAGING
+          - browser: webkit
+            env: CYAN
 
     runs-on: ${{ matrix.os }}
     env:

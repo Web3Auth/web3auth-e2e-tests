@@ -38,6 +38,7 @@ export async function confirmEmail({
       after: timestamp,
       to,
     });
+    console.log(`https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`)
     await page.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );
