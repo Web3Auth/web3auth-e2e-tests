@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
+import { useAutoCancelShareTransfer } from "../../utils/index";
 
 test("Login with Github+Device", async ({ page, openloginURL, user }) => {
   // Login with Github
@@ -13,6 +14,8 @@ test("Login with Github+Device", async ({ page, openloginURL, user }) => {
     });
     await page.click('button:has-text("Authorize TorusLabs")');
   } catch {}
+
+  useAutoCancelShareTransfer(page);
 
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
