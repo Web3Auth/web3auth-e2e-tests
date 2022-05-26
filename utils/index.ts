@@ -2,6 +2,12 @@ import { Page, PlaywrightWorkerOptions } from "@playwright/test";
 import { confirmEmail } from "./confirmEmail";
 import * as fs from "fs";
 
+const env_map = {
+  PROD: "https://app.openlogin.com",
+  STAGING: "https://beta.openlogin.com",
+  CYAN: "https://cyan.openlogin.com",
+};
+
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
   const promise = new Promise<void>(async (resolve) => {
@@ -126,11 +132,6 @@ async function deleteCurrentDeviceShare(page: Page) {
     }
   }
 }
-
-const env_map = {
-  PROD: "https://app.openlogin.com",
-  STAGING: "https://beta.openlogin.com",
-};
 
 function randomString(length: number) {
   var chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
