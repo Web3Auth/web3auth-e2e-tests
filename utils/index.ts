@@ -147,27 +147,12 @@ function randomNumber() {
 
 async function setup2FA(page: Page, flow: string) {
   try {
-    // if (flow == "Login") {
-    //   await page.click('button:has-text("Set up 2FA")');
-    //   await page.click(".v-input--selection-controls__ripple");
-    //   await page.click('button:has-text("Continue")');
-    // } else {
-    //   await Promise.all([
-    //     page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/home' }*/),
-    //     page.click('button:has-text("Maybe next time")'),
-    //   ]);
-    //   // Click text=Account
-
-    // Click button:has-text("Enable 2FA")
     await Promise.all([
       page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
       page.click('button:has-text("Enable 2FA")'),
     ]);
-    // Click .v-input--selection-controls__ripple
     await page.click(".v-input--selection-controls__ripple");
-    // Click button:has-text("Save current device")
     await page.click('button:has-text("Save current device")');
-    // }
     await page.click('button:has-text("View advanced option")');
     const [download] = await Promise.all([
       page.waitForEvent("download"),
@@ -175,11 +160,7 @@ async function setup2FA(page: Page, flow: string) {
     ]);
     const downloadedFile = await download.path();
     const backupPhrase = fs.readFileSync(downloadedFile, "utf8");
-    // if (flow == "Login") {
-    // await page.click(':nth-match(button:has-text("Continue"), 2)');
-    // } else {
     await page.click('button:has-text("Continue")');
-    // }
 
     await page.fill("textarea", backupPhrase);
     await page.click('button:has-text("Verify")');
