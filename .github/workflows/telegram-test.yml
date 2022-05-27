@@ -80,7 +80,8 @@ jobs:
           if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
           then
               echo "Test Failed, sending telegram alert"
-              curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=-1001736571310&text=LoginWithGithub%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}"
+              job_link=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+              curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=-1001736571310&text=LoginWithGithub%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{job_link}}"
           else
               echo "Test Passed, no alert!"
               echo ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
