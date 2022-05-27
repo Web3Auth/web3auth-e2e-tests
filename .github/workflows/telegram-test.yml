@@ -76,14 +76,14 @@ jobs:
       - id: telegram-alert
         name: Alert to telegram channel
         if: always()
-        - run: |
-            if [[ steps.run-tests.outcome != 'success' ]]
-            then
-                echo "Test Failed, sending telegram alert"
-                curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=-1001736571310&text=LoginWithGithub%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}"
-            else
-                echo "Test Passed, no alert!"
-            fi
+        run: |
+          if [[ steps.run-tests.outcome != 'success' ]]
+          then
+              echo "Test Failed, sending telegram alert"
+              curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=-1001736571310&text=LoginWithGithub%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}"
+          else
+              echo "Test Passed, no alert!"
+          fi
         # run: curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithGithub%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
         continue-on-error: true
 
