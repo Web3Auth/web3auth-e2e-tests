@@ -24,8 +24,7 @@ test("Login with Github+Device", async ({ page, openloginURL, user }) => {
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  // expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
-  expect(await page.isVisible("abc@jdjd.com")).toBeTruthy();
+  expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
