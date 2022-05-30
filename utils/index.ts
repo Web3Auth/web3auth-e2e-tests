@@ -2,9 +2,9 @@ import { Page, PlaywrightWorkerOptions } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
 
 const env_map = {
-  PROD: "https://app.openlogin.com",
-  STAGING: "https://beta.openlogin.com",
-  CYAN: "https://cyan.openlogin.com",
+  prod: "https://app.openlogin.com",
+  beta: "https://beta.openlogin.com",
+  cyan: "https://cyan.openlogin.com",
 };
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {

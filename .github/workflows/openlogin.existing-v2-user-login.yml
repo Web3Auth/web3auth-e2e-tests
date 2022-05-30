@@ -1,9 +1,10 @@
 name: OpenLogin - Existing V2 User Login
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
-  workflow_dispatch:
+  push
+  # schedule:
+  #   - cron: "*/15 * * * *"
+  # workflow_dispatch:
 
 env:
   NODE_VERSION: 16
@@ -12,18 +13,36 @@ jobs:
   run-tests:
     name: Run OpenLogin - Existing V2 User Login tests
     strategy:
+      # matrix:
+      #   local_path: [openlogin/existing-v2-user-login]
+      #   env: [PROD, STAGING, CYAN]
+      #   include:
+      #     - browser: chromium
+      #       os: macos-latest
+      #     - s3_path: openlogin/existing-v2-user-login-cyan
+      #       env: CYAN
+      #     - s3_path: openlogin/existing-v2-user-login-beta
+      #       env: STAGING
+      #     - s3_path: openlogin/existing-v2-user-login
+      #       env: PROD
       matrix:
         local_path: [openlogin/existing-v2-user-login]
-        env: [PROD, STAGING, CYAN]
+        env: [prod]
+        browser: [firefox, chromium, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
         include:
-          - browser: chromium
+          - s3_path: ${{ matrix.local_path }}-${{ matrix.env }}
+            local_path: ${{ matrix.local_path }}
             os: macos-latest
-          - s3_path: openlogin/existing-v2-user-login-cyan
-            env: CYAN
-          - s3_path: openlogin/existing-v2-user-login-beta
-            env: STAGING
-          - s3_path: openlogin/existing-v2-user-login
-            env: PROD
+            browser: chromium
+            env: cyan
+          - s3_path: ${{ matrix.local_path }}-${{ matrix.env }}
+            local_path: ${{ matrix.local_path }}
+            os: macos-latest
+            browser: chromium
+            env: beta
+          - s3_path: ${{ matrix.local_path }}
+            env: prod
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}
@@ -72,18 +91,18 @@ jobs:
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config ${{ matrix.local_path }}/index.config.ts --project ${{ matrix.browser }}
 
-      - id: telegram-alert
-        name: Alert to telegram channel
-        if: always()
-        run: |
-          if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
-          then
-              echo "Test Failed, sending telegram alert"
-              curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Existingv2UserLogin%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
-          else
-              echo "Test Passed, no alert!"
-          fi
-        continue-on-error: true
+      # - id: telegram-alert
+      #   name: Alert to telegram channel
+      #   if: always()
+      #   run: |
+      #     if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+      #     then
+      #         echo "Test Failed, sending telegram alert"
+      #         curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Existingv2UserLogin%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+      #     else
+      #         echo "Test Passed, no alert!"
+      #     fi
+      #   continue-on-error: true
 
       - id: upload-state
         name: Upload logged-in state once a week
