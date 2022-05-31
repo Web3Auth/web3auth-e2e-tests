@@ -1,4 +1,4 @@
-name: OpenLogin - Google Login
+name: OpenLogin - Passwordless Login
 
 on:
   push
@@ -8,29 +8,23 @@ on:
 
 env:
   NODE_VERSION: 16
-  LOCAL_PATH: openlogin/login-with-google
+  LOCAL_PATH: openlogin/login-with-passwordless
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Google Login tests
+    name: Run OpenLogin - Passwordless Login tests
     strategy:
       # matrix:
-      #   local_path: [openlogin/login-with-google]
       #   os: [macos-latest]
-      #   env: [PROD]
-      #   browser: [chromium, webkit]
+      #   browser: [firefox]
+      #   local_path: [openlogin/login-with-passwordless]
+      #   env: [PROD, STAGING, CYAN]
       #   include:
-      #     - s3_path: openlogin/login-with-google
+      #     - s3_path: openlogin/login-with-passwordless
       #       env: PROD
-      #     - s3_path: openlogin/login-with-google-cyan
-      #       local_path: openlogin/login-with-google
-      #       browser: webkit
-      #       os: macos-latest
+      #     - s3_path: openlogin/login-with-passwordless-cyan
       #       env: CYAN
-      #     - s3_path: openlogin/login-with-google-beta
-      #       local_path: openlogin/login-with-google
-      #       browser: chromium
-      #       os: macos-latest
+      #     - s3_path: openlogin/login-with-passwordless-beta
       #       env: STAGING
       matrix:
         env: [prod]
@@ -38,14 +32,11 @@ jobs:
         os: [macos-latest, windows-latest, ubuntu-latest]
         include:
           - os: macos-latest
-            browser: webkit
+            browser: firefox
             env: cyan
-          - os: ubuntu-latest
-            browser: chromium
+          - os: macos-latest
+            browser: firefox
             env: beta
-        exclude:
-          - browser: chromium
-            os: windows-latest
 
     runs-on: ${{ matrix.os }}
     env:
@@ -107,18 +98,18 @@ jobs:
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config ${{ env.LOCAL_PATH }}/index.config.ts --project ${{ matrix.browser }}
 
-      # - id: telegram-alert
-      #   name: Alert to telegram channel
-      #   if: always()
-      #   run: |
-      #     if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
-      #     then
-      #         echo "Test Failed, sending telegram alert"
-      #         curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithGoogle%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
-      #     else
-      #         echo "Test Passed, no alert!"
-      #     fi
-      #   continue-on-error: true
+      - id: telegram-alert
+        name: Alert to telegram channel
+        if: always()
+        run: |
+          if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+          then
+              echo "Test Failed, sending telegram alert"
+              curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginPasswordless%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+          else
+              echo "Test Passed, no alert!"
+          fi
+        continue-on-error: true
 
       - id: upload-state
         name: Upload logged-in state once a week
@@ -142,15 +133,15 @@ jobs:
           if-no-files-found: ignore
 
   # update-status:
-  #   name: Update OpenLogin - Google Login status
+  #   name: Update OpenLogin - Passwordless Login status
   #   needs: run-tests
-  #   if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
+  #   if: success() || failure()
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Update status
   #       uses: fjogeleit/http-request-action@master
   #       with:
-  #         url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.GOOGLE_COMPONENT_ID }}
+  #         url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.PASSWORDLESS_COMPONENT_ID }}
   #         customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
   #         method: PATCH
   #         contentType: "application/json"

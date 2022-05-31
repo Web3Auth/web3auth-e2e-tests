@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 import { signInWithGoogle } from "../../utils";
+import { useAutoCancelShareTransfer } from "../../utils/index";
 
 test("Login with Google+Device", async ({
   page,
@@ -16,6 +17,8 @@ test("Login with Google+Device", async ({
   test.fixme(
     !(await signInWithGoogle({ page, browserName, email: user.email }))
   );
+
+  useAutoCancelShareTransfer(page);
 
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
