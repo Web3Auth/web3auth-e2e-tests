@@ -12,11 +12,12 @@ jobs:
   run-tests:
     name: Run OpenLogin - Facebook Login with 2fa tests
     strategy:
-      matrix:
-        include:
-          - browser: firefox
-            os: windows-latest
+      env: [prod]
+      browser: [firefox, chromium, webkit]
+      os: [macos-latest, windows-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
+    env:
+      PLATFORM: ${{ matrix.env }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2

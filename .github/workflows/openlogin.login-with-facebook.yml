@@ -13,12 +13,13 @@ jobs:
     name: Run OpenLogin - Facebook Login tests
     strategy:
       matrix:
-        include:
-          - browser: chromium
-            os: windows-latest
-          - browser: firefox
-            os: windows-latest
+        env: [prod]
+        browser: [firefox, chromium, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
     runs-on: ${{ matrix.os }}
+    env:
+      PLATFORM: ${{ matrix.env }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
     steps:
