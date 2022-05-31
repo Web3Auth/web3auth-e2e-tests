@@ -1,6 +1,7 @@
 const { expect } = require("@playwright/test");
 import { confirmEmail } from "../../utils";
 import { test } from "./index.lib";
+import { useAutoCancelShareTransfer } from "../../utils/index";
 
 test("new v2 user can log in correctly", async ({
   context,
@@ -34,6 +35,7 @@ test("new v2 user can log in correctly", async ({
     await page.click('button:has-text("Maybe next time")');
   } catch {}
 
+  useAutoCancelShareTransfer(page);
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     timeout: 2 * 60 * 1000,
