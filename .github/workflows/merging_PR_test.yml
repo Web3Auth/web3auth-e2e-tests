@@ -43,6 +43,10 @@ jobs:
           - os: ubuntu-latest
             browser: chromium
             env: beta
+        exclude:
+          - browser: chromium
+            os: windows-latest
+
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}
