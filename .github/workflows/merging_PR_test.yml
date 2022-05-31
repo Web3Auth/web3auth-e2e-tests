@@ -1,4 +1,4 @@
-name: OpenLogin - Discord Login
+name: OpenLogin - Github Login
 
 on:
   push
@@ -8,28 +8,30 @@ on:
 
 env:
   NODE_VERSION: 16
-  LOCAL_PATH: openlogin/login-with-discord
+  LOCAL_PATH: openlogin/login-with-github
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Discord Login tests
+    name: Run OpenLogin - Github Login tests
     strategy:
       # matrix:
-      #   local_path: [openlogin/login-with-discord]
-      #   env: [PROD, STAGING, CYAN]
-      #   browser: [firefox, chromium]
-      #   os: [ubuntu-latest]
+      #   local_path: [openlogin/login-with-github]
+      #   env: [PROD]
+      #   browser: [firefox, chromium, webkit]
+      #   os: [macos-latest, windows-latest, ubuntu-latest]
       #   include:
-      #     - s3_path: openlogin/login-with-discord-cyan
+      #     - s3_path: openlogin/login-with-github-cyan
+      #       local_path: openlogin/login-with-github
+      #       os: macos-latest
+      #       browser: firefox
       #       env: CYAN
-      #     - s3_path: openlogin/login-with-discord-beta
+      #     - s3_path: openlogin/login-with-github-beta
+      #       local_path: openlogin/login-with-github
+      #       os: macos-latest
+      #       browser: firefox
       #       env: STAGING
-      #     - s3_path: openlogin/login-with-discord
+      #     - s3_path: openlogin/login-with-github
       #       env: PROD
-      #   exclude:
-      #     - browser: chromium
-      #       os: ubuntu-latest
-      #       env: CYAN
       matrix:
         env: [prod]
         browser: [firefox, chromium, webkit]
@@ -39,7 +41,7 @@ jobs:
             browser: firefox
             env: cyan
           - os: ubuntu-latest
-            browser: chromium
+            browser: firefox
             env: beta
     runs-on: ${{ matrix.os }}
     env:
@@ -108,11 +110,24 @@ jobs:
       #     if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
       #     then
       #         echo "Test Failed, sending telegram alert"
-      #         curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithDiscord%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+      #         curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithGithub%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
       #     else
       #         echo "Test Passed, no alert!"
       #     fi
       #   continue-on-error: true
+
+      - id: upload-state
+        name: Upload logged-in state once a week
+        uses: ./.github/actions/upload-state/
+        with:
+          os: ${{ matrix.os }}
+          browser: ${{ matrix.browser }}
+          s3_path: ${{ env.S3_PATH }}
+          local_path: ${{ env.LOCAL_PATH }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-1
+        continue-on-error: true
 
       - name: Upload test results
         if: always()
@@ -121,20 +136,3 @@ jobs:
           name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           if-no-files-found: ignore
-
-  # update-status:
-  #   name: Update OpenLogin - Discord status
-  #   needs: run-tests
-  #   if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Update status
-  #       uses: fjogeleit/http-request-action@master
-  #       with:
-  #         url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.DISCORD_COMPONENT_ID }}
-  #         customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-  #         method: PATCH
-  #         contentType: "application/json"
-  #         timeout: 10000
-  #         data: >-
-  #           { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }

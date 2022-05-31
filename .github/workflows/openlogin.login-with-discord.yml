@@ -7,27 +7,23 @@ on:
 
 env:
   NODE_VERSION: 16
+  LOCAL_PATH: openlogin/login-with-discord
 
 jobs:
   run-tests:
     name: Run OpenLogin - Discord Login tests
     strategy:
       matrix:
-        local_path: [openlogin/login-with-discord]
-        env: [PROD, STAGING, CYAN]
-        browser: [firefox, chromium]
-        os: [ubuntu-latest]
+        env: [prod]
+        browser: [firefox, chromium, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
         include:
-          - s3_path: openlogin/login-with-discord-cyan
-            env: CYAN
-          - s3_path: openlogin/login-with-discord-beta
-            env: STAGING
-          - s3_path: openlogin/login-with-discord
-            env: PROD
-        exclude:
-          - browser: chromium
-            os: ubuntu-latest
-            env: CYAN
+          - os: macos-latest
+            browser: firefox
+            env: cyan
+          - os: ubuntu-latest
+            browser: chromium
+            env: beta
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}
@@ -67,16 +63,26 @@ jobs:
           aws-region: us-east-1
         continue-on-error: true
 
+      - name: Set Path
+        run: |
+          if [[ ${{ matrix.env }} != 'prod' ]]
+          then
+              echo "S3_PATH=${{ env.LOCAL_PATH }}-${{ matrix.env }}" >> $GITHUB_ENV
+          else
+              echo "S3_PATH=${{ env.LOCAL_PATH }}" >> $GITHUB_ENV
+          fi
+        shell: bash
+
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/${{ matrix.s3_path }}/ ${{ matrix.local_path }}/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/${{ env.S3_PATH }}/ ${{ env.LOCAL_PATH }}/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config ${{ matrix.local_path }}/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config ${{ env.LOCAL_PATH }}/index.config.ts --project ${{ matrix.browser }}
 
       - id: telegram-alert
         name: Alert to telegram channel
