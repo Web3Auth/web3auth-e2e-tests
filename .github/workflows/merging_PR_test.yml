@@ -90,6 +90,7 @@ jobs:
               echo "S3_PATH=${{ env.LOCAL_PATH }}" >> $GITHUB_ENV
           fi
           echo ${{ env.S3_PATH }}
+        shell: bash
 
       - id: download-state
         name: Download remote browser snapshots
