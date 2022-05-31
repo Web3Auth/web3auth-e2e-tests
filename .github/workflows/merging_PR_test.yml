@@ -8,6 +8,7 @@ on:
 
 env:
   NODE_VERSION: 16
+  LOCAL_PATH: openlogin/existing-v2-user-login
 
 jobs:
   run-tests:
@@ -26,26 +27,34 @@ jobs:
       #     - s3_path: openlogin/existing-v2-user-login
       #       env: PROD
       matrix:
-        local_path: [openlogin/existing-v2-user-login]
+        # local_path: [openlogin/existing-v2-user-login]
         env: [prod]
         browser: [firefox, chromium, webkit]
         os: [macos-latest, windows-latest, ubuntu-latest]
         include:
-          - s3_path: ${{ matrix.local_path }}-${{ matrix.env }}
-            local_path: ${{ matrix.local_path }}
-            os: macos-latest
+          # - s3_path: ${{ env.LOCAL_PATH }}-${{ matrix.env }}
+          # local_path: ${{ env.LOCAL_PATH }}
+          - os: macos-latest
             browser: chromium
             env: cyan
-          - s3_path: ${{ matrix.local_path }}-${{ matrix.env }}
-            local_path: ${{ matrix.local_path }}
-            os: macos-latest
+          # - s3_path: ${{ env.LOCAL_PATH }}-${{ matrix.env }}
+          # local_path: ${{ matrix.local_path }}
+          - os: macos-latest
             browser: chromium
             env: beta
-          - s3_path: ${{ matrix.local_path }}
-            env: prod
+
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}
+    run: |
+      if [[ ${{ matrix.env }} != 'prod' ]]
+      then
+          echo "S3_PATH=${{ env.LOCAL_PATH }}-${{ matrix.env }}" >> $GITHUB_ENV
+      else
+          echo "S3_PATH=${{ env.LOCAL_PATH }}" >> $GITHUB_ENV
+      fi
+      echo ${{ env.S3_PATH }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -83,13 +92,13 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/${{ matrix.s3_path }}/ ${{ matrix.local_path }}/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/${{ env.S3_PATH }}/ ${{ env.LOCAL_PATH }}/ --recursive
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config ${{ matrix.local_path }}/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config ${{ env.LOCAL_PATH }}/index.config.ts --project ${{ matrix.browser }}
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
@@ -110,8 +119,8 @@ jobs:
         with:
           os: ${{ matrix.os }}
           browser: ${{ matrix.browser }}
-          s3_path: ${{ matrix.s3_path }}
-          local_path: ${{ matrix.local_path }}
+          s3_path: ${{ env.S3_PATH }}
+          local_path: ${{ env.LOCAL_PATH }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: us-east-1
