@@ -6,7 +6,6 @@ test("Login with Github+Device", async ({ page, openloginURL, user }) => {
   // Login with Github
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  // await page.click('[aria-label="Continue with existing GitHub"]');
   await page.click("text=Continue with existing GitHub");
 
   try {
