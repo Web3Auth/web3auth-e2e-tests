@@ -14,31 +14,14 @@ jobs:
   run-tests:
     name: Run OpenLogin - Existing V2 User Login tests
     strategy:
-      # matrix:
-      #   local_path: [openlogin/existing-v2-user-login]
-      #   env: [PROD, STAGING, CYAN]
-      #   include:
-      #     - browser: chromium
-      #       os: macos-latest
-      #     - s3_path: openlogin/existing-v2-user-login-cyan
-      #       env: CYAN
-      #     - s3_path: openlogin/existing-v2-user-login-beta
-      #       env: STAGING
-      #     - s3_path: openlogin/existing-v2-user-login
-      #       env: PROD
       matrix:
-        # local_path: [openlogin/existing-v2-user-login]
         env: [prod]
         browser: [firefox, chromium, webkit]
         os: [macos-latest, windows-latest, ubuntu-latest]
         include:
-          # - s3_path: ${{ env.LOCAL_PATH }}-${{ matrix.env }}
-          # local_path: ${{ env.LOCAL_PATH }}
           - os: macos-latest
             browser: chromium
             env: cyan
-          # - s3_path: ${{ env.LOCAL_PATH }}-${{ matrix.env }}
-          # local_path: ${{ matrix.local_path }}
           - os: macos-latest
             browser: chromium
             env: beta
@@ -89,7 +72,6 @@ jobs:
           else
               echo "S3_PATH=${{ env.LOCAL_PATH }}" >> $GITHUB_ENV
           fi
-          echo ${{ env.S3_PATH }}
         shell: bash
 
       - id: download-state
