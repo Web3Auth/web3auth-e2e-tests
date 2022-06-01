@@ -15,7 +15,7 @@ jobs:
   run-tests:
     name: Run OpenLogin - Setup 2FA tests
     strategy:
-      max-parallel: 3
+      max-parallel: 2
       # matrix:
       #   local_path: [openlogin/setup-2fa]
       #   s3_path: [openlogin/setup-2fa]
