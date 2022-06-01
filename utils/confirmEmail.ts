@@ -27,17 +27,20 @@ export async function confirmEmail({
    * utilise the same email inbox and thus we need to filter
    * by recipient in order to click the correct magic link
    */
-  to?: string;
+  to: string;
   resend: () => Promise<void>;
 }) {
   const page = await context.newPage();
   try {
+    // from:Web3Auth subject:(verify your email) after:1654083432 to:testuserYXJ@openlogin.com
+    console.log(`to: ${to}`);
     const mailFilterStr = generateFilterStr({
       from: "Web3Auth",
       subject: "(verify+your+email)",
       after: timestamp,
-      to,
+      to: to,
     });
+    console.log(`filter: ${mailFilterStr}`);
     await page.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );

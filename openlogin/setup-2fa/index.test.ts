@@ -11,18 +11,20 @@ test.describe("Setup 2FA", () => {
     await page.goto(openloginURL);
     await page.click('button:has-text("Get Started")');
     let testUser = user.email_2fa_login;
+    let to = user.email_2fa_login;
     // Login with Passwordless
     const timestamp = Math.floor(Date.now() / 1000);
     await page.fill('[placeholder="Email"]', testUser);
     await page.click('button:has-text("Continue with Email")');
     await page.waitForSelector("text=email has been sent");
     expect(await page.isVisible(`text=${testUser}`)).toBeTruthy();
-
+    console.log(`user from test: ${to}`);
     // Confirm email
     test.fixme(
       !(await confirmEmail({
         context,
         timestamp,
+        to,
         resend: () => page.click("text=Resend"),
       }))
     );
