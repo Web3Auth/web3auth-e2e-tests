@@ -157,7 +157,8 @@ async function setup2FA(page: Page, flow: string) {
     await page.click("text=View advanced option");
     const [download] = await Promise.all([
       page.waitForEvent("download"),
-      page.click('button:has-text("Download my recovery phrase")'),
+      // page.click('button:has-text("Download my recovery phrase")'),
+      page.click("text=Download my recovery phrase"),
     ]);
     const downloadedFile = await download.path();
     const backupPhrase = fs.readFileSync(downloadedFile, "utf8");
