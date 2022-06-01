@@ -1,0 +1,124 @@
+name: OpenLogin - Setup 2FA
+
+on:
+  push
+  # schedule:
+  #   - cron: "*/15 * * * *"
+  # workflow_dispatch:
+
+env:
+  NODE_VERSION: 16
+  LOCAL_PATH: openlogin/setup-2fa
+  S3_PATH: openlogin/setup-2fa
+
+jobs:
+  run-tests:
+    name: Run OpenLogin - Setup 2FA tests
+    strategy:
+      # matrix:
+      #   local_path: [openlogin/setup-2fa]
+      #   s3_path: [openlogin/setup-2fa]
+      #   os: [macos-latest]
+      #   env: [PROD, STAGING, CYAN]
+      #   include:
+      #     - browser: firefox
+      #       env: PROD
+      #     - browser: chromium
+      #       env: STAGING
+      #     - browser: webkit
+      #       env: CYAN
+      matrix:
+        env: [prod]
+        browser: [firefox, chromium, webkit]
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        include:
+          - os: macos-latest
+            browser: webkit
+            env: cyan
+          - os: macos-latest
+            browser: chromium
+            env: beta
+
+    runs-on: ${{ matrix.os }}
+    env:
+      PLATFORM: ${{ matrix.env }}
+    outputs:
+      conclusion: ${{ steps.run-tests.conclusion }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - id: setup-node
+        name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
+        continue-on-error: true
+
+      - id: yarn-install
+        name: Install Node.js dependencies
+        if: steps.setup-node.outcome == 'success'
+        run: yarn install --frozen-lockfile
+        continue-on-error: true
+
+      - id: yarn-install-deps
+        name: Install Ubuntu dependencies
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
+        continue-on-error: true
+
+      - id: configure-aws
+        name: Configure AWS credentials
+        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+        continue-on-error: true
+
+      - id: download-state
+        name: Download remote browser snapshots
+        if: steps.configure-aws.outcome == 'success'
+        run: aws s3 cp s3://torus-e2e-tests/${{ env.S3_PATH }}/ ${{ env.LOCAL_PATH }}/ --recursive
+        continue-on-error: true
+
+      - id: run-tests
+        name: Run tests
+        if: steps.download-state.outcome == 'success'
+        run: yarn run playwright test --config ${{ env.LOCAL_PATH }}/index.config.ts --project ${{ matrix.browser }}
+
+      # - id: telegram-alert
+      #   name: Alert to telegram channel
+      #   if: always()
+      #   run: |
+      #     if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+      #     then
+      #         echo "Test Failed, sending telegram alert"
+      #         curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Setup-2FA%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+      #     else
+      #         echo "Test Passed, no alert!"
+      #     fi
+      #   continue-on-error: true
+
+      - id: upload-state
+        name: Upload logged-in state once a week
+        uses: ./.github/actions/upload-state/
+        with:
+          os: ${{ matrix.os }}
+          browser: ${{ matrix.browser }}
+          s3_path: ${{ env.S3_PATH }}
+          local_path: ${{ env.LOCAL_PATH }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-1
+        continue-on-error: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
+          path: test-results/
+          if-no-files-found: ignore
