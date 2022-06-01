@@ -2,7 +2,7 @@ import { PlaywrightTestConfig } from "@playwright/test";
 
 const indexConfig: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
-  timeout: process.env.CI ? 1 * 60 * 1000 : 0,
+  timeout: process.env.CI ? 3 * 60 * 1000 : 0,
   retries: process.env.CI ? 1 : 0,
   use: {
     // Emulate browsing in San Francisco, CA, USA
