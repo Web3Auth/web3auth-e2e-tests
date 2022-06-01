@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 import { confirmEmail } from "../../utils";
 import { setup2FA } from "../../utils";
+import { useAutoCancelShareTransfer } from "../../utils/index";
 
 test.describe("Setup 2FA", () => {
   test("Setup 2FA", async ({ browser, openloginURL, user }) => {
@@ -25,7 +26,7 @@ test.describe("Setup 2FA", () => {
         resend: () => page.click("text=Resend"),
       }))
     );
-
+    useAutoCancelShareTransfer(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       timeout: 2 * 60 * 1000,
     });
