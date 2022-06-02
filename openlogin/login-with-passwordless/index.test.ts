@@ -24,6 +24,7 @@ test("Login with Passwordless+Device", async ({
     !(await confirmEmail({
       context,
       timestamp,
+      to: user.email,
       resend: () => page.click("text=Resend"),
     }))
   );

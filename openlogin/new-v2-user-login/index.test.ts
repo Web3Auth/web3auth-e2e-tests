@@ -24,6 +24,7 @@ test("new v2 user can log in correctly", async ({
     !(await confirmEmail({
       context,
       timestamp,
+      to: user.email,
       resend: () => page.click("text=Resend"),
     }))
   );
