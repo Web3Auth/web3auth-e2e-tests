@@ -58,12 +58,12 @@ export async function confirmEmail({
         reloads++;
         console.log("step-clicking on mail");
         await emailPage.click('div[role="link"] >> text=Verify your email', {
-          timeout: 2500,
+          timeout: 30 * 1000,
         });
         break;
       } catch {
         console.log("step-mail not found");
-        if (reloads % 5 === 0) await resend();
+        // if (reloads % 5 === 0) await resend();
         console.log("step-page reload");
         await emailPage.reload();
       }
