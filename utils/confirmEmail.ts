@@ -40,12 +40,14 @@ export async function confirmEmail({
       after: timestamp,
       to: to,
     });
-    console.log(`filter: ${mailFilterStr}`);
+    console.log(
+      `filter: ${`https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`}`
+    );
     await page.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );
     console.log("step-attaching");
-    await page.waitForSelector("a[title='Gmail']", { state: "attached" });
+    // await page.waitForSelector("a[title='Gmail']", { state: "attached" });
 
     // Try click on the verify link
     const maxReloads = 20;
