@@ -1,6 +1,6 @@
 import { Page, PlaywrightWorkerOptions } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
-import * as fs from "fs";
+// import * as fs from "fs";
 
 const env_map = {
   prod: "https://app.openlogin.com",
@@ -145,36 +145,36 @@ function randomNumber() {
   return Math.floor(Math.random() * 10);
 }
 
-async function setup2FA(page: Page, flow: string) {
-  try {
-    await Promise.all([
-      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
-      page.click('button:has-text("Enable 2FA")'),
-    ]);
-    await page.click(".v-input--selection-controls__ripple");
-    await page.click('button:has-text("Save current device")');
-    // await page.click('button:has-text("View advanced option")');
-    await page.click("text=View advanced option");
-    const [download] = await Promise.all([
-      page.waitForEvent("download"),
-      // page.click('button:has-text("Download my recovery phrase")'),
-      page.click("text=Download my recovery phrase"),
-    ]);
-    const downloadedFile = await download.path();
-    const backupPhrase = fs.readFileSync(downloadedFile, "utf8");
-    await page.click('button:has-text("Continue")');
+// async function setup2FA(page: Page, flow: string) {
+//   try {
+//     await Promise.all([
+//       page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
+//       page.click('button:has-text("Enable 2FA")'),
+//     ]);
+//     await page.click(".v-input--selection-controls__ripple");
+//     await page.click('button:has-text("Save current device")');
+//     // await page.click('button:has-text("View advanced option")');
+//     await page.click("text=View advanced option");
+//     const [download] = await Promise.all([
+//       page.waitForEvent("download"),
+//       // page.click('button:has-text("Download my recovery phrase")'),
+//       page.click("text=Download my recovery phrase"),
+//     ]);
+//     const downloadedFile = await download.path();
+//     const backupPhrase = fs.readFileSync(downloadedFile, "utf8");
+//     await page.click('button:has-text("Continue")');
 
-    await page.fill("textarea", backupPhrase);
-    await page.click('button:has-text("Verify")');
-    await Promise.all([
-      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/home' }*/),
-      page.click('button:has-text("Done")'),
-    ]);
-    return true;
-  } catch {
-    return false;
-  }
-}
+//     await page.fill("textarea", backupPhrase);
+//     await page.click('button:has-text("Verify")');
+//     await Promise.all([
+//       page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/home' }*/),
+//       page.click('button:has-text("Done")'),
+//     ]);
+//     return true;
+//   } catch {
+//     return false;
+//   }
+// }
 
 export {
   useAutoCancelShareTransfer,
@@ -185,6 +185,5 @@ export {
   deleteCurrentDeviceShare,
   env_map,
   randomString,
-  setup2FA,
   randomNumber,
 };
