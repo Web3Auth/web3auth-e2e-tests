@@ -30,7 +30,7 @@ export async function confirmEmail({
   to: string;
   resend: () => Promise<void>;
 }) {
-  const page = await context.newPage();
+  const emailPage = await context.newPage();
   try {
     // from:Web3Auth subject:(verify your email) after:1654083432 to:testuserYXJ@openlogin.com
     console.log(`to: ${to}`);
@@ -43,7 +43,7 @@ export async function confirmEmail({
     console.log(
       `filter: ${`https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`}`
     );
-    await page.goto(
+    await emailPage.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );
     console.log("step-attaching");
@@ -57,7 +57,7 @@ export async function confirmEmail({
       try {
         reloads++;
         console.log("step-clicking on mail");
-        await page.click('div[role="link"] >> text=Verify your email', {
+        await emailPage.click('div[role="link"] >> text=Verify your email', {
           timeout: 2500,
         });
         break;
@@ -65,15 +65,15 @@ export async function confirmEmail({
         console.log("step-mail not found");
         if (reloads % 5 === 0) await resend();
         console.log("step-page reload");
-        await page.reload();
+        await emailPage.reload();
       }
     }
     if (reloads >= maxReloads) return false;
     console.log("step-waiting for popup");
     console.log("step- and clicking confirm button");
     const [popup] = await Promise.all([
-      page.waitForEvent("popup"),
-      page.click(
+      emailPage.waitForEvent("popup"),
+      emailPage.click(
         'table[role="content-container"] a:has-text("Confirm my email")'
       ),
     ]);
@@ -87,7 +87,7 @@ export async function confirmEmail({
   } catch {
     return false;
   } finally {
-    await page.close();
+    await emailPage.close();
   }
 }
 

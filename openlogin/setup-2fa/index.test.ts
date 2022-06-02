@@ -72,9 +72,10 @@ test.describe("Setup 2FA", () => {
     expect(await page.isVisible(`text=${user.email_2fa_login}`)).toBeTruthy();
     console.log(`user from test: ${user.email_2fa_login}`);
     // Confirm email
+    const emailContext = await browser.newContext();
     test.fixme(
       !(await confirmEmail({
-        context,
+        context: emailContext,
         timestamp,
         to: user.email_2fa_login,
         resend: () => page.click("text=Resend"),
