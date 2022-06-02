@@ -58,6 +58,7 @@ async function setup2FA(page: Page, flow: string) {
 
 test.describe("Setup 2FA", () => {
   test("Setup 2FA", async ({ browser, openloginURL, user }) => {
+    test.setTimeout(process.env.CI ? 15 * 60 * 1000 : 0);
     const context = await browser.newContext({ acceptDownloads: true });
     const page = await context.newPage();
     await page.goto(openloginURL);
