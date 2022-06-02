@@ -44,36 +44,43 @@ export async function confirmEmail({
     await page.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );
+    console.log("step-attaching");
     await page.waitForSelector("a[title='Gmail']", { state: "attached" });
 
     // Try click on the verify link
     const maxReloads = 20;
     let reloads = 0;
+    console.log("step - trying to get email with button");
     while (reloads < maxReloads) {
       try {
         reloads++;
+        console.log("step-clicking on mail");
         await page.click('div[role="link"] >> text=Verify your email', {
           timeout: 2500,
         });
         break;
       } catch {
+        console.log("step-mail not found");
         if (reloads % 5 === 0) await resend();
+        console.log("step-page reload");
         await page.reload();
       }
     }
     if (reloads >= maxReloads) return false;
-
+    console.log("step-waiting for popup");
+    console.log("step- and clicking confirm button");
     const [popup] = await Promise.all([
       page.waitForEvent("popup"),
       page.click(
         'table[role="content-container"] a:has-text("Confirm my email")'
       ),
     ]);
+    console.log("step-closing email window");
     await popup.waitForSelector(
       "text=Close this and return to your previous window"
     );
     await popup.close();
-
+    console.log("step-done with email..");
     return true;
   } catch {
     return false;
