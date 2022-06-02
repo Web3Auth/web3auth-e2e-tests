@@ -14,10 +14,14 @@ async function setup2FA(page: Page, flow: string) {
     var isDownloaded = false;
     while (isDownloaded === false) {
       try {
+        console.log("Starting Download process again...");
         await page.click(".v-input--selection-controls__ripple");
+        console.log("step-save device");
         await page.click('button:has-text("Save current device")');
         // await page.click('button:has-text("View advanced option")');
+        console.log("step-view advanced options");
         await page.click("text=View advanced option", { timeout: 60 * 1000 });
+        console.log("step-download");
         const [download] = await Promise.all([
           page.waitForEvent("download"),
           // page.click('button:has-text("Download my recovery phrase")'),
@@ -25,17 +29,20 @@ async function setup2FA(page: Page, flow: string) {
             timeout: 60 * 1000,
           }),
         ]);
+        console.log("step-read file");
         const downloadedFile = await download.path();
         const backupPhrase = fs.readFileSync(downloadedFile, "utf8");
+        console.log("step-continue");
         await page.click('button:has-text("Continue")');
-
+        console.log("step-put phrase into textbox");
         await page.fill("textarea", backupPhrase);
+        console.log("step-verify button");
         await page.click('button:has-text("Verify")');
         isDownloaded = true;
         console.log("Done.");
       } catch {
         console.log("reloading page.....");
-        page.reload();
+        await page.reload();
       }
     }
     console.log("exiting...");
