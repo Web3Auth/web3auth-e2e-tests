@@ -23,9 +23,9 @@ async function setup2FA(page: Page, flow: string) {
         await page.click("text=View advanced option");
         console.log("step-download");
         const [download] = await Promise.all([
-          page.waitForEvent("download"),
+          page.waitForEvent("download", { timeout: 5 * 1000 }),
           // page.click('button:has-text("Download my recovery phrase")'),
-          page.click("text=Download my recovery phrase"),
+          page.click("text=Download my recovery phrase", { timeout: 5 * 1000 }),
         ]);
         console.log("step-read file");
         const downloadedFile = await download.path();
@@ -58,7 +58,7 @@ async function setup2FA(page: Page, flow: string) {
 
 test.describe("Setup 2FA", () => {
   test("Setup 2FA", async ({ browser, openloginURL, user }) => {
-    test.setTimeout(process.env.CI ? 15 * 60 * 1000 : 0);
+    test.setTimeout(process.env.CI ? 5 * 60 * 1000 : 0);
     const context = await browser.newContext({ acceptDownloads: true });
     const page = await context.newPage();
     await page.goto(openloginURL);
