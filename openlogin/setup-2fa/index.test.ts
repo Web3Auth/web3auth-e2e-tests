@@ -15,12 +15,18 @@ async function setup2FA(page: Page, flow: string) {
     while (isDownloaded === false) {
       try {
         console.log("Starting Download process again...");
-        await page.click(".v-input--selection-controls__ripple");
+        await page.click(".v-input--selection-controls__ripple", {
+          timeout: 5 * 1000,
+        });
         console.log("step-save device");
-        await page.click('button:has-text("Save current device")');
+        await page.click('button:has-text("Save current device")', {
+          timeout: 5 * 1000,
+        });
         // await page.click('button:has-text("View advanced option")');
         console.log("step-view advanced options");
-        await page.click("text=View advanced option");
+        await page.click("text=View advanced option", {
+          timeout: 5 * 1000,
+        });
         console.log("step-download");
         const [download] = await Promise.all([
           page.waitForEvent("download", { timeout: 5 * 1000 }),
