@@ -23,13 +23,6 @@ const projects: Array<
       name: "Lisa",
     },
   },
-  {
-    browserName: "webkit",
-    user: {
-      email: "dvpizamosb_1624264537@tfbnw.net",
-      name: "Lisa",
-    },
-  },
 ];
 
 const config: PlaywrightTestConfig<TestArgs> = {
