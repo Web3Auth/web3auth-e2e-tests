@@ -10,37 +10,20 @@ async function setup2FA(page: Page, flow: string) {
       page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
       page.click('button:has-text("Enable 2FA")'),
     ]);
-    // from here
-
-    console.log("Starting Download process again...");
-    await page.click(".v-input--selection-controls__ripple", {
-      timeout: 5 * 1000,
-    });
-    console.log("step-save device");
-    await page.click('button:has-text("Save current device")', {
-      timeout: 5 * 1000,
-    });
+    await page.click(".v-input--selection-controls__ripple");
+    await page.click('button:has-text("Save current device")');
     // await page.click('button:has-text("View advanced option")');
-    console.log("step-view advanced options");
-    await page.click("text=View advanced option", {
-      timeout: 5 * 1000,
-    });
-    console.log("step-download");
+    await page.click("text=View advanced option");
     const [download] = await Promise.all([
       page.waitForEvent("download", { timeout: 5 * 1000 }),
       // page.click('button:has-text("Download my recovery phrase")'),
       page.click("text=Download my recovery phrase", { timeout: 5 * 1000 }),
     ]);
-    console.log("step-read file");
     const downloadedFile = await download.path();
     const backupPhrase = fs.readFileSync(downloadedFile, "utf8");
-    console.log("step-continue");
     await page.click('button:has-text("Continue")');
-    console.log("step-put phrase into textbox");
     await page.fill("textarea", backupPhrase);
-    console.log("step-verify button");
     await page.click('button:has-text("Verify")');
-    console.log("Done.");
 
     // till here
 
@@ -66,7 +49,6 @@ test.describe("Setup 2FA", () => {
     await page.click('button:has-text("Continue with Email")');
     await page.waitForSelector("text=email has been sent");
     expect(await page.isVisible(`text=${user.email_2fa_login}`)).toBeTruthy();
-    console.log(`user from test: ${user.email_2fa_login}`);
     // Confirm email
     const emailContext = await browser.newContext();
     test.fixme(
