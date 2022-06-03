@@ -1,9 +1,10 @@
 name: OpenLogin - Setup 2FA
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
-  workflow_dispatch:
+  push
+  # schedule:
+  #   - cron: "*/15 * * * *"
+  # workflow_dispatch:
 
 env:
   NODE_VERSION: 16

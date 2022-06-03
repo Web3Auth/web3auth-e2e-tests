@@ -32,7 +32,6 @@ export async function confirmEmail({
 }) {
   const emailPage = await context.newPage();
   try {
-    // from:Web3Auth subject:(verify your email) after:1654083432 to:testuserYXJ@openlogin.com
     const mailFilterStr = generateFilterStr({
       from: "Web3Auth",
       subject: "(verify+your+email)",
@@ -42,7 +41,7 @@ export async function confirmEmail({
     await emailPage.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );
-    await page.waitForSelector("a[title='Gmail']", { state: "attached" });
+    await emailPage.waitForSelector("a[title='Gmail']", { state: "attached" });
 
     // Try click on the verify link
     const maxReloads = 20;
