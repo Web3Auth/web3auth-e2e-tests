@@ -11,45 +11,37 @@ async function setup2FA(page: Page, flow: string) {
       page.click('button:has-text("Enable 2FA")'),
     ]);
     // from here
-    var isDownloaded = false;
-    while (isDownloaded === false) {
-      try {
-        console.log("Starting Download process again...");
-        await page.click(".v-input--selection-controls__ripple", {
-          timeout: 5 * 1000,
-        });
-        console.log("step-save device");
-        await page.click('button:has-text("Save current device")', {
-          timeout: 5 * 1000,
-        });
-        // await page.click('button:has-text("View advanced option")');
-        console.log("step-view advanced options");
-        await page.click("text=View advanced option", {
-          timeout: 5 * 1000,
-        });
-        console.log("step-download");
-        const [download] = await Promise.all([
-          page.waitForEvent("download", { timeout: 5 * 1000 }),
-          // page.click('button:has-text("Download my recovery phrase")'),
-          page.click("text=Download my recovery phrase", { timeout: 5 * 1000 }),
-        ]);
-        console.log("step-read file");
-        const downloadedFile = await download.path();
-        const backupPhrase = fs.readFileSync(downloadedFile, "utf8");
-        console.log("step-continue");
-        await page.click('button:has-text("Continue")');
-        console.log("step-put phrase into textbox");
-        await page.fill("textarea", backupPhrase);
-        console.log("step-verify button");
-        await page.click('button:has-text("Verify")');
-        isDownloaded = true;
-        console.log("Done.");
-      } catch {
-        console.log("reloading page.....");
-        await page.reload();
-      }
-    }
-    console.log("exiting...");
+
+    console.log("Starting Download process again...");
+    await page.click(".v-input--selection-controls__ripple", {
+      timeout: 5 * 1000,
+    });
+    console.log("step-save device");
+    await page.click('button:has-text("Save current device")', {
+      timeout: 5 * 1000,
+    });
+    // await page.click('button:has-text("View advanced option")');
+    console.log("step-view advanced options");
+    await page.click("text=View advanced option", {
+      timeout: 5 * 1000,
+    });
+    console.log("step-download");
+    const [download] = await Promise.all([
+      page.waitForEvent("download", { timeout: 5 * 1000 }),
+      // page.click('button:has-text("Download my recovery phrase")'),
+      page.click("text=Download my recovery phrase", { timeout: 5 * 1000 }),
+    ]);
+    console.log("step-read file");
+    const downloadedFile = await download.path();
+    const backupPhrase = fs.readFileSync(downloadedFile, "utf8");
+    console.log("step-continue");
+    await page.click('button:has-text("Continue")');
+    console.log("step-put phrase into textbox");
+    await page.fill("textarea", backupPhrase);
+    console.log("step-verify button");
+    await page.click('button:has-text("Verify")');
+    console.log("Done.");
+
     // till here
 
     await Promise.all([
@@ -64,7 +56,6 @@ async function setup2FA(page: Page, flow: string) {
 
 test.describe("Setup 2FA", () => {
   test("Setup 2FA", async ({ browser, openloginURL, user }) => {
-    test.setTimeout(process.env.CI ? 5 * 60 * 1000 : 0);
     const context = await browser.newContext({ acceptDownloads: true });
     const page = await context.newPage();
     await page.goto(openloginURL);

@@ -63,7 +63,7 @@ export async function confirmEmail({
         break;
       } catch {
         console.log("step-mail not found");
-        // if (reloads % 5 === 0) await resend();
+        if (reloads % 5 === 0) await resend();
         console.log("step-page reload");
         await emailPage.reload();
       }
