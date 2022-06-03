@@ -7,16 +7,31 @@ on:
 
 env:
   NODE_VERSION: 16
+  LOCAL_PATH: openlogin/new-v2-user-login
+  S3_PATH: openlogin/new-v2-user-login
 
 jobs:
   run-tests:
     name: Run OpenLogin - New V2 User Login tests
     strategy:
       matrix:
+        env: [prod]
+        browser: [firefox, chromium]
+        os: [macos-latest, windows-latest, ubuntu-latest]
         include:
-          - browser: chromium
-            os: macos-latest
+          - os: macos-latest
+            browser: chromium
+            env: cyan
+          - os: macos-latest
+            browser: webkit
+            env: beta
+          - os: macos-latest
+            browser: webkit
+            env: prod
+
     runs-on: ${{ matrix.os }}
+    env:
+      PLATFORM: ${{ matrix.env }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -54,7 +69,7 @@ jobs:
       - id: download-state
         name: Download remote browser snapshots
         if: steps.configure-aws.outcome == 'success'
-        run: aws s3 cp s3://torus-e2e-tests/openlogin/new-v2-user-login/ openlogin/new-v2-user-login/ --recursive
+        run: aws s3 cp s3://torus-e2e-tests/${{ env.S3_PATH }}/ ${{ env.LOCAL_PATH }}/ --recursive
         continue-on-error: true
 
       - id: run-tests
@@ -62,28 +77,32 @@ jobs:
         env:
           TEST_RUN_ID: ${{ matrix.os }}.${{ matrix.browser }}.${{ github.run_id }}.${{ github.run_attempt }}
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/new-v2-user-login/index.config.ts --project ${{ matrix.browser }}
+        run: yarn run playwright test --config ${{ env.LOCAL_PATH }}/index.config.ts --project ${{ matrix.browser }}
 
       - id: telegram-alert
         name: Alert to telegram channel
-        if: steps.run-tests.outcome != 'success'
-        run: curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithNewV2User%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
+        if: always()
+        run: |
+          if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+          then
+              echo "Test Failed, sending telegram alert"
+              curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithNewV2User%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+          else
+              echo "Test Passed, no alert!"
+          fi
         continue-on-error: true
 
       - id: upload-state
-        name: Upload logged-in state once a day
-        run: |
-          last_updated=$(aws s3 ls s3://torus-e2e-tests/openlogin/new-v2-user-login/${{ matrix.browser }}.json | awk '{print $1}')
-          yesterday=$(date -v-1d +'%Y-%m-%d')
-          echo "Last Updated: $last_updated, Yesterday: $yesterday"
-
-          if [[ "$last_updated" > "$yesterday" ]]
-          then
-              echo "State is still new, no need to update"
-          else
-              echo "State is old, need to refresh"
-              aws s3 cp openlogin/new-v2-user-login/${{ matrix.browser }}.json s3://torus-e2e-tests/openlogin/new-v2-user-login/
-          fi
+        name: Upload logged-in state once a week
+        uses: ./.github/actions/upload-state/
+        with:
+          os: ${{ matrix.os }}
+          browser: ${{ matrix.browser }}
+          s3_path: ${{ env.S3_PATH }}
+          local_path: ${{ env.LOCAL_PATH }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-1
         continue-on-error: true
 
       - name: Upload test results

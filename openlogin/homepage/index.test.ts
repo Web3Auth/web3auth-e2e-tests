@@ -10,7 +10,6 @@ test.describe("On homepage,", () => {
     const title = await page.title();
     expect(title).toBe("OpenLogin");
   });
-
   test(`there should be "Get Started" button`, async ({ page }) => {
     expect(await page.isVisible(`button:has-text("Get Started")`)).toBeTruthy();
   });
