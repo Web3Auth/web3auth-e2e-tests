@@ -22,11 +22,11 @@ jobs:
             browser: chromium
             env: cyan
           - os: macos-latest
-            browser: chromium
+            browser: webkit
             env: beta
           - os: macos-latest
             browser: webkit
-            env: [prod, cyan, beta]
+            env: prod
 
     runs-on: ${{ matrix.os }}
     env:

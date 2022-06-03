@@ -13,14 +13,20 @@ jobs:
     name: Run OpenLogin - Homepage tests
     strategy:
       matrix:
-        env: [PROD, STAGING, CYAN]
-        browser: [chromium, firefox, webkit]
+        env: [prod]
+        browser: [firefox, chromium]
         os: [macos-latest, windows-latest, ubuntu-latest]
-        exclude:
-          - browser: webkit
-            os: windows-latest
-          - browser: webkit
-            os: ubuntu-latest
+        include:
+          - os: macos-latest
+            browser: chromium
+            env: cyan
+          - os: macos-latest
+            browser: webkit
+            env: beta
+          - os: macos-latest
+            browser: webkit
+            env: prod
+
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}

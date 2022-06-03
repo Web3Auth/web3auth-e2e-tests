@@ -15,15 +15,19 @@ jobs:
     strategy:
       matrix:
         env: [prod]
-        browser: [firefox, chromium, webkit]
+        browser: [firefox, chromium]
         os: [macos-latest, windows-latest, ubuntu-latest]
         include:
           - os: macos-latest
-            browser: firefox
-            env: cyan
-          - os: ubuntu-latest
             browser: chromium
+            env: cyan
+          - os: macos-latest
+            browser: webkit
             env: beta
+          - os: macos-latest
+            browser: webkit
+            env: prod
+
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}

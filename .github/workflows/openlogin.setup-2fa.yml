@@ -17,17 +17,18 @@ jobs:
       max-parallel: 2
       matrix:
         env: [prod]
-        browser: [webkit, firefox, chromium]
+        browser: [firefox, chromium]
         os: [macos-latest, windows-latest, ubuntu-latest]
         include:
           - os: macos-latest
-            browser: webkit
+            browser: chromium
             env: cyan
           - os: macos-latest
-            browser: chromium
+            browser: webkit
             env: beta
-        exclude:
-          - browser: webkit
+          - os: macos-latest
+            browser: webkit
+            env: prod
 
     runs-on: ${{ matrix.os }}
     env:
