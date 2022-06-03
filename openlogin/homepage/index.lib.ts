@@ -1,9 +1,10 @@
 import * as playwright from "@playwright/test";
+import { env_map } from "../../utils/index";
 
 export interface TestArgs {
   openloginURL: string;
 }
 
 export const test = playwright.test.extend<TestArgs>({
-  openloginURL: "https://app.openlogin.com",
+  openloginURL: env_map[process.env.PLATFORM],
 });

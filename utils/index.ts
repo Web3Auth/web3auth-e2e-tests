@@ -1,5 +1,12 @@
 import { Page, PlaywrightWorkerOptions } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
+// import * as fs from "fs";
+
+const env_map = {
+  prod: "https://app.openlogin.com",
+  beta: "https://beta.openlogin.com",
+  cyan: "https://cyan.openlogin.com",
+};
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
@@ -76,7 +83,7 @@ async function signInWithDiscord(page: Page): Promise<boolean> {
     await page.waitForURL("https://discord.com/oauth2/**");
     await Promise.all([
       page.waitForNavigation(),
-      page.click('button:has-text("Authorize")'),
+      page.click('button:has-text("Authorise"), button:has-text("Authorize")'),
     ]);
     return true;
   } catch {
@@ -126,6 +133,18 @@ async function deleteCurrentDeviceShare(page: Page) {
   }
 }
 
+function randomString(length: number) {
+  var chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var result = "";
+  for (var i = length; i > 0; --i)
+    result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
+
+function randomNumber() {
+  return Math.floor(Math.random() * 10);
+}
+
 export {
   useAutoCancelShareTransfer,
   signInWithGoogle,
@@ -133,4 +152,7 @@ export {
   signInWithDiscord,
   confirmEmail,
   deleteCurrentDeviceShare,
+  env_map,
+  randomString,
+  randomNumber,
 };

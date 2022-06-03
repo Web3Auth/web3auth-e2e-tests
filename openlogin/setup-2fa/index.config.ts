@@ -5,21 +5,35 @@ import {
 } from "@playwright/test";
 import { TestArgs } from "./index.lib";
 import indexConfig from "../../index.config";
+import { randomString, randomNumber } from "../../utils/index";
+
+function randomEmail() {
+  return randomString(randomNumber()) + randomString(randomNumber());
+}
 
 const projects: Array<
   Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
   {
     browserName: "chromium",
-    user: { email: `testuser.existing1@openlogin.com` },
+    user: {
+      email_2fa_login: `testuser${randomEmail()}@openlogin.com`,
+      email_2fa_settings: `testuser${randomEmail()}@openlogin.com`,
+    },
   },
   {
     browserName: "firefox",
-    user: { email: `testuser.existing1@openlogin.com` },
+    user: {
+      email_2fa_login: `testuser${randomEmail()}@openlogin.com`,
+      email_2fa_settings: `testuser${randomEmail()}@openlogin.com`,
+    },
   },
   {
     browserName: "webkit",
-    user: { email: `testuser.existing1@openlogin.com` },
+    user: {
+      email_2fa_login: `testuser${randomEmail()}@openlogin.com`,
+      email_2fa_settings: `testuser${randomEmail()}@openlogin.com`,
+    },
   },
 ];
 
