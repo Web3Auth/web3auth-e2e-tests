@@ -18,16 +18,6 @@ End-to-end testing of [Torus] products.
 
 [![OpenLogin - Passwordless Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-passwordless.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-passwordless.yml)
 
-[![OpenLogin - Lighthouse](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/lighthouse.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/lighthouse.yml)
-
-[![OpenLogin - Existing v2 User Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.existing-v2-user-login.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.existing-v2-user-login.yml)
-
-[![OpenLogin - GitHub Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-github.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-github.yml)
-
-[![OpenLogin - New v2 User Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.new-v2-user-login.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.new-v2-user-login.yml)
-
-[![OpenLogin - Setup 2fa](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.setup-2fa.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.setup-2fa.yml)
-
 ### Wallet
 
 [![Wallet - SDK](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/wallet.sdk.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/wallet.sdk.yml)
