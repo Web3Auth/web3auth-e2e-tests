@@ -1,7 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 import { signInWithDiscord } from "../../utils";
-import { useAutoCancelShareTransfer } from "../../utils/index";
 
 test("Login with Discord+Device", async ({ page, openloginURL, user }) => {
   // Login with Discord
@@ -10,7 +9,6 @@ test("Login with Discord+Device", async ({ page, openloginURL, user }) => {
   await page.click('[aria-label="login with discord"]');
   test.fixme(!(await signInWithDiscord(page)));
 
-  useAutoCancelShareTransfer(page);
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     timeout: 2 * 60 * 1000,

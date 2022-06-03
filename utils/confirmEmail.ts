@@ -27,21 +27,21 @@ export async function confirmEmail({
    * utilise the same email inbox and thus we need to filter
    * by recipient in order to click the correct magic link
    */
-  to: string;
+  to?: string;
   resend: () => Promise<void>;
 }) {
-  const emailPage = await context.newPage();
+  const page = await context.newPage();
   try {
     const mailFilterStr = generateFilterStr({
-      from: "Web3Auth",
+      from: "torus",
       subject: "(verify+your+email)",
       after: timestamp,
-      to: to,
+      to,
     });
-    await emailPage.goto(
+    await page.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );
-    await emailPage.waitForSelector("a[title='Gmail']", { state: "attached" });
+    await page.waitForSelector("a[title='Gmail']", { state: "attached" });
 
     // Try click on the verify link
     const maxReloads = 20;
@@ -49,19 +49,20 @@ export async function confirmEmail({
     while (reloads < maxReloads) {
       try {
         reloads++;
-        await emailPage.click('div[role="link"] >> text=Verify your email', {
-          timeout: 30 * 1000,
+        await page.click('div[role="link"] >> text=Verify your email', {
+          timeout: 2500,
         });
         break;
       } catch {
         if (reloads % 5 === 0) await resend();
-        await emailPage.reload();
+        await page.reload();
       }
     }
     if (reloads >= maxReloads) return false;
+
     const [popup] = await Promise.all([
-      emailPage.waitForEvent("popup"),
-      emailPage.click(
+      page.waitForEvent("popup"),
+      page.click(
         'table[role="content-container"] a:has-text("Confirm my email")'
       ),
     ]);
@@ -69,11 +70,12 @@ export async function confirmEmail({
       "text=Close this and return to your previous window"
     );
     await popup.close();
+
     return true;
   } catch {
     return false;
   } finally {
-    await emailPage.close();
+    await page.close();
   }
 }
 

@@ -1,7 +1,6 @@
 import { expect } from "@playwright/test";
 import { confirmEmail } from "../../utils";
 import { test } from "./index.lib";
-import { useAutoCancelShareTransfer } from "../../utils/index";
 
 test("Login with Passwordless+Device", async ({
   context,
@@ -24,19 +23,10 @@ test("Login with Passwordless+Device", async ({
     !(await confirmEmail({
       context,
       timestamp,
-      to: user.email,
       resend: () => page.click("text=Resend"),
     }))
   );
 
-  try {
-    await page.waitForSelector("text=Enable 2 Factor Authentication (2FA)", {
-      timeout: 10000,
-    });
-    await page.click('button:has-text("Maybe next time")');
-  } catch {}
-
-  useAutoCancelShareTransfer(page);
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     timeout: 2 * 60 * 1000,

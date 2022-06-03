@@ -17,10 +17,6 @@ const projects: Array<
     browserName: "chromium",
     user: { email: "connie.washington.1981@gmail.com" },
   },
-  {
-    browserName: "webkit",
-    user: { email: "clyde.m.carter@gmail.com" },
-  },
 ];
 
 const config: PlaywrightTestConfig<TestArgs> = {
