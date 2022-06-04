@@ -22,12 +22,9 @@ jobs:
           - os: macos-latest
             browser: chromium
             env: cyan
-          - os: macos-latest
-            browser: firefox
-            env: beta
           # - os: macos-latest --- beta-discord login redirects to home page(https://github.com/torusresearch/OpenLoginSdk/issues/138)
           #   browser: webkit  --- needs to be uncommented once fixed
-          #   env: beta    --- we are running firefox instead on beta
+          #   env: beta    ---
           - os: macos-latest
             browser: webkit
             env: prod
