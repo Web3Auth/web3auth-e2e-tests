@@ -1,4 +1,4 @@
-name: Duplicate - OpenLogin - New V2 User Login
+name: Duplicate - OpenLogin - Setup 2FA
 
 on:
   push
@@ -8,13 +8,14 @@ on:
 
 env:
   NODE_VERSION: 16
-  LOCAL_PATH: openlogin/new-v2-user-login
-  S3_PATH: openlogin/new-v2-user-login
+  LOCAL_PATH: openlogin/setup-2fa
+  S3_PATH: openlogin/setup-2fa
 
 jobs:
   run-tests:
-    name: Duplicate - Run OpenLogin - New V2 User Login tests
+    name: Duplicate - Run OpenLogin - Setup 2FA tests
     strategy:
+      # max-parallel: 2
       matrix:
         env: [prod]
         browser: [firefox, chromium]
@@ -33,6 +34,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}
+    outputs:
+      conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -75,8 +78,6 @@ jobs:
 
       - id: run-tests
         name: Run tests
-        env:
-          TEST_RUN_ID: ${{ matrix.os }}.${{ matrix.browser }}.${{ github.run_id }}.${{ github.run_attempt }}
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config ${{ env.LOCAL_PATH }}/index.config.ts --project ${{ matrix.browser }}
 
@@ -87,7 +88,7 @@ jobs:
       #     if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
       #     then
       #         echo "Test Failed, sending telegram alert"
-      #         curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithNewV2User%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+      #         curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Setup-2FA%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
       #     else
       #         echo "Test Passed, no alert!"
       #     fi

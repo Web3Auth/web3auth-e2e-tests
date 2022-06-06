@@ -14,25 +14,46 @@ function randomEmail() {
 const projects: Array<
   Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
+  // {
+  //   browserName: "chromium",
+  //   user: {
+  //     email_2fa_login: `testuser${randomEmail()}@openlogin.com`,
+  //     email_2fa_settings: `testuser${randomEmail()}@openlogin.com`,
+  //   },
+  // },
+  // {
+  //   browserName: "firefox",
+  //   user: {
+  //     email_2fa_login: `testuser${randomEmail()}@openlogin.com`,
+  //     email_2fa_settings: `testuser${randomEmail()}@openlogin.com`,
+  //   },
+  // },
+  // {
+  //   browserName: "webkit",
+  //   user: {
+  //     email_2fa_login: `testuser${randomEmail()}@openlogin.com`,
+  //     email_2fa_settings: `testuser${randomEmail()}@openlogin.com`,
+  //   },
+  // },
   {
     browserName: "chromium",
     user: {
       email_2fa_login: `testuser${randomEmail()}@openlogin.com`,
-      email_2fa_settings: `testuser${randomEmail()}@openlogin.com`,
+      email_2fa_settings: `testuser${process.env.TEST_RUN_ID}@openlogin.com`,
     },
   },
   {
     browserName: "firefox",
     user: {
       email_2fa_login: `testuser${randomEmail()}@openlogin.com`,
-      email_2fa_settings: `testuser${randomEmail()}@openlogin.com`,
+      email_2fa_settings: `testuser${process.env.TEST_RUN_ID}@openlogin.com`,
     },
   },
   {
     browserName: "webkit",
     user: {
       email_2fa_login: `testuser${randomEmail()}@openlogin.com`,
-      email_2fa_settings: `testuser${randomEmail()}@openlogin.com`,
+      email_2fa_settings: `testuser${process.env.TEST_RUN_ID}@openlogin.com`,
     },
   },
 ];
