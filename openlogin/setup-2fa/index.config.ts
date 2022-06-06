@@ -5,11 +5,7 @@ import {
 } from "@playwright/test";
 import { TestArgs } from "./index.lib";
 import indexConfig from "../../index.config";
-import { randomString, randomNumber } from "../../utils/index";
-
-function randomEmail() {
-  return randomString(randomNumber()) + randomString(randomNumber());
-}
+// import { randomString, randomNumber } from "../../utils/index";
 
 const projects: Array<
   Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">

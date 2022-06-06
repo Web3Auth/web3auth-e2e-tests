@@ -45,19 +45,17 @@ test.describe("Setup 2FA", () => {
     await page.click('button:has-text("Get Started")');
     // Login with Passwordless
     const timestamp = Math.floor(Date.now() / 1000);
-    await page.fill('[placeholder="Email"]', user.email_2fa_settings);
+    await page.fill('[placeholder="Email"]', user.email);
     await page.click('button:has-text("Continue with Email")');
     await page.waitForSelector("text=email has been sent");
-    expect(
-      await page.isVisible(`text=${user.email_2fa_settings}`)
-    ).toBeTruthy();
+    expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
     // Confirm email
     const emailContext = await browser.newContext();
     test.fixme(
       !(await confirmEmail({
         context: emailContext,
         timestamp,
-        to: user.email_2fa_settings,
+        to: user.email,
         resend: () => page.click("text=Resend"),
       }))
     );
@@ -77,9 +75,7 @@ test.describe("Setup 2FA", () => {
 
     // Go to Account page
     await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-    expect(
-      await page.isVisible(`text=${user.email_2fa_settings}`)
-    ).toBeTruthy();
+    expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
 
     // Logout
     await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);

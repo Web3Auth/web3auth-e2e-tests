@@ -1,4 +1,4 @@
-name: OpenLogin - Setup 2FA
+name: Duplicate - OpenLogin - Setup 2FA
 
 on:
   push
@@ -13,7 +13,7 @@ env:
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Setup 2FA tests
+    name: Duplicate - Run OpenLogin - Setup 2FA tests
     strategy:
       matrix:
         env: [prod]
