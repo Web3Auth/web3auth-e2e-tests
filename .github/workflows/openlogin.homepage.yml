@@ -13,14 +13,23 @@ jobs:
     name: Run OpenLogin - Homepage tests
     strategy:
       matrix:
-        browser: [chromium, firefox, webkit]
+        env: [prod]
+        browser: [firefox, chromium]
         os: [macos-latest, windows-latest, ubuntu-latest]
-        exclude:
-          - browser: webkit
-            os: windows-latest
-          - browser: webkit
-            os: ubuntu-latest
+        include:
+          - os: macos-latest
+            browser: chromium
+            env: cyan
+          - os: macos-latest
+            browser: webkit
+            env: beta
+          - os: macos-latest
+            browser: webkit
+            env: prod
+
     runs-on: ${{ matrix.os }}
+    env:
+      PLATFORM: ${{ matrix.env }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
     steps:
@@ -54,8 +63,15 @@ jobs:
 
       - id: telegram-alert
         name: Alert to telegram channel
-        if: steps.run-tests.outcome != 'success'
-        run: curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Homepage%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}"
+        if: always()
+        run: |
+          if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+          then
+              echo "Test Failed, sending telegram alert"
+              curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Homepage%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+          else
+              echo "Test Passed, no alert!"
+          fi
         continue-on-error: true
 
       - name: Upload test results

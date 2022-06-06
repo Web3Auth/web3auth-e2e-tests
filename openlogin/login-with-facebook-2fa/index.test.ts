@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 import { deleteCurrentDeviceShare, signInWithFacebook } from "../../utils";
+import { useAutoCancelShareTransfer } from "../../utils/index";
 
 test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
   test.setTimeout(process.env.CI ? 15 * 60 * 1000 : 0);
@@ -20,7 +21,7 @@ test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
     user.backupPhrase.trim()
   );
   await page.click('button:has-text("Confirm")');
-
+  useAutoCancelShareTransfer(page);
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     timeout: 10 * 60 * 1000,
   });
