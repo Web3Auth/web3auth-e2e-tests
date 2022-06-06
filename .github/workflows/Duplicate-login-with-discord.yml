@@ -78,6 +78,8 @@ jobs:
 
       - id: run-tests
         name: Run tests
+        env:
+          TEST_RUN_ID: ${{ matrix.os }}.${{ matrix.browser }}.${{ github.run_id }}.${{ github.run_attempt }}
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config ${{ env.LOCAL_PATH }}/index.config.ts --project ${{ matrix.browser }}
 
