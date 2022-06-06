@@ -12,11 +12,9 @@ async function setup2FA(page: Page, flow: string) {
     ]);
     await page.click(".v-input--selection-controls__ripple");
     await page.click('button:has-text("Save current device")');
-    // await page.click('button:has-text("View advanced option")');
     await page.click("text=View advanced option");
     const [download] = await Promise.all([
       page.waitForEvent("download", { timeout: 5 * 1000 }),
-      // page.click('button:has-text("Download my recovery phrase")'),
       page.click("text=Download my recovery phrase", { timeout: 5 * 1000 }),
     ]);
     const downloadedFile = await download.path();
