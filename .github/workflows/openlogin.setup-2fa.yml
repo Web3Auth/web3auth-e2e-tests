@@ -14,7 +14,6 @@ jobs:
   run-tests:
     name: Run OpenLogin - Setup 2FA tests
     strategy:
-      max-parallel: 2
       matrix:
         env: [prod]
         browser: [firefox, chromium]
@@ -77,6 +76,8 @@ jobs:
 
       - id: run-tests
         name: Run tests
+        env:
+          TEST_RUN_ID: ${{ matrix.os }}.${{ matrix.browser }}.${{ github.run_id }}.${{ github.run_attempt }}
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config ${{ env.LOCAL_PATH }}/index.config.ts --project ${{ matrix.browser }}
 
