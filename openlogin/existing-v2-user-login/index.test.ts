@@ -28,12 +28,21 @@ test("existing v2 user can log in correctly", async ({
       resend: () => page.click("text=Resend"),
     }))
   );
+  // try {
+  //   await Promise.all([
+  //     page.waitForNavigation(/*{ url: 'https://app.openlogin.com/wallet/home' }*/),
+  //     page
+  //       .locator('button:has-text("Maybe next time")')
+  //       .click(),
+  //   ]);
+  // } catch {}
 
   try {
     await page.waitForSelector("text=Enable 2 Factor Authentication (2FA)", {
       timeout: 10000,
     });
-    await page.click('button:has-text("Maybe next time")');
+    // await page.click('button:has-text("Maybe next time")');
+    await page.click("text=Maybe next time");
   } catch {}
 
   useAutoCancelShareTransfer(page);
