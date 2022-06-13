@@ -2,7 +2,7 @@ name: OpenLogin - Setup 2FA
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 env:
