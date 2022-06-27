@@ -28,6 +28,13 @@ jobs:
           - os: macos-latest
             browser: webkit
             env: prod
+        exclude:
+          - os: windows-latest
+            browser: chromium
+            env: prod
+          - os: ubuntu-latest
+            browser: chromium
+            env: prod
 
     runs-on: ${{ matrix.os }}
     env:
