@@ -1,4 +1,4 @@
-name: OpenLogin - Google Login
+name: Duplicate - OpenLogin - Google Login
 
 on:
   push
@@ -12,7 +12,7 @@ env:
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Google Login tests
+    name: Duplicate - Run OpenLogin - Google Login tests
     strategy:
       matrix:
         env: [prod]
