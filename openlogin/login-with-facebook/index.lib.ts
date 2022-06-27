@@ -11,8 +11,11 @@ export interface TestArgs {
 
 export const test = playwright.test.extend<TestArgs>({
   openloginURL: env_map[process.env.PLATFORM],
-  user: [{
-    email: "hello@tor.us",
-    name: "Torus Labs",
-  }, { option: true }],
+  user: [
+    {
+      email: "hello@tor.us",
+      name: "Torus Labs",
+    },
+    { option: true },
+  ],
 });
