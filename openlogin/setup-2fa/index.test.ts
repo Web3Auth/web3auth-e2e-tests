@@ -12,7 +12,6 @@ async function setup2FA(page: Page, flow: string) {
       page.click('button:has-text("Enable 2FA")'),
     ]);}
     else{
-      console.log("inside login flow, clicking on start")
       try {
         await page.waitForSelector("text=Enable 2 Factor Authentication (2FA)", {
           timeout: 10000,
@@ -89,25 +88,6 @@ test.describe("Setup 2FA", () => {
     const context = await browser.newContext({ acceptDownloads: true, 
       storageState: `${__dirname}/${browserName}.json` });
     const page = await context.newPage();
-    // await page.goto(openloginURL);
-    // await page.click('button:has-text("Get Started")');
-    // // Login with Passwordless
-    // const timestamp = Math.floor(Date.now() / 1000);
-    // await page.fill('[placeholder="Email"]', user.email);
-    // await page.click('button:has-text("Continue with Email")');
-    // await page.waitForSelector("text=email has been sent");
-    // expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
-    // // Confirm email
-    // const emailContext = await browser.newContext({storageState: `${__dirname}/${browserName}.json`});
-    // test.fixme(
-    //   !(await confirmEmail({
-    //     context: emailContext,
-    //     timestamp,
-    //     to: user.email,
-    //     resend: () => page.click("text=Resend"),
-    //   }))
-    // );
-    // useAutoCancelShareTransfer(page);
     await emailLogin(browser, browserName, openloginURL, user.emailSettings, page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       timeout: 2 * 60 * 1000,
@@ -128,8 +108,6 @@ test.describe("Setup 2FA", () => {
 
     // Logout
     await closeSession(page, openloginURL);
-    // await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
-    // expect(page.url()).toBe(`${openloginURL}/`);
   });
   test("Setup 2FA Login", async ({ browser, openloginURL, user, browserName }) => {
     // login 3 times to detect login flow to setup 2fa
@@ -149,19 +127,14 @@ test.describe("Setup 2FA", () => {
     await emailLogin(browser, browserName, openloginURL, user.emailLogin, page);
     expect(await setup2FA(page, "login")).toBeTruthy();
     // Should be signed in in <2 minutes
-    console.log("2fa setup done!!")
-    console.log("going to home page")
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       timeout: 2 * 60 * 1000,
     });
-    console.log("Going to account page")
     // Go to Account page
     await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
     expect(await page.isVisible(`text=${user.emailLogin}`)).toBeTruthy();
-    console.log("user email found..")
     // Logout
     await closeSession(page, openloginURL);
-    console.log("Logged out!")
   });
 });
 
@@ -170,5 +143,4 @@ test.afterEach(async ({ page, browserName }) => {
   await page
     .context()
     .storageState({ path: `${__dirname}/${browserName}.json` });
-  console.log("backup done!!")  
 });
