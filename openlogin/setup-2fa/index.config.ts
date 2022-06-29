@@ -11,15 +11,21 @@ const projects: Array<
 > = [
   {
     browserName: "chromium",
-    user: { email: `testuser${process.env.TEST_RUN_ID}@openlogin.com` },
+    user: { emailSettings: `testuser${process.env.TEST_RUN_ID}@openlogin.com`,
+    emailLogin: `testuser${process.env.TEST_RUN_ID.split("").reverse().join("")}@openlogin.com`
+   },
   },
   {
     browserName: "firefox",
-    user: { email: `testuser${process.env.TEST_RUN_ID}@openlogin.com` },
+    user: { emailSettings: `testuser${process.env.TEST_RUN_ID}@openlogin.com`,
+    emailLogin: `testuser${process.env.TEST_RUN_ID.split("").reverse().join("")}@openlogin.com`
+   },
   },
   {
     browserName: "webkit",
-    user: { email: `testuser${process.env.TEST_RUN_ID}@openlogin.com` },
+    user: { emailSettings: `testuser${process.env.TEST_RUN_ID}@openlogin.com`,
+    emailLogin: `testuser${process.env.TEST_RUN_ID.split("").reverse().join("")}@openlogin.com`
+   },
   },
 ];
 
