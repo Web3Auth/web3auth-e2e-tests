@@ -6,23 +6,28 @@ import * as fs from "fs";
 
 async function setup2FA(page: Page, flow: string) {
   try {
-    if (flow === "settings"){
-    await Promise.all([
-      page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
-      page.click('button:has-text("Enable 2FA")'),
-    ]);}
-    else{
+    if (flow === "settings") {
+      await Promise.all([
+        page.waitForNavigation(/*{ url: 'https://app.openlogin.com/register#upgrading=true' }*/),
+        page.click('button:has-text("Enable 2FA")'),
+      ]);
+    } else {
       try {
-        await page.waitForSelector("text=Enable 2 Factor Authentication (2FA)", {
-          timeout: 10000,
-        });
+        await page.waitForSelector(
+          "text=Enable 2 Factor Authentication (2FA)",
+          {
+            timeout: 10000,
+          }
+        );
         await page.click('button:has-text("Set up 2FA")');
-      } catch {return false}
+      } catch {
+        return false;
+      }
     }
     await page.click(".v-input--selection-controls__ripple");
-    if (flow == "settings")
-    {await page.click('button:has-text("Save current device")');}
-    else{
+    if (flow == "settings") {
+      await page.click('button:has-text("Save current device")');
+    } else {
       await page.locator('button:has-text("Continue")').first().click();
     }
     await page.click("text=View advanced option");
@@ -32,9 +37,9 @@ async function setup2FA(page: Page, flow: string) {
     ]);
     const downloadedFile = await download.path();
     const backupPhrase = fs.readFileSync(downloadedFile, "utf8");
-    if (flow === "settings"){
-    await page.click('button:has-text("Continue")');}
-    else{
+    if (flow === "settings") {
+      await page.click('button:has-text("Continue")');
+    } else {
       await page.locator('button:has-text("Continue")').nth(1).click();
     }
     await page.fill("textarea", backupPhrase);
@@ -51,11 +56,12 @@ async function setup2FA(page: Page, flow: string) {
 }
 
 async function emailLogin(
-  browser: Browser, 
-  browserName: string, 
-  openloginURL: string, 
+  browser: Browser,
+  browserName: string,
+  openloginURL: string,
   email: string,
-  page: Page){
+  page: Page
+) {
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   // Login with Passwordless
@@ -65,7 +71,9 @@ async function emailLogin(
   await page.waitForSelector("text=email has been sent");
   expect(await page.isVisible(`text=${email}`)).toBeTruthy();
   // Confirm email
-  const emailContext = await browser.newContext({storageState: `${__dirname}/${browserName}.json`});
+  const emailContext = await browser.newContext({
+    storageState: `${__dirname}/${browserName}.json`,
+  });
   test.fixme(
     !(await confirmEmail({
       context: emailContext,
@@ -77,18 +85,31 @@ async function emailLogin(
   useAutoCancelShareTransfer(page);
 }
 
-async function closeSession(page: Page, openloginURL: string){
+async function closeSession(page: Page, openloginURL: string) {
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
   expect(page.url()).toBe(`${openloginURL}/`);
 }
 
 test.describe("Setup 2FA", () => {
-  test("Setup 2FA Settings", async ({ browser, openloginURL, user, browserName }) => {
-    const context = await browser.newContext({ acceptDownloads: true, 
-      storageState: `${__dirname}/${browserName}.json` });
+  test("Setup 2FA Settings", async ({
+    browser,
+    openloginURL,
+    user,
+    browserName,
+  }) => {
+    const context = await browser.newContext({
+      acceptDownloads: true,
+      storageState: `${__dirname}/${browserName}.json`,
+    });
     const page = await context.newPage();
-    await emailLogin(browser, browserName, openloginURL, user.emailSettings, page);
+    await emailLogin(
+      browser,
+      browserName,
+      openloginURL,
+      user.emailSettings,
+      page
+    );
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       timeout: 2 * 60 * 1000,
     });
@@ -109,10 +130,17 @@ test.describe("Setup 2FA", () => {
     // Logout
     await closeSession(page, openloginURL);
   });
-  test("Setup 2FA Login", async ({ browser, openloginURL, user, browserName }) => {
+  test("Setup 2FA Login", async ({
+    browser,
+    openloginURL,
+    user,
+    browserName,
+  }) => {
     // login 3 times to detect login flow to setup 2fa
-    const context = await browser.newContext({ acceptDownloads: true, 
-      storageState: `${__dirname}/${browserName}.json` });
+    const context = await browser.newContext({
+      acceptDownloads: true,
+      storageState: `${__dirname}/${browserName}.json`,
+    });
     const page = await context.newPage();
     await emailLogin(browser, browserName, openloginURL, user.emailLogin, page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
