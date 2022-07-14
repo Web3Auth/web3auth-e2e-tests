@@ -93,6 +93,7 @@ jobs:
           else
               echo "Test Passed, no alert!"
           fi
+        shell: bash
         continue-on-error: true
 
       - id: upload-state
