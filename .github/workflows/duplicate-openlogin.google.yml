@@ -8,11 +8,11 @@ on:
 
 env:
   NODE_VERSION: 16
-  LOCAL_PATH: Duplicate - openlogin/existing-v2-user-login
+  LOCAL_PATH: openlogin/existing-v2-user-login
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Existing V2 User Login tests
+    name: Duplicate - Run OpenLogin - Existing V2 User Login tests
     strategy:
       matrix:
         env: [prod]
