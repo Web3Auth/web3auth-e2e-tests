@@ -11,9 +11,9 @@ export interface TestArgs {
 
 export const test = playwright.test.extend<TestArgs>({
   openloginURL: "https://app.openlogin.com",
-  user: {
+  user: [{
     email: "hello@tor.us",
     name: "Torus Labs",
     backupPhrase: ""
-  },
+  }, { option: true }],
 });
