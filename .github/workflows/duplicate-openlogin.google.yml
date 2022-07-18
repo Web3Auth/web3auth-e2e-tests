@@ -42,8 +42,8 @@ jobs:
       - id: yarn-install
         name: Install Node.js dependencies
         if: steps.setup-node.outcome == 'success'
-        # run: exit 1
-        run: yarn install --frozen-lockfile
+        run: exit 1
+        # run: yarn install --frozen-lockfile
         continue-on-error: true
         
 
@@ -72,8 +72,8 @@ jobs:
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        # run: yarn run playwright test --config openlogin/login-with-facebook/index.config.ts --project ${{ matrix.browser }}
-        run: exit 1
+        run: yarn run playwright test --config openlogin/login-with-facebook/index.config.ts --project ${{ matrix.browser }}
+        # run: exit 1
 
       - id: telegram-alert
         name: Alert to telegram channel
