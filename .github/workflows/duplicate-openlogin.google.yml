@@ -72,19 +72,21 @@ jobs:
         if: steps.download-state.outcome == 'success'
         run: yarn run playwright test --config openlogin/login-with-facebook/index.config.ts --project ${{ matrix.browser }}
 
-      # - id: telegram-alert
-      #   name: Alert to telegram channel
-      #   if: always()
-      #   run: |
-      #     if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
-      #     then
-      #         echo "Test Failed, sending telegram alert"
-      #         curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithFacebook%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
-      #     else
-      #         echo "Test Passed, no alert!"
-      #     fi
-      #   shell: bash
-      #   continue-on-error: true
+      - id: telegram-alert
+        name: Alert to telegram channel
+        needs: run-tests
+        if: always()
+        run: |
+          echo ${{ steps.run-tests.outcome }}
+          echo ${{ needs.run-tests.result }}
+          if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+          then
+              echo "Test Failed, sending telegram alert"
+          else
+              echo "Test Passed, no alert!"
+          fi
+        shell: bash
+        continue-on-error: true
 
       - name: Upload test results
         if: always()
@@ -93,6 +95,7 @@ jobs:
           name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           if-no-files-found: ignore
+  # curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithFacebook%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
 
   # update-status:
   #   name: Update OpenLogin - Facebook Login status
