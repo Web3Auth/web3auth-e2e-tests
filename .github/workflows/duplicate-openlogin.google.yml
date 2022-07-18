@@ -85,7 +85,13 @@ jobs:
           if [[ ${{ steps.run-tests.outcome }} == 'failure' ]]
           then
               echo "attempt: ${{github.run_attempt}}"
-              echo "Test Failed, sending telegram alert"
+              if [[ ${{github.run_attempt}} < 2 ]]
+              then
+                  echo "attempt < 2, re-running job"
+                  curl -X POST "https://api.github.com/repos/OWNER/REPO/actions/runs/${{github.run_id}}/rerun"
+              else:
+                  echo "attempt >= 2, and failed sending telegram alert"
+              fi
           else
               echo "Test Passed, no alert!"
           fi
@@ -99,7 +105,7 @@ jobs:
           name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           if-no-files-found: ignore
-          
+
   # response=curl "https://api.github.com/repos/torusresearch/torus-e2e-tests/actions/runs/${{github.run_id}}"
   # curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=LoginWithFacebook%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
 
