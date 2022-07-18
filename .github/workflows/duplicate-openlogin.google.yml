@@ -74,11 +74,11 @@ jobs:
 
       - id: telegram-alert
         name: Alert to telegram channel
-        needs: run-tests
+        # needs: run-tests
         if: always()
         run: |
           echo ${{ steps.run-tests.outcome }}
-          echo ${{ needs.run-tests.result }}
+          echo ${{ steps.run-tests.result }}
           if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
           then
               echo "Test Failed, sending telegram alert"
