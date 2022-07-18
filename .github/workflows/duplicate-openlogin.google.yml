@@ -85,7 +85,7 @@ jobs:
           if [[ ${{ steps.run-tests.outcome }} == 'failure' ]]
           then
               response=$(curl "https://api.github.com/repos/torusresearch/torus-e2e-tests/actions/runs/${{github.run_id}}")
-              echo $(response['conclusion'])
+              echo $response['conclusion']
               echo "Test Failed, sending telegram alert"
           else
               echo "Test Passed, no alert!"
