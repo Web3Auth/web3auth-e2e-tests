@@ -74,7 +74,7 @@ jobs:
         if: steps.download-state.outcome == 'success'
         # run: yarn run playwright test --config openlogin/login-with-facebook/index.config.ts --project ${{ matrix.browser }}
         run: exit 1
-        
+
       - id: telegram-alert
         name: Alert to telegram channel
         # needs: run-tests
@@ -82,7 +82,7 @@ jobs:
         run: |
           echo ${{ steps.run-tests.outcome }}
           echo ${{ steps.run-tests.result }}
-          if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+          if [[ ${{ steps.run-tests.outcome }} == 'failure' ]]
           then
               echo "Test Failed, sending telegram alert"
           else
