@@ -72,8 +72,8 @@ jobs:
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config openlogin/login-with-facebook/index.config.ts --project ${{ matrix.browser }}
-        # run: exit 1
+        # run: yarn run playwright test --config openlogin/login-with-facebook/index.config.ts --project ${{ matrix.browser }}
+        run: exit 1
 
       - id: telegram-alert
         name: Alert to telegram channel
@@ -84,6 +84,8 @@ jobs:
           echo ${{ steps.run-tests.result }}
           if [[ ${{ steps.run-tests.outcome }} == 'failure' ]]
           then
+              RESPONSE =$(curl "https://api.github.com/repos/torusresearch/torus-e2e-tests/actions/runs/${{github.run_id}}")
+              echo $RESPONSE
               echo "Test Failed, sending telegram alert"
           else
               echo "Test Passed, no alert!"
