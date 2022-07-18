@@ -88,7 +88,7 @@ jobs:
               if [[ ${{github.run_attempt}} < 2 ]]
               then
                   echo "attempt < 2, re-running job"
-                  curl -X POST "https://api.github.com/repos/OWNER/REPO/actions/runs/${{github.run_id}}/rerun"
+                  curl -X POST "https://api.github.com/repos/torusresearch/torus-e2e-tests/actions/runs/${{github.run_id}}/rerun"
               else:
                   echo "attempt >= 2, and failed sending telegram alert"
               fi
