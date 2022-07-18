@@ -42,8 +42,8 @@ jobs:
       - id: yarn-install
         name: Install Node.js dependencies
         if: steps.setup-node.outcome == 'success'
-        run: exit 1
-        # run: yarn install --frozen-lockfile
+        # run: exit 1
+        run: yarn install --frozen-lockfile
         continue-on-error: true
         
 
