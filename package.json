@@ -9,7 +9,7 @@
   "dependencies": {
     "@playwright/test": "^1.22.1",
     "playwright": "^1.22.1",
-    "serve-handler": "^6.1.3"
+    "serve-handler": "^6.1.5"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
