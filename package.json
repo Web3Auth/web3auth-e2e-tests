@@ -7,7 +7,7 @@
     "trace": "playwright show-trace"
   },
   "dependencies": {
-    "@playwright/test": "^1.22.1",
+    "@playwright/test": "^1.28.0",
     "playwright": "^1.22.1",
     "serve-handler": "^6.1.3"
   },
