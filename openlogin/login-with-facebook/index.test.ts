@@ -3,7 +3,7 @@ import { test } from "./index.lib";
 import { signInWithFacebook, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test.only("Login with Facebook+Device", async ({ page, openloginURL, FB }) => {
+test("Login with Facebook+Device", async ({ page, openloginURL, FB }) => {
   page.setDefaultTimeout(8 * 60 * 1000);
   page.setDefaultNavigationTimeout(8 * 60 * 1000);
 

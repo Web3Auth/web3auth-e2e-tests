@@ -5,6 +5,7 @@
 logs
 *.log
 .env.*
+.env
 
 # Node.js
 node_modules
