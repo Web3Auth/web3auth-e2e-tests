@@ -3,9 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test:browser": "PLATFORM=prod playwright test --headed",
-    "test": "PLATFORM=prod playwright test",
-    "test:beta": "PLATFORM=beta playwright test",
+    "test:browser": "playwright test --headed",
+    "test": "playwright test",
     "trace": "playwright show-trace"
   },
   "dependencies": {
