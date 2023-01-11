@@ -25,6 +25,26 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   };
 }
 
+function useAutoCancel2FASetup(page: Page): () => Promise<void> {
+  let stopped = false;
+  const promise = new Promise<void>(async (resolve) => {
+    while (!stopped) {
+      try {
+        if (await page.isVisible("text=secure your account"))
+          await page.click('button:has-text("Maybe next time")', {
+            force: true,
+          });
+      } catch {}
+    }
+    resolve();
+  });
+
+  return async () => {
+    stopped = true;
+    await promise;
+  };
+}
+
 async function signInWithGoogle({
   page,
   browserName,
@@ -147,6 +167,7 @@ async function deleteCurrentDeviceShare(page: Page) {
 
 export {
   useAutoCancelShareTransfer,
+  useAutoCancel2FASetup,
   signInWithGoogle,
   signInWithFacebook,
   signInWithDiscord,

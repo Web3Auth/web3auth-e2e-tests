@@ -14,6 +14,7 @@ test("existing v2 user can log in correctly", async ({
 
   // Login with Passwordless
   const timestamp = Math.floor(Date.now() / 1000);
+
   await page.fill('[placeholder="Email"]', user.email);
   await page.click('button:has-text("Continue with Email")');
   await page.waitForSelector("text=email has been sent");

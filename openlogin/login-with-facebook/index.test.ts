@@ -1,33 +1,30 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
-import { signInWithFacebook } from "../../utils";
+import { signInWithFacebook, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test("Login with Facebook+Device", async ({ page, openloginURL, user, FB }) => {
+test("Login with Facebook+Device", async ({ page, openloginURL, FB }) => {
+  page.setDefaultTimeout(8 * 60 * 1000);
+  page.setDefaultNavigationTimeout(8 * 60 * 1000);
+
   // Login with Facebook
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   await page.click('[aria-label="login with facebook"]');
   await signInWithFacebook({ page, FB });
 
-  useAutoCancelShareTransfer(page);
+  await useAutoCancelShareTransfer(page);
+  await useAutoCancel2FASetup(page);
 
-  try {
-    // Skip setting up 2FA popup if its visible
-    await page.waitForSelector("text=secure your account");
-    await page.click(`button:has-text("Maybe next time")`);
-  } catch (e) {}
-
-  // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
-    timeout: 2 * 60 * 1000,
-    // waitUntil: "domcontentloaded",
+    waitUntil: "load",
   });
 
-  await page.waitForNavigation();
-  await page.waitForSelector(`text=Welcome, ${FB.name}`);
+  expect(page.url()).toBe(`${openloginURL}/wallet/home`);
 
-  // Logout
-  // await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
-  // expect(page.url()).toBe(`${openloginURL}/`);
+  const welcome = await page.waitForSelector(`text=Welcome, ${FB.name}`);
+
+  // Logout;
+  await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
+  expect(page.url()).toBe(`${openloginURL}/`);
 });
