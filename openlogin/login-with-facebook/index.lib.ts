@@ -7,6 +7,11 @@ export interface TestArgs {
     email: string;
     name: string;
   };
+  FB: {
+    password: string;
+    email: string;
+    name: string;
+  };
 }
 
 export const test = playwright.test.extend<TestArgs>({
@@ -18,4 +23,9 @@ export const test = playwright.test.extend<TestArgs>({
     },
     { option: true },
   ],
+  FB: {
+    name: "",
+    email: "",
+    password: "",
+  },
 });

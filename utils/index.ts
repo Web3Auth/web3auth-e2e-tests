@@ -58,17 +58,30 @@ async function signInWithGoogle({
 
 async function signInWithFacebook({
   page,
-  name,
+  FB,
 }: {
   page: Page;
-  name: string;
+  FB: {
+    email: string;
+    password: string;
+    name: string;
+  };
 }): Promise<boolean> {
   try {
     await page.waitForURL("https://www.facebook.com/**");
     await Promise.all([
-      page.waitForNavigation(),
+      // await page.waitForNavigation({
+      //   waitUntil: "load",
+      // }),
+      await page.isVisible("text=Log in"),
+      await page.fill(
+        '[placeholder="Email address or phone number"]',
+        FB.email
+      ),
+      await page.fill('[placeholder="Password"]', FB.password),
+      await page.click(`button:has-text("Login"), [name="login"]`),
       page.click(
-        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${name}"]`
+        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.name}"]`
       ),
     ]);
     return true;
