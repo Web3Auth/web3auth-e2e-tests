@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@playwright/test": "^1.22.1",
+    "dotenv": "^16.0.3",
     "playwright": "^1.22.1",
     "serve-handler": "^6.1.3"
   },

@@ -85,6 +85,7 @@ async function signInWithFacebook({
     email: string;
     password: string;
     name: string;
+    firstName: string;
   };
 }): Promise<boolean> {
   try {
@@ -101,7 +102,7 @@ async function signInWithFacebook({
       await page.fill('[placeholder="Password"]', FB.password),
       await page.click(`button:has-text("Login"), [name="login"]`),
       page.click(
-        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.name}"]`
+        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
       ),
     ]);
     return true;
