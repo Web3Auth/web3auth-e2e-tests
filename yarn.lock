@@ -616,6 +616,13 @@
   "resolved" "https://registry.npmjs.org/lru_map/-/lru_map-0.3.3.tgz"
   "version" "0.3.3"
 
+"mailosaur@^8.5.0":
+  "integrity" "sha512-exO+Yssl8IduNqN32tUwIG7FYMJLg/Uu1nqaVld/5xVYqx97c82SGQgs+qqdOwhoUSOpdWcR/A7avhL+/U2Qhw=="
+  "resolved" "https://registry.npmjs.org/mailosaur/-/mailosaur-8.5.0.tgz"
+  "version" "8.5.0"
+  dependencies:
+    "https-proxy-agent" "^5.0.0"
+
 "make-dir@^3.0.0":
   "integrity" "sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw=="
   "resolved" "https://registry.npmjs.org/make-dir/-/make-dir-3.1.0.tgz"
