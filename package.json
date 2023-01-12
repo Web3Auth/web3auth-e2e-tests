@@ -3,14 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test:browser": "PLATFORM=prod playwright test --headed",
-    "test": "PLATFORM=prod playwright test",
-    "test:beta": "PLATFORM=beta playwright test",
+    "test:browser": "playwright test --headed",
+    "test": "playwright test",
     "trace": "playwright show-trace"
   },
   "dependencies": {
     "@playwright/test": "^1.22.1",
     "dotenv": "^16.0.3",
+    "mailosaur": "^8.5.0",
     "playwright": "^1.22.1",
     "serve-handler": "^6.1.3"
   },
