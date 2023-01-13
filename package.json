@@ -10,6 +10,7 @@
   "dependencies": {
     "@playwright/test": "^1.22.1",
     "dotenv": "^16.0.3",
+    "generate-password": "^1.7.0",
     "mailosaur": "^8.5.0",
     "playwright": "^1.22.1",
     "serve-handler": "^6.1.3"

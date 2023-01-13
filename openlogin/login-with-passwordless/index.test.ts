@@ -14,7 +14,7 @@ function findLink(links: Link[], text: string) {
   return null;
 }
 
-test.only("Login with Passwordless+Device", async ({
+test("Login with Passwordless+Device", async ({
   context,
   browser,
   page,
@@ -64,8 +64,6 @@ test.only("Login with Passwordless+Device", async ({
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     waitUntil: "networkidle",
   });
-
-  expect(page.url()).toBe(`${openloginURL}/wallet/home`);
 
   const welcome = await page.waitForSelector(`text=Welcome`);
 

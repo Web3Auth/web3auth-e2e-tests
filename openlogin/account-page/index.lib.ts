@@ -15,6 +15,10 @@ export interface TestArgs {
     name: string;
     firstName: string;
   };
+  googleCred: {
+    email: string;
+    password: string;
+  };
 }
 
 export const test = playwright.test.extend<TestArgs>({
@@ -31,5 +35,9 @@ export const test = playwright.test.extend<TestArgs>({
     email: process.env.FB_TEST_USER_EMAIL || "",
     password: process.env.FB_TEST_USER_PASS || "",
     firstName: (process.env.FB_TEST_USER_NAME || "").split(" ")[0],
+  },
+  googleCred: {
+    email: process.env.GOOGLE_TEST_USER_EMAIL || "",
+    password: process.env.GOOGLE_TEST_PASSWORD || "",
   },
 });
