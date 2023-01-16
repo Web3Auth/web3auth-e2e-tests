@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@playwright/test": "^1.22.1",
+    "bip39": "^3.0.4",
     "dotenv": "^16.0.3",
     "generate-password": "^1.7.0",
     "mailosaur": "^8.5.0",
