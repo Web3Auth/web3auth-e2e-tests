@@ -47,7 +47,7 @@ End-to-end testing of [Torus] products.
 Add a new file `<name>.test.ts` to the test suite's directory:
 
 ```ts
-test("focus this test", async ({ page }) => {
+test.only("focus this test", async ({ page }) => {
   // Run only this test during development
 });
 ```
