@@ -14,7 +14,7 @@ function findLink(links: Link[], text: string) {
   return null;
 }
 
-test("Login with Passwordless+Device", async ({
+test("Login with passwordless", async ({
   context,
   browser,
   page,
