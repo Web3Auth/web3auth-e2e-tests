@@ -27,17 +27,16 @@ test("Login with Passwordless+Device", async ({
   // Verify environment variables
   expect(
     !!process.env.MAILOSAUR_SERVER_ID &&
-      !!process.env.MAILOSAUR_API_KEY &&
-      !!process.env.MAILOSAUR_SERVER_DOMAIN
+    !!process.env.MAILOSAUR_API_KEY &&
+    !!process.env.MAILOSAUR_SERVER_DOMAIN
   ).toBe(true);
 
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
 
   // Login with Passwordless
-  const testEmail = `hello+${Date.now()}@${
-    process.env.MAILOSAUR_SERVER_DOMAIN
-  }`;
+  const testEmail = `hello+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN
+    }`;
   await page.fill('[placeholder="Email"]', testEmail);
   await page.click('button:has-text("Continue with Email")');
   await page.waitForSelector("text=email has been sent");

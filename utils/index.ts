@@ -1,10 +1,10 @@
 import { Page, PlaywrightWorkerOptions } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
 
-const env_map = {
-  prod: "https://app.openlogin.com",
-  beta: "https://beta.openlogin.com",
-  cyan: "https://cyan.openlogin.com",
+const env_map: { [key: string]: string } = {
+  "prod": "https://app.openlogin.com",
+  "beta": "https://beta.openlogin.com",
+  "cyan": "https://cyan.openlogin.com",
 };
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
@@ -14,7 +14,7 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
       try {
         if (await page.isVisible("text=New login detected"))
           await page.click('button:has-text("Cancel")', { force: true });
-      } catch {}
+      } catch { }
     }
     resolve();
   });
@@ -34,7 +34,7 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
           await page.click('button:has-text("Maybe next time")', {
             force: true,
           });
-      } catch {}
+      } catch { }
     }
     resolve();
   });
