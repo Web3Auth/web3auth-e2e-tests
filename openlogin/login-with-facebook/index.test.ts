@@ -22,7 +22,7 @@ test("Login with Facebook+Device", async ({ page, openloginURL, FB }) => {
 
   expect(page.url()).toBe(`${openloginURL}/wallet/home`);
 
-  const welcome = await page.waitForSelector(`text=Welcome, ${FB.name}`);
+  await page.waitForSelector(`text=Welcome, ${FB.name}`);
 
   // Logout;
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);

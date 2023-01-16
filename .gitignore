@@ -15,4 +15,4 @@ node_modules
 **/firefox.json
 **/webkit.json
 **/backup-phrase.txt
-test-results/
+test-results

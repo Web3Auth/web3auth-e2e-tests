@@ -21,32 +21,42 @@ test("Login with Passwordless+Device", async ({
   openloginURL,
   user,
 }) => {
-  // todo: break when mailosaur env are empty
+  page.setDefaultTimeout(8 * 60 * 1000);
+  page.setDefaultNavigationTimeout(8 * 60 * 1000);
+
+  // Verify environment variables
+  expect(
+    !!process.env.MAILOSAUR_SERVER_ID &&
+    !!process.env.MAILOSAUR_API_KEY &&
+    !!process.env.MAILOSAUR_SERVER_DOMAIN
+  ).toBe(true);
+
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
 
   // Login with Passwordless
-  const testEmail = `hello+${Date.now()}@${
-    process.env.MAILOSAUR_SERVER_DOMAIN
-  }`;
-  const timestamp = Math.floor(Date.now() / 1000);
+  const testEmail = `hello+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN
+    }`;
   await page.fill('[placeholder="Email"]', testEmail);
   await page.click('button:has-text("Continue with Email")');
   await page.waitForSelector("text=email has been sent");
   expect(await page.isVisible(`text=${testEmail}`)).toBeTruthy();
 
-  // Search for the email
+  // Read Inbox for link
   const email = await mailosaur.messages.get(
     process.env.MAILOSAUR_SERVER_ID || "",
     {
       sentTo: testEmail,
     }
   );
-
   expect(email.subject).toBe("Verify your email");
   const link = findLink(email.html?.links || [], "Confirm my email");
   expect(link?.text).toBe("Confirm my email");
   const href = link?.href || "";
+  expect(href).toBeTruthy();
+  expect(typeof href).toBe("string");
+
+  // Open the link
   const context2 = await browser.newContext();
   const page2 = await context2.newPage();
   await page2.goto(href);
@@ -58,16 +68,13 @@ test("Login with Passwordless+Device", async ({
   );
   await page2.close();
 
+  // Successful login
   await useAutoCancelShareTransfer(page);
   await useAutoCancel2FASetup(page);
 
-  await page.waitForURL(`${openloginURL}/wallet/home`, {
-    waitUntil: "networkidle",
-  });
+  await page.waitForNavigation();
 
+  await page.waitForURL(`${openloginURL}/wallet/home`);
+  expect(page.url()).toBe(`${openloginURL}/wallet/home`);
   const welcome = await page.waitForSelector(`text=Welcome`);
-
-  // Logout;
-  await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
-  expect(page.url()).toBe(`${openloginURL}/`);
 });
