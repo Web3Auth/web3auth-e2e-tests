@@ -1,7 +1,7 @@
 import { expect, Page, Browser } from "@playwright/test";
 import { test } from "./index.lib";
-import { confirmEmail } from "../../utils";
-import { useAutoCancelShareTransfer } from "../../utils/index";
+import { confirmEmail } from "../../../utils";
+import { useAutoCancelShareTransfer } from "../../../utils/index";
 import * as fs from "fs";
 
 async function setup2FA(page: Page, flow: string) {
