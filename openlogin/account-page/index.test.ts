@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
 import {
   signInWithFacebook,
@@ -15,9 +15,8 @@ const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
 const testEmail = `hello+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 
-const backupEmail = `hello+backup+${Date.now()}@${
-  process.env.MAILOSAUR_SERVER_DOMAIN
-}`;
+const backupEmail = `hello+backup+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN
+  }`;
 
 const randomPassword = generate({
   length: 15,
@@ -41,7 +40,7 @@ function findLink(links: Link[], text: string) {
   return null;
 }
 test.describe.serial.only("Account page test", () => {
-  let page;
+  let page: Page;
   test.beforeAll(async ({ browser, openloginURL, user }) => {
     const context = await browser.newContext();
     page = await context.newPage();
