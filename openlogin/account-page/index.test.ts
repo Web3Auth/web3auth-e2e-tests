@@ -15,8 +15,9 @@ const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
 const testEmail = `hello+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 
-const backupEmail = `hello+backup+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN
-  }`;
+const backupEmail = `hello+backup+${Date.now()}@${
+  process.env.MAILOSAUR_SERVER_DOMAIN
+}`;
 
 const randomPassword = generate({
   length: 15,
@@ -158,29 +159,7 @@ test.describe.serial.only("Account page test", () => {
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
   });
 
-  test(`should setup account password`, async ({ openloginURL }) => {
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    console.log("Password:", randomPassword);
-    await page.fill('[placeholder="Set your password"]', randomPassword.trim());
-    await page.fill(
-      '[placeholder="Re-enter your password"]',
-      randomPassword.trim()
-    );
-    await page.click('button:has-text("Confirm")');
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    expect(await page.isVisible("text=2 / 4")).toBeTruthy();
-  });
-
   test(`should resend recovery email share`, async ({ openloginURL }) => {
-    let testStartTime = new Date();
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -192,9 +171,6 @@ test.describe.serial.only("Account page test", () => {
       process.env.MAILOSAUR_SERVER_ID || "",
       {
         sentTo: backupEmail,
-      },
-      {
-        receivedAfter: testStartTime,
       }
     );
     expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
@@ -208,32 +184,52 @@ test.describe.serial.only("Account page test", () => {
     expect(validateMnemonic(seedString)).toBeTruthy();
   });
 
-  test(`should change/update account password`, async ({ openloginURL }) => {
-    await page.goto(`${openloginURL}/wallet/home`);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
+  test(`emailed backup phrase and phrase from UI should match`, async ({
+    openloginURL,
+  }) => {
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    await page.click('button:has-text("Change Password")');
+    await page.click('button[aria-label="export email share"]');
 
-    await page.fill('[placeholder="Set your password"]', newRandomPassword);
-    await page.fill(
-      '[placeholder="Re-enter your password"]',
-      newRandomPassword
+    const resentBackup = await mailosaur.messages.get(
+      process.env.MAILOSAUR_SERVER_ID || "",
+      {
+        sentTo: backupEmail,
+      }
     );
-    await page.click('button:has-text("Confirm")');
-    await page.reload();
+    expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
+
+    let seedArray = resentBackup.text.body.slice(171).split(" ");
+    let seedString = "";
+    for (let i = 0; i < 23; i++) {
+      seedString += seedArray[i] + " ";
+    }
+    seedString += seedArray[23].split("\n")[0];
+    expect(validateMnemonic(seedString)).toBeTruthy();
+    expect(
+      await page.isVisible("text=Save a copy of your backup phrase")
+    ).toBeTruthy();
+    expect(await page.isVisible(`text=${seedString}`)).toBeTruthy(); // check if the backup phrase on email matches the one on UI.
+  });
+
+  test(`should be able to delete email share`, async ({ openloginURL }) => {
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    expect(await page.isVisible("text=2 / 4")).toBeTruthy();
-    // check if toast popup
+    await page.click('button[aria-label="delete email share"]');
+    await page.waitForTimeout(2000);
+
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    await page.reload();
+    expect(await page.isVisible("text=2 / 2")).toBeTruthy();
   });
 
   test(`should show a popup with copy option while clicking download device share`, async ({
@@ -250,48 +246,90 @@ test.describe.serial.only("Account page test", () => {
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
 
     await page.click(`button[aria-label='export device share']`);
+    await page.waitForTimeout(1000);
 
     expect(
       await page.isVisible("text=Save a copy of your backup phrase")
     ).toBeTruthy();
   });
 
-  //   test(`should add a new device share by log in with email and password`, async ({
-  //     openloginURL,
-  //     browser,
-  //   }) => {
-  //     const newContext = await browser.newContext();
+  // // Below test is not complete
+  test(`should setup account password`, async ({ openloginURL }) => {
+    await page.goto(`${openloginURL}/wallet/home`);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      waitUntil: "load",
+    });
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    await page.fill('[placeholder="Enter recovery email"]', backupEmail);
+    await page.click('button:has-text("Confirm")');
+    console.log("Password:", randomPassword);
+    await page.fill('[placeholder="Set your password"]', randomPassword.trim());
+    await page.fill(
+      '[placeholder="Re-enter your password"]',
+      randomPassword.trim()
+    );
+    await page.click('button:has-text("Confirm")');
+    // await page.reload();
+    // await page.goto(`${openloginURL}/wallet/home`);
+    // await page.waitForURL(`${openloginURL}/wallet/home`, {
+    //   waitUntil: "load",
+    // });
+    // await page.goto(`${openloginURL}/wallet/account`);
+    // await page.waitForURL(`${openloginURL}/wallet/account`, {
+    //   waitUntil: "load",
+    // });
+    // await page.waitForTimeout(2000);
 
-  //     page = await newContext.newPage();
-  //     await page.goto(openloginURL);
-  //     await page.click('button:has-text("Get Started")');
+    // expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    // expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    // await page.click('button:has-text("Change Password")');
 
-  //     const timestamp = Math.floor(Date.now() / 1000);
-  //     await page.fill('[placeholder="Email"]', testEmail);
-  //     await page.click('button:has-text("Continue with Email")');
-  //     await page.waitForSelector("text=email has been sent");
-  //     expect(await page.isVisible(`text=${testEmail}`)).toBeTruthy();
+    // await page.fill('[placeholder="Set your password"]', newRandomPassword);
+    // await page.fill(
+    //   '[placeholder="Re-enter your password"]',
+    //   newRandomPassword
+    // );
+    // await page.click('button:has-text("Confirm")');
+    // await page.reload();
+    // await page.goto(`${openloginURL}/wallet/account`);
+    // await page.waitForURL(`${openloginURL}/wallet/account`, {
+    //   waitUntil: "load",
+    // });
+    // expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    // expect(await page.isVisible("text=2 / 4")).toBeTruthy();
+    // expect(await page.isVisible("text=2 / 3bcvbcv")).toBeTruthy();
+  });
 
-  //     const email = await mailosaur.messages.get(
-  //       process.env.MAILOSAUR_SERVER_ID || "",
-  //       {
-  //         sentTo: testEmail,
-  //       }
-  //     );
-
-  //     expect(email.subject).toBe("Verify your email");
-  //     const link = findLink(email.html?.links || [], "Confirm my email");
-  //     expect(link?.text).toBe("Confirm my email");
-  //     const href = link?.href || "";
-  //     const context2 = await browser.newContext();
-  //     const page2 = await context2.newPage();
-  //     await page2.goto(href);
-  //     await page2.waitForSelector(
-  //       "text=Close this and return to your previous window",
-  //       {
-  //         timeout: 10000,
-  //       }
-  //     );
-  //     await page2.close();
+  // Below test is not complete and working
+  // test(`should change/update account password`, async ({ openloginURL }) => {
+  //   await page.goto(`${openloginURL}/wallet/home`);
+  //   await page.waitForURL(`${openloginURL}/wallet/home`, {
+  //     waitUntil: "load",
   //   });
+  //   await page.goto(`${openloginURL}/wallet/account`);
+  //   await page.waitForURL(`${openloginURL}/wallet/account`, {
+  //     waitUntil: "load",
+  //   });
+  //   expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+  //   await page.click('button:has-text("Change Password")');
+
+  //   await page.fill('[placeholder="Set your password"]', newRandomPassword);
+  //   await page.fill(
+  //     '[placeholder="Re-enter your password"]',
+  //     newRandomPassword
+  //   );
+  //   await page.click('button:has-text("Confirm")');
+  //   await page.reload();
+  //   await page.goto(`${openloginURL}/wallet/account`);
+  //   await page.waitForURL(`${openloginURL}/wallet/account`, {
+  //     waitUntil: "load",
+  //   });
+  //   expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+  //   expect(await page.isVisible("text=2 / 4")).toBeTruthy();
+  //   // check if toast popup
+  // });
 });

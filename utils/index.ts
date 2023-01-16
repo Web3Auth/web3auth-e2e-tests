@@ -1,7 +1,7 @@
 import { Page, PlaywrightWorkerOptions } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
 
-const env_map = {
+const env_map: { [key: string]: string } = {
   prod: "https://app.openlogin.com",
   beta: "https://beta.openlogin.com",
   cyan: "https://cyan.openlogin.com",
@@ -14,6 +14,26 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
       try {
         if (await page.isVisible("text=New login detected"))
           await page.click('button:has-text("Cancel")', { force: true });
+      } catch {}
+    }
+    resolve();
+  });
+
+  return async () => {
+    stopped = true;
+    await promise;
+  };
+}
+
+function useAutoCancel2FASetup(page: Page): () => Promise<void> {
+  let stopped = false;
+  const promise = new Promise<void>(async (resolve) => {
+    while (!stopped) {
+      try {
+        if (await page.isVisible("text=secure your account"))
+          await page.click('button:has-text("Maybe next time")', {
+            force: true,
+          });
       } catch {}
     }
     resolve();
@@ -58,17 +78,31 @@ async function signInWithGoogle({
 
 async function signInWithFacebook({
   page,
-  name,
+  FB,
 }: {
   page: Page;
-  name: string;
+  FB: {
+    email: string;
+    password: string;
+    name: string;
+    firstName: string;
+  };
 }): Promise<boolean> {
   try {
     await page.waitForURL("https://www.facebook.com/**");
     await Promise.all([
-      page.waitForNavigation(),
+      // await page.waitForNavigation({
+      //   waitUntil: "load",
+      // }),
+      await page.isVisible("text=Log in"),
+      await page.fill(
+        '[placeholder="Email address or phone number"]',
+        FB.email
+      ),
+      await page.fill('[placeholder="Password"]', FB.password),
+      await page.click(`button:has-text("Login"), [name="login"]`),
       page.click(
-        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${name}"]`
+        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
       ),
     ]);
     return true;
@@ -134,6 +168,7 @@ async function deleteCurrentDeviceShare(page: Page) {
 
 export {
   useAutoCancelShareTransfer,
+  useAutoCancel2FASetup,
   signInWithGoogle,
   signInWithFacebook,
   signInWithDiscord,
