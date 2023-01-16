@@ -10,7 +10,7 @@ export interface TestArgs {
 }
 
 export const test = playwright.test.extend<TestArgs>({
-  openloginURL: "https://cyan.openlogin.com",
+  openloginURL: "https://app.openlogin.com",
   user: [
     {
       email: "hello@tor.us",

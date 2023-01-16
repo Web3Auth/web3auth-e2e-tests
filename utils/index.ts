@@ -1,10 +1,10 @@
 import { Page, PlaywrightWorkerOptions } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
 
-const env_map: { [key: string]: string } = {
-  "prod": "https://app.openlogin.com",
-  "beta": "https://beta.openlogin.com",
-  "cyan": "https://cyan.openlogin.com",
+const env_map = {
+  prod: "https://app.openlogin.com",
+  beta: "https://beta.openlogin.com",
+  cyan: "https://cyan.openlogin.com",
 };
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
@@ -14,27 +14,7 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
       try {
         if (await page.isVisible("text=New login detected"))
           await page.click('button:has-text("Cancel")', { force: true });
-      } catch { }
-    }
-    resolve();
-  });
-
-  return async () => {
-    stopped = true;
-    await promise;
-  };
-}
-
-function useAutoCancel2FASetup(page: Page): () => Promise<void> {
-  let stopped = false;
-  const promise = new Promise<void>(async (resolve) => {
-    while (!stopped) {
-      try {
-        if (await page.isVisible("text=secure your account"))
-          await page.click('button:has-text("Maybe next time")', {
-            force: true,
-          });
-      } catch { }
+      } catch {}
     }
     resolve();
   });
@@ -48,51 +28,28 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
 async function signInWithGoogle({
   page,
   browserName,
-  credentials,
+  email,
 }: {
   page: Page;
   browserName: PlaywrightWorkerOptions["browserName"];
-  credentials: {
-    email: string;
-    password: string;
-    passwordShare: string;
-  };
+  email: string;
 }): Promise<boolean> {
-  // try {
-  //   await page.waitForURL("https://accounts.google.com/**");
-  //   await page.click(`text=${credentials.email}`);
-  //   if (browserName === "chromium") {
-  //     // On Chromium, Google sometimes re-ask for user's consent
-  //     if (
-  //       page
-  //         .url()
-  //         .startsWith("https://accounts.google.com/signin/oauth/legacy/consent")
-  //     )
-  //       await page.click('button:has-text("Allow")');
-  //   }
-  //   if (browserName === "webkit")
-  //     // Workaround wait for URL issue on Safari
-  //     while (page.url().startsWith("https://accounts.google.com"))
-  //       await page.waitForTimeout(100);
-  //   return true;
-  // } catch {
-  //   return false;
-  // }
   try {
     await page.waitForURL("https://accounts.google.com/**");
-    await Promise.all([
-      // await page.waitForNavigation({
-      //   waitUntil: "load",
-      // }),
-      await page.isVisible("text=Sign in"),
-      await page.fill('[placeholder="Email or phone"]', credentials.email),
-      await page.click(`button:has-text("Next"), [name="next"]`),
-      await page.fill(
-        '[placeholder="Enter your password"]',
-        credentials.password
-      ),
-      await page.click(`button:has-text("Next"), [name="next"]`),
-    ]);
+    await page.click(`text=${email}`);
+    if (browserName === "chromium") {
+      // On Chromium, Google sometimes re-ask for user's consent
+      if (
+        page
+          .url()
+          .startsWith("https://accounts.google.com/signin/oauth/legacy/consent")
+      )
+        await page.click('button:has-text("Allow")');
+    }
+    if (browserName === "webkit")
+      // Workaround wait for URL issue on Safari
+      while (page.url().startsWith("https://accounts.google.com"))
+        await page.waitForTimeout(100);
     return true;
   } catch {
     return false;
@@ -101,31 +58,17 @@ async function signInWithGoogle({
 
 async function signInWithFacebook({
   page,
-  FB,
+  name,
 }: {
   page: Page;
-  FB: {
-    email: string;
-    password: string;
-    name: string;
-    firstName: string;
-  };
+  name: string;
 }): Promise<boolean> {
   try {
     await page.waitForURL("https://www.facebook.com/**");
     await Promise.all([
-      // await page.waitForNavigation({
-      //   waitUntil: "load",
-      // }),
-      await page.isVisible("text=Log in"),
-      await page.fill(
-        '[placeholder="Email address or phone number"]',
-        FB.email
-      ),
-      await page.fill('[placeholder="Password"]', FB.password),
-      await page.click(`button:has-text("Login"), [name="login"]`),
+      page.waitForNavigation(),
       page.click(
-        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
+        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${name}"]`
       ),
     ]);
     return true;
@@ -191,7 +134,6 @@ async function deleteCurrentDeviceShare(page: Page) {
 
 export {
   useAutoCancelShareTransfer,
-  useAutoCancel2FASetup,
   signInWithGoogle,
   signInWithFacebook,
   signInWithDiscord,
