@@ -52,7 +52,6 @@ test.describe.serial("Home page tests", () => {
         timeout: 10000,
       }
     );
-    //console.log(context.pages()[0].url());
     await page2.close();
 
     await useAutoCancelShareTransfer(page);
@@ -83,7 +82,6 @@ test.describe.serial("Home page tests", () => {
   }) => {
     await page.click(`text=Support`);
     await page.waitForTimeout(5000);
-    console.log(await context.pages());
   });
 
   test(`Clicking 'Learn more' button should redirect user to correct support page`, async ({}) => {
