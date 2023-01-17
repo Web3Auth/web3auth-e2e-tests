@@ -47,29 +47,21 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
 
 async function signInWithGoogle({
   page,
-  browserName,
-  email,
+  google,
 }: {
   page: Page;
-  browserName: PlaywrightWorkerOptions["browserName"];
-  email: string;
+  google: {
+    email: string;
+    password: string;
+  }
 }): Promise<boolean> {
   try {
     await page.waitForURL("https://accounts.google.com/**");
-    await page.click(`text=${email}`);
-    if (browserName === "chromium") {
-      // On Chromium, Google sometimes re-ask for user's consent
-      if (
-        page
-          .url()
-          .startsWith("https://accounts.google.com/signin/oauth/legacy/consent")
-      )
-        await page.click('button:has-text("Allow")');
-    }
-    if (browserName === "webkit")
-      // Workaround wait for URL issue on Safari
-      while (page.url().startsWith("https://accounts.google.com"))
-        await page.waitForTimeout(100);
+    await page.isVisible("text=Sign in");
+    await page.fill('[aria-label="Email or phone"]', google.email);
+    await page.click(`button:has-text("Next")`);
+    await page.fill('[aria-label="Enter your password"]', google.password);
+    await page.click(`button:has-text("Next")`);
     return true;
   } catch {
     return false;

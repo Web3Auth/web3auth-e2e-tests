@@ -3,10 +3,18 @@ import { env_map } from "../../utils/index";
 
 export interface TestArgs {
   openloginURL: string;
-  user: { email: string };
+  google: {
+    email: string;
+    password: string;
+    name: string;
+  }
 }
 
 export const test = playwright.test.extend<TestArgs>({
-  openloginURL: env_map[process.env.PLATFORM],
-  user: [{ email: "hello@tor.us" }, { option: true }],
+  openloginURL: env_map[process.env.PLATFORM || 'cyan'],
+  google: {
+    email: process.env.GOOGLE_ACCOUNT || "",
+    password: process.env.GOOGLE_PASSWORD || "",
+    name: process.env.GOOGLE_NAME || ""
+  }
 });

@@ -7,6 +7,13 @@ test("Login with Facebook+Device", async ({ page, openloginURL, FB }) => {
   page.setDefaultTimeout(8 * 60 * 1000);
   page.setDefaultNavigationTimeout(8 * 60 * 1000);
 
+  // Verify environment variables
+  expect(
+    !!process.env.FB_TEST_USER_NAME &&
+    !!process.env.FB_TEST_USER_EMAIL &&
+    !!process.env.FB_TEST_USER_PASS
+  ).toBe(true);
+
   // Login with Facebook
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');

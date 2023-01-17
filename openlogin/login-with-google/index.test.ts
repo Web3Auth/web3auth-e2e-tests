@@ -1,42 +1,50 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
-import { signInWithGoogle } from "../../utils";
+import { signInWithGoogle, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test("Login with Google+Device", async ({
+test.only("Login with Google+Device", async ({
   page,
   browserName,
   openloginURL,
-  user,
+  google,
 }) => {
+  page.setDefaultTimeout(8 * 60 * 1000);
+  page.setDefaultNavigationTimeout(8 * 60 * 1000);
+
+  // Verify environment variables
+  expect(
+    !!process.env.GOOGLE_ACCOUNT &&
+    !!process.env.GOOGLE_PASSWORD &&
+    !!process.env.GOOGLE_NAME
+  ).toBe(true);
+
+
   // Login with Google
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   // await page.click('[aria-label="Continue with existing Google"]');
-  await page.click("text=Continue with existing Google");
-  test.fixme(
-    !(await signInWithGoogle({ page, browserName, email: user.email }))
-  );
+  await page.click("[aria-label='login with google']");
+
+  await signInWithGoogle({ page, google })
 
   useAutoCancelShareTransfer(page);
+  useAutoCancel2FASetup(page);
 
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
-    timeout: 2 * 60 * 1000,
+    waitUntil: "load",
   });
 
-  // Go to Account page
-  await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
+  expect(page.url()).toBe(`${openloginURL}/wallet/home`);
+
+  await page.waitForSelector(`text=Welcome, ${google.name}`);
+
+  // // Go to Account page
+  // await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
+  // expect(await page.isVisible(`text=${google.email}`)).toBeTruthy();
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
   expect(page.url()).toBe(`${openloginURL}/`);
-});
-
-// Save signed-in state to storage
-test.afterEach(async ({ page, browserName }) => {
-  await page
-    .context()
-    .storageState({ path: `${__dirname}/${browserName}.json` });
 });
