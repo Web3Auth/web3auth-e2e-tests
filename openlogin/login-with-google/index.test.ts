@@ -23,7 +23,6 @@ test.only("Login with Google+Device", async ({
   // Login with Google
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  // await page.click('[aria-label="Continue with existing Google"]');
   await page.click("[aria-label='login with google']");
 
   await signInWithGoogle({ page, google })
@@ -39,10 +38,6 @@ test.only("Login with Google+Device", async ({
   expect(page.url()).toBe(`${openloginURL}/wallet/home`);
 
   await page.waitForSelector(`text=Welcome, ${google.name}`);
-
-  // // Go to Account page
-  // await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  // expect(await page.isVisible(`text=${google.email}`)).toBeTruthy();
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
