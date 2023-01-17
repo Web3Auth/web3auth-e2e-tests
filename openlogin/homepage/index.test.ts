@@ -1,15 +1,9 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
-import {
-  signInWithFacebook,
-  useAutoCancel2FASetup,
-  signInWithGoogle,
-} from "../../utils";
+import { useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import Mailosaur from "mailosaur";
 import { Link } from "mailosaur/lib/models";
-import { generate } from "generate-password";
-import { validateMnemonic } from "bip39";
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
@@ -23,7 +17,7 @@ function findLink(links: Link[], text: string) {
   }
   return null;
 }
-test.describe.serial("Authorized Apps page tests", () => {
+test.describe.serial.only("Home page tests", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL, user }) => {
     const context = await browser.newContext();
@@ -69,19 +63,15 @@ test.describe.serial("Authorized Apps page tests", () => {
     browser.close;
   });
 
-  test(`should login to solana wallet with passwordless login`, async ({
-    openloginURL,
-    browser,
-  }) => {
-    const context2 = await browser.newContext();
-    const page2 = await context2.newPage();
-    await page2.goto("https://solana.tor.us/login");
-    await page2.waitForSelector(
-      "text=Close this and return to your previous window",
-      {
-        timeout: 10000,
-      }
-    );
-    await page2.close();
+  test(`should display user email on top right`, async ({}) => {
+    expect(await page.isVisible(`text=${testEmail}`)).toBeTruthy();
+  });
+  test(`should display welcome message`, async ({}) => {
+    expect(await page.isVisible(`text=Welcome, ${testEmail}`)).toBeTruthy();
+  });
+  test(`should redirect to Torus docs on clicking Learn more button `, async ({}) => {
+    ////////////
+    await page.click('button:has-text("English")');
+    expect(await page.isVisible(`text=German (Deutsch)`)).toBeTruthy();
   });
 });

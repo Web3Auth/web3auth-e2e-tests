@@ -1,10 +1,6 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
-import {
-  signInWithFacebook,
-  useAutoCancel2FASetup,
-  signInWithGoogle,
-} from "../../utils";
+import { useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import Mailosaur from "mailosaur";
 import { Link } from "mailosaur/lib/models";
@@ -284,7 +280,6 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    console.log("Password:", randomPassword);
     await page.fill('[placeholder="Set your password"]', randomPassword.trim());
     await page.fill(
       '[placeholder="Re-enter your password"]',
@@ -306,7 +301,6 @@ test.describe.serial("Account page test", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     await page.click('button:has-text("Change Password")');
-    console.log("Password:", newRandomPassword);
     await page.fill(
       '[placeholder="Set your password"]',
       newRandomPassword.trim()
