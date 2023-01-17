@@ -76,8 +76,8 @@ test.describe.serial("App authorization page test", () => {
     ).toBeTruthy();
   });
 
-  //below test is not working and complete
-
+  //below test use testEmail to login to solana wallet prod and there by generates an app share
+  // which gets listed in list of apps
   test(`should login to solana wallet with passwordless login and list app`, async ({
     openloginURL,
     browser,
