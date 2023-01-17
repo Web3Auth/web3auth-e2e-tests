@@ -18,7 +18,7 @@ function findLink(links: Link[], text: string) {
   return null;
 }
 
-test.describe.serial.only("Home page tests", () => {
+test.describe.serial("Home page tests", () => {
   let page: Page;
   test.beforeAll(async ({ openloginURL, browser }) => {
     const context = await browser.newContext({});

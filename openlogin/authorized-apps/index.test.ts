@@ -24,8 +24,6 @@ test.describe.serial("App authorization page test", () => {
     page = await context.newPage();
     await page.goto(openloginURL);
     await page.click('button:has-text("Get Started")');
-
-    const timestamp = Math.floor(Date.now() / 1000);
     await page.fill('[placeholder="Email"]', testEmail);
     await page.click('button:has-text("Continue with Email")');
     await page.waitForSelector("text=email has been sent");
@@ -78,63 +76,82 @@ test.describe.serial("App authorization page test", () => {
     ).toBeTruthy();
   });
 
-  // below test is not working and complete
-  //   test(`should login to solana wallet with passwordless login and list app`, async ({
-  //     openloginURL,
-  //     browser,
-  //   }) => {
-  //     const context2 = await browser.newContext();
-  //     const context3 = await browser.newContext();
-  //     const page2 = await context2.newPage();
-  //     await page2.goto("https://solana.tor.us/login");
-  //     await page2.fill('[placeholder="Enter your email"]', testEmail);
-  //     await page2.click('button:has-text("Continue with Email")');
-  //     await page.waitForTimeout(4000);
+  //below test is not working and complete
 
-  //     const newEmail = await mailosaur.messages.get(
-  //       process.env.MAILOSAUR_SERVER_ID || "",
-  //       {
-  //         sentTo: testEmail,
-  //       }
-  //     );
-  //     expect(newEmail.subject).toBe("Verify your email");
-  //     const link = findLink(newEmail.html?.links || [], "Confirm my email");
-  //     expect(link?.text).toBe("Confirm my email");
-  //     const href = link?.href || "";
-  //     const page3 = await context3.newPage();
-  //     await page3.goto(href);
-  //     await page3.waitForSelector(
-  //       "text=Close this and return to your previous window",
-  //       {
-  //         timeout: 10000,
-  //       }
-  //     );
-  //     await page.goto(`${openloginURL}/wallet/apps`);
-  //     await page.reload();
-  //     await page.waitForTimeout(2000);
-  //     await page.waitForURL(`${openloginURL}/wallet/home`, {
-  //       waitUntil: "load",
-  //     });
-  //     await page.goto(`${openloginURL}/wallet/home`);
-  //     expect(page.url()).toBe(`${openloginURL}/wallet/home`);
-  //     await page.waitForURL(`${openloginURL}/wallet/home`, {
-  //       waitUntil: "load",
-  //     });
+  test(`should login to solana wallet with passwordless login and list app`, async ({
+    openloginURL,
+    browser,
+  }) => {
+    const context2 = await browser.newContext();
+    const context3 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto("https://solana.tor.us/login");
+    await page2.fill('[placeholder="Enter your email"]', testEmail);
+    await page2.click('button:has-text("Continue with Email")');
+    await page.waitForTimeout(4000);
 
-  //     expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
-  //     expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
-  //     await page.waitForTimeout(4000);
-  //     expect(
-  //       await page.isVisible(
-  //         "text=You are not connected to any applications yet."
-  //       )
-  //     ).toBeTruthy();
-  //     await page3.close();
-  //     await page2.close();
-  //   });
+    const newEmail = await mailosaur.messages.get(
+      process.env.MAILOSAUR_SERVER_ID || "",
+      {
+        sentTo: testEmail,
+      }
+    );
+    expect(newEmail.subject).toBe("Verify your email");
+    const link = findLink(newEmail.html?.links || [], "Confirm my email");
+    expect(link?.text).toBe("Confirm my email");
+    const href = link?.href || "";
+    const page3 = await context3.newPage();
+    await page3.goto(href);
+    await page3.waitForSelector(
+      "text=Close this and return to your previous window",
+      {
+        timeout: 10000,
+      }
+    );
+    await page2.waitForTimeout(4000);
+    await page.goto(`${openloginURL}/wallet/apps`);
+    await page.reload();
+    await page.waitForURL(`${openloginURL}/wallet/apps`, {
+      waitUntil: "load",
+    });
+    await page.goto(`${openloginURL}/wallet/apps`);
+    expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
+    await page.waitForURL(`${openloginURL}/wallet/apps`, {
+      waitUntil: "load",
+    });
 
-  //   test(`should be able to delete app share from UI`, async ({
-  //     openloginURL,
-  //     browser,
-  //   }) => {});
+    expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
+    expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
+    await page.waitForTimeout(4000);
+    expect(
+      await page.isVisible(
+        "text=You are not connected to any applications yet."
+      )
+    ).toBeFalsy();
+    await page3.close();
+    await page2.close();
+  });
+
+  test(`should be able to delete app share from UI`, async ({
+    openloginURL,
+    browser,
+  }) => {
+    await page.goto(`${openloginURL}/wallet/apps`);
+    await page.waitForURL(`${openloginURL}/wallet/apps`, {
+      waitUntil: "load",
+    });
+    expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
+    await page.click('button[aria-label="delete device share"]');
+    await page.waitForTimeout(2000);
+    await page.goto(`${openloginURL}/wallet/apps`);
+    await page.waitForURL(`${openloginURL}/wallet/apps`, {
+      waitUntil: "load",
+    });
+    expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
+    expect(
+      await page.isVisible(
+        "text=You are not connected to any applications yet."
+      )
+    ).toBeTruthy();
+  });
 });
