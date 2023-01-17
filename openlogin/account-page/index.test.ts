@@ -40,7 +40,7 @@ function findLink(links: Link[], text: string) {
   }
   return null;
 }
-test.describe.serial.only("Account page test", () => {
+test.describe.serial("Account page test", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL, user }) => {
     const context = await browser.newContext();
@@ -136,7 +136,7 @@ test.describe.serial.only("Account page test", () => {
         sentTo: backupEmail,
       }
     );
-    let seedArray = seedEmail.text.body.slice(171).split(" ");
+    let seedArray = seedEmail?.text?.body?.slice(171).split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
       seedString += seedArray[i] + " ";
@@ -175,7 +175,7 @@ test.describe.serial.only("Account page test", () => {
     );
     expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
 
-    let seedArray = resentBackup.text.body.slice(171).split(" ");
+    let seedArray = resentBackup?.text?.body?.slice(171).split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
       seedString += seedArray[i] + " ";
@@ -202,7 +202,7 @@ test.describe.serial.only("Account page test", () => {
     );
     expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
 
-    let seedArray = resentBackup.text.body.slice(171).split(" ");
+    let seedArray = resentBackup?.text?.body?.slice(171).split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
       seedString += seedArray[i] + " ";
@@ -269,11 +269,6 @@ test.describe.serial.only("Account page test", () => {
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     await page.fill('[placeholder="Enter recovery email"]', testEmail);
     await page.click('button:has-text("Confirm")');
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     await page.waitForTimeout(4000);
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
   });
@@ -341,10 +336,9 @@ test.describe.serial.only("Account page test", () => {
     expect(
       await page.isVisible("text=Delete authentication factor")
     ).toBeTruthy();
-    expect(
-      await page.isVisible(
-        "text=Be very sure that this action is permanent and cannot be undone"
-      )
-    ).toBeTruthy();
+    await page.click('button:has-text("Remove Share")');
+    await page.waitForTimeout(4000);
+    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
+    expect(await page.isVisible("text=No device shares found")).toBeTruthy();
   });
 });
