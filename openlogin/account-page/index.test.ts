@@ -40,7 +40,7 @@ function findLink(links: Link[], text: string) {
   }
   return null;
 }
-test.describe.serial("Account page test", () => {
+test.describe.serial.only("Account page test", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL, user }) => {
     const context = await browser.newContext();
@@ -229,6 +229,7 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
     await page.reload();
+    await page.waitForTimeout(1000);
     expect(await page.isVisible("text=2 / 2")).toBeTruthy();
   });
 
@@ -253,7 +254,31 @@ test.describe.serial("Account page test", () => {
     ).toBeTruthy();
   });
 
-  // // Below test is not complete
+  // should test setting up email backup again after deleting email share.
+  test(`should be able to setup email backup again`, async ({
+    openloginURL,
+  }) => {
+    await page.goto(`${openloginURL}/wallet/home`);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      waitUntil: "load",
+    });
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    await page.fill('[placeholder="Enter recovery email"]', testEmail);
+    await page.click('button:has-text("Confirm")');
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    await page.waitForTimeout(4000);
+    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
+  });
+
+  // below test check password share setup.
   test(`should setup account password`, async ({ openloginURL }) => {
     await page.goto(`${openloginURL}/wallet/home`);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
@@ -264,8 +289,6 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    await page.fill('[placeholder="Enter recovery email"]', backupEmail);
-    await page.click('button:has-text("Confirm")');
     console.log("Password:", randomPassword);
     await page.fill('[placeholder="Set your password"]', randomPassword.trim());
     await page.fill(
@@ -273,63 +296,55 @@ test.describe.serial("Account page test", () => {
       randomPassword.trim()
     );
     await page.click('button:has-text("Confirm")');
-    // await page.reload();
-    // await page.goto(`${openloginURL}/wallet/home`);
-    // await page.waitForURL(`${openloginURL}/wallet/home`, {
-    //   waitUntil: "load",
-    // });
-    // await page.goto(`${openloginURL}/wallet/account`);
-    // await page.waitForURL(`${openloginURL}/wallet/account`, {
-    //   waitUntil: "load",
-    // });
-    // await page.waitForTimeout(2000);
-
-    // expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    // expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    // await page.click('button:has-text("Change Password")');
-
-    // await page.fill('[placeholder="Set your password"]', newRandomPassword);
-    // await page.fill(
-    //   '[placeholder="Re-enter your password"]',
-    //   newRandomPassword
-    // );
-    // await page.click('button:has-text("Confirm")');
-    // await page.reload();
-    // await page.goto(`${openloginURL}/wallet/account`);
-    // await page.waitForURL(`${openloginURL}/wallet/account`, {
-    //   waitUntil: "load",
-    // });
-    // expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    // expect(await page.isVisible("text=2 / 4")).toBeTruthy();
-    // expect(await page.isVisible("text=2 / 3bcvbcv")).toBeTruthy();
+    await page.waitForTimeout(4000);
+    expect(await page.isVisible("text=2 / 4")).toBeTruthy();
   });
 
-  // Below test is not complete and working
-  // test(`should change/update account password`, async ({ openloginURL }) => {
-  //   await page.goto(`${openloginURL}/wallet/home`);
-  //   await page.waitForURL(`${openloginURL}/wallet/home`, {
-  //     waitUntil: "load",
-  //   });
-  //   await page.goto(`${openloginURL}/wallet/account`);
-  //   await page.waitForURL(`${openloginURL}/wallet/account`, {
-  //     waitUntil: "load",
-  //   });
-  //   expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-  //   await page.click('button:has-text("Change Password")');
+  test(`should change/update account password`, async ({ openloginURL }) => {
+    await page.goto(`${openloginURL}/wallet/home`);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      waitUntil: "load",
+    });
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    await page.click('button:has-text("Change Password")');
+    console.log("Password:", newRandomPassword);
+    await page.fill(
+      '[placeholder="Set your password"]',
+      newRandomPassword.trim()
+    );
+    await page.fill(
+      '[placeholder="Re-enter your password"]',
+      newRandomPassword.trim()
+    );
+    await page.click('button:has-text("Confirm")');
+    await page.waitForTimeout(4000);
+    expect(await page.isVisible("text=2 / 4")).toBeTruthy();
+  });
 
-  //   await page.fill('[placeholder="Set your password"]', newRandomPassword);
-  //   await page.fill(
-  //     '[placeholder="Re-enter your password"]',
-  //     newRandomPassword
-  //   );
-  //   await page.click('button:has-text("Confirm")');
-  //   await page.reload();
-  //   await page.goto(`${openloginURL}/wallet/account`);
-  //   await page.waitForURL(`${openloginURL}/wallet/account`, {
-  //     waitUntil: "load",
-  //   });
-  //   expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-  //   expect(await page.isVisible("text=2 / 4")).toBeTruthy();
-  //   // check if toast popup
-  // });
+  test(`should be able to delete device share`, async ({ openloginURL }) => {
+    await page.goto(`${openloginURL}/wallet/home`);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      waitUntil: "load",
+    });
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+
+    await page.click(`button[aria-label='delete device share']`);
+
+    expect(
+      await page.isVisible("text=Delete authentication factor")
+    ).toBeTruthy();
+    expect(
+      await page.isVisible(
+        "text=Be very sure that this action is permanent and cannot be undone"
+      )
+    ).toBeTruthy();
+  });
 });
