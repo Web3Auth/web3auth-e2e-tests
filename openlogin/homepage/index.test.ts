@@ -1,4 +1,4 @@
-import { expect, Page } from "@playwright/test";
+import { chromium, expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
 import { useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
@@ -17,10 +17,11 @@ function findLink(links: Link[], text: string) {
   }
   return null;
 }
+
 test.describe.serial.only("Home page tests", () => {
   let page: Page;
-  test.beforeAll(async ({ browser, openloginURL, user }) => {
-    const context = await browser.newContext();
+  test.beforeAll(async ({ openloginURL, browser }) => {
+    const context = await browser.newContext({});
     page = await context.newPage();
     await page.goto(openloginURL);
     await page.click('button:has-text("Get Started")');
@@ -51,6 +52,7 @@ test.describe.serial.only("Home page tests", () => {
         timeout: 10000,
       }
     );
+    //console.log(context.pages()[0].url());
     await page2.close();
 
     await useAutoCancelShareTransfer(page);
@@ -63,15 +65,37 @@ test.describe.serial.only("Home page tests", () => {
     browser.close;
   });
 
-  test(`should display user email on top right`, async ({}) => {
+  test(`should display user email on top right`, async ({ context }) => {
     expect(await page.isVisible(`text=${testEmail}`)).toBeTruthy();
   });
-  test(`should display welcome message`, async ({}) => {
+  test(`should display welcome message`, async ({ context }) => {
     expect(await page.isVisible(`text=Welcome, ${testEmail}`)).toBeTruthy();
   });
-  test(`should redirect to Torus docs on clicking Learn more button `, async ({}) => {
-    ////////////
+  test(`Clicking language button should display language dropdown `, async ({
+    context,
+  }) => {
     await page.click('button:has-text("English")');
     expect(await page.isVisible(`text=German (Deutsch)`)).toBeTruthy();
+  });
+
+  test(`Clicking 'Support' button should redirect user to correct support page`, async ({
+    context,
+  }) => {
+    await page.click(`text=Support`);
+    await page.waitForTimeout(5000);
+    console.log(await context.pages());
+  });
+
+  test(`Clicking 'Learn more' button should redirect user to correct support page`, async ({}) => {
+    await page.click('a:has-text("Learn more")');
+
+    await page.waitForTimeout(5000);
+  });
+
+  test(`Clicking 'Logout' button should logout user`, async ({}) => {
+    await page.click(`text=Logout`);
+    expect(
+      await page.isVisible(`text=Manage all your web interactions in one place`)
+    ).toBeTruthy();
   });
 });
