@@ -1,20 +1,19 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
-import { useAutoCancel2FASetup, findLink } from "../../utils";
-import { useAutoCancelShareTransfer } from "../../utils/index";
+import { useAutoCancel2FASetup, signInWithEmail } from "../../utils";
+import {
+  useAutoCancelShareTransfer,
+  generateRandomEmail,
+} from "../../utils/index";
 import Mailosaur from "mailosaur";
 import { generate } from "generate-password";
 import { validateMnemonic } from "bip39";
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
-const testEmail = `accnt+hello+${Date.now()}@${
-  process.env.MAILOSAUR_SERVER_DOMAIN
-}`;
+const testEmail = generateRandomEmail();
 
-const backupEmail = `hello+backup+${Date.now()}@${
-  process.env.MAILOSAUR_SERVER_DOMAIN
-}`;
+const backupEmail = "backup" + generateRandomEmail();
 
 const randomPassword = generate({
   length: 15,
@@ -37,35 +36,7 @@ test.describe.serial("Account page test", () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
-    await page.click('button:has-text("Get Started")');
-
-    const timestamp = Math.floor(Date.now() / 1000);
-    await page.fill('[placeholder="Email"]', testEmail);
-    await page.click('button:has-text("Continue with Email")');
-    await page.waitForSelector("text=email has been sent");
-    expect(await page.isVisible(`text=${testEmail}`)).toBeTruthy();
-
-    const email = await mailosaur.messages.get(
-      process.env.MAILOSAUR_SERVER_ID || "",
-      {
-        sentTo: testEmail,
-      }
-    );
-
-    expect(email.subject).toBe("Verify your email");
-    const link = findLink(email.html?.links || [], "Confirm my email");
-    expect(link?.text).toBe("Confirm my email");
-    const href = link?.href || "";
-    const context2 = await browser.newContext();
-    const page2 = await context2.newPage();
-    await page2.goto(href);
-    await page2.waitForSelector(
-      "text=Close this and return to your previous window",
-      {
-        timeout: 10000,
-      }
-    );
-    await page2.close();
+    await signInWithEmail(page, testEmail, browser);
 
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);

@@ -13,12 +13,11 @@ const projects: Array<
 const config: PlaywrightTestConfig<TestArgs> = {
   ...indexConfig,
   testDir: __dirname,
-  projects: projects.map(({ browserName, user }) => ({
+  projects: projects.map(({ browserName }) => ({
     name: browserName,
     use: {
       browserName,
       storageState: path.resolve(__dirname, `${browserName}.json`),
-      user,
     },
   })),
 };
