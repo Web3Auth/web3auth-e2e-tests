@@ -1,5 +1,6 @@
 import { Page, PlaywrightWorkerOptions } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
+import { Link } from "mailosaur/lib/models";
 
 const env_map: { [key: string]: string } = {
   prod: "https://app.openlogin.com",
@@ -166,6 +167,13 @@ async function deleteCurrentDeviceShare(page: Page) {
   }
 }
 
+function findLink(links: Link[], text: string) {
+  for (const link of links) {
+    if (link.text === text) return link;
+  }
+  return null;
+}
+
 export {
   useAutoCancelShareTransfer,
   useAutoCancel2FASetup,
@@ -174,5 +182,6 @@ export {
   signInWithDiscord,
   confirmEmail,
   deleteCurrentDeviceShare,
+  findLink,
   env_map,
 };

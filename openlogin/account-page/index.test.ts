@@ -1,9 +1,8 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
-import { useAutoCancel2FASetup } from "../../utils";
+import { useAutoCancel2FASetup, findLink } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import Mailosaur from "mailosaur";
-import { Link } from "mailosaur/lib/models";
 import { generate } from "generate-password";
 import { validateMnemonic } from "bip39";
 
@@ -32,12 +31,6 @@ const newRandomPassword = generate({
   strict: true,
 });
 
-function findLink(links: Link[], text: string) {
-  for (const link of links) {
-    if (link.text === text) return link;
-  }
-  return null;
-}
 test.describe.serial("Account page test", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {

@@ -1,22 +1,14 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
-import { useAutoCancel2FASetup } from "../../utils";
+import { useAutoCancel2FASetup, findLink } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import Mailosaur from "mailosaur";
-import { Link } from "mailosaur/lib/models";
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
 const testEmail = `hello+home+${Date.now()}@${
   process.env.MAILOSAUR_SERVER_DOMAIN
 }`;
-
-function findLink(links: Link[], text: string) {
-  for (const link of links) {
-    if (link.text === text) return link;
-  }
-  return null;
-}
 
 test.describe.serial("Home page tests", () => {
   let page: Page;
@@ -103,6 +95,9 @@ test.describe.serial("Home page tests", () => {
     await page.click(`text=Logout`);
     expect(
       await page.isVisible(`text=Manage all your web interactions in one place`)
+    ).toBeTruthy();
+    expect(
+      await page.isVisible(`text=Click Get Started to continue`)
     ).toBeTruthy();
   });
 });
