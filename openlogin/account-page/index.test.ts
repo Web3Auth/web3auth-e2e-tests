@@ -219,6 +219,7 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
     await page.click('button[aria-label="delete email share"]');
     await page.waitForTimeout(2000);
 
@@ -228,6 +229,7 @@ test.describe.serial("Account page test", () => {
     });
     await page.reload();
     await page.waitForTimeout(1000);
+    expect(await page.isVisible("text=2 / 3")).toBeFalsy();
     expect(await page.isVisible("text=2 / 2")).toBeTruthy();
   });
 
@@ -265,6 +267,7 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    expect(await page.isVisible("text=2 / 2")).toBeTruthy();
     await page.fill('[placeholder="Enter recovery email"]', testEmail);
     await page.click('button:has-text("Confirm")');
     await page.waitForTimeout(4000);
