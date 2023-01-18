@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test:browser": "playwright test --workers=1 --headed",
-    "test": "playwright test --workers=1",
+    "test:browser": "playwright test --headed",
+    "test": "playwright test",
     "trace": "playwright show-trace"
   },
   "dependencies": {

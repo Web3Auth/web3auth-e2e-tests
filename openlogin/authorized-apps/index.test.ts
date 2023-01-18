@@ -88,11 +88,13 @@ test.describe.serial("App authorization page test", () => {
     expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
     expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
     await page.waitForTimeout(4000);
+
     expect(
       await page.isVisible(
         "text=You are not connected to any applications yet."
       )
     ).toBeFalsy();
+    expect(await page.isVisible("text=solana-prod")).toBeTruthy();
     await page3.close();
     await page2.close();
   });
