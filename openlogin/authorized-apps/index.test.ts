@@ -59,7 +59,7 @@ test.describe.serial("App authorization page test", () => {
     });
   });
   test.afterAll(async ({ browser }) => {
-    browser.close;
+    browser.close();
   });
   test(`should display "You are not connected to any applications yet." when no apps are connected.`, async ({
     openloginURL,

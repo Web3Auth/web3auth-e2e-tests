@@ -61,7 +61,7 @@ test.describe.serial("Home page tests", () => {
     });
   });
   test.afterAll(async ({ browser }) => {
-    browser.close;
+    browser.close();
   });
 
   test(`should display user email on top right`, async ({ context }) => {

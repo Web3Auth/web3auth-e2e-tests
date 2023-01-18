@@ -81,7 +81,7 @@ test.describe.serial("Account page test", () => {
     });
   });
   test.afterAll(async ({ browser }) => {
-    browser.close;
+    browser.close();
   });
 
   test(`page title should be "Account" for account page`, async ({
