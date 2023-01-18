@@ -1,4 +1,4 @@
-import { chromium, expect, Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
 import { useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";

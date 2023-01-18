@@ -19,7 +19,7 @@ function findLink(links: Link[], text: string) {
 }
 test.describe.serial("App authorization page test", () => {
   let page: Page;
-  test.beforeAll(async ({ browser, openloginURL, user }) => {
+  test.beforeAll(async ({ browser, openloginURL }) => {
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
@@ -109,13 +109,8 @@ test.describe.serial("App authorization page test", () => {
       }
     );
     await page2.waitForTimeout(4000);
+
     await page.goto(`${openloginURL}/wallet/apps`);
-    await page.reload();
-    await page.waitForURL(`${openloginURL}/wallet/apps`, {
-      waitUntil: "load",
-    });
-    await page.goto(`${openloginURL}/wallet/apps`);
-    expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {
       waitUntil: "load",
     });

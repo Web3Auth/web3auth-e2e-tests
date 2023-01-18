@@ -40,7 +40,7 @@ function findLink(links: Link[], text: string) {
 }
 test.describe.serial("Account page test", () => {
   let page: Page;
-  test.beforeAll(async ({ browser, openloginURL, user }) => {
+  test.beforeAll(async ({ browser, openloginURL }) => {
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
