@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test:browser": "playwright test --headed",
-    "test": "playwright test",
+    "test": "playwright test --workers=1",
     "trace": "playwright show-trace"
   },
   "dependencies": {
