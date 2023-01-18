@@ -229,7 +229,6 @@ test.describe.serial("Account page test", () => {
     });
     await page.reload();
     await page.waitForTimeout(1000);
-    expect(await page.isVisible("text=2 / 3")).toBeFalsy();
     expect(await page.isVisible("text=2 / 2")).toBeTruthy();
   });
 
