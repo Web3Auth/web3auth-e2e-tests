@@ -18,7 +18,7 @@ function findLink(links: Link[], text: string) {
   return null;
 }
 
-test.describe.serial("Home page tests", () => {
+test.describe.serial.only("Home page tests", () => {
   let page: Page;
   test.beforeAll(async ({ openloginURL, browser }) => {
     const context = await browser.newContext({});
@@ -77,17 +77,26 @@ test.describe.serial("Home page tests", () => {
     expect(await page.isVisible(`text=German (Deutsch)`)).toBeTruthy();
   });
 
-  test(`Clicking 'Support' button should redirect user to correct support page`, async ({
-    context,
-  }) => {
+  // checks if the support button routes to correct url
+  test(`Clicking 'Support' button should redirect user to correct support page`, async ({}) => {
+    const popupPromise = page.waitForEvent("popup");
     await page.click(`text=Support`);
-    await page.waitForTimeout(5000);
+    const popup = await popupPromise;
+    await popup.waitForLoadState();
+    const URL = await popup.url();
+    expect(URL === "https://torus.crisp.help/en/").toBeTruthy();
   });
 
-  test(`Clicking 'Learn more' button should redirect user to correct support page`, async ({}) => {
+  // checks if the learn more button routes to correct url
+  test(`Clicking 'Learn more' button should redirect user to correct docs page`, async ({}) => {
+    const popupPromise = page.waitForEvent("popup");
     await page.click('a:has-text("Learn more")');
-
-    await page.waitForTimeout(5000);
+    const popup = await popupPromise;
+    await popup.waitForLoadState();
+    const URL = await popup.url();
+    expect(
+      URL === "https://docs.tor.us/open-login/what-is-openlogin"
+    ).toBeTruthy();
   });
 
   test(`Clicking 'Logout' button should logout user`, async ({}) => {

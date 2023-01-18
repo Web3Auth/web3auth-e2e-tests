@@ -9,7 +9,9 @@ import { validateMnemonic } from "bip39";
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
-const testEmail = `hello+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+const testEmail = `accnt+hello+${Date.now()}@${
+  process.env.MAILOSAUR_SERVER_DOMAIN
+}`;
 
 const backupEmail = `hello+backup+${Date.now()}@${
   process.env.MAILOSAUR_SERVER_DOMAIN
