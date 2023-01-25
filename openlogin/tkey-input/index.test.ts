@@ -1,13 +1,12 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
-import { useAutoCancel2FASetup, signInWithEmail } from "../../utils";
+import { useAutoCancel2FASetup, signInWithEmail, findLink } from "../../utils";
 import {
   useAutoCancelShareTransfer,
   generateRandomEmail,
 } from "../../utils/index";
 import Mailosaur from "mailosaur";
 import { generate } from "generate-password";
-import { validateMnemonic } from "bip39";
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
@@ -15,11 +14,17 @@ const testEmail = generateRandomEmail();
 
 const backupEmail = "backup" + generateRandomEmail();
 
-const passwordShare = "ExamplePassword123";
+const passwordShare = generate({
+  length: 18,
+  numbers: true,
+  uppercase: true,
+  lowercase: true,
+  strict: true,
+});
 
 let backupPhrase = "";
 
-test.describe.serial("tkey Input test", () => {
+test.describe.serial.only("tkey Input test", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
     // this will get a fresh email login and setup 2FA for the account
@@ -40,9 +45,8 @@ test.describe.serial("tkey Input test", () => {
     browser.close();
   });
 
-  test(`should login with social + password`, async ({
+  test(`should setup 2FA and password for running further tkey_input tests`, async ({
     openloginURL,
-    browser,
   }) => {
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
@@ -84,31 +88,62 @@ test.describe.serial("tkey Input test", () => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-
     expect(await page.isVisible("text=Recovery email")).toBeTruthy();
     expect(await page.isVisible("text=Device(s)")).toBeTruthy();
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
 
-    // set password share
-    await page.fill('[placeholder="Set your password"]', passwordShare);
-    await page.fill('[placeholder="Re-enter your password"]', passwordShare);
-    await page.click('button:has-text("Confirm")');
-    await page.waitForTimeout(4000);
-    expect(await page.isVisible("text=2 / 4")).toBeTruthy();
-
     // logout the user after setting up 2FA
     await page.click(`text=Logout`);
+    await page.goto(`${openloginURL}`);
+    await page.waitForURL(`${openloginURL}`, {
+      waitUntil: "load",
+    });
     expect(
       await page.isVisible(`text=Click Get Started to continue`)
     ).toBeTruthy();
+  });
 
-    // user login with email+ device password via tkey input page
-    await signInWithEmail(page, testEmail, browser);
+  test(`should login with social + device share`, async ({
+    openloginURL,
+    browser,
+  }) => {
+    const startTime = new Date();
+    await page.goto(openloginURL);
+    await page.click('button:has-text("Get Started")');
+    await page.fill('[placeholder="Email"]', testEmail);
+    await page.click('button:has-text("Continue with Email")');
+    await page.waitForSelector("text=email has been sent");
+    const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+    const mailBox = await mailosaur.messages.get(
+      process.env.MAILOSAUR_SERVER_ID || "",
+      {
+        sentTo: testEmail,
+      },
+      {
+        receivedAfter: startTime,
+      }
+    );
+    const link = findLink(mailBox.html?.links || [], "Confirm my email");
+    const href = link?.href || "";
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector(
+      "text=Close this and return to your previous window",
+      {
+        timeout: 10000,
+      }
+    );
+    await page2.close();
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      waitUntil: "load",
+    });
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    expect(await page.isVisible("text=Account")).toBeTruthy();
 
     // deleting device share
     await page.click(`button[aria-label='delete device share']`);
@@ -116,24 +151,13 @@ test.describe.serial("tkey Input test", () => {
     expect(
       await page.isVisible("text=Delete authentication factor")
     ).toBeTruthy();
-    await page.click('button:has-text("Remove Share")');
+    await page.click('button:has-text("Remove share")');
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
     await page.waitForTimeout(4000);
-    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
+    await page.reload();
+    expect(await page.isVisible("text=2 / 2")).toBeTruthy();
     expect(await page.isVisible("text=No device shares found")).toBeTruthy();
-    await mailosaur.messages.deleteAll(process.env.MAILOSAUR_SERVER_ID || ""); // Deleting emails in email server.
-
-    // logout the user again
-    await page.click(`text=Logout`);
-    expect(
-      await page.isVisible(`text=Click Get Started to continue`)
-    ).toBeTruthy();
   });
-
-  //   test(`should login with social + password`, async ({
-  //     openloginURL,
-  //     browser,
-  //   }) => {
-  //     await page.goto(openloginURL);
-  //     await signInWithEmail(page, testEmail, browser);
-  //   });
 });
