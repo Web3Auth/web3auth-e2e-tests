@@ -1,4 +1,4 @@
-name: OpenLogin - Homepage
+name: OpenLogin - TkeyInput
 
 on:
   schedule:
@@ -10,7 +10,7 @@ env:
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Homepage tests
+    name: Run OpenLogin - TkeyInput tests
     strategy:
       matrix:
         env: [prod]
@@ -83,7 +83,7 @@ jobs:
           if-no-files-found: ignore
 
   update-status:
-    name: Update OpenLogin - Homepage status
+    name: Update OpenLogin - TkeyInput status
     needs: run-tests
     if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
     runs-on: ubuntu-latest

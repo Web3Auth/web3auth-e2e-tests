@@ -1,4 +1,4 @@
-name: OpenLogin - Homepage
+name: OpenLogin - AccountPage
 
 on:
   schedule:
@@ -10,7 +10,7 @@ env:
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Homepage tests
+    name: Run OpenLogin - AccountPage tests
     strategy:
       matrix:
         env: [prod]
@@ -59,7 +59,7 @@ jobs:
       - id: run-tests
         name: Run tests
         if: steps.npm-install.outcome == 'success' && steps.npm-install-deps.outcome != 'failure'
-        run: npx playwright test openlogin/tkey-input/index.test.ts ${{ matrix.browser }}
+        run: npx playwright test openlogin/account-page/index.test.ts ${{ matrix.browser }}
 
       - id: telegram-alert
         name: Alert to telegram channel
@@ -83,7 +83,7 @@ jobs:
           if-no-files-found: ignore
 
   update-status:
-    name: Update OpenLogin - Homepage status
+    name: Update OpenLogin - AccountPage status
     needs: run-tests
     if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
     runs-on: ubuntu-latest
