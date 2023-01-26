@@ -42,11 +42,6 @@ test.describe.serial("tkey Input test", () => {
     });
   });
 
-  // test.beforeEach(async ({ page }, testInfo) => {
-  //   // Extend timeout for all tests running this hook by 30 seconds.
-  //   testInfo.setTimeout(testInfo.timeout + 30000);
-  // });
-
   test.afterAll(async ({ browser }) => {
     browser.close();
   });

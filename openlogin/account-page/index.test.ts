@@ -44,6 +44,7 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
   });
+
   test.afterAll(async ({ browser }) => {
     browser.close();
   });
