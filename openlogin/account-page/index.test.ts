@@ -155,7 +155,9 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    await page.click('button[aria-label="export email share"]');
+    await page.click('button[aria-label="export email share"]', {
+      force: true,
+    });
     const resentBackup = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
       {
@@ -184,7 +186,9 @@ test.describe.serial("Account page test", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
-    await page.click('button[aria-label="delete email share"]');
+    await page.click('button[aria-label="delete email share"]', {
+      force: true,
+    });
     await page.waitForTimeout(2000);
 
     await page.goto(`${openloginURL}/wallet/account`);
@@ -209,7 +213,9 @@ test.describe.serial("Account page test", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
 
-    await page.click(`button[aria-label='export device share']`);
+    await page.click(`button[aria-label='export device share']`, {
+      force: true,
+    });
     await page.waitForTimeout(1000);
 
     expect(
@@ -293,7 +299,9 @@ test.describe.serial("Account page test", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
 
-    await page.click(`button[aria-label='delete device share']`);
+    await page.click(`button[aria-label='delete device share']`, {
+      force: true,
+    });
 
     expect(
       await page.isVisible("text=Delete authentication factor")

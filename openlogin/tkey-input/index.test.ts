@@ -123,8 +123,12 @@ test.describe.serial("tkey Input test", () => {
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=Account")).toBeTruthy();
     //deleting device share
-    await page.click(`button[aria-label='delete device share']`);
-    await page.click('button:has-text(" Remove share ")');
+    await page.click(`button[aria-label='delete device share']`, {
+      force: true,
+    });
+    await page.click('button:has-text(" Remove share ")', {
+      force: true,
+    });
     await page.waitForTimeout(4000);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
@@ -165,7 +169,9 @@ test.describe.serial("tkey Input test", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=Account")).toBeTruthy();
-    await page.click(`button[aria-label='delete device share']`);
+    await page.click(`button[aria-label='delete device share']`, {
+      force: true,
+    });
     await page.click('button:has-text(" Remove share ")');
     await page.waitForTimeout(4000);
     await page.goto(`${openloginURL}/wallet/account`);

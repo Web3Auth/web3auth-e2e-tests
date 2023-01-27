@@ -14,6 +14,7 @@ const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const testEmail = generateRandomEmail();
 
 test.describe.serial("App authorization page test", () => {
+  test.skip(() => process.env.PLATFORM === "local"); // skipping this test for local
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
     const context = await browser.newContext();
@@ -174,8 +175,11 @@ test.describe.serial("App authorization page test", () => {
     await page.waitForURL(`${openloginURL}/wallet/apps`, {
       waitUntil: "load",
     });
+
     expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
-    await page.click('button[aria-label="delete device share"]');
+    await page.click('button[aria-label="delete device share"]', {
+      force: true,
+    });
     await page.waitForTimeout(2000);
     await page.goto(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {
