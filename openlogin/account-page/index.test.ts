@@ -156,7 +156,6 @@ test.describe.serial("Account page test", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     await page.click('button[aria-label="export email share"]');
-
     const resentBackup = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
       {

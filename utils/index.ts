@@ -193,7 +193,10 @@ async function signInWithEmail(
         sentTo: email,
       }
     );
-    const link = findLink(mailBox.html?.links || [], "Confirm my email");
+    let link = findLink(mailBox.html?.links || [], "Confirm my email");
+    if (!link) {
+      link = findLink(mailBox.html?.links || [], "Verify my email");
+    }
     const href = link?.href || "";
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();
