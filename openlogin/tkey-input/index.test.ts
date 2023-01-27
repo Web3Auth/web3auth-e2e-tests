@@ -126,9 +126,7 @@ test.describe.serial("tkey Input test", () => {
     await page.click(`button[aria-label='delete device share']`, {
       force: true,
     });
-    await page.click('button:has-text(" Remove share ")', {
-      force: true,
-    });
+    await page.click('button:has-text("Remove share")');
     await page.waitForTimeout(4000);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
@@ -151,6 +149,7 @@ test.describe.serial("tkey Input test", () => {
     openloginURL,
     browser,
   }) => {
+    test.setTimeout(120000);
     await signInWithEmail(page, testEmail, browser);
     await mailosaur.messages.deleteAll(process.env.MAILOSAUR_SERVER_ID || ""); // Deleting emails in email server.
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
@@ -169,10 +168,8 @@ test.describe.serial("tkey Input test", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=Account")).toBeTruthy();
-    await page.click(`button[aria-label='delete device share']`, {
-      force: true,
-    });
-    await page.click('button:has-text(" Remove share ")');
+    await page.click(`button[aria-label='delete device share']`);
+    await page.click('button:has-text("Remove share")');
     await page.waitForTimeout(4000);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
