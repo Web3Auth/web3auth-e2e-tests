@@ -21,7 +21,6 @@ test.describe.serial("App authorization page test", () => {
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
-    await mailosaur.messages.deleteAll(process.env.MAILOSAUR_SERVER_ID || ""); // Deleting emails in email server.
 
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);

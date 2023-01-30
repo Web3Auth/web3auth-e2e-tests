@@ -198,6 +198,9 @@ async function signInWithEmail(
       link = findLink(mailBox.html?.links || [], "Verify my email");
     }
     const href = link?.href || "";
+
+    await mailosaur.messages.del(mailBox?.id || "");
+
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();
     await page2.goto(href);

@@ -33,7 +33,6 @@ test.describe.serial("tkey Input test", () => {
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
-    await mailosaur.messages.deleteAll(process.env.MAILOSAUR_SERVER_ID || ""); // Deleting emails in email server.
 
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
@@ -72,7 +71,7 @@ test.describe.serial("tkey Input test", () => {
         sentTo: backupEmail,
       }
     );
-    await mailosaur.messages.deleteAll(process.env.MAILOSAUR_SERVER_ID || ""); // Deleting emails in email server.
+    await mailosaur.messages.del(seedEmail?.id || "");
     let seedArray = seedEmail?.text?.body?.slice(171).split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
@@ -112,7 +111,6 @@ test.describe.serial("tkey Input test", () => {
     browser,
   }) => {
     await signInWithEmail(page, testEmail, browser);
-    await mailosaur.messages.deleteAll(process.env.MAILOSAUR_SERVER_ID || ""); // Deleting emails in email server.
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
@@ -151,7 +149,6 @@ test.describe.serial("tkey Input test", () => {
   }) => {
     test.setTimeout(120000);
     await signInWithEmail(page, testEmail, browser);
-    await mailosaur.messages.deleteAll(process.env.MAILOSAUR_SERVER_ID || ""); // Deleting emails in email server.
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
       waitUntil: "load",
     });
@@ -201,7 +198,6 @@ test.describe.serial("tkey Input test", () => {
     browser,
   }) => {
     await signInWithEmail(page, testEmail, browser);
-    await mailosaur.messages.deleteAll(process.env.MAILOSAUR_SERVER_ID || ""); // Deleting emails in email server.
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
       waitUntil: "load",
     });
