@@ -1,5 +1,7 @@
 import * as playwright from "@playwright/test";
 import { env_map } from "../../utils/index";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export interface TestArgs {
   openloginURL: string;
