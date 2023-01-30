@@ -173,7 +173,8 @@ test.describe.serial("tkey Input test", () => {
     await page.fill('[placeholder="Set your password"]', passwordShare);
     await page.fill('[placeholder="Re-enter your password"]', passwordShare);
     await page.click('button:has-text("Confirm")');
-    await page.waitForTimeout(4000);
+    // TODO: find a better way to wait for password deletion
+
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
 
     // logout the user
