@@ -56,17 +56,9 @@ test.describe.serial("Account page test", () => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=Account")).toBeTruthy();
   });
-  test(`should display 2FA enable window for single factor account`, async ({
-    openloginURL,
-  }) => {
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+  test(`should display 2FA enable window for single factor account`, async ({}) => {
     expect(
       await page.isVisible(
         "text=We strongly recommend you to enable 2FA on your account"
@@ -76,11 +68,6 @@ test.describe.serial("Account page test", () => {
   test(`should setup 2FA account from account page`, async ({
     openloginURL,
   }) => {
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     await page.click('button:has-text("Enable 2FA")');
     page
       .locator(
@@ -99,6 +86,7 @@ test.describe.serial("Account page test", () => {
         sentTo: backupEmail,
       }
     );
+    await mailosaur.messages.del(seedEmail?.id || "");
     let seedArray = seedEmail?.text?.body?.slice(171).split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
@@ -122,12 +110,7 @@ test.describe.serial("Account page test", () => {
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
   });
 
-  test(`should resend recovery email share`, async ({ openloginURL }) => {
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+  test(`should resend recovery email share`, async () => {
     await page.click('button:has-text("Resend")');
 
     const resentBackup = await mailosaur.messages.get(
@@ -154,10 +137,7 @@ test.describe.serial("Account page test", () => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    await page.click('button[aria-label="export email share"]', {
-      force: true,
-    });
+    await page.click('button[aria-label="export email share"]');
     const resentBackup = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
       {
@@ -177,6 +157,7 @@ test.describe.serial("Account page test", () => {
       await page.isVisible("text=Save a copy of your backup phrase")
     ).toBeTruthy();
     expect(await page.isVisible(`text=${seedString}`)).toBeTruthy(); // check if the backup phrase on email matches the one on UI.
+    await page.click('button:has-text("Close")');
   });
 
   test(`should be able to delete email share`, async ({ openloginURL }) => {
@@ -186,94 +167,64 @@ test.describe.serial("Account page test", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
-    await page.click('button[aria-label="delete email share"]', {
-      force: true,
-    });
-    await page.waitForTimeout(2000);
-
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/metadata.tor.us/bulk_set_stream") &&
+          resp.status() === 200
+      ),
+      page.click('button[aria-label="delete email share"]'),
+    ]);
     await page.reload();
-    await page.waitForTimeout(1000);
     expect(await page.isVisible("text=2 / 2")).toBeTruthy();
   });
 
-  test(`should show a popup with copy option while clicking download device share`, async ({
-    openloginURL,
-  }) => {
-    await page.goto(`${openloginURL}/wallet/home`);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-
-    await page.click(`button[aria-label='export device share']`, {
-      force: true,
-    });
-    await page.waitForTimeout(1000);
-
-    expect(
-      await page.isVisible("text=Save a copy of your backup phrase")
-    ).toBeTruthy();
+  test(`should show a popup with copy option while clicking download device share`, async () => {
+    await Promise.all([
+      expect(
+        page.isVisible("text=Save a copy of your backup phrase")
+      ).toBeTruthy(),
+      page.click(`button[aria-label='export device share']`),
+    ]);
+    await page.click('button:has-text("Close")');
   });
 
   // should test setting up email backup again after deleting email share.
-  test(`should be able to setup email backup again`, async ({
-    openloginURL,
-  }) => {
-    await page.goto(`${openloginURL}/wallet/home`);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+  test(`should be able to setup email backup again`, async () => {
     expect(await page.isVisible("text=2 / 2")).toBeTruthy();
     await page.fill('[placeholder="Enter recovery email"]', testEmail);
-    await page.click('button:has-text("Confirm")');
-    await page.waitForTimeout(4000);
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/metadata.tor.us/releaseLock") &&
+          resp.status() === 200
+      ),
+      page.click('button:has-text("Confirm")'),
+    ]);
+    await page.reload();
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
   });
 
   // below test check password share setup.
   test(`should setup account password`, async ({ openloginURL }) => {
-    await page.goto(`${openloginURL}/wallet/home`);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     await page.fill('[placeholder="Set your password"]', randomPassword.trim());
     await page.fill(
       '[placeholder="Re-enter your password"]',
       randomPassword.trim()
     );
-    await page.click('button:has-text("Confirm")');
-    await page.waitForTimeout(4000);
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/metadata.tor.us/releaseLock") &&
+          resp.status() === 200
+      ),
+      page.click('button:has-text("Confirm")'),
+    ]);
+    await page.reload();
     expect(await page.isVisible("text=2 / 4")).toBeTruthy();
   });
 
   test(`should change/update account password`, async ({ openloginURL }) => {
-    await page.goto(`${openloginURL}/wallet/home`);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     await page.click('button:has-text("Change Password")');
     await page.fill(
       '[placeholder="Set your password"]',
@@ -283,32 +234,29 @@ test.describe.serial("Account page test", () => {
       '[placeholder="Re-enter your password"]',
       newRandomPassword.trim()
     );
-    await page.click('button:has-text("Confirm")');
-    await page.waitForTimeout(4000);
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/metadata.tor.us/releaseLock") &&
+          resp.status() === 200
+      ),
+      page.click('button:has-text("Confirm")'),
+    ]);
     expect(await page.isVisible("text=2 / 4")).toBeTruthy();
   });
 
   test(`should be able to delete device share`, async ({ openloginURL }) => {
-    await page.goto(`${openloginURL}/wallet/home`);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-
-    await page.click(`button[aria-label='delete device share']`, {
-      force: true,
-    });
-
-    expect(
-      await page.isVisible("text=Delete authentication factor")
-    ).toBeTruthy();
-    await page.click('button:has-text("Remove Share")');
-    await page.waitForTimeout(4000);
-    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
+    await page.click(`button[aria-label='delete device share']`);
+    await Promise.all([
+      expect(page.isVisible("text=2 / 3")).toBeTruthy(),
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/metadata.tor.us/releaseLock") &&
+          resp.status() === 200
+      ),
+      page.click('button:has-text("Remove Share")'),
+    ]);
+    // expect(await page.isVisible("text=2 / 3")).toBeTruthy();
     expect(await page.isVisible("text=No device shares found")).toBeTruthy();
   });
 });

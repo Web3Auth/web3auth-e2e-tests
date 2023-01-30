@@ -17,7 +17,7 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
       try {
         if (await page.isVisible("text=New login detected"))
           await page.click('button:has-text("Cancel")', { force: true });
-      } catch { }
+      } catch {}
     }
     resolve();
   });
@@ -34,10 +34,8 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
     while (!stopped) {
       try {
         if (await page.isVisible("text=secure your account"))
-          await page.click('button:has-text("Maybe next time")', {
-            force: true,
-          });
-      } catch { }
+          await page.click('button:has-text("Maybe next time")');
+      } catch {}
     }
     resolve();
   });

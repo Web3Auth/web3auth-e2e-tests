@@ -52,7 +52,6 @@ test.describe.serial("App authorization page test", () => {
     openloginURL,
     browser,
   }) => {
-    test.setTimeout(120000);
     const context2 = await browser.newContext();
     const context3 = await browser.newContext();
     const page2 = await context2.newPage();
@@ -60,7 +59,6 @@ test.describe.serial("App authorization page test", () => {
       await page2.goto("https://solana.tor.us/login");
       await page2.fill('[placeholder="Enter your email"]', testEmail);
       await page2.click('button:has-text("Continue with Email")');
-      await page.waitForTimeout(4000);
 
       const newEmail = await mailosaur.messages.get(
         process.env.MAILOSAUR_SERVER_ID || "",
@@ -96,8 +94,6 @@ test.describe.serial("App authorization page test", () => {
 
       expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
       expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
-      await page.waitForTimeout(4000);
-
       expect(
         await page.isVisible(
           "text=You are not connected to any applications yet."
@@ -113,7 +109,6 @@ test.describe.serial("App authorization page test", () => {
       await page2.click('button:has-text("CONNECT WITH SOCIAL")');
       await page2.fill('[placeholder="Email"]', testEmail);
       await page2.click('button:has-text("Continue with Email")');
-      await page.waitForTimeout(4000);
 
       const newEmail = await mailosaur.messages.get(
         process.env.MAILOSAUR_SERVER_ID || "",
@@ -148,12 +143,10 @@ test.describe.serial("App authorization page test", () => {
       });
       expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
       expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
-      await page.waitForTimeout(4000);
       await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
         waitUntil: "load",
       });
-      await page.waitForTimeout(4000);
 
       expect(
         await page.isVisible(
@@ -176,10 +169,7 @@ test.describe.serial("App authorization page test", () => {
     });
 
     expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
-    await page.click('button[aria-label="delete device share"]', {
-      force: true,
-    });
-    await page.waitForTimeout(2000);
+    await page.click('button[aria-label="delete device share"]');
     await page.goto(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {
       waitUntil: "load",

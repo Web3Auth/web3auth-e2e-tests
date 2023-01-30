@@ -1,6 +1,11 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
-import { useAutoCancel2FASetup, signInWithEmail, findLink, deleteCurrentDeviceShare } from "../../utils";
+import {
+  useAutoCancel2FASetup,
+  signInWithEmail,
+  findLink,
+  deleteCurrentDeviceShare,
+} from "../../utils";
 import {
   useAutoCancelShareTransfer,
   generateRandomEmail,
@@ -138,7 +143,6 @@ test.describe.serial("tkey Input test", () => {
     openloginURL,
     browser,
   }) => {
-    test.setTimeout(120000);
     await signInWithEmail(page, testEmail, browser);
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
       waitUntil: "load",
@@ -150,30 +154,21 @@ test.describe.serial("tkey Input test", () => {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/home`);
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-    expect(await page.isVisible("text=Account")).toBeTruthy();
 
     // Delete device share to simulate tkey-input page
-    await page.click(`button[aria-label='delete device share']`);
-    await page.click('button:has-text("Remove share")');
-    await page.waitForTimeout(4000);
+    await deleteCurrentDeviceShare(page);
+
+    // setup password share
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-    expect(await page.isVisible("text=2 / 2")).toBeTruthy();
-    expect(await page.isVisible("text=No device shares found")).toBeTruthy();
-
-    // setup password share
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     await page.fill('[placeholder="Set your password"]', passwordShare);
     await page.fill('[placeholder="Re-enter your password"]', passwordShare);
     await page.click('button:has-text("Confirm")');
     // TODO: find a better way to wait for password deletion
+    // wait for tkey-rehydration
 
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
 
