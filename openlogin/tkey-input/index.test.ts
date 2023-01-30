@@ -1,6 +1,6 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
-import { useAutoCancel2FASetup, signInWithEmail, findLink } from "../../utils";
+import { useAutoCancel2FASetup, signInWithEmail, findLink, deleteCurrentDeviceShare } from "../../utils";
 import {
   useAutoCancelShareTransfer,
   generateRandomEmail,
@@ -23,8 +23,6 @@ const passwordShare = generate({
   lowercase: true,
   strict: true,
 });
-
-let backupPhrase = "";
 
 test.describe.serial("tkey Input test", () => {
   let page: Page;
@@ -106,7 +104,7 @@ test.describe.serial("tkey Input test", () => {
     ).toBeTruthy();
   });
 
-  test(`should login with social + device share`, async ({
+  test(`should login with social + device and delete device share`, async ({
     openloginURL,
     browser,
   }) => {
@@ -120,18 +118,11 @@ test.describe.serial("tkey Input test", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=Account")).toBeTruthy();
-    //deleting device share
-    await page.click(`button[aria-label='delete device share']`, {
-      force: true,
-    });
-    await page.click('button:has-text("Remove share")');
-    await page.waitForTimeout(4000);
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(await page.isVisible("text=2 / 2")).toBeTruthy();
-    expect(await page.isVisible("text=No device shares found")).toBeTruthy();
+
+    // Make sure tkey is rehydrated here.
+    // Deleting device share
+    await deleteCurrentDeviceShare(page);
+
     // logout the user
     await page.click(`text=Logout`);
     await page.goto(`${openloginURL}`);
@@ -165,6 +156,8 @@ test.describe.serial("tkey Input test", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=Account")).toBeTruthy();
+
+    // Delete device share to simulate tkey-input page
     await page.click(`button[aria-label='delete device share']`);
     await page.click('button:has-text("Remove share")');
     await page.waitForTimeout(4000);
@@ -182,6 +175,7 @@ test.describe.serial("tkey Input test", () => {
     await page.click('button:has-text("Confirm")');
     await page.waitForTimeout(4000);
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
+
     // logout the user
     await page.click(`text=Logout`);
     await page.goto(`${openloginURL}`);

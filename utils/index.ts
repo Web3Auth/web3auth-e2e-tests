@@ -17,7 +17,7 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
       try {
         if (await page.isVisible("text=New login detected"))
           await page.click('button:has-text("Cancel")', { force: true });
-      } catch {}
+      } catch { }
     }
     resolve();
   });
@@ -37,7 +37,7 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
           await page.click('button:has-text("Maybe next time")', {
             force: true,
           });
-      } catch {}
+      } catch { }
     }
     resolve();
   });
@@ -134,6 +134,7 @@ async function ensureDeviceShareDeleted(page: Page) {
     if (
       await page.locator("text=Device share deletion unsuccessful").isVisible()
     ) {
+      console.log("Unable to delete device share");
       await page.reload();
     } else {
       // inner try/catch block to handle a scenario where there is no timeout/error
