@@ -128,7 +128,6 @@ test.describe.serial("App authorization page test", () => {
       await page2.waitForSelector("text=You are connected with your account", {
         timeout: 30000, // larger timeout for external webpage loading
       });
-      //await page2.waitForTimeout(4000);
       await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
         waitUntil: "load",

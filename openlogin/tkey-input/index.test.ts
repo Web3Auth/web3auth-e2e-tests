@@ -47,7 +47,7 @@ test.describe.serial("tkey Input test", () => {
     browser.close();
   });
 
-  test(`should setup 2FA and password for running further tkey_input tests`, async ({
+  test(`should setup 2FA for running further tkey_input tests`, async ({
     openloginURL,
   }) => {
     test.setTimeout(60000); // adding more time to compensate high loading time
