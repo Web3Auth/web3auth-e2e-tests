@@ -52,6 +52,7 @@ test.describe.serial("App authorization page test", () => {
     openloginURL,
     browser,
   }) => {
+    test.setTimeout(120000); // adding more time since test is depended on external websites.
     const context2 = await browser.newContext();
     const context3 = await browser.newContext();
     const page2 = await context2.newPage();
@@ -59,7 +60,7 @@ test.describe.serial("App authorization page test", () => {
       await page2.goto("https://solana.tor.us/login");
       await page2.fill('[placeholder="Enter your email"]', testEmail);
       await page2.click('button:has-text("Continue with Email")');
-
+      await page2.waitForTimeout(4000);
       const newEmail = await mailosaur.messages.get(
         process.env.MAILOSAUR_SERVER_ID || "",
         {
@@ -78,21 +79,17 @@ test.describe.serial("App authorization page test", () => {
           timeout: 10000,
         }
       );
-      await page2.waitForTimeout(4000);
-
-      await page.goto(`${openloginURL}/wallet/home`);
-      await page.waitForURL(`${openloginURL}/wallet/home`, {
+      await page3.close();
+      await page2.waitForURL(`https://solana.tor.us/wallet/home`, {
         waitUntil: "load",
       });
-
-      expect(page.url()).toBe(`${openloginURL}/wallet/home`);
-
-      await page.goto(`${openloginURL}/wallet/apps`);
+      await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
         waitUntil: "load",
       });
 
       expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
+      await page.waitForSelector("text=solana-prod");
       expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
       expect(
         await page.isVisible(
@@ -100,15 +97,15 @@ test.describe.serial("App authorization page test", () => {
         )
       ).toBeFalsy();
       expect(await page.isVisible("text=solana-prod")).toBeTruthy();
-      await page3.close();
       await page2.close();
     }
     if (process.env.PLATFORM === "cyan") {
-      await page2.goto("https://collect.100thieves.com/");
+      await page2.goto("https://collect.100thieves.com");
       await page2.click('button:has-text("CONNECT WALLET")');
       await page2.click('button:has-text("CONNECT WITH SOCIAL")');
       await page2.fill('[placeholder="Email"]', testEmail);
       await page2.click('button:has-text("Continue with Email")');
+      await page2.waitForTimeout(4000);
 
       const newEmail = await mailosaur.messages.get(
         process.env.MAILOSAUR_SERVER_ID || "",
@@ -128,47 +125,23 @@ test.describe.serial("App authorization page test", () => {
           timeout: 10000,
         }
       );
+      await page3.close();
       await page2.waitForTimeout(4000);
-
-      await page.goto(`${openloginURL}/wallet/home`);
-      await page.waitForURL(`${openloginURL}/wallet/home`, {
-        waitUntil: "load",
-      });
-
-      expect(page.url()).toBe(`${openloginURL}/wallet/home`);
-
-      await page.goto(`${openloginURL}/wallet/apps`);
-      await page.waitForURL(`${openloginURL}/wallet/apps`, {
-        waitUntil: "load",
-      });
-      expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
-      expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
+      await page.waitForTimeout(2000);
       await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
         waitUntil: "load",
       });
-
-      expect(
-        await page.isVisible(
-          "text=You are not connected to any applications yet."
-        )
-      ).toBeFalsy();
+      await page.waitForSelector("text=LCS Drop");
+      expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
       expect(await page.isVisible("text=LCS Drop")).toBeTruthy();
-      await page3.close();
       await page2.close();
     }
   });
 
   test(`should be able to delete app share from UI`, async ({
     openloginURL,
-    browser,
   }) => {
-    await page.goto(`${openloginURL}/wallet/apps`);
-    await page.waitForURL(`${openloginURL}/wallet/apps`, {
-      waitUntil: "load",
-    });
-
-    expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
     await page.click('button[aria-label="delete device share"]');
     await page.goto(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {

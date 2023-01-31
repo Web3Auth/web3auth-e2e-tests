@@ -3,8 +3,7 @@ import { test } from "./index.lib";
 import {
   useAutoCancel2FASetup,
   signInWithEmail,
-  findLink,
-  deleteCurrentDeviceShare,
+  deleteDeviceShare,
 } from "../../utils";
 import {
   useAutoCancelShareTransfer,
@@ -36,7 +35,6 @@ test.describe.serial("tkey Input test", () => {
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
-
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
@@ -74,7 +72,7 @@ test.describe.serial("tkey Input test", () => {
         sentTo: backupEmail,
       }
     );
-    await mailosaur.messages.del(seedEmail?.id || "");
+    await mailosaur.messages.del(seedEmail.id || ""); // Deleting emails in email server.
     let seedArray = seedEmail?.text?.body?.slice(171).split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
@@ -124,9 +122,8 @@ test.describe.serial("tkey Input test", () => {
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=Account")).toBeTruthy();
 
-    // Make sure tkey is rehydrated here.
     // Deleting device share
-    await deleteCurrentDeviceShare(page);
+    await deleteDeviceShare(page);
 
     // logout the user
     await page.click(`text=Logout`);
@@ -156,22 +153,28 @@ test.describe.serial("tkey Input test", () => {
     expect(page.url()).toBe(`${openloginURL}/wallet/home`);
 
     // Delete device share to simulate tkey-input page
-    await deleteCurrentDeviceShare(page);
-
-    // setup password share
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    await deleteDeviceShare(page);
+
+    // setup password share with tkey-rehydration
+    await page.reload();
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
     await page.fill('[placeholder="Set your password"]', passwordShare);
     await page.fill('[placeholder="Re-enter your password"]', passwordShare);
-    await page.click('button:has-text("Confirm")');
-    // TODO: find a better way to wait for password deletion
-    // wait for tkey-rehydration
-
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/metadata.tor.us/releaseLock") &&
+          resp.status() === 200
+      ),
+      page.click('button:has-text("Confirm")'),
+    ]);
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
-
     // logout the user
     await page.click(`text=Logout`);
     await page.goto(`${openloginURL}`);

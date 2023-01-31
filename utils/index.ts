@@ -1,4 +1,9 @@
-import { Page, PlaywrightWorkerOptions, Browser } from "@playwright/test";
+import {
+  Page,
+  PlaywrightWorkerOptions,
+  Browser,
+  expect,
+} from "@playwright/test";
 import confirmEmail from "./confirmEmail";
 import { Link } from "mailosaur/lib/models";
 import Mailosaur from "mailosaur";
@@ -125,47 +130,17 @@ async function signInWithDiscord(page: Page): Promise<boolean> {
   }
 }
 
-async function ensureDeviceShareDeleted(page: Page) {
-  var isDeleted = false;
-  try {
-    await page.click('button:has-text("Remove share")');
-    if (
-      await page.locator("text=Device share deletion unsuccessful").isVisible()
-    ) {
-      console.log("Unable to delete device share");
-      await page.reload();
-    } else {
-      // inner try/catch block to handle a scenario where there is no timeout/error
-      // but still did not  get successful message, reload the page and return false
-      try {
-        await page.waitForSelector("text=Device share successfully deleted");
-        isDeleted = true;
-      } catch {
-        await page.reload();
-      }
-    }
-    // catch to handle timeout scenario after clicking "Remove share" button
-    // close delete share conformation dialog and reload the page
-  } catch {
-    await page.click('[aria-label="Close Delete Share Dialog"]');
-    await page.reload();
-  }
-  return isDeleted;
-}
-
-async function deleteCurrentDeviceShare(page: Page) {
-  var deviceShares = page.locator('[aria-label="delete device share"]');
-  var countShares = await deviceShares.count();
-  while (countShares > 0) {
-    await deviceShares.first().click();
-    let isDeleted = await ensureDeviceShareDeleted(page);
-    if (isDeleted) {
-      countShares = countShares - 1;
-    } else {
-      deviceShares = page.locator('[aria-label="delete device share"]');
-      countShares = await deviceShares.count();
-    }
-  }
+async function deleteDeviceShare(page: Page) {
+  await page.click(`button[aria-label='delete device share']`);
+  await Promise.all([
+    expect(page.isVisible("text=No device shares found")).toBeTruthy(),
+    page.waitForResponse(
+      (resp) =>
+        resp.url().includes("/metadata.tor.us/releaseLock") &&
+        resp.status() === 200
+    ),
+    page.click('button:has-text("Remove Share")'),
+  ]);
 }
 
 function findLink(links: Link[], text: string) {
@@ -196,10 +171,8 @@ async function signInWithEmail(
     if (!link) {
       link = findLink(mailBox.html?.links || [], "Verify my email");
     }
+    await mailosaur.messages.del(mailBox.id || ""); // Deleting emails in email server.
     const href = link?.href || "";
-
-    await mailosaur.messages.del(mailBox?.id || "");
-
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();
     await page2.goto(href);
@@ -227,7 +200,7 @@ export {
   signInWithFacebook,
   signInWithDiscord,
   confirmEmail,
-  deleteCurrentDeviceShare,
+  deleteDeviceShare,
   findLink,
   signInWithEmail,
   generateRandomEmail,

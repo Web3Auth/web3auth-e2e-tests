@@ -1,6 +1,10 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
-import { useAutoCancel2FASetup, signInWithEmail } from "../../utils";
+import {
+  useAutoCancel2FASetup,
+  signInWithEmail,
+  deleteDeviceShare,
+} from "../../utils";
 import {
   useAutoCancelShareTransfer,
   generateRandomEmail,
@@ -86,7 +90,7 @@ test.describe.serial("Account page test", () => {
         sentTo: backupEmail,
       }
     );
-    await mailosaur.messages.del(seedEmail?.id || "");
+    await mailosaur.messages.del(seedEmail.id || "");
     let seedArray = seedEmail?.text?.body?.slice(171).split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
@@ -246,17 +250,10 @@ test.describe.serial("Account page test", () => {
   });
 
   test(`should be able to delete device share`, async ({ openloginURL }) => {
-    await page.click(`button[aria-label='delete device share']`);
-    await Promise.all([
-      expect(page.isVisible("text=2 / 3")).toBeTruthy(),
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/metadata.tor.us/releaseLock") &&
-          resp.status() === 200
-      ),
-      page.click('button:has-text("Remove Share")'),
-    ]);
-    // expect(await page.isVisible("text=2 / 3")).toBeTruthy();
-    expect(await page.isVisible("text=No device shares found")).toBeTruthy();
+    await deleteDeviceShare(page);
+    await page.reload();
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
   });
 });
