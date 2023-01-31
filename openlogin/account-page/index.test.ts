@@ -3,7 +3,7 @@ import { test } from "./index.lib";
 import {
   useAutoCancel2FASetup,
   signInWithEmail,
-  deleteDeviceShare,
+  deleteCurrentDeviceShare,
 } from "../../utils";
 import {
   useAutoCancelShareTransfer,
@@ -37,6 +37,7 @@ const newRandomPassword = generate({
 test.describe.serial("Account page test", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
+    test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
@@ -250,7 +251,7 @@ test.describe.serial("Account page test", () => {
   });
 
   test(`should be able to delete device share`, async ({ openloginURL }) => {
-    await deleteDeviceShare(page);
+    await deleteCurrentDeviceShare(page);
     await page.reload();
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",

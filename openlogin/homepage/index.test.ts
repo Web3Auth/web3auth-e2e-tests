@@ -13,6 +13,7 @@ const testEmail = `hello+home+${Date.now()}@${
 test.describe.serial("Home page tests", () => {
   let page: Page;
   test.beforeAll(async ({ openloginURL, browser }) => {
+    test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext({});
     page = await context.newPage();
     await page.goto(openloginURL);

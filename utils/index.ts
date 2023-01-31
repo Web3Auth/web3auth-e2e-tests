@@ -130,19 +130,6 @@ async function signInWithDiscord(page: Page): Promise<boolean> {
   }
 }
 
-async function deleteDeviceShare(page: Page) {
-  await page.click(`button[aria-label='delete device share']`);
-  await Promise.all([
-    expect(page.isVisible("text=No device shares found")).toBeTruthy(),
-    page.waitForResponse(
-      (resp) =>
-        resp.url().includes("/metadata.tor.us/releaseLock") &&
-        resp.status() === 200
-    ),
-    page.click('button:has-text("Remove Share")'),
-  ]);
-}
-
 function findLink(links: Link[], text: string) {
   for (const link of links) {
     if (link.text === text) return link;
@@ -192,6 +179,48 @@ async function signInWithEmail(
 function generateRandomEmail() {
   return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 }
+async function ensureDeviceShareDeleted(page: Page) {
+  var isDeleted = false;
+  var url = page.url();
+  try {
+    await page.click('button:has-text("Remove share")');
+    if (
+      await page.locator("text=Device share deletion unsuccessful").isVisible()
+    ) {
+      await page.reload();
+    } else {
+      // inner try/catch block to handle a scenario where there is no timeout/error
+      // but still did not  get successful message, reload the page and return false
+      try {
+        await page.waitForSelector("text=Device share successfully deleted");
+        isDeleted = true;
+      } catch {
+        await page.reload();
+      }
+    }
+    // catch to handle timeout scenario after clicking "Remove share" button
+    // close delete share conformation dialog and reload the page
+  } catch {
+    await page.click('[aria-label="Close Delete Share Dialog"]');
+    await page.reload();
+  }
+  return isDeleted;
+}
+
+async function deleteCurrentDeviceShare(page: Page) {
+  var deviceShares = page.locator('[aria-label="delete device share"]');
+  var countShares = await deviceShares.count();
+  while (countShares > 0) {
+    await deviceShares.first().click();
+    let isDeleted = await ensureDeviceShareDeleted(page);
+    if (isDeleted) {
+      countShares = countShares - 1;
+    } else {
+      deviceShares = page.locator('[aria-label="delete device share"]');
+      countShares = await deviceShares.count();
+    }
+  }
+}
 
 export {
   useAutoCancelShareTransfer,
@@ -200,9 +229,9 @@ export {
   signInWithFacebook,
   signInWithDiscord,
   confirmEmail,
-  deleteDeviceShare,
   findLink,
   signInWithEmail,
   generateRandomEmail,
+  deleteCurrentDeviceShare,
   env_map,
 };

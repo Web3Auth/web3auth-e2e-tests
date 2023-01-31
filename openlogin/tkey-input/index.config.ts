@@ -13,7 +13,6 @@ const projects: Array<
 const config: PlaywrightTestConfig<TestArgs> = {
   ...indexConfig,
   testDir: __dirname,
-  timeout: 70000,
   projects: projects.map(({ browserName }) => ({
     name: browserName,
     use: {

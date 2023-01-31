@@ -3,7 +3,7 @@ import { test } from "./index.lib";
 import {
   useAutoCancel2FASetup,
   signInWithEmail,
-  deleteDeviceShare,
+  deleteCurrentDeviceShare,
 } from "../../utils";
 import {
   useAutoCancelShareTransfer,
@@ -31,6 +31,7 @@ const passwordShare = generate({
 test.describe.serial("tkey Input test", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
+    test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
@@ -49,6 +50,7 @@ test.describe.serial("tkey Input test", () => {
   test(`should setup 2FA and password for running further tkey_input tests`, async ({
     openloginURL,
   }) => {
+    test.setTimeout(60000); // adding more time to compensate high loading time
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -111,6 +113,7 @@ test.describe.serial("tkey Input test", () => {
     openloginURL,
     browser,
   }) => {
+    test.setTimeout(60000); // adding more time to compensate high loading time
     await signInWithEmail(page, testEmail, browser);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
@@ -123,7 +126,7 @@ test.describe.serial("tkey Input test", () => {
     expect(await page.isVisible("text=Account")).toBeTruthy();
 
     // Deleting device share
-    await deleteDeviceShare(page);
+    await deleteCurrentDeviceShare(page);
 
     // logout the user
     await page.click(`text=Logout`);
@@ -140,6 +143,7 @@ test.describe.serial("tkey Input test", () => {
     openloginURL,
     browser,
   }) => {
+    test.setTimeout(60000); // adding more time to compensate high loading time
     await signInWithEmail(page, testEmail, browser);
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
       waitUntil: "load",
@@ -157,7 +161,7 @@ test.describe.serial("tkey Input test", () => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-    await deleteDeviceShare(page);
+    await deleteCurrentDeviceShare(page);
 
     // setup password share with tkey-rehydration
     await page.reload();

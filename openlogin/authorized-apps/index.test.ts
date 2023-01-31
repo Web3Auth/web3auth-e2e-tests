@@ -17,6 +17,7 @@ test.describe.serial("App authorization page test", () => {
   test.skip(() => process.env.PLATFORM === "local"); // skipping this test for local
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
+    test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
@@ -60,7 +61,6 @@ test.describe.serial("App authorization page test", () => {
       await page2.goto("https://solana.tor.us/login");
       await page2.fill('[placeholder="Enter your email"]', testEmail);
       await page2.click('button:has-text("Continue with Email")');
-      await page2.waitForTimeout(4000);
       const newEmail = await mailosaur.messages.get(
         process.env.MAILOSAUR_SERVER_ID || "",
         {
@@ -105,7 +105,6 @@ test.describe.serial("App authorization page test", () => {
       await page2.click('button:has-text("CONNECT WITH SOCIAL")');
       await page2.fill('[placeholder="Email"]', testEmail);
       await page2.click('button:has-text("Continue with Email")');
-      await page2.waitForTimeout(4000);
 
       const newEmail = await mailosaur.messages.get(
         process.env.MAILOSAUR_SERVER_ID || "",
@@ -122,12 +121,14 @@ test.describe.serial("App authorization page test", () => {
       await page3.waitForSelector(
         "text=Close this and return to your previous window",
         {
-          timeout: 10000,
+          timeout: 20000,
         }
       );
       await page3.close();
-      await page2.waitForTimeout(4000);
-      await page.waitForTimeout(2000);
+      await page2.waitForSelector("text=You are connected with your account", {
+        timeout: 30000, // larger timeout for external webpage loading
+      });
+      //await page2.waitForTimeout(4000);
       await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
         waitUntil: "load",
