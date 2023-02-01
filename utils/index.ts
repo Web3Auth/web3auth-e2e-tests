@@ -1,5 +1,8 @@
-import { Page, PlaywrightWorkerOptions } from "@playwright/test";
+import test, { expect, Page, PlaywrightWorkerOptions } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
+import config from "./../index.config"
+
+export const DEFAULT_PLATFORM = "cyan"
 
 const env_map: { [key: string]: string } = {
   "prod": "https://app.openlogin.com",
@@ -68,6 +71,56 @@ async function signInWithGoogle({
   }
 }
 
+async function signInWithTwitter({
+  page,
+  twitter,
+  openloginURL
+}: {
+  page: Page;
+  twitter: {
+    email: string;
+    password: string;
+  },
+  openloginURL: string;
+}): Promise<void> {
+  await page.goto(openloginURL);
+  await page.click('button:has-text("Get Started")');
+  await page.click("[aria-label='login with twitter']");
+
+  await page.waitForURL("https://api.twitter.com/oauth/**");
+  await page.waitForSelector('h2:text("Authorize Web3Auth to access your account")');
+  await page.click(`input:has-text("Sign in")`);
+  // Only for the first time users, they have to click on authorize web3Auth app
+  try {
+    // smaller timeout, we don't want to wait here for longer
+    const ele = await page.waitForSelector(`input:has-text("Authorize app")`, {
+      timeout: 1000
+    })
+    await page.click(`input:has-text("Authorize app")`)
+  } catch {
+  }
+  await page.waitForSelector('text="Sign in to Twitter"');
+  await page.fill('input[autocomplete="username"]', twitter.email);
+  await page.click(`div[role="button"] span:has-text("Next")`);
+  await page.fill('input[type="password"]', twitter.password);
+  // Login tests are slow tests, >1 min is consumed in the redirection loop from the social provider to finally reach wallet/home. Hence the max test timeout.
+  // FLOW: social-redirections => [host]/auth(SLOW) => [host]/register(SLOW) => [host]/wallet/home
+  await slowOperation(async () => {
+    await page.click(`div[role="button"] span:has-text("Log in")`)
+    await useAutoCancelShareTransfer(page)
+    await useAutoCancel2FASetup(page)
+    await page.waitForURL(`${openloginURL}/wallet/home`)
+  })
+}
+
+async function slowOperation(op: () => Promise<any>, timeout?: number) {
+  // Set slow timeout
+  test.setTimeout(timeout || 2 * 60 * 1000) // => 2 mins timeout
+  await op()
+  // Reset timeout
+  test.setTimeout(config.timeout || 0)
+}
+
 async function signInWithFacebook({
   page,
   FB,
@@ -103,17 +156,33 @@ async function signInWithFacebook({
   }
 }
 
-async function signInWithDiscord(page: Page): Promise<boolean> {
-  try {
-    await page.waitForURL("https://discord.com/oauth2/**");
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click('button:has-text("Authorise"), button:has-text("Authorize")'),
-    ]);
-    return true;
-  } catch {
-    return false;
+async function signInWithDiscord({ page, discord }: {
+  page: Page, discord: {
+    email: string,
+    password: string
   }
+}): Promise<boolean> {
+  // try {
+  //   await page.waitForURL("https://accounts.google.com/**");
+  //   await page.isVisible("text=Sign in");
+  //   await page.fill('[aria-label="Email or phone"]', google.email);
+  //   await page.click(`button:has-text("Next")`);
+  //   await page.fill('[aria-label="Enter your password"]', google.password);
+  //   await page.click(`button:has-text("Next")`);
+  //   return true;
+  // } catch {
+  //   return false;
+  // }
+  // try {
+  await page.waitForURL("https://discord.com/oauth2/**");
+  await page.isVisible("text=Welcome back!");
+  await page.fill('[name="email"]', discord.email);
+  await page.fill('[name="password"]', discord.password);
+  await page.click(`button:has-text("Log In")`);
+  return true;
+  // } catch {
+  //   return false;
+  // }
 }
 
 async function ensureDeviceShareDeleted(page: Page) {
@@ -162,6 +231,7 @@ export {
   useAutoCancelShareTransfer,
   useAutoCancel2FASetup,
   signInWithGoogle,
+  signInWithTwitter,
   signInWithFacebook,
   signInWithDiscord,
   confirmEmail,
