@@ -4,6 +4,7 @@ import {
   useAutoCancel2FASetup,
   signInWithEmail,
   deleteCurrentDeviceShare,
+  waitForTkeyRehydration,
 } from "../../utils";
 import {
   useAutoCancelShareTransfer,
@@ -30,6 +31,7 @@ const passwordShare = generate({
 
 test.describe.serial("tkey Input test", () => {
   let page: Page;
+
   test.beforeAll(async ({ browser, openloginURL }) => {
     test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext();
@@ -41,6 +43,9 @@ test.describe.serial("tkey Input test", () => {
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
+    // page.on("console", (message) => {
+    //   console.log(message);
+    // });
   });
 
   test.afterAll(async ({ browser }) => {
@@ -89,7 +94,7 @@ test.describe.serial("tkey Input test", () => {
     await page.click('button:has-text("Verify")');
 
     await page.click('button:has-text("Done")');
-    await page.reload();
+    // await page.reload();
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -99,11 +104,20 @@ test.describe.serial("tkey Input test", () => {
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
 
     // logout the user after setting up 2FA
+    // await page.reload();
     await page.click(`text=Logout`);
+    // await page.waitForTimeout(5000)
     await page.goto(`${openloginURL}`);
     await page.waitForURL(`${openloginURL}`, {
       waitUntil: "load",
     });
+
+    // await page.evaluate(() => {
+    //   console.log("page eavl")
+    //   console.log(JSON.stringify(window.localStorage));
+    //   console.log(JSON.stringify(window.sessionStorage));
+    // });
+
     expect(
       await page.isVisible(`text=Click Get Started to continue`)
     ).toBeTruthy();
@@ -113,22 +127,35 @@ test.describe.serial("tkey Input test", () => {
     openloginURL,
     browser,
   }) => {
-    test.setTimeout(60000); // adding more time to compensate high loading time
+    test.setTimeout(60000); // adding more time since test is depended on external websites.
+    // await page.evaluate(() => {
+    //   console.log("page eavl")
+    //   console.log(JSON.stringify(window.localStorage));
+    //   console.log(JSON.stringify(window.sessionStorage));
+    // });
     await signInWithEmail(page, testEmail, browser);
+    await useAutoCancelShareTransfer(page);
+    await useAutoCancel2FASetup(page);
+
+    let tkey = waitForTkeyRehydration(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
+    await tkey;
+
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=Account")).toBeTruthy();
+    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
+    // console.log("starting should login2")
 
     // Deleting device share
     await deleteCurrentDeviceShare(page);
 
-    // logout the user
+    // // logout the user
     await page.click(`text=Logout`);
     await page.goto(`${openloginURL}`);
     await page.waitForURL(`${openloginURL}`, {
@@ -143,31 +170,43 @@ test.describe.serial("tkey Input test", () => {
     openloginURL,
     browser,
   }) => {
-    test.setTimeout(60000); // adding more time to compensate high loading time
+    test.setTimeout(60000); // adding more time since test is depended on external websites.
     await signInWithEmail(page, testEmail, browser);
+    let stPromise = await useAutoCancelShareTransfer(page);
+    await useAutoCancel2FASetup(page);
+
+    console.log(stPromise);
+
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
       waitUntil: "load",
     });
     expect(await page.isVisible("text=Verify your login")).toBeTruthy();
     await page.fill('[placeholder="Enter backup phrase"]', emailBackupShare);
     await page.click('button:has-text("Confirm")');
+
+
+    let tkey = waitForTkeyRehydration(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
-    expect(page.url()).toBe(`${openloginURL}/wallet/home`);
+    await tkey;
 
     // Delete device share to simulate tkey-input page
+    let tkey2 = waitForTkeyRehydration(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
+    await tkey2;
+    console.log(stPromise);
+
     await deleteCurrentDeviceShare(page);
 
     // setup password share with tkey-rehydration
-    await page.reload();
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
+    // await page.waitForURL(`${openloginURL}/wallet/account`, {
+    //   waitUntil: "load",
+    // });
+
     await page.fill('[placeholder="Set your password"]', passwordShare);
     await page.fill('[placeholder="Re-enter your password"]', passwordShare);
     await Promise.all([
@@ -178,6 +217,7 @@ test.describe.serial("tkey Input test", () => {
       ),
       page.click('button:has-text("Confirm")'),
     ]);
+
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
     // logout the user
     await page.click(`text=Logout`);

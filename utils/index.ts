@@ -1,9 +1,4 @@
-import {
-  Page,
-  PlaywrightWorkerOptions,
-  Browser,
-  expect,
-} from "@playwright/test";
+import { Page, PlaywrightWorkerOptions, Browser } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
 import { Link } from "mailosaur/lib/models";
 import Mailosaur from "mailosaur";
@@ -21,8 +16,9 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
     while (!stopped) {
       try {
         if (await page.isVisible("text=New login detected"))
-          await page.click('button:has-text("Cancel")', { force: true });
-      } catch {}
+          console.log("share transfer detected")
+        await page.click('button:has-text("Cancel")', { force: true });
+      } catch { }
     }
     resolve();
   });
@@ -33,6 +29,23 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   };
 }
 
+async function waitForTkeyRehydration(page: Page): Promise<boolean> {
+  return new Promise(function (resolve) {
+    page.on('console', (msg) => {
+      // console.log(msg.text(), msg.type());
+      // 120 state will change if the openlogin default state changes.
+      // need better way to rehydrate or find if the object is empty
+      if (msg.type() === 'info' && msg.text().includes("e2e:tests:tkeyjson")) {
+        // console.log("resolving,,,", msg.type(), msg.text())
+        let text = msg.text();
+        let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
+        if (length > 100) resolve(true);
+      }
+    });
+  });
+}
+
+
 function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   let stopped = false;
   const promise = new Promise<void>(async (resolve) => {
@@ -40,7 +53,7 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
       try {
         if (await page.isVisible("text=secure your account"))
           await page.click('button:has-text("Maybe next time")');
-      } catch {}
+      } catch { }
     }
     resolve();
   });
@@ -130,63 +143,14 @@ async function signInWithDiscord(page: Page): Promise<boolean> {
   }
 }
 
-function findLink(links: Link[], text: string) {
-  for (const link of links) {
-    if (link.text === text) return link;
-  }
-  return null;
-}
-
-async function signInWithEmail(
-  page: Page,
-  email: string,
-  browser: Browser
-): Promise<boolean> {
-  try {
-    await page.click('button:has-text("Get Started")');
-    await page.fill('[placeholder="Email"]', email);
-    await page.click('button:has-text("Continue with Email")');
-    await page.waitForSelector("text=email has been sent");
-    const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
-    const mailBox = await mailosaur.messages.get(
-      process.env.MAILOSAUR_SERVER_ID || "",
-      {
-        sentTo: email,
-      }
-    );
-    let link = findLink(mailBox.html?.links || [], "Confirm my email");
-    if (!link) {
-      link = findLink(mailBox.html?.links || [], "Verify my email");
-    }
-    await mailosaur.messages.del(mailBox.id || ""); // Deleting emails in email server.
-    const href = link?.href || "";
-    const context2 = await browser.newContext();
-    const page2 = await context2.newPage();
-    await page2.goto(href);
-    await page2.waitForSelector(
-      "text=Close this and return to your previous window",
-      {
-        timeout: 10000,
-      }
-    );
-    await page2.close();
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function generateRandomEmail() {
-  return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
-}
 async function ensureDeviceShareDeleted(page: Page) {
   var isDeleted = false;
-  var url = page.url();
   try {
     await page.click('button:has-text("Remove share")');
     if (
       await page.locator("text=Device share deletion unsuccessful").isVisible()
     ) {
+      console.log("Unable to delete device share");
       await page.reload();
     } else {
       // inner try/catch block to handle a scenario where there is no timeout/error
@@ -222,6 +186,58 @@ async function deleteCurrentDeviceShare(page: Page) {
   }
 }
 
+function findLink(links: Link[], text: string) {
+  for (const link of links) {
+    if (link.text === text) return link;
+  }
+  return null;
+}
+
+async function signInWithEmail(
+  page: Page,
+  email: string,
+  browser: Browser
+): Promise<boolean> {
+  try {
+    await page.click('button:has-text("Get Started")');
+    await page.fill('[placeholder="Email"]', email);
+    await page.click('button:has-text("Continue with Email")');
+    await page.waitForSelector("text=email has been sent");
+    const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+    const mailBox = await mailosaur.messages.get(
+      process.env.MAILOSAUR_SERVER_ID || "",
+      {
+        sentTo: email,
+      }
+    );
+    let link = findLink(mailBox.html?.links || [], "Confirm my email");
+    if (!link) {
+      link = findLink(mailBox.html?.links || [], "Verify my email");
+    }
+    await mailosaur.messages.del(mailBox?.id || "");
+    const href = link?.href || "";
+
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector(
+      "text=Close this and return to your previous window",
+      {
+        timeout: 10000,
+      }
+    );
+    await page2.close();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function generateRandomEmail() {
+  return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+}
+
+
 export {
   useAutoCancelShareTransfer,
   useAutoCancel2FASetup,
@@ -233,5 +249,6 @@ export {
   signInWithEmail,
   generateRandomEmail,
   deleteCurrentDeviceShare,
+  waitForTkeyRehydration,
   env_map,
 };

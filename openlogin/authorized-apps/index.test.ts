@@ -47,7 +47,7 @@ test.describe.serial("App authorization page test", () => {
     ).toBeTruthy();
   });
 
-  //below test use testEmail to login to solana wallet prod and there by generates an app share
+  // Velow test use testEmail to login to solana wallet prod and there by generates an app share
   // which gets listed in list of apps
   test(`should connect DApp  wallet with passwordless login and list app`, async ({
     openloginURL,
