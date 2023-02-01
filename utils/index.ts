@@ -43,6 +43,25 @@ async function waitForTkeyRehydration(page: Page, size = 100): Promise<boolean> 
   });
 }
 
+async function waitForAddPassword(page: Page): Promise<boolean> {
+  return new Promise(function (resolve) {
+    page.on('console', (msg) => {
+      if (msg.type() === 'info' && msg.text() === "e2e:tests:addPasswordCompleted") {
+        resolve(true);
+      }
+    });
+  });
+}
+
+async function waitForChangePassword(page: Page): Promise<boolean> {
+  return new Promise(function (resolve) {
+    page.on('console', (msg) => {
+      if (msg.type() === 'info' && msg.text().includes("e2e:tests:changePasswordCompleted")) {
+        resolve(true);
+      }
+    });
+  });
+}
 
 function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   let stopped = false;
@@ -200,31 +219,40 @@ async function addPasswordShare(page: Page, password: string) {
   await page.locator("input[name='openlogin-password']").fill(password);
   await page.locator("input[name='openlogin-confirm-password']").fill(password);
 
-  let x = page.waitForResponse(
-    (resp) =>
-      resp.url().includes("/metadata.tor.us/releaseLock") &&
-      resp.status() === 200
-  );
+  // let x = page.waitForResponse(
+  //   (resp) =>
+  //     resp.url().includes("/metadata.tor.us/releaseLock") &&
+  //     resp.status() === 200
+  // );
+  let y = waitForAddPassword(page);
   await page.click('button:has-text("Confirm")');
-  await x;
+  // await x;
 
   await page.isVisible('button:has-text("Change password")');
   await page.locator("text=Password successfully changed").isVisible();
+  await y;
 }
 
 async function changePasswordShare(page: Page, password: string) {
-  await page.click('button:has-text("Change Password")');
+  await page.locator('button:has-text("Change Password")').isVisible();
+  await page.locator('button:has-text("Change Password")').click();
+
+  await page.locator("input[name='openlogin-password']").isVisible();
+  await page.locator("input[name='openlogin-confirm-password']").isVisible();
+
   await page.locator("input[name='openlogin-password']").fill(password);
   await page.locator("input[name='openlogin-confirm-password']").fill(password);
-  let x = page.waitForResponse(
-    (resp) =>
-      resp.url().includes("/metadata.tor.us/releaseLock") &&
-      resp.status() === 200
-  );
+  // let x = page.waitForResponse(
+  //   (resp) =>
+  //     resp.url().includes("/metadata.tor.us/releaseLock") &&
+  //     resp.status() === 200
+  // );
+  let y = waitForChangePassword(page);
   await page.click('button:has-text("Confirm")');
-  await x;
+  // await x;
   await page.isVisible('button:has-text("Change password")');
   await page.locator("text=Password successfully changed").isVisible();
+  await y;
 }
 
 function findLink(links: Link[], text: string) {

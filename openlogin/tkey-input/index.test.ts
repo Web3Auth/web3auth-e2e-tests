@@ -6,6 +6,7 @@ import {
   deleteCurrentDeviceShare,
   waitForTkeyRehydration,
   addPasswordShare,
+  changePasswordShare,
 } from "../../utils";
 import {
   useAutoCancelShareTransfer,
@@ -190,6 +191,7 @@ test.describe.serial("tkey Input test", () => {
     await deleteCurrentDeviceShare(page);
 
     await addPasswordShare(page, passwordShare);
+    await changePasswordShare(page, passwordShare);
 
     // logout the user
     await page.click(`text=Logout`);
