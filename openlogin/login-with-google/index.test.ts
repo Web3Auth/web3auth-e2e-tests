@@ -3,7 +3,7 @@ import { test } from "./index.lib";
 import { signInWithGoogle, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test("Login with Google", async ({
+test.skip("Login with Google - skipped bcz it requires captcha solving", async ({
   page,
   browserName,
   openloginURL,

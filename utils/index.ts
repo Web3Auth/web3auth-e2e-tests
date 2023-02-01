@@ -124,6 +124,7 @@ async function slowOperation(op: () => Promise<any>, timeout?: number) {
 async function signInWithFacebook({
   page,
   FB,
+  openloginURL
 }: {
   page: Page;
   FB: {
@@ -132,28 +133,28 @@ async function signInWithFacebook({
     name: string;
     firstName: string;
   };
-}): Promise<boolean> {
-  try {
-    await page.waitForURL("https://www.facebook.com/**");
-    await Promise.all([
-      // await page.waitForNavigation({
-      //   waitUntil: "load",
-      // }),
-      await page.isVisible("text=Log in"),
-      await page.fill(
-        '[placeholder="Email address or phone number"]',
-        FB.email
-      ),
-      await page.fill('[placeholder="Password"]', FB.password),
-      await page.click(`button:has-text("Login"), [name="login"]`),
-      page.click(
-        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
-      ),
-    ]);
-    return true;
-  } catch {
-    return false;
-  }
+  openloginURL: string
+}): Promise<void> {
+  await page.goto(openloginURL);
+  await page.click('button:has-text("Get Started")');
+  await page.click('[aria-label="login with facebook"]');
+
+  await page.waitForURL("https://www.facebook.com/**");
+  await page.isVisible("text=Log in")
+  await page.fill(
+    '[placeholder="Email address or phone number"]',
+    FB.email
+  )
+  await page.fill('[placeholder="Password"]', FB.password)
+  await page.click(`button:has-text("Login"), [name="login"]`)
+  await slowOperation(async () => {
+    await page.click(
+      `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
+    )
+    await useAutoCancelShareTransfer(page);
+    await useAutoCancel2FASetup(page);
+    await page.waitForURL(`${openloginURL}/wallet/home`)
+  })
 }
 
 async function signInWithDiscord({ page, discord }: {
@@ -162,27 +163,16 @@ async function signInWithDiscord({ page, discord }: {
     password: string
   }
 }): Promise<boolean> {
-  // try {
-  //   await page.waitForURL("https://accounts.google.com/**");
-  //   await page.isVisible("text=Sign in");
-  //   await page.fill('[aria-label="Email or phone"]', google.email);
-  //   await page.click(`button:has-text("Next")`);
-  //   await page.fill('[aria-label="Enter your password"]', google.password);
-  //   await page.click(`button:has-text("Next")`);
-  //   return true;
-  // } catch {
-  //   return false;
-  // }
-  // try {
-  await page.waitForURL("https://discord.com/oauth2/**");
-  await page.isVisible("text=Welcome back!");
-  await page.fill('[name="email"]', discord.email);
-  await page.fill('[name="password"]', discord.password);
-  await page.click(`button:has-text("Log In")`);
-  return true;
-  // } catch {
-  //   return false;
-  // }
+  try {
+    await page.waitForURL("https://discord.com/oauth2/**");
+    await page.isVisible("text=Welcome back!");
+    await page.fill('[name="email"]', discord.email);
+    await page.fill('[name="password"]', discord.password);
+    await page.click(`button:has-text("Log In")`);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function ensureDeviceShareDeleted(page: Page) {
