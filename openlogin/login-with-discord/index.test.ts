@@ -3,7 +3,7 @@ import { test } from "./index.lib";
 import { signInWithDiscord, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test.only("Login with Discord", async ({ page, openloginURL, discord }) => {
+test.skip("Login with Discord - skipped bcz it requires captcha solving", async ({ page, openloginURL, discord }) => {
   // Verify environment variables
   expect(
     !!process.env.DISCORD_EMAIL &&
@@ -16,19 +16,19 @@ test.only("Login with Discord", async ({ page, openloginURL, discord }) => {
   await page.click('[aria-label="login with discord"]');
   test.fixme(!(await signInWithDiscord({ page, discord })));
 
-  // useAutoCancelShareTransfer(page);
-  // useAutoCancel2FASetup(page);
+  useAutoCancelShareTransfer(page);
+  useAutoCancel2FASetup(page);
 
-  // // Should be signed in in <2 minutes
-  // await page.waitForURL(`${openloginURL}/wallet/home`, {
-  //   waitUntil: "load",
-  // });
+  // Should be signed in in <2 minutes
+  await page.waitForURL(`${openloginURL}/wallet/home`, {
+    waitUntil: "load",
+  });
 
-  // expect(page.url()).toBe(`${openloginURL}/wallet/home`);
+  expect(page.url()).toBe(`${openloginURL}/wallet/home`);
 
-  // await page.waitForSelector(`text=Welcome, ${discord.email}`);
+  await page.waitForSelector(`text=Welcome, ${discord.email}`);
 
-  // // Logout
-  // await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
-  // expect(page.url()).toBe(`${openloginURL}/`);
+  // Logout
+  await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
+  expect(page.url()).toBe(`${openloginURL}/`);
 });
