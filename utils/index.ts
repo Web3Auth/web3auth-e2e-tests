@@ -15,9 +15,9 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   const promise = new Promise<void>(async (resolve) => {
     while (!stopped) {
       try {
-        if (await page.isVisible("text=New login detected"))
-          console.log("share transfer detected")
-        await page.click('button:has-text("Cancel")', { force: true });
+        if (await page.isVisible("text=New login detected")) {
+          await page.click('button:has-text("Cancel")', { force: true });
+        }
       } catch { }
     }
     resolve();
@@ -29,17 +29,15 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   };
 }
 
-async function waitForTkeyRehydration(page: Page): Promise<boolean> {
+async function waitForTkeyRehydration(page: Page, size = 100): Promise<boolean> {
   return new Promise(function (resolve) {
     page.on('console', (msg) => {
-      // console.log(msg.text(), msg.type());
       // 120 state will change if the openlogin default state changes.
       // need better way to rehydrate or find if the object is empty
       if (msg.type() === 'info' && msg.text().includes("e2e:tests:tkeyjson")) {
-        // console.log("resolving,,,", msg.type(), msg.text())
         let text = msg.text();
         let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
-        if (length > 100) resolve(true);
+        if (length > size) resolve(true);
       }
     });
   });
@@ -171,10 +169,17 @@ async function ensureDeviceShareDeleted(page: Page) {
   return isDeleted;
 }
 
+// Delete all shares
 async function deleteCurrentDeviceShare(page: Page) {
+  let x;
   var deviceShares = page.locator('[aria-label="delete device share"]');
   var countShares = await deviceShares.count();
   while (countShares > 0) {
+    x = page.waitForResponse(
+      (resp) =>
+        resp.url().includes("/metadata.tor.us/releaseLock") &&
+        resp.status() === 200
+    );
     await deviceShares.first().click();
     let isDeleted = await ensureDeviceShareDeleted(page);
     if (isDeleted) {
@@ -184,6 +189,42 @@ async function deleteCurrentDeviceShare(page: Page) {
       countShares = await deviceShares.count();
     }
   }
+  await x;
+}
+
+async function addPasswordShare(page: Page, password: string) {
+  // wait for password to be visible
+  await page.isVisible("input[name='openlogin-password']");
+  await page.isVisible("input[name='openlogin-confirm-password']");
+
+  await page.locator("input[name='openlogin-password']").fill(password);
+  await page.locator("input[name='openlogin-confirm-password']").fill(password);
+
+  let x = page.waitForResponse(
+    (resp) =>
+      resp.url().includes("/metadata.tor.us/releaseLock") &&
+      resp.status() === 200
+  );
+  await page.click('button:has-text("Confirm")');
+  await x;
+
+  await page.isVisible('button:has-text("Change password")');
+  await page.locator("text=Password successfully changed").isVisible();
+}
+
+async function changePasswordShare(page: Page, password: string) {
+  await page.click('button:has-text("Change Password")');
+  await page.locator("input[name='openlogin-password']").fill(password);
+  await page.locator("input[name='openlogin-confirm-password']").fill(password);
+  let x = page.waitForResponse(
+    (resp) =>
+      resp.url().includes("/metadata.tor.us/releaseLock") &&
+      resp.status() === 200
+  );
+  await page.click('button:has-text("Confirm")');
+  await x;
+  await page.isVisible('button:has-text("Change password")');
+  await page.locator("text=Password successfully changed").isVisible();
 }
 
 function findLink(links: Link[], text: string) {
@@ -250,5 +291,7 @@ export {
   generateRandomEmail,
   deleteCurrentDeviceShare,
   waitForTkeyRehydration,
+  addPasswordShare,
+  changePasswordShare,
   env_map,
 };

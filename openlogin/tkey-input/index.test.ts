@@ -5,6 +5,7 @@ import {
   signInWithEmail,
   deleteCurrentDeviceShare,
   waitForTkeyRehydration,
+  addPasswordShare,
 } from "../../utils";
 import {
   useAutoCancelShareTransfer,
@@ -43,6 +44,8 @@ test.describe.serial("tkey Input test", () => {
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
+
+    // Useful for debugging
     // page.on("console", (message) => {
     //   console.log(message);
     // });
@@ -103,20 +106,11 @@ test.describe.serial("tkey Input test", () => {
     expect(await page.isVisible("text=Device(s)")).toBeTruthy();
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
 
-    // logout the user after setting up 2FA
-    // await page.reload();
     await page.click(`text=Logout`);
-    // await page.waitForTimeout(5000)
     await page.goto(`${openloginURL}`);
     await page.waitForURL(`${openloginURL}`, {
       waitUntil: "load",
     });
-
-    // await page.evaluate(() => {
-    //   console.log("page eavl")
-    //   console.log(JSON.stringify(window.localStorage));
-    //   console.log(JSON.stringify(window.sessionStorage));
-    // });
 
     expect(
       await page.isVisible(`text=Click Get Started to continue`)
@@ -128,11 +122,7 @@ test.describe.serial("tkey Input test", () => {
     browser,
   }) => {
     test.setTimeout(60000); // adding more time since test is depended on external websites.
-    // await page.evaluate(() => {
-    //   console.log("page eavl")
-    //   console.log(JSON.stringify(window.localStorage));
-    //   console.log(JSON.stringify(window.sessionStorage));
-    // });
+
     await signInWithEmail(page, testEmail, browser);
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
@@ -150,7 +140,6 @@ test.describe.serial("tkey Input test", () => {
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=Account")).toBeTruthy();
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
-    // console.log("starting should login2")
 
     // Deleting device share
     await deleteCurrentDeviceShare(page);
@@ -172,10 +161,8 @@ test.describe.serial("tkey Input test", () => {
   }) => {
     test.setTimeout(60000); // adding more time since test is depended on external websites.
     await signInWithEmail(page, testEmail, browser);
-    let stPromise = await useAutoCancelShareTransfer(page);
+    await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
-
-    console.log(stPromise);
 
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
       waitUntil: "load",
@@ -198,27 +185,12 @@ test.describe.serial("tkey Input test", () => {
       waitUntil: "load",
     });
     await tkey2;
-    console.log(stPromise);
 
+    // Required to simulate tkeyinput page
     await deleteCurrentDeviceShare(page);
 
-    // setup password share with tkey-rehydration
-    // await page.waitForURL(`${openloginURL}/wallet/account`, {
-    //   waitUntil: "load",
-    // });
+    await addPasswordShare(page, passwordShare);
 
-    await page.fill('[placeholder="Set your password"]', passwordShare);
-    await page.fill('[placeholder="Re-enter your password"]', passwordShare);
-    await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/metadata.tor.us/releaseLock") &&
-          resp.status() === 200
-      ),
-      page.click('button:has-text("Confirm")'),
-    ]);
-
-    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
     // logout the user
     await page.click(`text=Logout`);
     await page.goto(`${openloginURL}`);
