@@ -1,13 +1,15 @@
-import test, { expect, Page, PlaywrightWorkerOptions } from "@playwright/test";
+import test, { Page } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
 import config from "./../index.config"
+import { Link } from "mailosaur/lib/models";
+import Mailosaur from "mailosaur";
 
 export const DEFAULT_PLATFORM = "cyan"
 
 const env_map: { [key: string]: string } = {
-  "prod": "https://app.openlogin.com",
-  "beta": "https://beta.openlogin.com",
-  "cyan": "https://cyan.openlogin.com",
+  prod: "https://app.openlogin.com",
+  beta: "https://beta.openlogin.com",
+  cyan: "https://cyan.openlogin.com",
 };
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
@@ -217,6 +219,52 @@ async function deleteCurrentDeviceShare(page: Page) {
   }
 }
 
+function findLink(links: Link[], text: string) {
+  for (const link of links) {
+    if (link.text === text) return link;
+  }
+  return null;
+}
+
+async function signInWithEmail(
+  page: Page,
+  email: string,
+  browser: Browser
+): Promise<boolean> {
+  try {
+    await page.click('button:has-text("Get Started")');
+    await page.fill('[placeholder="Email"]', email);
+    await page.click('button:has-text("Continue with Email")');
+    await page.waitForSelector("text=email has been sent");
+    const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+    const mailBox = await mailosaur.messages.get(
+      process.env.MAILOSAUR_SERVER_ID || "",
+      {
+        sentTo: email,
+      }
+    );
+    const link = findLink(mailBox.html?.links || [], "Confirm my email");
+    const href = link?.href || "";
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector(
+      "text=Close this and return to your previous window",
+      {
+        timeout: 10000,
+      }
+    );
+    await page2.close();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function generateRandomEmail() {
+  return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+}
+
 export {
   useAutoCancelShareTransfer,
   useAutoCancel2FASetup,
@@ -226,5 +274,8 @@ export {
   signInWithDiscord,
   confirmEmail,
   deleteCurrentDeviceShare,
+  findLink,
+  signInWithEmail,
+  generateRandomEmail,
   env_map,
 };
