@@ -269,18 +269,21 @@ async function signInWithEmail(
     await page.click('button:has-text("Continue with Email")');
     await page.waitForSelector("text=email has been sent");
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+    console.log(mailosaur);
     const mailBox = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
       {
         sentTo: email,
       }
     );
+    console.log(mailBox);
     let link = findLink(mailBox.html?.links || [], "Confirm my email");
     if (!link) {
       link = findLink(mailBox.html?.links || [], "Verify my email");
     }
     await mailosaur.messages.del(mailBox?.id || "");
     const href = link?.href || "";
+    console.log(href);
 
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();
