@@ -19,16 +19,16 @@ jobs:
         env: [testing]
         browser: [firefox]
         os: [macos-latest]
-        include:
-          # - os: macos-latest
-          #   browser: chromium
-          #   env: cyan
-          # - os: macos-latest
-          #   browser: webkit
-          #   env: beta
-          # - os: macos-latest
-          #   browser: webkit
-          #   env: prod
+        # include:
+        #   - os: macos-latest
+        #     browser: chromium
+        #     env: cyan
+        # - os: macos-latest
+        #   browser: webkit
+        #   env: beta
+        # - os: macos-latest
+        #   browser: webkit
+        #   env: prod
 
     runs-on: ${{ matrix.os }}
     env:
