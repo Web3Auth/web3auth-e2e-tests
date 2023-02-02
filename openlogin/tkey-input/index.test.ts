@@ -36,6 +36,11 @@ test.describe.serial("tkey Input test", () => {
 
   test.beforeAll(async ({ browser, openloginURL }) => {
     test.setTimeout(60000); // adding more time to compensate high loading time
+    // Useful for debugging
+    page.on("console", (message) => {
+      console.log(message);
+    });
+
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
@@ -46,10 +51,7 @@ test.describe.serial("tkey Input test", () => {
       waitUntil: "load",
     });
 
-    // Useful for debugging
-    page.on("console", (message) => {
-      console.log(message);
-    });
+
   });
 
   test.afterAll(async ({ browser }) => {
