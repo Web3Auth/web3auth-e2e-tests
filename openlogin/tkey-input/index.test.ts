@@ -37,12 +37,12 @@ test.describe.serial("tkey Input test", () => {
   test.beforeAll(async ({ browser, openloginURL }) => {
     test.setTimeout(60000); // adding more time to compensate high loading time
     // Useful for debugging
+    const context = await browser.newContext();
+    page = await context.newPage();
     page.on("console", (message) => {
       console.log(message);
     });
 
-    const context = await browser.newContext();
-    page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
     await useAutoCancelShareTransfer(page);
