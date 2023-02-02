@@ -13,7 +13,7 @@ jobs:
     name: Run OpenLogin - TkeyInput tests
     strategy:
       matrix:
-        env: [prod]
+        env: [testing]
         browser: [firefox, chromium]
         os: [macos-latest, windows-latest, ubuntu-latest]
         include:

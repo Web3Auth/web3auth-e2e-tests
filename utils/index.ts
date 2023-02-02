@@ -7,6 +7,7 @@ const env_map: { [key: string]: string } = {
   prod: "https://app.openlogin.com",
   beta: "https://beta.openlogin.com",
   cyan: "https://cyan.openlogin.com",
+  testing: "https://testing.openlogin.com",
   local: "http://localhost:3000",
 };
 
