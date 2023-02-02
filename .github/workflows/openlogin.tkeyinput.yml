@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         env: [testing]
-        browser: [chromium]
+        browser: [firefox]
         os: [macos-latest]
         include:
           - os: macos-latest
@@ -36,6 +36,7 @@ jobs:
       MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
       MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
       MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_API_KEY }}
+
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
     steps:
@@ -50,21 +51,21 @@ jobs:
           cache: yarn
         continue-on-error: true
 
-      - id: npm-install
+      - id: yarn-install
         name: Install Node.js dependencies
         if: steps.setup-node.outcome == 'success'
-        run: npm ci
+        run: yarn ci
         continue-on-error: true
 
-      - id: npm-install-deps
+      - id: yarn-install-deps
         name: Install Ubuntu dependencies
-        if: steps.npm-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
         run: npx run playwright install-deps ${{ matrix.browser }}
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
-        if: steps.npm-install.outcome == 'success' && steps.npm-install-deps.outcome != 'failure'
+        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
         run: npx playwright test openlogin/tkey-input/index.test.ts ${{ matrix.browser }}
 
       - id: telegram-alert
