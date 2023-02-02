@@ -20,9 +20,9 @@ jobs:
         browser: [firefox]
         os: [macos-latest]
         include:
-          - os: macos-latest
-            browser: chromium
-            env: cyan
+          # - os: macos-latest
+          #   browser: chromium
+          #   env: cyan
           # - os: macos-latest
           #   browser: webkit
           #   env: beta
