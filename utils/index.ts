@@ -63,6 +63,16 @@ async function waitForChangePassword(page: Page): Promise<boolean> {
   });
 }
 
+async function waitForDeleteShare(page: Page): Promise<boolean> {
+  return new Promise(function (resolve) {
+    page.on('console', (msg) => {
+      if (msg.type() === 'info' && msg.text().includes("e2e:tests:deleteShareCompleted")) {
+        resolve(true);
+      }
+    });
+  });
+}
+
 function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   let stopped = false;
   const promise = new Promise<void>(async (resolve) => {
@@ -194,13 +204,11 @@ async function deleteCurrentDeviceShare(page: Page) {
   var deviceShares = page.locator('[aria-label="delete device share"]');
   var countShares = await deviceShares.count();
   while (countShares > 0) {
-    x = page.waitForResponse(
-      (resp) =>
-        resp.url().includes("/metadata.tor.us/releaseLock") &&
-        resp.status() === 200
-    );
+    x = waitForDeleteShare(page);
     await deviceShares.first().click();
     let isDeleted = await ensureDeviceShareDeleted(page);
+    await x;
+
     if (isDeleted) {
       countShares = countShares - 1;
     } else {
@@ -208,7 +216,6 @@ async function deleteCurrentDeviceShare(page: Page) {
       countShares = await deviceShares.count();
     }
   }
-  await x;
 }
 
 async function addPasswordShare(page: Page, password: string) {
@@ -219,15 +226,8 @@ async function addPasswordShare(page: Page, password: string) {
   await page.locator("input[name='openlogin-password']").fill(password);
   await page.locator("input[name='openlogin-confirm-password']").fill(password);
 
-  // let x = page.waitForResponse(
-  //   (resp) =>
-  //     resp.url().includes("/metadata.tor.us/releaseLock") &&
-  //     resp.status() === 200
-  // );
   let y = waitForAddPassword(page);
   await page.click('button:has-text("Confirm")');
-  // await x;
-
   await page.isVisible('button:has-text("Change password")');
   await page.locator("text=Password successfully changed").isVisible();
   await y;
@@ -242,14 +242,9 @@ async function changePasswordShare(page: Page, password: string) {
 
   await page.locator("input[name='openlogin-password']").fill(password);
   await page.locator("input[name='openlogin-confirm-password']").fill(password);
-  // let x = page.waitForResponse(
-  //   (resp) =>
-  //     resp.url().includes("/metadata.tor.us/releaseLock") &&
-  //     resp.status() === 200
-  // );
+
   let y = waitForChangePassword(page);
   await page.click('button:has-text("Confirm")');
-  // await x;
   await page.isVisible('button:has-text("Change password")');
   await page.locator("text=Password successfully changed").isVisible();
   await y;

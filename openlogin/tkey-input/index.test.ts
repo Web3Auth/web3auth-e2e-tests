@@ -47,9 +47,9 @@ test.describe.serial("tkey Input test", () => {
     });
 
     // Useful for debugging
-    // page.on("console", (message) => {
-    //   console.log(message);
-    // });
+    page.on("console", (message) => {
+      console.log(message);
+    });
   });
 
   test.afterAll(async ({ browser }) => {
