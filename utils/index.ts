@@ -19,7 +19,7 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
         if (await page.isVisible("text=New login detected")) {
           await page.click('button:has-text("Cancel")', { force: true });
         }
-      } catch { }
+      } catch {}
     }
     resolve();
   });
@@ -30,12 +30,15 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   };
 }
 
-async function waitForTkeyRehydration(page: Page, size = 100): Promise<boolean> {
+async function waitForTkeyRehydration(
+  page: Page,
+  size = 100
+): Promise<boolean> {
   return new Promise(function (resolve) {
-    page.on('console', (msg) => {
+    page.on("console", (msg) => {
       // 120 state will change if the openlogin default state changes.
       // need better way to rehydrate or find if the object is empty
-      if (msg.type() === 'info' && msg.text().includes("e2e:tests:tkeyjson")) {
+      if (msg.type() === "info" && msg.text().includes("e2e:tests:tkeyjson")) {
         let text = msg.text();
         let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
         if (length > size) resolve(true);
@@ -46,8 +49,11 @@ async function waitForTkeyRehydration(page: Page, size = 100): Promise<boolean> 
 
 async function waitForAddPassword(page: Page): Promise<boolean> {
   return new Promise(function (resolve) {
-    page.on('console', (msg) => {
-      if (msg.type() === 'info' && msg.text() === "e2e:tests:addPasswordCompleted") {
+    page.on("console", (msg) => {
+      if (
+        msg.type() === "info" &&
+        msg.text() === "e2e:tests:addPasswordCompleted"
+      ) {
         resolve(true);
       }
     });
@@ -56,8 +62,11 @@ async function waitForAddPassword(page: Page): Promise<boolean> {
 
 async function waitForChangePassword(page: Page): Promise<boolean> {
   return new Promise(function (resolve) {
-    page.on('console', (msg) => {
-      if (msg.type() === 'info' && msg.text().includes("e2e:tests:changePasswordCompleted")) {
+    page.on("console", (msg) => {
+      if (
+        msg.type() === "info" &&
+        msg.text().includes("e2e:tests:changePasswordCompleted")
+      ) {
         resolve(true);
       }
     });
@@ -66,8 +75,11 @@ async function waitForChangePassword(page: Page): Promise<boolean> {
 
 async function waitForDeleteShare(page: Page): Promise<boolean> {
   return new Promise(function (resolve) {
-    page.on('console', (msg) => {
-      if (msg.type() === 'info' && msg.text().includes("e2e:tests:deleteShareCompleted")) {
+    page.on("console", (msg) => {
+      if (
+        msg.type() === "info" &&
+        msg.text().includes("e2e:tests:deleteShareCompleted")
+      ) {
         resolve(true);
       }
     });
@@ -81,7 +93,7 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
       try {
         if (await page.isVisible("text=secure your account"))
           await page.click('button:has-text("Maybe next time")');
-      } catch { }
+      } catch {}
     }
     resolve();
   });
@@ -276,7 +288,7 @@ async function signInWithEmail(
         sentTo: email,
       }
     );
-    console.log(mailBox);
+    console.log(mailBox.id);
     let link = findLink(mailBox.html?.links || [], "Confirm my email");
     if (!link) {
       link = findLink(mailBox.html?.links || [], "Verify my email");
@@ -298,7 +310,7 @@ async function signInWithEmail(
     console.log("login completed");
     return true;
   } catch (err) {
-    console.error(err)
+    console.error(err);
     return false;
   }
 }
@@ -306,7 +318,6 @@ async function signInWithEmail(
 function generateRandomEmail() {
   return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 }
-
 
 export {
   useAutoCancelShareTransfer,
