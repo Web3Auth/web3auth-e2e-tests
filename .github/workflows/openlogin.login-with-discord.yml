@@ -45,21 +45,21 @@ jobs:
           cache: yarn
         continue-on-error: true
 
-      - id: yarn-install
+      - id: npm-install
         name: Install Node.js dependencies
         if: steps.setup-node.outcome == 'success'
         run: npm install
         continue-on-error: true
 
-      - id: yarn-install-deps
+      - id: npm-install-deps
         name: Install Ubuntu dependencies
-        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        if: steps.npm-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
         run: npm run playwright install-deps ${{ matrix.browser }}
         continue-on-error: true
 
       - id: configure-aws
         name: Configure AWS credentials
-        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
+        if: steps.npm-install.outcome == 'success' && steps.npm-install-deps.outcome != 'failure'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -81,7 +81,7 @@ jobs:
       - id: run-tests
         name: Run tests
         if: steps.download-state.outcome == 'success'
-        run: yarn run playwright test --config ${{ env.LOCAL_PATH }}/index.config.ts --project ${{ matrix.browser }}
+        run: npm run playwright test --config ${{ env.LOCAL_PATH }}/index.config.ts --project ${{ matrix.browser }}
 
       - id: telegram-alert
         name: Alert to telegram channel
