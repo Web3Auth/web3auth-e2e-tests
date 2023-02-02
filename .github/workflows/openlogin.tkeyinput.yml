@@ -54,13 +54,13 @@ jobs:
       - id: yarn-install
         name: Install Node.js dependencies
         if: steps.setup-node.outcome == 'success'
-        run: yarn ci
+        run: yarn install --frozen-lockfile
         continue-on-error: true
 
       - id: yarn-install-deps
         name: Install Ubuntu dependencies
         if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
-        run: npx run playwright install-deps ${{ matrix.browser }}
+        run: yarn run playwright install-deps ${{ matrix.browser }}
         continue-on-error: true
 
       - id: run-tests
