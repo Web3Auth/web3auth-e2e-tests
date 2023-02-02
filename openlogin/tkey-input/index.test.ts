@@ -50,8 +50,6 @@ test.describe.serial("tkey Input test", () => {
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
-
-
   });
 
   test.afterAll(async ({ browser }) => {
@@ -100,7 +98,7 @@ test.describe.serial("tkey Input test", () => {
     await page.click('button:has-text("Verify")');
 
     await page.click('button:has-text("Done")');
-    // await page.reload();
+    await page.reload();
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -173,7 +171,6 @@ test.describe.serial("tkey Input test", () => {
     expect(await page.isVisible("text=Verify your login")).toBeTruthy();
     await page.fill('[placeholder="Enter backup phrase"]', emailBackupShare);
     await page.click('button:has-text("Confirm")');
-
 
     let tkey = waitForTkeyRehydration(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
