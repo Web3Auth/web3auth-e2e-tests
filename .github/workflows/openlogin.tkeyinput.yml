@@ -65,7 +65,6 @@ jobs:
 
       - id: run-tests
         name: Run tests
-        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
         run: npx playwright test openlogin/tkey-input/index.test.ts ${{ matrix.browser }}
 
       - id: telegram-alert
