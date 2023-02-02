@@ -297,7 +297,8 @@ async function signInWithEmail(
     await page2.close();
     console.log("login completed");
     return true;
-  } catch {
+  } catch (err) {
+    console.error(err)
     return false;
   }
 }
