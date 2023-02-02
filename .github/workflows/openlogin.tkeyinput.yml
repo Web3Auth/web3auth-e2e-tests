@@ -33,6 +33,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}
+      MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
+      MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
+      MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_API_KEY }}
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
     steps:
