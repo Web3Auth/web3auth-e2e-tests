@@ -1,6 +1,9 @@
 name: OpenLogin - TkeyInput
 
 on:
+  push:
+    branches:
+      - sid-e2e-ci-pipe
   schedule:
     - cron: "*/30 * * * *"
   workflow_dispatch:
