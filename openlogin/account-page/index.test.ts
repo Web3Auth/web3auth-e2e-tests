@@ -110,7 +110,6 @@ test.describe.serial("Account page test", () => {
     await page.click('button:has-text("Verify")');
 
     await page.click('button:has-text("Done")');
-    await page.reload();
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -132,12 +131,18 @@ test.describe.serial("Account page test", () => {
     );
     expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
 
-    let seedArray = resentBackup?.text?.body?.slice(171).split(" ") || [];
+    let seedArray =
+      resentBackup.html?.body
+        ?.toString()
+        .replace(/(\r\n|\n|\r)/gm, "")
+        .slice(11084)
+        .split("<")[0]
+        .split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
       seedString += seedArray[i] + " ";
     }
-    seedString += seedArray[23].split("\n")[0];
+    seedString += seedArray[23];
     expect(validateMnemonic(seedString)).toBeTruthy();
   });
 
@@ -157,12 +162,18 @@ test.describe.serial("Account page test", () => {
     );
     expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
 
-    let seedArray = resentBackup?.text?.body?.slice(171).split(" ") || [];
+    let seedArray =
+      resentBackup.html?.body
+        ?.toString()
+        .replace(/(\r\n|\n|\r)/gm, "")
+        .slice(11084)
+        .split("<")[0]
+        .split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
       seedString += seedArray[i] + " ";
     }
-    seedString += seedArray[23].split("\n")[0];
+    seedString += seedArray[23];
     expect(validateMnemonic(seedString)).toBeTruthy();
     expect(
       await page.isVisible("text=Save a copy of your backup phrase")
