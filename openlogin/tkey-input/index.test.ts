@@ -84,12 +84,18 @@ test.describe.serial("tkey Input test", () => {
       }
     );
     await mailosaur.messages.del(seedEmail.id || ""); // Deleting emails in email server.
-    let seedArray = seedEmail?.text?.body?.slice(171).split(" ") || [];
+    let seedArray =
+      seedEmail.html?.body
+        ?.toString()
+        .replace(/(\r\n|\n|\r)/gm, "")
+        .slice(11084)
+        .split("<")[0]
+        .split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
       seedString += seedArray[i] + " ";
     }
-    seedString += seedArray[23].split("\n")[0];
+    seedString += seedArray[23];
 
     emailBackupShare = seedString;
 
