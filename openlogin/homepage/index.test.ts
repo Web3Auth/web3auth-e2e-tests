@@ -1,14 +1,16 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
-import { useAutoCancel2FASetup, signInWithEmail } from "../../utils";
+import {
+  useAutoCancel2FASetup,
+  signInWithEmail,
+  generateRandomEmail,
+} from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import Mailosaur from "mailosaur";
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
-const testEmail = `hello+home+${Date.now()}@${
-  process.env.MAILOSAUR_SERVER_DOMAIN
-}`;
+const testEmail = generateRandomEmail();
 
 test.describe.serial("Home page tests", () => {
   let page: Page;
