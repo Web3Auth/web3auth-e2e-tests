@@ -276,6 +276,7 @@ async function signInWithEmail(
   browser: Browser
 ): Promise<boolean> {
   console.log("EMAIL :", email);
+
   try {
     await page.click('button:has-text("Get Started")');
     await page.fill('[placeholder="Email"]', email);
@@ -317,7 +318,7 @@ async function signInWithEmail(
 }
 
 function generateRandomEmail() {
-  return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+  return `hello+apps+${Date.now()}@obhhiyk1.mailosaur.net`;
 }
 
 export {
