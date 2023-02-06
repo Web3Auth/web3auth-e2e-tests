@@ -9,6 +9,7 @@ phases:
     commands:
       - echo Installing source NPM dependencies...
       - npm install
+      - npx playwright install-deps
   build:
     commands:
       - echo Running Tests
