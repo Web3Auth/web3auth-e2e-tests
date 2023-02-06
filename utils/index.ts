@@ -318,7 +318,7 @@ async function signInWithEmail(
 }
 
 function generateRandomEmail() {
-  return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+  return `hello+apps+${Date.now()}@obhhiyk1.mailosaur.net`;
 }
 
 export {
