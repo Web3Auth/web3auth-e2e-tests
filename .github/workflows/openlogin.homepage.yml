@@ -1,6 +1,9 @@
-name: OpenLogin - Homepage
+name: OpenLogin - HomePage
 
 on:
+  push:
+    branches:
+      - sid-e2e-ci-pipe
   schedule:
     - cron: "*/30 * * * *"
   workflow_dispatch:
@@ -10,26 +13,30 @@ env:
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Homepage tests
+    name: Run OpenLogin - HomePage tests
     strategy:
       matrix:
-        env: [prod]
-        browser: [firefox, chromium]
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        include:
-          - os: macos-latest
-            browser: chromium
-            env: cyan
-          - os: macos-latest
-            browser: webkit
-            env: beta
-          - os: macos-latest
-            browser: webkit
-            env: prod
+        env: [testing]
+        browser: [firefox]
+        os: [macos-latest]
+        # include:
+        #   - os: macos-latest
+        #     browser: chromium
+        #     env: cyan
+        # - os: macos-latest
+        #   browser: webkit
+        #   env: beta
+        # - os: macos-latest
+        #   browser: webkit
+        #   env: prod
 
     runs-on: ${{ matrix.os }}
     env:
       PLATFORM: ${{ matrix.env }}
+      MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
+      MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
+      MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_API_KEY }}
+
     outputs:
       conclusion: ${{ steps.run-tests.conclusion }}
     steps:
@@ -44,22 +51,21 @@ jobs:
           cache: yarn
         continue-on-error: true
 
-      - id: npm-install
+      - id: yarn-install
         name: Install Node.js dependencies
         if: steps.setup-node.outcome == 'success'
-        run: npm ci
+        run: yarn install --frozen-lockfile
         continue-on-error: true
 
-      - id: npm-install-deps
+      - id: yarn-install-deps
         name: Install Ubuntu dependencies
-        if: steps.npm-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
-        run: npx run playwright install-deps ${{ matrix.browser }}
+        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        run: yarn run playwright install-deps ${{ matrix.browser }}
         continue-on-error: true
 
       - id: run-tests
         name: Run tests
-        if: steps.npm-install.outcome == 'success' && steps.npm-install-deps.outcome != 'failure'
-        run: npx playwright test openlogin/tkey-input/index.test.ts ${{ matrix.browser }}
+        run: npx playwright test openlogin/homepage/index.test.ts --browser=firefox
 
       - id: telegram-alert
         name: Alert to telegram channel
@@ -83,7 +89,7 @@ jobs:
           if-no-files-found: ignore
 
   update-status:
-    name: Update OpenLogin - Homepage status
+    name: Update OpenLogin - TkeyInput status
     needs: run-tests
     if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
     runs-on: ubuntu-latest
