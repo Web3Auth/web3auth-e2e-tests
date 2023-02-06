@@ -10,24 +10,13 @@ env:
 
 jobs:
   run-tests:
-    name: Run OpenLogin - Homepage tests
+    name: Run OpenLogin - tests
     strategy:
       matrix:
-        env: [prod]
+        env: [prod, cyan]
         browser: [firefox, chromium]
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        include:
-          - os: macos-latest
-            browser: chromium
-            env: cyan
-          - os: macos-latest
-            browser: webkit
-            env: beta
-          - os: macos-latest
-            browser: webkit
-            env: prod
-
-    runs-on: ${{ matrix.os }}
+        cloudBuild: [TorusE2ETests]
+    runs-on: ubuntu-latest
     env:
       PLATFORM: ${{ matrix.env }}
     outputs:
@@ -41,10 +30,11 @@ jobs:
           aws-region: us-east-1
         continue-on-error: true
 
-      - name: "AWS CodeBuild run build"
+      - id: run-tests
+        name: "AWS CodeBuild run build"
         uses: aws-actions/aws-codebuild-run-build@v1.0.8
         with:
-          project-name: TorusE2ETests
+          project-name: ${{ matrix.cloudBuild }}
           buildspec-override: ./buildspec.yml
           env-vars-for-codebuild: |
             PLATFORM,
@@ -56,34 +46,6 @@ jobs:
           MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
           MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
           MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_API_KEY }}
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - id: setup-node
-        name: Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: yarn
-        continue-on-error: true
-
-      - id: yarn-install
-        name: Install Node.js dependencies
-        if: steps.setup-node.outcome == 'success'
-        run: yarn install --frozen-lockfile
-        continue-on-error: true
-
-      - id: yarn-install-deps
-        name: Install Ubuntu dependencies
-        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
-        run: yarn run playwright install-deps ${{ matrix.browser }}
-        continue-on-error: true
-
-      - id: run-tests
-        name: Run tests
-        if: steps.yarn-install.outcome == 'success' && steps.yarn-install-deps.outcome != 'failure'
-        run: yarn run playwright test --config openlogin/homepage/index.config.ts --project ${{ matrix.browser }}
 
       - id: telegram-alert
         name: Alert to telegram channel
