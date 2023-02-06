@@ -65,7 +65,7 @@ jobs:
 
       - id: run-tests
         name: Run tests
-        run: npx playwright test openlogin/homepage/index.test.ts --browser=firefox
+        run: npx playwright test openlogin/homepage/index.test.ts --browser=chromium
 
       - id: telegram-alert
         name: Alert to telegram channel
