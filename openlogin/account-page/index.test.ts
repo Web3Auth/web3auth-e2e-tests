@@ -126,6 +126,7 @@ test.describe.serial("Account page test", () => {
 
   test(`should resend recovery email share`, async () => {
     await page.click('button:has-text("Resend")');
+    await page.waitForTimeout(5000); // timeout mailosaur waiting for email
 
     const resentBackup = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
