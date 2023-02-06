@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         env: [testing]
-        browser: [firefox]
+        browser: [chromium]
         os: [macos-latest]
         # include:
         #   - os: macos-latest
