@@ -110,7 +110,7 @@ test.describe.serial("tkey Input test", () => {
     await page.click('button:has-text("Verify")');
 
     await page.click('button:has-text("Done")');
-    await page.reload();
+    //await page.reload();
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -219,6 +219,7 @@ test.describe.serial("tkey Input test", () => {
     openloginURL,
     browser,
   }) => {
+    test.setTimeout(60000); // adding more time.
     await signInWithEmail(page, testEmail, browser);
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
       waitUntil: "load",

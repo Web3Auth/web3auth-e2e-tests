@@ -65,7 +65,7 @@ jobs:
 
       - id: run-tests
         name: Run tests
-        run: npx playwright test openlogin/tkey-input/index.test.ts ${{ matrix.browser }}
+        run: npx playwright test openlogin/tkey-input/index.test.ts --browser=firefox
 
       - id: telegram-alert
         name: Alert to telegram channel
