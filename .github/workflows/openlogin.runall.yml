@@ -64,11 +64,11 @@ jobs:
         continue-on-error: true
 
       - id: run-tests-tkeyInput
-        name: Run tests
+        name: Run tkey-input tests
         run: npx playwright test openlogin/tkey-input/index.test.ts --browser=firefox
 
-      - id: run-tests-account-page
-        name: Run tests
+      - id: run-tests-accountPage
+        name: Run account-page tests
         run: npx playwright test openlogin/account-page/index.test.ts --browser=firefox
 
       # - id: telegram-alert

@@ -110,6 +110,9 @@ test.describe.serial("Account page test", () => {
     await page.click('button:has-text("Verify")');
 
     await page.click('button:has-text("Done")');
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      waitUntil: "load",
+    });
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
