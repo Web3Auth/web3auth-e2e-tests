@@ -8,12 +8,12 @@
     "trace": "playwright show-trace"
   },
   "dependencies": {
-    "@playwright/test": "^1.22.1",
+    "@playwright/test": "^1.30.0",
     "bip39": "^3.0.4",
     "dotenv": "^16.0.3",
     "generate-password": "^1.7.0",
     "mailosaur": "^8.5.0",
-    "playwright": "^1.22.1",
+    "playwright": "^1.30.0",
     "serve-handler": "^6.1.3"
   },
   "devDependencies": {
