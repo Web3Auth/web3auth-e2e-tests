@@ -35,10 +35,6 @@ test.describe.serial("tkey Input test", () => {
   let page: Page;
 
   test.beforeAll(async ({ browser, openloginURL }) => {
-    console.log(process.env.PLATFORM);
-    console.log(process.env.MAILOSAUR_SERVER_DOMAIN);
-    console.log(process.env.MAILOSAUR_SERVER_ID);
-    console.log(process.env.MAILOSAUR_API_KEY);
     test.setTimeout(60000); // adding more time to compensate high loading time
 
     const context = await browser.newContext();

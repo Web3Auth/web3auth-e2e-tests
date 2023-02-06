@@ -275,29 +275,24 @@ async function signInWithEmail(
   email: string,
   browser: Browser
 ): Promise<boolean> {
-  console.log("EMAIL :", email);
-
   try {
     await page.click('button:has-text("Get Started")');
     await page.fill('[placeholder="Email"]', email);
     await page.click('button:has-text("Continue with Email")');
     await page.waitForSelector("text=email has been sent");
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
-    //console.log(mailosaur);
     const mailBox = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
       {
         sentTo: email,
       }
     );
-    //console.log(mailBox.id);
     let link = findLink(mailBox.html?.links || [], "Confirm my email");
     if (!link) {
       link = findLink(mailBox.html?.links || [], "Verify my email");
     }
     await mailosaur.messages.del(mailBox?.id || "");
     const href = link?.href || "";
-    //console.log(href);
 
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();
@@ -309,7 +304,6 @@ async function signInWithEmail(
       }
     );
     await page2.close();
-    console.log("login completed");
     return true;
   } catch (err) {
     console.error(err);
@@ -318,7 +312,7 @@ async function signInWithEmail(
 }
 
 function generateRandomEmail() {
-  return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+  return `hello+apps+${Date.now()}@obhhiyk1.mailosaur.net`; //TODO: move mailosaur domain to env
 }
 
 export {
