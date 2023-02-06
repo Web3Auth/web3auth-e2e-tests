@@ -41,7 +41,7 @@ jobs:
           aws-region: us-east-1
         continue-on-error: true
 
-      - name: "AWS CodeBuild run build" Action For GitHub Actions
+      - name: "AWS CodeBuild run build"
         uses: aws-actions/aws-codebuild-run-build@v1.0.8
         with:
           project-name: TorusE2ETests
