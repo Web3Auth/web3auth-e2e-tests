@@ -202,6 +202,9 @@ test.describe.serial("Account page test", () => {
       page.click('button[aria-label="delete email share"]'),
     ]);
     await page.reload();
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
     expect(await page.isVisible("text=2 / 2")).toBeTruthy();
   });
 
