@@ -67,10 +67,6 @@ jobs:
         name: Run login with passwordless test
         run: npx playwright test openlogin/login-with-passwordless/index.test.ts --browser=firefox
 
-      - id: run-tests-accountPage
-        name: Run account-page tests
-        run: npx playwright test openlogin/account-page/index.test.ts --browser=firefox
-
       - id: run-tests-homePage
         name: Run home-page tests
         run: npx playwright test openlogin/homepage/index.test.ts --browser=firefox
@@ -82,6 +78,10 @@ jobs:
       - id: run-tests-authorized-appsPage
         name: Run authorized-apps-page tests
         run: npx playwright test openlogin/authorized-apps/index.test.ts --browser=firefox
+
+      - id: run-tests-accountPage
+        name: Run account-page tests
+        run: npx playwright test openlogin/account-page/index.test.ts --browser=firefox
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
