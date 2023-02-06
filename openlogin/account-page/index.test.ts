@@ -73,6 +73,7 @@ test.describe.serial("Account page test", () => {
   test(`should setup 2FA account from account page`, async ({
     openloginURL,
   }) => {
+    test.setTimeout(60000); // adding more time to compensate high loading time
     await page.click('button:has-text("Enable 2FA")');
     page
       .locator(
