@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         env: [testing]
-        browser: [chromium]
+        browser: [firefox]
         os: [macos-latest]
         # include:
         #   - os: macos-latest
@@ -65,23 +65,23 @@ jobs:
 
       - id: run-tests-login-with-passwordless
         name: Run login with passwordless test
-        run: npx playwright test openlogin/login-with-passwordless/index.test.ts --browser=chromium
+        run: npx playwright test openlogin/login-with-passwordless/index.test.ts --browser=firefox
 
       - id: run-tests-homePage
         name: Run home-page tests
-        run: npx playwright test openlogin/homepage/index.test.ts --browser=chromium
+        run: npx playwright test openlogin/homepage/index.test.ts --browser=firefox
 
       - id: run-tests-tkey-inputPage
         name: Run tkey-input-page tests
-        run: npx playwright test openlogin/tkey-input/index.test.ts --browser=chromium
+        run: npx playwright test openlogin/tkey-input/index.test.ts --browser=firefox
 
       - id: run-tests-authorized-appsPage
         name: Run authorized-apps-page tests
-        run: npx playwright test openlogin/authorized-apps/index.test.ts --browser=chromium
+        run: npx playwright test openlogin/authorized-apps/index.test.ts --browser=firefox
 
       - id: run-tests-accountPage
         name: Run account-page tests
-        run: npx playwright test openlogin/account-page/index.test.ts --browser=chromium
+        run: npx playwright test openlogin/account-page/index.test.ts --browser=firefox
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
