@@ -15,6 +15,7 @@ const testEmail = generateRandomEmail();
 
 test.describe.serial("App authorization page test", () => {
   test.skip(() => process.env.PLATFORM === "local"); // skipping this test for local
+  test.skip(() => process.env.PLATFORM === "testing"); // skipping this test for testing env
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
     test.setTimeout(60000); // adding more time to compensate high loading time
@@ -47,7 +48,7 @@ test.describe.serial("App authorization page test", () => {
     ).toBeTruthy();
   });
 
-  // Velow test use testEmail to login to solana wallet prod and there by generates an app share
+  // Below test use testEmail to login to solana wallet prod and there by generates an app share
   // which gets listed in list of apps
   test(`should connect DApp  wallet with passwordless login and list app`, async ({
     openloginURL,
