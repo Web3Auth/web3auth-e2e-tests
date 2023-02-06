@@ -61,7 +61,7 @@ test.describe.serial("tkey Input test", () => {
   test(`should setup 2FA for running further tkey_input tests`, async ({
     openloginURL,
   }) => {
-    test.setTimeout(60000); // adding more time to compensate high loading time
+    test.setTimeout(100000); // adding more time to compensate high loading time
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
