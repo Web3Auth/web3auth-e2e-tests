@@ -40,12 +40,14 @@ test.describe.serial("tkey Input test", () => {
     console.log(process.env.MAILOSAUR_SERVER_ID);
     console.log(process.env.MAILOSAUR_API_KEY);
     test.setTimeout(60000); // adding more time to compensate high loading time
-    // Useful for debugging
+
     const context = await browser.newContext();
     page = await context.newPage();
-    page.on("console", (message) => {
-      console.log(message);
-    });
+
+    // Useful for debugging
+    // page.on("console", (message) => {
+    //   console.log(message);
+    // });
 
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
