@@ -9,7 +9,7 @@ phases:
     commands:
       - echo Installing source NPM dependencies...
       - npm install
-      - npm run install-deps
+      # - npm run install-deps
   build:
     commands:
       - echo Running Tests
