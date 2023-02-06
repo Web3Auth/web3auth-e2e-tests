@@ -45,7 +45,7 @@ jobs:
         uses: aws-actions/aws-codebuild-run-build@v1.0.8
         with:
           project-name: TorusE2ETests
-          buildspec-override: ./.github/buildspec.yaml
+          buildspec-override: ./buildspec.yml
 
       - name: Checkout
         uses: actions/checkout@v3
