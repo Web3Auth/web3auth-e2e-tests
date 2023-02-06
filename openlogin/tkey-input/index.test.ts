@@ -153,6 +153,8 @@ test.describe.serial("tkey Input test", () => {
     // Deleting device share
     await deleteCurrentDeviceShare(page);
 
+    expect(await page.isVisible("text=2 / 2")).toBeTruthy();
+
     // // logout the user
     await page.click(`text=Logout`);
     await page.goto(`${openloginURL}`);
@@ -197,8 +199,11 @@ test.describe.serial("tkey Input test", () => {
     // Required to simulate tkeyinput page
     await deleteCurrentDeviceShare(page);
 
+    expect(await page.isVisible("text=2 / 2")).toBeTruthy();
+
     await addPasswordShare(page, passwordShare);
-    await changePasswordShare(page, passwordShare);
+
+    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
 
     // logout the user
     await page.click(`text=Logout`);
