@@ -168,7 +168,7 @@ test.describe.serial("tkey Input test", () => {
     openloginURL,
     browser,
   }) => {
-    test.setTimeout(60000); // adding more time since test is depended on external websites.
+    test.setTimeout(100000); // adding more time.
     await signInWithEmail(page, testEmail, browser);
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
