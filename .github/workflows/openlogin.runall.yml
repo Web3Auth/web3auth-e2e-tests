@@ -42,25 +42,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        uses: actions/setup-node@v3
 
       - id: setup-node
         name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: yarn
+          cache: npm
         continue-on-error: true
 
-      - id: yarn-install
+      - id: npm-install
         name: Install Node.js dependencies
         if: steps.setup-node.outcome == 'success'
-        run: yarn install --frozen-lockfile
+        run: npm ci
         continue-on-error: true
 
-      - id: yarn-install-deps
+      - id: npm-install-deps
         name: Install Ubuntu dependencies
-        if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
-        run: yarn run playwright install-deps ${{ matrix.browser }}
+        if: steps.npm-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        run: npm run playwright install-deps
         continue-on-error: true
 
       - id: run-tests-homepage
