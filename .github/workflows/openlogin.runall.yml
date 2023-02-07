@@ -83,6 +83,14 @@ jobs:
         name: Run authorized-apps-page tests
         run: npx playwright test openlogin/authorized-apps/index.test.ts --browser=firefox
 
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
+          path: test-results/
+          if-no-files-found: ignore
+
       # - id: telegram-alert
       #   name: Alert to telegram channel
       #   if: always()
