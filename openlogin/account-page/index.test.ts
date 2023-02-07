@@ -153,9 +153,12 @@ test.describe.serial("Account page test", () => {
     openloginURL,
   }) => {
     await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
+    const navigationPromise = await page.waitForURL(
+      `${openloginURL}/wallet/account`,
+      {
+        waitUntil: "load",
+      }
+    );
     await page.click('button[aria-label="export email share"]');
     const resentBackup = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
