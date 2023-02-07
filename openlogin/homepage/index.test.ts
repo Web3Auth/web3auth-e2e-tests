@@ -41,12 +41,13 @@ test.describe.serial("Home page tests", () => {
   test(`should display welcome message`, async ({ context }) => {
     expect(await page.isVisible(`text=Welcome, ${testEmail}`)).toBeTruthy();
   });
-  // test(`Clicking language button should display language dropdown `, async ({
-  //   context,
-  // }) => {
-  //   await page.click('button:has-text("English")');
-  //   expect(await page.isVisible(`text=German (Deutsch)`)).toBeTruthy();
-  // });
+  test(`Clicking language button should display language dropdown `, async ({
+    context,
+  }) => {
+    await page.waitForTimeout(2000);
+    await page.click('button:has-text("English")');
+    expect(await page.isVisible(`text=German (Deutsch)`)).toBeTruthy();
+  });
 
   //checks if the support button routes to correct url
   test(`Clicking 'Support' button should redirect user to correct support page`, async ({}) => {
