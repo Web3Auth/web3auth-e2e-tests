@@ -41,6 +41,10 @@ test.describe.serial("Account page test", () => {
     test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext();
     page = await context.newPage();
+    //Useful for debugging
+    page.on("console", (message) => {
+      console.log(message);
+    });
     await page.goto(openloginURL);
     await catchError(page);
     await signInWithEmail(page, testEmail, browser);
