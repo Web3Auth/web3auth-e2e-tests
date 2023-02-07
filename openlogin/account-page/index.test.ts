@@ -4,6 +4,7 @@ import {
   useAutoCancel2FASetup,
   signInWithEmail,
   deleteCurrentDeviceShare,
+  catchError,
 } from "../../utils";
 import {
   useAutoCancelShareTransfer,
@@ -41,7 +42,9 @@ test.describe.serial("Account page test", () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
+    await catchError(page);
     await signInWithEmail(page, testEmail, browser);
+    await catchError(page);
 
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);

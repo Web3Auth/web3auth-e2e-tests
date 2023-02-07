@@ -104,6 +104,44 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   };
 }
 
+function catchError(page: Page): () => Promise<void> {
+  let stopped = false;
+  const promise = new Promise<void>(async (resolve) => {
+    while (!stopped) {
+      try {
+        if (await page.isVisible("text=Too many requests"))
+          console.log("Error: Test failed due to too many requests");
+      } catch {}
+      try {
+        if (
+          await page.isVisible(
+            "text=Unable to detect login share from the Auth Network"
+          )
+        )
+          console.log(
+            "Error: Test failed to detect login share from the Auth Network"
+          );
+      } catch {}
+      try {
+        if (
+          await page.isVisible(
+            "text=Unable to connect to Auth Network. The Network may be congested."
+          )
+        )
+          console.log(
+            "Error: Test failed to connect to Auth Network. The Network may be congested."
+          );
+      } catch {}
+    }
+    resolve();
+  });
+
+  return async () => {
+    stopped = true;
+    await promise;
+  };
+}
+
 async function signInWithGoogle({
   page,
   browserName,
@@ -329,5 +367,6 @@ export {
   waitForTkeyRehydration,
   addPasswordShare,
   changePasswordShare,
+  catchError,
   env_map,
 };

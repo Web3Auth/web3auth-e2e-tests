@@ -5,6 +5,7 @@ import {
   findLink,
   signInWithEmail,
   generateRandomEmail,
+  catchError,
 } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import Mailosaur from "mailosaur";
@@ -23,6 +24,7 @@ test.describe.serial("App authorization page test", () => {
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
+    await catchError(page);
 
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
@@ -69,8 +71,11 @@ test.describe.serial("App authorization page test", () => {
         }
       );
       expect(newEmail.subject).toBe("Verify your email");
-      const link = findLink(newEmail.html?.links || [], "Confirm my email");
-      expect(link?.text).toBe("Confirm my email");
+      let link = findLink(newEmail.html?.links || [], "Confirm my email");
+      if (!link) {
+        link = findLink(newEmail.html?.links || [], "Verify my email");
+      }
+      expect(link?.text).toBe("Verify my email");
       const href = link?.href || "";
       const page3 = await context3.newPage();
       await page3.goto(href);
@@ -114,8 +119,11 @@ test.describe.serial("App authorization page test", () => {
         }
       );
       expect(newEmail.subject).toBe("Verify your email");
-      const link = findLink(newEmail.html?.links || [], "Confirm my email");
-      expect(link?.text).toBe("Confirm my email");
+      let link = findLink(newEmail.html?.links || [], "Confirm my email");
+      if (!link) {
+        link = findLink(newEmail.html?.links || [], "Verify my email");
+      }
+      expect(link?.text).toBe("Verify my email");
       const href = link?.href || "";
       const page3 = await context3.newPage();
       await page3.goto(href);
