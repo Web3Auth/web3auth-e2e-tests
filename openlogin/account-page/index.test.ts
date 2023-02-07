@@ -152,13 +152,9 @@ test.describe.serial("Account page test", () => {
   test(`emailed backup phrase and phrase from UI should match`, async ({
     openloginURL,
   }) => {
-    await page.goto(`${openloginURL}/wallet/account`);
-    const navigationPromise = await page.waitForURL(
-      `${openloginURL}/wallet/account`,
-      {
-        waitUntil: "load",
-      }
-    );
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
     await page.click('button[aria-label="export email share"]');
     const resentBackup = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
