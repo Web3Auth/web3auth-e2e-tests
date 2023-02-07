@@ -3,17 +3,16 @@ import { test } from "./index.lib";
 import { signInWithDiscord, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-<<<<<<< HEAD
-test.skip("Login with Discord+Device", async ({ page, openloginURL, user }) => {
-=======
-test.skip("Login with Discord - skipped bcz it requires captcha solving", async ({ page, openloginURL, discord }) => {
+test.skip("Login with Discord - skipped bcz it requires captcha solving", async ({
+  page,
+  openloginURL,
+  discord,
+}) => {
   // Verify environment variables
-  expect(
-    !!process.env.DISCORD_EMAIL &&
-    !!process.env.DISCORD_PASSWORD
-  ).toBe(true);
+  expect(!!process.env.DISCORD_EMAIL && !!process.env.DISCORD_PASSWORD).toBe(
+    true
+  );
 
->>>>>>> develop
   // Login with Discord
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');

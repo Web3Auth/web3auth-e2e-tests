@@ -30,8 +30,6 @@ test("Login with passwordless", async ({ browser, page, openloginURL }) => {
   await useAutoCancelShareTransfer(page);
   await useAutoCancel2FASetup(page);
 
-  await page.waitForNavigation();
-
   await page.waitForURL(`${openloginURL}/wallet/home`);
   expect(page.url()).toBe(`${openloginURL}/wallet/home`);
   const welcome = await page.waitForSelector(`text=Welcome`);
