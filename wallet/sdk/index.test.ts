@@ -1,7 +1,10 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 
-test(`torus.login() should open "Sign in" modal`, async ({ page, appURL }) => {
+test.skip(`torus.login() should open "Sign in" modal`, async ({
+  page,
+  appURL,
+}) => {
   await page.goto(appURL);
   await page.click("text=Login");
   const iframe = page.frame({

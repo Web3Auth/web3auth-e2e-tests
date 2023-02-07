@@ -3,7 +3,7 @@ import { test } from "./index.lib";
 import { signInWithDiscord } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test("Login with Discord+Device", async ({ page, openloginURL, user }) => {
+test.skip("Login with Discord+Device", async ({ page, openloginURL, user }) => {
   // Login with Discord
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');

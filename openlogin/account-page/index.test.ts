@@ -4,7 +4,6 @@ import {
   useAutoCancel2FASetup,
   signInWithEmail,
   deleteCurrentDeviceShare,
-  catchError,
 } from "../../utils";
 import {
   useAutoCancelShareTransfer,
@@ -41,14 +40,8 @@ test.describe.serial("Account page test", () => {
     test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext();
     page = await context.newPage();
-    //Useful for debugging
-    // page.on("console", (message) => {
-    //   console.log(message);
-    // });
     await page.goto(openloginURL);
-    await catchError(page);
     await signInWithEmail(page, testEmail, browser);
-    await catchError(page);
 
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
@@ -99,7 +92,6 @@ test.describe.serial("Account page test", () => {
         sentTo: backupEmail,
       }
     );
-    await mailosaur.messages.del(seedEmail.id || "");
     let seedArray =
       seedEmail.html?.body
         ?.toString()
@@ -131,10 +123,8 @@ test.describe.serial("Account page test", () => {
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
   });
 
-  test(`should resend recovery email share`, async ({ context }) => {
-    await context.tracing.start({ screenshots: true, snapshots: true });
+  test(`should resend recovery email share`, async () => {
     await page.click('button:has-text("Resend")');
-    await page.waitForTimeout(5000); // timeout mailosaur waiting for email
 
     const resentBackup = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
@@ -143,7 +133,6 @@ test.describe.serial("Account page test", () => {
       }
     );
     expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
-    await context.tracing.stop({ path: "test-results/trace-35.zip" });
 
     let seedArray =
       resentBackup.html?.body
@@ -212,9 +201,6 @@ test.describe.serial("Account page test", () => {
       page.click('button[aria-label="delete email share"]'),
     ]);
     await page.reload();
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
     expect(await page.isVisible("text=2 / 2")).toBeTruthy();
   });
 

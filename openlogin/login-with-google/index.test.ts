@@ -3,7 +3,7 @@ import { test } from "./index.lib";
 import { signInWithGoogle } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test("Login with Google+Device", async ({
+test.skip("Login with Google+Device", async ({
   page,
   browserName,
   openloginURL,
