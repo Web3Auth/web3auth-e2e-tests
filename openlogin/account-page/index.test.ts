@@ -4,6 +4,7 @@ import {
   useAutoCancel2FASetup,
   signInWithEmail,
   deleteCurrentDeviceShare,
+  waitForTkeyRehydration,
 } from "../../utils";
 import {
   useAutoCancelShareTransfer,
@@ -270,6 +271,13 @@ test.describe.serial("Account page test", () => {
   });
 
   test(`should be able to delete device share`, async ({ openloginURL }) => {
+    let tkey = waitForTkeyRehydration(page);
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    await tkey;
+
     await deleteCurrentDeviceShare(page);
     await page.reload();
     await page.waitForURL(`${openloginURL}/wallet/account`, {
