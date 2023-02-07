@@ -65,7 +65,7 @@ jobs:
 
       - id: run-tests-accountPage
         name: Run account-page tests
-        run: npx playwright test openlogin/account-page/index.test.ts --browser=firefox
+        run: npx playwright test openlogin/account-page/index.test.ts --browser=chromium
 
       - id: run-tests-login-with-passwordless
         name: Run login with passwordless test
