@@ -16,6 +16,7 @@ const config: PlaywrightTestConfig<TestArgs> = {
   projects: projects.map(({ browserName }) => ({
     name: browserName,
     use: {
+      trace: "on",
       browserName,
       storageState: path.resolve(__dirname, `${browserName}.json`),
     },

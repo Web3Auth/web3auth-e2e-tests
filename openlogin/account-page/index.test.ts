@@ -131,7 +131,8 @@ test.describe.serial("Account page test", () => {
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
   });
 
-  test(`should resend recovery email share`, async () => {
+  test(`should resend recovery email share`, async ({ context }) => {
+    await context.tracing.start({ screenshots: true, snapshots: true });
     await page.click('button:has-text("Resend")');
     await page.waitForTimeout(5000); // timeout mailosaur waiting for email
 
@@ -142,6 +143,7 @@ test.describe.serial("Account page test", () => {
       }
     );
     expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
+    await context.tracing.stop({ path: "test-results/trace-35.zip" });
 
     let seedArray =
       resentBackup.html?.body
