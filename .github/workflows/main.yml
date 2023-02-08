@@ -1,4 +1,4 @@
-name: OpenLogin - Homepage
+name: OpenLogin - TorusE2ETests
 
 on:
   schedule:
@@ -15,7 +15,7 @@ jobs:
       matrix:
         env: [prod, cyan]
         browser: [firefox, chromium]
-        cloudBuild: [TorusE2ETests]
+        cloudBuild: [TorusE2ETests, TorusE2ETests-SG]
     runs-on: ubuntu-latest
     env:
       PLATFORM: ${{ matrix.env }}
