@@ -1,6 +1,9 @@
 name: OpenLogin - TorusE2ETests
 
 on:
+  push:
+    branches:
+      - pooja-test
   schedule:
     - cron: "*/30 * * * *"
   workflow_dispatch:
