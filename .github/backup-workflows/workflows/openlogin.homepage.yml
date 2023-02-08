@@ -40,42 +40,36 @@ jobs:
             PLATFORM,
             MAILOSAUR_API_KEY,
             MAILOSAUR_SERVER_ID,
-            MAILOSAUR_SERVER_DOMAIN,
-            FB_TEST_USER_EMAIL,
-            FB_TEST_USER_PASS,
-            FB_TEST_USER_NAME,
-            TWITTER_ACCOUNT,
-            TWITTER_PASSWORD
+            MAILOSAUR_SERVER_DOMAIN
         env:
           PLATFORM: ${{ matrix.env }}
           MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
           MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
           MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_API_KEY }}
-          FB_TEST_USER_EMAIL: ${{ secrets.FB_TEST_USER_EMAIL }}
-          FB_TEST_USER_PASS: ${{ secrets.FB_TEST_USER_PASS }}
-          FB_TEST_USER_NAME: ${{ secrets.FB_TEST_USER_NAME }}
-          TWITTER_ACCOUNT: ${{ secrets.TWITTER_ACCOUNT }}
-          TWITTER_PASSWORD: ${{ secrets.TWITTER_PASSWORD }}
 
-      - id: telegram-notify
-        name: Telegram Notify
-        uses: appleboy/telegram-action@0.0.3
-        with:
-          to: ${{ secrets.CHAT_ID }}
-          token: ${{ secrets.BOT_API_TOKEN }}
-          message: Testresult=${{steps.run-tests.outcome}}%0AcloudBuild=${{matrix.cloudBuild}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}
+      - id: telegram-alert
+        name: Alert to telegram channel
+        if: always()
+        run: |
+          if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+          then
+              echo "Test Failed, sending telegram alert"
+              curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Homepage%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+          else
+              echo "Test Passed, no alert!"
+          fi
         continue-on-error: true
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: test-results-on-${{ matrix.browser }}-${{ matrix.cloudBuild }}
+          name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           if-no-files-found: ignore
 
   update-status:
-    name: Update OpenLogin - Tests status
+    name: Update OpenLogin - Homepage status
     needs: run-tests
     if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
     runs-on: ubuntu-latest
