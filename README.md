@@ -1,4 +1,4 @@
-# torus-e2e-tests
+# web3auth-e2e-tests
 
 End-to-end testing of [Torus] products.
 
