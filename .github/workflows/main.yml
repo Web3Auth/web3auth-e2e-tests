@@ -68,7 +68,7 @@ jobs:
           if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
           then
               echo "Test Failed, sending telegram alert"
-              curl -X POST -H 'Content-Type: application/json' -d '{"chat_id": "5044712918", "text": "TestResult=${{steps.run-tests.outcome}}, region=${{matrix.region}}, browser=${{matrix.browser}}, Environment=${{matrix.env}}, Job=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"}' https://api.telegram.org/bot6256661188:AAHpqN8Zy9MBxgGKar3s9CfIANnbUxDz7AU/sendMessage
+              curl -X POST -H 'Content-Type: application/json' -d '{"chat_id": "${{secrets.CHAT_ID}}", "text": "TestResult=${{steps.run-tests.outcome}}, region=${{matrix.region}}, browser=${{matrix.browser}}, Environment=${{matrix.env}}, Job=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"}' https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage
           else
               echo "Test Passed, no alert!"
           fi
