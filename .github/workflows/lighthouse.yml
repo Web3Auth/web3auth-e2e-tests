@@ -1,0 +1,60 @@
+name: Lighthouse
+
+on:
+  schedule:
+    - cron: "* 0 * * *"
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 16
+
+jobs:
+  run-lighthouse:
+    name: Run Lighthouse
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: yarn
+
+      - name: Setup
+        run: |
+          yarn install
+          mkdir lighthouse
+
+      - name: Run Lighthouse
+        run: |
+          yarn lighthouse https://app.tor.us --output-path lighthouse/app.tor.us.html --save-assets --chrome-flags="--headless"
+          yarn lighthouse https://app.openlogin.com --output-path lighthouse/app.openlogin.com.html --save-assets --chrome-flags="--headless"
+          yarn lighthouse https://solana.tor.us --output-path lighthouse/solana.tor.us.html --save-assets --chrome-flags="--headless"
+          yarn lighthouse https://casper.tor.us --output-path lighthouse/casper.tor.us.html --save-assets --chrome-flags="--headless"
+          cd lighthouse
+          tree -H '.' -L 1 --noreport --charset utf-8 -P "*.html" -o index.html
+
+      - name: Upload results
+        uses: actions/upload-artifact@v3
+        with:
+          path: lighthouse
+
+      - name: sync s3
+        uses: jakejarvis/s3-sync-action@master
+        env:
+          SOURCE_DIR: lighthouse
+          AWS_REGION: us-east-1
+          AWS_S3_BUCKET: lighthouse.tor.us
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: invalidate
+        uses: chetan/invalidate-cloudfront-action@master
+        env:
+          DISTRIBUTION: E36M6XHGBP2LD7
+          PATHS: "/*"
+          AWS_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
