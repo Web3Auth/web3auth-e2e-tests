@@ -64,6 +64,7 @@ jobs:
       - id: telegram-notify
         name: Telegram Notify
         uses: appleboy/telegram-action@0.0.3
+        if: failure()
         with:
           to: ${{ secrets.CHAT_ID }}
           token: ${{ secrets.BOT_API_TOKEN }}
