@@ -18,7 +18,8 @@ jobs:
       matrix:
         env: [prod, cyan]
         browser: [firefox, chromium]
-        cloudBuild: [TorusE2ETests, TorusE2ETests-SG]
+        cloudBuild: [TorusE2ETests]
+        region: [us-east-1, ap-northeast-2, ap-southeast-1]
     runs-on: ubuntu-latest
     env:
       PLATFORM: ${{ matrix.env }}
@@ -30,7 +31,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ matrix.region }}
         continue-on-error: true
 
       - id: run-tests
