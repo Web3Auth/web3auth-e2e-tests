@@ -63,7 +63,7 @@ jobs:
 
       - id: telegram-notify
         name: Telegram Notify
-        uses: appleboy/telegram-action@0.0.3
+        uses: appleboy/telegram-action@master
         if: failure()
         with:
           to: ${{ secrets.CHAT_ID }}
