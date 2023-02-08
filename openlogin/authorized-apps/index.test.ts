@@ -17,6 +17,7 @@ const testEmail = generateRandomEmail();
 test.describe.serial("App authorization page test", () => {
   test.skip(() => process.env.PLATFORM === "local"); // skipping this test for local
   test.skip(() => process.env.PLATFORM === "testing"); // skipping this test for testing env
+  test.skip(() => process.env.PLATFORM === "cyan"); // skipping this test for cyan since 100thieves is too slow.
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
     test.setTimeout(60000); // adding more time to compensate high loading time
@@ -109,7 +110,9 @@ test.describe.serial("App authorization page test", () => {
       await page2.goto("https://collect.100thieves.com");
       await page2.click('button:has-text("CONNECT WALLET")');
       await page2.click('button:has-text("CONNECT WITH SOCIAL")');
-      await page2.fill('[placeholder="Email"]', testEmail);
+      // await page2.fill('[placeholder="Email"]', testEmail);
+      await page2.locator("input[name='email']").fill(testEmail);
+      await page2.waitForTimeout(1000);
       await page2.click('button:has-text("Continue with Email")');
 
       const newEmail = await mailosaur.messages.get(

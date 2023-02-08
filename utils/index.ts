@@ -86,6 +86,19 @@ async function waitForDeleteShare(page: Page): Promise<boolean> {
   });
 }
 
+// async function waitForExportShare(page: Page): Promise<boolean> {
+//   return new Promise(function (resolve) {
+//     page.on("console", (msg) => {
+//       if (
+//         msg.type() === "info" &&
+//         msg.text().includes("exportShareCompleted")
+//       ) {
+//         resolve(true);
+//       }
+//     });
+//   });
+// }
+
 function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   let stopped = false;
   const promise = new Promise<void>(async (resolve) => {
@@ -368,5 +381,6 @@ export {
   addPasswordShare,
   changePasswordShare,
   catchError,
+  //waitForExportShare,
   env_map,
 };

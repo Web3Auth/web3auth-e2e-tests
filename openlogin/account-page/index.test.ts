@@ -9,6 +9,7 @@ import {
   changePasswordShare,
   useAutoCancelShareTransfer,
   generateRandomEmail,
+  //waitForExportShare,
 } from "../../utils";
 import Mailosaur from "mailosaur";
 import { generate } from "generate-password";
@@ -125,8 +126,15 @@ test.describe.serial("Account page test", () => {
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
   });
 
-  test(`should resend recovery email share`, async () => {
+  test(`should resend recovery email share`, async ({ openloginURL }) => {
+    let tkey2 = waitForTkeyRehydration(page);
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    await tkey2;
     await page.click('button:has-text("Resend")');
+    await page.waitForTimeout(5000);
 
     const resentBackup = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
