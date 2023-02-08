@@ -5,11 +5,11 @@ import {
   signInWithEmail,
   deleteCurrentDeviceShare,
   waitForTkeyRehydration,
-} from "../../utils";
-import {
+  addPasswordShare,
+  changePasswordShare,
   useAutoCancelShareTransfer,
   generateRandomEmail,
-} from "../../utils/index";
+} from "../../utils";
 import Mailosaur from "mailosaur";
 import { generate } from "generate-password";
 import { validateMnemonic } from "bip39";
@@ -105,6 +105,7 @@ test.describe.serial("Account page test", () => {
       seedString += seedArray[i] + " ";
     }
     seedString += seedArray[23];
+    await mailosaur.messages.del(seedEmail?.id || "");
 
     await page.fill('[placeholder="Recovery phrase"]', seedString);
 
@@ -232,41 +233,34 @@ test.describe.serial("Account page test", () => {
 
   // below test check password share setup.
   test(`should setup account password`, async ({ openloginURL }) => {
-    await page.fill('[placeholder="Set your password"]', randomPassword.trim());
-    await page.fill(
-      '[placeholder="Re-enter your password"]',
-      randomPassword.trim()
-    );
-    await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/metadata.tor.us/releaseLock") &&
-          resp.status() === 200
-      ),
-      page.click('button:has-text("Confirm")'),
-    ]);
+    let tkey = waitForTkeyRehydration(page);
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    await tkey;
+
+    await addPasswordShare(page, randomPassword);
     await page.reload();
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
     expect(await page.isVisible("text=2 / 4")).toBeTruthy();
   });
 
   test(`should change/update account password`, async ({ openloginURL }) => {
-    await page.click('button:has-text("Change Password")');
-    await page.fill(
-      '[placeholder="Set your password"]',
-      newRandomPassword.trim()
-    );
-    await page.fill(
-      '[placeholder="Re-enter your password"]',
-      newRandomPassword.trim()
-    );
-    await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/metadata.tor.us/releaseLock") &&
-          resp.status() === 200
-      ),
-      page.click('button:has-text("Confirm")'),
-    ]);
+    let tkey = waitForTkeyRehydration(page);
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    await tkey;
+
+    await changePasswordShare(page, newRandomPassword);
+    await page.reload();
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
     expect(await page.isVisible("text=2 / 4")).toBeTruthy();
   });
 
