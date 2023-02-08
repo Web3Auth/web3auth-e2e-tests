@@ -16,7 +16,7 @@ jobs:
     name: Run OpenLogin - E2E Tests
     strategy:
       matrix:
-        env: [cyan]
+        env: [testing]
         browser: [firefox]
         os: [macos-latest]
         # include:

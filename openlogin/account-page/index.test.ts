@@ -9,7 +9,8 @@ import {
   changePasswordShare,
   useAutoCancelShareTransfer,
   generateRandomEmail,
-  //waitForExportShare,
+  catchError,
+  waitForSessionStorage,
 } from "../../utils";
 import Mailosaur from "mailosaur";
 import { generate } from "generate-password";
@@ -44,7 +45,7 @@ test.describe.serial("Account page test", () => {
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
-
+    await catchError(page);
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
@@ -116,6 +117,7 @@ test.describe.serial("Account page test", () => {
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
+    await page.waitForTimeout(3000);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -127,12 +129,7 @@ test.describe.serial("Account page test", () => {
   });
 
   test(`should resend recovery email share`, async ({ openloginURL }) => {
-    let tkey2 = waitForTkeyRehydration(page);
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    await tkey2;
+    await waitForSessionStorage(page, openloginURL);
     await page.click('button:has-text("Resend")');
     await page.waitForTimeout(5000);
 
@@ -165,6 +162,7 @@ test.describe.serial("Account page test", () => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
+    await waitForSessionStorage(page, openloginURL);
     await page.click('button[aria-label="export email share"]');
     const resentBackup = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
@@ -200,6 +198,7 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+    await waitForSessionStorage(page, openloginURL);
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
     await Promise.all([
       page.waitForResponse(
@@ -213,7 +212,10 @@ test.describe.serial("Account page test", () => {
     expect(await page.isVisible("text=2 / 2")).toBeTruthy();
   });
 
-  test(`should show a popup with copy option while clicking download device share`, async () => {
+  test(`should show a popup with copy option while clicking download device share`, async ({
+    openloginURL,
+  }) => {
+    await waitForSessionStorage(page, openloginURL);
     await Promise.all([
       expect(
         page.isVisible("text=Save a copy of your backup phrase")
@@ -224,7 +226,10 @@ test.describe.serial("Account page test", () => {
   });
 
   // should test setting up email backup again after deleting email share.
-  test(`should be able to setup email backup again`, async () => {
+  test(`should be able to setup email backup again`, async ({
+    openloginURL,
+  }) => {
+    await waitForSessionStorage(page, openloginURL);
     expect(await page.isVisible("text=2 / 2")).toBeTruthy();
     await page.fill('[placeholder="Enter recovery email"]', testEmail);
     await Promise.all([
@@ -241,6 +246,7 @@ test.describe.serial("Account page test", () => {
 
   // below test check password share setup.
   test(`should setup account password`, async ({ openloginURL }) => {
+    await waitForSessionStorage(page, openloginURL);
     let tkey = waitForTkeyRehydration(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
@@ -263,6 +269,7 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
     await tkey;
+    await waitForSessionStorage(page, openloginURL);
 
     await changePasswordShare(page, newRandomPassword);
     await page.reload();
@@ -279,7 +286,7 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
     await tkey;
-
+    await waitForSessionStorage(page, openloginURL);
     await deleteCurrentDeviceShare(page);
     await page.reload();
     await page.waitForURL(`${openloginURL}/wallet/account`, {

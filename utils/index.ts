@@ -60,6 +60,26 @@ async function waitForAddPassword(page: Page): Promise<boolean> {
   });
 }
 
+async function waitForSessionStorage(page: Page, openloginURL: string) {
+  const sessionStorage: any = await page.evaluate(() => sessionStorage);
+  let shares = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey.shares;
+  let noShare = Object.keys(shares).length;
+  if (noShare < 2) {
+    console.log("not enough shares");
+    await page.goto(`${openloginURL}/wallet/home`);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      waitUntil: "load",
+    });
+    await page.waitForTimeout(3000);
+    await waitForTkeyRehydration(page);
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+  }
+  return;
+}
+
 async function waitForChangePassword(page: Page): Promise<boolean> {
   return new Promise(function (resolve) {
     page.on("console", (msg) => {
@@ -85,19 +105,6 @@ async function waitForDeleteShare(page: Page): Promise<boolean> {
     });
   });
 }
-
-// async function waitForExportShare(page: Page): Promise<boolean> {
-//   return new Promise(function (resolve) {
-//     page.on("console", (msg) => {
-//       if (
-//         msg.type() === "info" &&
-//         msg.text().includes("exportShareCompleted")
-//       ) {
-//         resolve(true);
-//       }
-//     });
-//   });
-// }
 
 function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   let stopped = false;
@@ -381,6 +388,6 @@ export {
   addPasswordShare,
   changePasswordShare,
   catchError,
-  //waitForExportShare,
+  waitForSessionStorage,
   env_map,
 };

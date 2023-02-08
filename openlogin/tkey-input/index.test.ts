@@ -6,7 +6,6 @@ import {
   deleteCurrentDeviceShare,
   waitForTkeyRehydration,
   addPasswordShare,
-  changePasswordShare,
   catchError,
 } from "../../utils";
 import {
@@ -111,6 +110,7 @@ test.describe.serial("tkey Input test", () => {
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
+    await page.waitForTimeout(2000);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -140,11 +140,11 @@ test.describe.serial("tkey Input test", () => {
     await catchError(page);
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
-
     let tkey = waitForTkeyRehydration(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
+    await page.waitForTimeout(2000);
     await tkey;
 
     await page.goto(`${openloginURL}/wallet/account`);
@@ -193,6 +193,7 @@ test.describe.serial("tkey Input test", () => {
       waitUntil: "load",
     });
     await tkey;
+    await page.waitForTimeout(2000);
 
     // Delete device share to simulate tkey-input page
     let tkey2 = waitForTkeyRehydration(page);
@@ -238,6 +239,7 @@ test.describe.serial("tkey Input test", () => {
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
+
     expect(page.url()).toBe(`${openloginURL}/wallet/home`);
     expect(await page.isVisible(`text=Welcome, ${testEmail}`)).toBeTruthy();
   });
