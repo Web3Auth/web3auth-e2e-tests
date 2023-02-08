@@ -61,14 +61,17 @@ jobs:
           TWITTER_ACCOUNT: ${{ secrets.TWITTER_ACCOUNT }}
           TWITTER_PASSWORD: ${{ secrets.TWITTER_PASSWORD }}
 
-      - id: telegram-notify
-        name: Telegram Notify
-        uses: appleboy/telegram-action@master
-        if: failure()
-        with:
-          to: ${{ secrets.CHAT_ID }}
-          token: ${{ secrets.BOT_API_TOKEN }}
-          message: Testresult=${{steps.run-tests.outcome}}%0AcloudBuild=${{matrix.cloudBuild}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}
+      - id: telegram-alert
+        name: Alert to telegram channel
+        if: always()
+        run: |
+          if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+          then
+              echo "Test Failed, sending telegram alert"
+              curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Testresult=Failed%0Aregion=${{matrix.region}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+          else
+              echo "Test Passed, no alert!"
+          fi
         continue-on-error: true
 
       - name: Upload test results
