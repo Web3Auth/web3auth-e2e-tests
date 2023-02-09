@@ -47,7 +47,7 @@ test.describe.serial("tkey Input test", () => {
 
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
-    await catchError(page);
+    // await catchError(page);
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
@@ -137,7 +137,7 @@ test.describe.serial("tkey Input test", () => {
     test.setTimeout(60000); // adding more time since test is depended on external websites.
 
     await signInWithEmail(page, testEmail, browser);
-    await catchError(page);
+    // await catchError(page);
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
     let tkey = waitForTkeyRehydration(page);
@@ -177,7 +177,7 @@ test.describe.serial("tkey Input test", () => {
   }) => {
     test.setTimeout(100000); // adding more time.
     await signInWithEmail(page, testEmail, browser);
-    await catchError(page);
+    // await catchError(page);
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
 
@@ -229,7 +229,7 @@ test.describe.serial("tkey Input test", () => {
   }) => {
     test.setTimeout(60000); // adding more time.
     await signInWithEmail(page, testEmail, browser);
-    await catchError(page);
+    // await catchError(page);
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
       waitUntil: "load",
     });
