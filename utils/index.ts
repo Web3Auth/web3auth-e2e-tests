@@ -66,7 +66,7 @@ async function waitForSessionStorage(page: Page, openloginURL: string) {
   let shares = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey.shares;
   let noShare = Object.keys(shares).length;
   if (noShare < 2) {
-    console.log("not enough shares");
+    // console.log("not enough shares");
     await page.goto(`${openloginURL}/wallet/home`);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
