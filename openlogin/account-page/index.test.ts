@@ -66,7 +66,7 @@ test.describe.serial("Account page test", () => {
     });
     expect(await page.isVisible("text=Account")).toBeTruthy();
   });
-  test(`should display 2FA enable window for single factor account`, async ({}) => {
+  test(`should display 2FA enable window for single factor account`, async ({ }) => {
     expect(
       await page.isVisible(
         "text=We strongly recommend you to enable 2FA on your account"
@@ -198,8 +198,14 @@ test.describe.serial("Account page test", () => {
       waitUntil: "load",
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+
+    // not reliable, either rewrite or await for some other marker
     await waitForSessionStorage(page, openloginURL);
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
+
+    // No need to rely on API response, its incorrect.
+    // because state changes locally aren't guaranteed
+    // checkout how await for delete share works in utils
     await Promise.all([
       page.waitForResponse(
         (resp) =>
