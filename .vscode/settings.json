@@ -5,8 +5,7 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "files.exclude": {
-    "node_modules": true,
-    "yarn.lock": true
+    "node_modules": true
   },
   "[markdown]": {
     "editor.wordWrap": "off"
@@ -19,6 +18,7 @@
     "gmail",
     "isrefinement",
     "jakejarvis",
+    "Mailosaur",
     "mkdir",
     "networkidle",
     "noreport",

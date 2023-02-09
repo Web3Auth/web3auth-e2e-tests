@@ -1,15 +1,15 @@
-import test, { Page } from "@playwright/test";
+import { Page, PlaywrightWorkerOptions, Browser } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
-import config from "./../index.config"
 import { Link } from "mailosaur/lib/models";
 import Mailosaur from "mailosaur";
-
-export const DEFAULT_PLATFORM = "cyan"
 
 const env_map: { [key: string]: string } = {
   prod: "https://app.openlogin.com",
   beta: "https://beta.openlogin.com",
   cyan: "https://cyan.openlogin.com",
+  testing: "https://testing.openlogin.com",
+  celeste: "https://celeste.openlogin.com",
+  local: "http://localhost:3000",
 };
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
@@ -17,8 +17,9 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   const promise = new Promise<void>(async (resolve) => {
     while (!stopped) {
       try {
-        if (await page.isVisible("text=New login detected"))
+        if (await page.isVisible("text=New login detected")) {
           await page.click('button:has-text("Cancel")', { force: true });
+        }
       } catch { }
     }
     resolve();
@@ -30,15 +31,127 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   };
 }
 
+async function waitForTkeyRehydration(
+  page: Page,
+  size = 100
+): Promise<boolean> {
+  return new Promise(function (resolve) {
+    page.on("console", (msg) => {
+      // 120 state will change if the openlogin default state changes.
+      // need better way to rehydrate or find if the object is empty
+      if (msg.type() === "info" && msg.text().includes("e2e:tests:tkeyjson")) {
+        let text = msg.text();
+        let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
+        if (length > size) resolve(true);
+      }
+    });
+  });
+}
+
+async function waitForAddPassword(page: Page): Promise<boolean> {
+  return new Promise(function (resolve) {
+    page.on("console", (msg) => {
+      if (
+        msg.type() === "info" &&
+        msg.text() === "e2e:tests:addPasswordCompleted"
+      ) {
+        resolve(true);
+      }
+    });
+  });
+}
+
+async function waitForSessionStorage(page: Page, openloginURL: string) {
+  const sessionStorage: any = await page.evaluate(() => sessionStorage);
+  let shares = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey.shares;
+  let noShare = Object.keys(shares).length;
+  if (noShare < 2) {
+    // console.log("not enough shares");
+    await page.goto(`${openloginURL}/wallet/home`);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      waitUntil: "load",
+    });
+    await page.waitForTimeout(3000);
+    await waitForTkeyRehydration(page);
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+  }
+  return;
+}
+
+async function waitForChangePassword(page: Page): Promise<boolean> {
+  return new Promise(function (resolve) {
+    page.on("console", (msg) => {
+      if (
+        msg.type() === "info" &&
+        msg.text().includes("e2e:tests:changePasswordCompleted")
+      ) {
+        resolve(true);
+      }
+    });
+  });
+}
+
+async function waitForDeleteShare(page: Page): Promise<boolean> {
+  return new Promise(function (resolve) {
+    page.on("console", (msg) => {
+      if (
+        msg.type() === "info" &&
+        msg.text().includes("e2e:tests:deleteShareCompleted")
+      ) {
+        resolve(true);
+      }
+    });
+  });
+}
+
 function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   let stopped = false;
   const promise = new Promise<void>(async (resolve) => {
     while (!stopped) {
       try {
         if (await page.isVisible("text=secure your account"))
-          await page.click('button:has-text("Maybe next time")', {
-            force: true,
-          });
+          await page.click('button:has-text("Maybe next time")');
+      } catch { }
+    }
+    resolve();
+  });
+
+  return async () => {
+    stopped = true;
+    await promise;
+  };
+}
+
+function catchError(page: Page): () => Promise<void> {
+  let stopped = false;
+  const promise = new Promise<void>(async (resolve) => {
+    while (!stopped) {
+      try {
+        if (await page.isVisible("text=Too many requests"))
+          console.log("Error: Test failed due to too many requests");
+      } catch { }
+      try {
+        if (
+          await page.isVisible(
+            "text=Unable to detect login share from the Auth Network"
+          )
+        )
+          console.log(
+            "Error: Test failed to detect login share from the Auth Network"
+          );
+      } catch { }
+      try {
+        if (
+          await page.isVisible(
+            "text=Unable to connect to Auth Network. The Network may be congested."
+          )
+        )
+          console.log(
+            "Error: Test failed to connect to Auth Network. The Network may be congested."
+          );
       } catch { }
     }
     resolve();
@@ -52,81 +165,38 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
 
 async function signInWithGoogle({
   page,
-  google,
+  browserName,
+  email,
 }: {
   page: Page;
-  google: {
-    email: string;
-    password: string;
-  }
+  browserName: PlaywrightWorkerOptions["browserName"];
+  email: string;
 }): Promise<boolean> {
   try {
     await page.waitForURL("https://accounts.google.com/**");
-    await page.isVisible("text=Sign in");
-    await page.fill('[aria-label="Email or phone"]', google.email);
-    await page.click(`button:has-text("Next")`);
-    await page.fill('[aria-label="Enter your password"]', google.password);
-    await page.click(`button:has-text("Next")`);
+    await page.click(`text=${email}`);
+    if (browserName === "chromium") {
+      // On Chromium, Google sometimes re-ask for user's consent
+      if (
+        page
+          .url()
+          .startsWith("https://accounts.google.com/signin/oauth/legacy/consent")
+      )
+        await page.click('button:has-text("Allow")');
+    }
+    if (browserName === "webkit")
+      // Workaround wait for URL issue on Safari
+      while (page.url().startsWith("https://accounts.google.com"))
+        await page.waitForTimeout(100);
     return true;
   } catch {
     return false;
   }
 }
 
-async function signInWithTwitter({
-  page,
-  twitter,
-  openloginURL
-}: {
-  page: Page;
-  twitter: {
-    email: string;
-    password: string;
-  },
-  openloginURL: string;
-}): Promise<void> {
-  await page.goto(openloginURL);
-  await page.click('button:has-text("Get Started")');
-  await page.click("[aria-label='login with twitter']");
-
-  await page.waitForURL("https://api.twitter.com/oauth/**");
-  await page.waitForSelector('h2:text("Authorize Web3Auth to access your account")');
-  await page.click(`input:has-text("Sign in")`);
-  // Only for the first time users, they have to click on authorize web3Auth app
-  try {
-    // smaller timeout, we don't want to wait here for longer
-    const ele = await page.waitForSelector(`input:has-text("Authorize app")`, {
-      timeout: 1000
-    })
-    await page.click(`input:has-text("Authorize app")`)
-  } catch {
-  }
-  await page.waitForSelector('text="Sign in to Twitter"');
-  await page.fill('input[autocomplete="username"]', twitter.email);
-  await page.click(`div[role="button"] span:has-text("Next")`);
-  await page.fill('input[type="password"]', twitter.password);
-  // Login tests are slow tests, >1 min is consumed in the redirection loop from the social provider to finally reach wallet/home. Hence the max test timeout.
-  // FLOW: social-redirections => [host]/auth(SLOW) => [host]/register(SLOW) => [host]/wallet/home
-  await slowOperation(async () => {
-    await page.click(`div[role="button"] span:has-text("Log in")`)
-    await useAutoCancelShareTransfer(page)
-    await useAutoCancel2FASetup(page)
-    await page.waitForURL(`${openloginURL}/wallet/home`)
-  })
-}
-
-async function slowOperation(op: () => Promise<any>, timeout?: number) {
-  // Set slow timeout
-  test.setTimeout(timeout || 2 * 60 * 1000) // => 2 mins timeout
-  await op()
-  // Reset timeout
-  test.setTimeout(config.timeout || 0)
-}
-
 async function signInWithFacebook({
   page,
   FB,
-  openloginURL
 }: {
   page: Page;
   FB: {
@@ -135,42 +205,37 @@ async function signInWithFacebook({
     name: string;
     firstName: string;
   };
-  openloginURL: string
-}): Promise<void> {
-  await page.goto(openloginURL);
-  await page.click('button:has-text("Get Started")');
-  await page.click('[aria-label="login with facebook"]');
-
-  await page.waitForURL("https://www.facebook.com/**");
-  await page.isVisible("text=Log in")
-  await page.fill(
-    '[placeholder="Email address or phone number"]',
-    FB.email
-  )
-  await page.fill('[placeholder="Password"]', FB.password)
-  await page.click(`button:has-text("Login"), [name="login"]`)
-  await slowOperation(async () => {
-    await page.click(
-      `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
-    )
-    await useAutoCancelShareTransfer(page);
-    await useAutoCancel2FASetup(page);
-    await page.waitForURL(`${openloginURL}/wallet/home`)
-  })
-}
-
-async function signInWithDiscord({ page, discord }: {
-  page: Page, discord: {
-    email: string,
-    password: string
-  }
 }): Promise<boolean> {
   try {
+    await page.waitForURL("https://www.facebook.com/**");
+    await Promise.all([
+      // await page.waitForNavigation({
+      //   waitUntil: "load",
+      // }),
+      await page.isVisible("text=Log in"),
+      await page.fill(
+        '[placeholder="Email address or phone number"]',
+        FB.email
+      ),
+      await page.fill('[placeholder="Password"]', FB.password),
+      await page.click(`button:has-text("Login"), [name="login"]`),
+      page.click(
+        `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
+      ),
+    ]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function signInWithDiscord(page: Page): Promise<boolean> {
+  try {
     await page.waitForURL("https://discord.com/oauth2/**");
-    await page.isVisible("text=Welcome back!");
-    await page.fill('[name="email"]', discord.email);
-    await page.fill('[name="password"]', discord.password);
-    await page.click(`button:has-text("Log In")`);
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click('button:has-text("Authorise"), button:has-text("Authorize")'),
+    ]);
     return true;
   } catch {
     return false;
@@ -184,6 +249,7 @@ async function ensureDeviceShareDeleted(page: Page) {
     if (
       await page.locator("text=Device share deletion unsuccessful").isVisible()
     ) {
+      console.log("Unable to delete device share");
       await page.reload();
     } else {
       // inner try/catch block to handle a scenario where there is no timeout/error
@@ -204,12 +270,17 @@ async function ensureDeviceShareDeleted(page: Page) {
   return isDeleted;
 }
 
+// Delete all shares
 async function deleteCurrentDeviceShare(page: Page) {
+  let x;
   var deviceShares = page.locator('[aria-label="delete device share"]');
   var countShares = await deviceShares.count();
   while (countShares > 0) {
+    x = waitForDeleteShare(page);
     await deviceShares.first().click();
     let isDeleted = await ensureDeviceShareDeleted(page);
+    await x;
+
     if (isDeleted) {
       countShares = countShares - 1;
     } else {
@@ -217,6 +288,38 @@ async function deleteCurrentDeviceShare(page: Page) {
       countShares = await deviceShares.count();
     }
   }
+}
+
+async function addPasswordShare(page: Page, password: string) {
+  // wait for password to be visible
+  await page.isVisible("input[name='openlogin-password']");
+  await page.isVisible("input[name='openlogin-confirm-password']");
+
+  await page.locator("input[name='openlogin-password']").fill(password);
+  await page.locator("input[name='openlogin-confirm-password']").fill(password);
+
+  let y = waitForAddPassword(page);
+  await page.click('button:has-text("Confirm")');
+  await page.isVisible('button:has-text("Change password")');
+  await page.locator("text=Password successfully changed").isVisible();
+  await y;
+}
+
+async function changePasswordShare(page: Page, password: string) {
+  await page.locator('button:has-text("Change Password")').isVisible();
+  await page.locator('button:has-text("Change Password")').click();
+
+  await page.locator("input[name='openlogin-password']").isVisible();
+  await page.locator("input[name='openlogin-confirm-password']").isVisible();
+
+  await page.locator("input[name='openlogin-password']").fill(password);
+  await page.locator("input[name='openlogin-confirm-password']").fill(password);
+
+  let y = waitForChangePassword(page);
+  await page.click('button:has-text("Confirm")');
+  await page.isVisible('button:has-text("Change password")');
+  await page.locator("text=Password successfully changed").isVisible();
+  await y;
 }
 
 function findLink(links: Link[], text: string) {
@@ -243,8 +346,13 @@ async function signInWithEmail(
         sentTo: email,
       }
     );
-    const link = findLink(mailBox.html?.links || [], "Confirm my email");
+    let link = findLink(mailBox.html?.links || [], "Confirm my email");
+    if (!link) {
+      link = findLink(mailBox.html?.links || [], "Verify my email");
+    }
+    await mailosaur.messages.del(mailBox?.id || "");
     const href = link?.href || "";
+
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();
     await page2.goto(href);
@@ -256,26 +364,31 @@ async function signInWithEmail(
     );
     await page2.close();
     return true;
-  } catch {
+  } catch (err) {
+    console.error(err);
     return false;
   }
 }
 
 function generateRandomEmail() {
-  return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+  return `hello+apps+${Date.now()}@obhhiyk1.mailosaur.net`;
 }
 
 export {
   useAutoCancelShareTransfer,
   useAutoCancel2FASetup,
   signInWithGoogle,
-  signInWithTwitter,
   signInWithFacebook,
   signInWithDiscord,
   confirmEmail,
-  deleteCurrentDeviceShare,
   findLink,
   signInWithEmail,
   generateRandomEmail,
+  deleteCurrentDeviceShare,
+  waitForTkeyRehydration,
+  addPasswordShare,
+  changePasswordShare,
+  catchError,
+  waitForSessionStorage,
   env_map,
 };

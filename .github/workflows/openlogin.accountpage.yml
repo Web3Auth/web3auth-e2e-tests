@@ -1,0 +1,106 @@
+# name: OpenLogin - AccountPage
+
+# on:
+#   push:
+#     branches:
+#       - sid-e2e-ci-pipe
+#   schedule:
+#     - cron: "*/30 * * * *"
+#   workflow_dispatch:
+
+# env:
+#   NODE_VERSION: 16
+
+# jobs:
+#   run-tests:
+#     name: Run OpenLogin - AccountPage tests
+#     strategy:
+#       matrix:
+#         env: [testing]
+#         browser: [firefox]
+#         os: [macos-latest]
+#         # include:
+#         #   - os: macos-latest
+#         #     browser: chromium
+#         #     env: cyan
+#         # - os: macos-latest
+#         #   browser: webkit
+#         #   env: beta
+#         # - os: macos-latest
+#         #   browser: webkit
+#         #   env: prod
+
+#     runs-on: ${{ matrix.os }}
+#     env:
+#       PLATFORM: ${{ matrix.env }}
+#       MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
+#       MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
+#       MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_API_KEY }}
+
+#     outputs:
+#       conclusion: ${{ steps.run-tests.conclusion }}
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3
+
+#       - id: setup-node
+#         name: Setup Node.js ${{ env.NODE_VERSION }}
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NODE_VERSION }}
+#           cache: yarn
+#         continue-on-error: true
+
+#       - id: yarn-install
+#         name: Install Node.js dependencies
+#         if: steps.setup-node.outcome == 'success'
+#         run: yarn install --frozen-lockfile
+#         continue-on-error: true
+
+#       - id: yarn-install-deps
+#         name: Install Ubuntu dependencies
+#         if: steps.yarn-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+#         run: yarn run playwright install-deps ${{ matrix.browser }}
+#         continue-on-error: true
+
+#       - id: run-tests
+#         name: Run tests
+#         run: npx playwright test openlogin/account-page/index.test.ts --browser=firefox
+
+#       - id: telegram-alert
+#         name: Alert to telegram channel
+#         if: always()
+#         run: |
+#           if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+#           then
+#               echo "Test Failed, sending telegram alert"
+#               curl "https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage?chat_id=${{secrets.CHAT_ID}}&text=Homepage%0ATestresult=Failed%0AOS=${{matrix.os}}%0Abrowser=${{matrix.browser}}%0AEnvironment=${{matrix.env}}%0AJob=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+#           else
+#               echo "Test Passed, no alert!"
+#           fi
+#         continue-on-error: true
+
+#       - name: Upload test results
+#         if: always()
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: test-results-on-${{ matrix.browser }}-${{ matrix.os }}
+#           path: test-results/
+#           if-no-files-found: ignore
+
+#   update-status:
+#     name: Update OpenLogin - TkeyInput status
+#     needs: run-tests
+#     if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Update status
+#         uses: fjogeleit/http-request-action@master
+#         with:
+#           url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.HOME_PAGE_COMPONENT_ID }}
+#           customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
+#           method: PATCH
+#           contentType: "application/json"
+#           timeout: 10000
+#           data: >-
+#             { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }

@@ -1,0 +1,84 @@
+name: OpenLogin - RunAll
+
+on:
+  push:
+    branches:
+      - sid-e2e-ci-pipe
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 16
+
+jobs:
+  run-tests:
+    name: Run OpenLogin - E2E Tests
+    strategy:
+      matrix:
+        env: [testing]
+        browser: [firefox]
+        os: [macos-latest]
+        # include:
+        #   - os: macos-latest
+        #     browser: chromium
+        #     env: cyan
+        # - os: macos-latest
+        #   browser: webkit
+        #   env: beta
+        # - os: macos-latest
+        #   browser: webkit
+        #   env: prod
+
+    runs-on: ${{ matrix.os }}
+    env:
+      PLATFORM: ${{ matrix.env }}
+      MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
+      MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
+      MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_API_KEY }}
+
+    outputs:
+      conclusion: ${{ steps.run-tests.conclusion }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: setup-node
+        name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+        continue-on-error: true
+
+      - id: npm-install
+        name: Install Node.js dependencies
+        if: steps.setup-node.outcome == 'success'
+        run: npm ci
+        continue-on-error: true
+
+      - id: npm-install-deps
+        name: Install Ubuntu dependencies
+        if: steps.npm-install.outcome == 'success' && startsWith(matrix.os, 'ubuntu')
+        run: npm run playwright install-deps
+        continue-on-error: true
+
+      - id: run-tests-homepage
+        name: Run Homepage tests
+        run: npx playwright test openlogin/homepage/index.test.ts --browser=firefox
+
+      - id: run-tests-passwordless-login
+        name: Run Passwordless login tests
+        run: npx playwright test openlogin/login-with-passwordless/index.test.ts --browser=firefox
+
+      - id: run-tests-authorized-apps
+        name: Run Authorized Apps tests
+        run: npx playwright test openlogin/authorized-apps/index.test.ts --browser=firefox
+
+      - id: run-tests-tkey-input
+        name: Run Tkey Input tests
+        run: npx playwright test openlogin/tkey-input/index.test.ts --browser=firefox
+
+      - id: run-account-page
+        name: Run Account Page tests
+        run: npx playwright test openlogin/account-page/index.test.ts --browser=firefox
