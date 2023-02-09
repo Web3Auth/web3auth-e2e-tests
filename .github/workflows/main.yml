@@ -16,8 +16,8 @@ jobs:
     name: Run OpenLogin - tests
     strategy:
       matrix:
-        env: [prod, cyan]
-        browser: [firefox, chromium]
+        env: [prod, cyan, celeste]
+        browser: [chromium]
         cloudBuild: [TorusE2ETests]
         region: [us-east-1, ap-northeast-2, ap-southeast-1]
     runs-on: ubuntu-latest
