@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 
-test.skip(`torus.login() should open "Sign in" modal`, async ({
+test(`torus.login() should open "Sign in" modal`, async ({
   page,
   appURL,
 }) => {
