@@ -8,6 +8,7 @@ const env_map: { [key: string]: string } = {
   beta: "https://beta.openlogin.com",
   cyan: "https://cyan.openlogin.com",
   testing: "https://testing.openlogin.com",
+  celeste: "https://celeste.openlogin.com",
   local: "http://localhost:3000",
 };
 
@@ -19,7 +20,7 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
         if (await page.isVisible("text=New login detected")) {
           await page.click('button:has-text("Cancel")', { force: true });
         }
-      } catch {}
+      } catch { }
     }
     resolve();
   });
@@ -113,7 +114,7 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
       try {
         if (await page.isVisible("text=secure your account"))
           await page.click('button:has-text("Maybe next time")');
-      } catch {}
+      } catch { }
     }
     resolve();
   });
@@ -131,7 +132,7 @@ function catchError(page: Page): () => Promise<void> {
       try {
         if (await page.isVisible("text=Too many requests"))
           console.log("Error: Test failed due to too many requests");
-      } catch {}
+      } catch { }
       try {
         if (
           await page.isVisible(
@@ -141,7 +142,7 @@ function catchError(page: Page): () => Promise<void> {
           console.log(
             "Error: Test failed to detect login share from the Auth Network"
           );
-      } catch {}
+      } catch { }
       try {
         if (
           await page.isVisible(
@@ -151,7 +152,7 @@ function catchError(page: Page): () => Promise<void> {
           console.log(
             "Error: Test failed to connect to Auth Network. The Network may be congested."
           );
-      } catch {}
+      } catch { }
     }
     resolve();
   });
