@@ -13,7 +13,7 @@ jobs:
     name: Run OpenLogin - tests
     strategy:
       matrix:
-        env: [prod, cyan, celeste]
+        env: [prod, cyan]
         browser: [chromium]
         cloudBuild: [TorusE2ETests]
         region: [us-east-1, ap-northeast-2, ap-southeast-1]
