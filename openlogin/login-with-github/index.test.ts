@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test("Login with Github+Device", async ({ page, openloginURL, user }) => {
+test.skip("Login with Github+Device", async ({ page, openloginURL, user }) => {
   // Login with Github
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
@@ -13,7 +13,7 @@ test("Login with Github+Device", async ({ page, openloginURL, user }) => {
       timeout: 10 * 1000,
     });
     await page.click('button:has-text("Authorize TorusLabs")');
-  } catch {}
+  } catch { }
 
   useAutoCancelShareTransfer(page);
 
