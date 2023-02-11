@@ -388,6 +388,11 @@ async function signInWithEmail(
     console.log(process.env.MAILOSAUR_API_KEY);
     await page.locator('button[aria-label="Get Started"]').click();
     await page.locator('[placeholder="Email"]').fill(email);
+    console.log(await page.locator('[placeholder="Email"]'),
+      await page.locator('[placeholder="Email"]').inputValue(),
+      await page.locator('button[aria-label="login with email"]').isEnabled()
+    );
+
     await page.locator('button[aria-label="login with email"]').click();
     await page.waitForSelector("text=email has been sent");
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
