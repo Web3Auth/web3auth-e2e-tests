@@ -3,9 +3,7 @@ name: OpenLogin - TorusE2ETests
 on:
   push:
     branches:
-      - develop
-  schedule:
-    - cron: "*/30 * * * *"
+      - feat/finalization
   workflow_dispatch:
 
 env:
@@ -16,10 +14,10 @@ jobs:
     name: Run OpenLogin - tests
     strategy:
       matrix:
-        env: [prod, cyan]
+        env: [testing]
         browser: [chromium]
         cloudBuild: [TorusE2ETests]
-        region: [us-east-1, ap-northeast-2, ap-southeast-1]
+        region: [ap-southeast-1]
     runs-on: ubuntu-latest
     env:
       PLATFORM: ${{ matrix.env }}
