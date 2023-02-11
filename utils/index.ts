@@ -390,7 +390,7 @@ async function signInWithEmail(
     await page.locator('[placeholder="Email"]').fill(email);
     console.log(await page.locator('[placeholder="Email"]'),
       await page.locator('[placeholder="Email"]').inputValue(),
-      await t page.locator('button[aria-label="login with email"]').isEnabled()
+      await page.locator('button:has-text("Continue with Email")').isEnabled()
     );
 
     await page.waitForTimeout(2000);
@@ -398,7 +398,7 @@ async function signInWithEmail(
 
     console.log(await page.locator('[placeholder="Email"]'),
       await page.locator('[placeholder="Email"]').inputValue(),
-      await t page.locator('button[aria-label="login with email"]').isEnabled()
+      await page.locator('button:has-text("Continue with Email")').isEnabled()
     );
 
     await page.locator('button[aria-label="login with email"]').click({ force: true });
