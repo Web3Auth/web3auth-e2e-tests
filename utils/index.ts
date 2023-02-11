@@ -386,14 +386,14 @@ async function signInWithEmail(
 ): Promise<boolean> {
   try {
     console.log(process.env.MAILOSAUR_API_KEY);
-    await page.locator('button[aria-label="Get Started"]').click();
+    await page.locator('button[aria-label="Get Started"]').click({ force: true });
     await page.locator('[placeholder="Email"]').fill(email);
     console.log(await page.locator('[placeholder="Email"]'),
       await page.locator('[placeholder="Email"]').inputValue(),
       await page.locator('button[aria-label="login with email"]').isEnabled()
     );
 
-    await page.locator('button[aria-label="login with email"]').click();
+    await page.locator('button[aria-label="login with email"]').click({ force: true });
     await page.waitForSelector("text=email has been sent");
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
     const mailBox = await mailosaur.messages.get(
