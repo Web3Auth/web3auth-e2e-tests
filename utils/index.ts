@@ -385,11 +385,11 @@ async function signInWithEmail(
   browser: Browser
 ): Promise<boolean> {
   try {
-    await page.locator('button:has-text("Get Started")').click();
-    await page.locator('[placeholder="Email"]').fill(email);
-    await page.locator('button:has-text("Continue with Email")').click();
-    await page.waitForSelector("text=email has been sent");
     console.log(process.env.MAILOSAUR_API_KEY);
+    await page.locator('button[aria-label="Get Started"]').click();
+    await page.locator('[placeholder="Email"]').fill(email);
+    await page.locator('button[aria-label="login with email"]').click();
+    await page.waitForSelector("text=email has been sent");
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
     const mailBox = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
