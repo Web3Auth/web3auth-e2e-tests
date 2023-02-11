@@ -386,7 +386,7 @@ async function signInWithEmail(
 ): Promise<boolean> {
   try {
     await page.locator('button:has-text("Get Started")').click();
-    await page.fill('[placeholder="Email"]', email);
+    await page.locator('[placeholder="Email"]').fill(email);
     await page.locator('button:has-text("Continue with Email")').click();
     await page.waitForSelector("text=email has been sent");
     console.log(process.env.MAILOSAUR_API_KEY);
