@@ -388,13 +388,19 @@ async function signInWithEmail(
     console.log(process.env.MAILOSAUR_API_KEY);
     await page.locator('button[aria-label="Get Started"]').click({ force: true });
     await page.locator('[placeholder="Email"]').fill(email);
-    // console.log(await page.locator('[placeholder="Email"]'),
-    //   await page.locator('[placeholder="Email"]').inputValue(),
-    //   await page.locator('button:has-text("Continue with Email")').isEnabled()
-    // );
+    console.log(await page.locator('[placeholder="Email"]'),
+      await page.locator('[placeholder="Email"]').inputValue(),
+      await t page.locator('button[aria-label="login with email"]').isEnabled()
+    );
 
     await page.waitForTimeout(2000);
     await page.locator('button[aria-label="login with email"]').isEnabled()
+
+    console.log(await page.locator('[placeholder="Email"]'),
+      await page.locator('[placeholder="Email"]').inputValue(),
+      await t page.locator('button[aria-label="login with email"]').isEnabled()
+    );
+
     await page.locator('button[aria-label="login with email"]').click({ force: true });
     await page.locator("text=Verification").isVisible();
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
