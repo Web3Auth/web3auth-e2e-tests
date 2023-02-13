@@ -8,6 +8,8 @@ phases:
   pre_build:
     commands:
       - echo Installing source NPM dependencies...
+      - cd /app
+      - ls -la
       - npm install
   build:
     commands:
