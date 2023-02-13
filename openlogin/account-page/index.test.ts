@@ -45,6 +45,7 @@ test.describe.serial("Account page test", () => {
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
+    console.log("sign in completed")
     await catchError(page);
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);

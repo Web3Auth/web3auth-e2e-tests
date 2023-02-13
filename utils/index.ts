@@ -385,10 +385,25 @@ async function signInWithEmail(
   browser: Browser
 ): Promise<boolean> {
   try {
-    await page.click('button:has-text("Get Started")');
-    await page.fill('[placeholder="Email"]', email);
-    await page.click('button:has-text("Continue with Email")');
-    await page.waitForSelector("text=email has been sent");
+    await page.locator('button[aria-label="Get Started"]').click({ force: true });
+    await page.locator('[placeholder="Email"]').fill(email);
+    // console.log(await page.locator('[placeholder="Email"]'),
+    //   await page.locator('[placeholder="Email"]').inputValue(),
+    //   await page.locator('button[aria-label="login with email"]'),
+    //   await page.locator('button[aria-label="login with email"]').isDisabled()
+    // );
+
+    await page.waitForTimeout(2000);
+    // await page.locator('button[aria-label="login with email"]').isEnabled()
+
+    console.log(await page.locator('[placeholder="Email"]'),
+      await page.locator('[placeholder="Email"]').inputValue(),
+      await page.locator('button[aria-label="login with email"]').isEnabled(),
+      await page.locator('button[aria-label="login with email"]').isDisabled()
+    );
+
+    await page.locator('button[aria-label="login with email"]').click();
+    // await page.locator("text=Verification").isVisible();
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
     const mailBox = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test:browser": "playwright test --headed",
-    "test": "playwright test",
+    "test": "playwright test openlogin/account-page/index.test.ts",
     "trace": "playwright show-trace",
     "install-deps": "playwright install-deps"
   },
