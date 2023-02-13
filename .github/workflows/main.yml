@@ -8,6 +8,8 @@ on:
 
 env:
   NODE_VERSION: 16
+  ECR_REGION: ${{ env.ECR_REGION || "ap-southeast-1" }}
+
 
 jobs:
   run-tests:
@@ -17,7 +19,7 @@ jobs:
         env: [prod, cyan]
         browser: [chromium]
         cloudBuild: [TorusE2ETests]
-        region: [ap-southeast-1]
+        region: [us-east-1, ap-northeast-2, ap-southeast-1]
     runs-on: ubuntu-latest
     env:
       PLATFORM: ${{ matrix.env }}
@@ -32,7 +34,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ matrix.region }}
+          aws-region: ${{ env.ECR_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
