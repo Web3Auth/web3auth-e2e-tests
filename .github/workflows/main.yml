@@ -10,19 +10,19 @@ env:
   NODE_VERSION: 16
 
 jobs:
-  run-tests:
+  build:
     name: Run OpenLogin - tests
-    strategy:
-      matrix:
-        env: [prod, cyan]
-        browser: [chromium]
-        cloudBuild: [TorusE2ETests]
-        region: [us-east-1, ap-northeast-2, ap-southeast-1]
+    # strategy:
+    #   matrix:
+    #     env: [prod, cyan]
+    #     browser: [chromium]
+    #     cloudBuild: [TorusE2ETests]
+    #     region: [us-east-1, ap-northeast-2, ap-southeast-1]
     runs-on: ubuntu-latest
-    env:
-      PLATFORM: ${{ matrix.env }}
-    outputs:
-      conclusion: ${{ steps.run-tests.conclusion }}
+    # env:
+    #   PLATFORM: ${{ matrix.env }}
+    # outputs:
+    #   conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -47,67 +47,40 @@ jobs:
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
 
-      # - id: run-tests
-      #   name: "AWS CodeBuild run build"
-      #   uses: aws-actions/aws-codebuild-run-build@v1.0.8
+      # - id: telegram-alert
+      #   name: Alert to telegram channel
+      #   if: always()
+      #   run: |
+      #     if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
+      #     then
+      #         echo "Test Failed, sending telegram alert"
+      #         curl -X POST -H 'Content-Type: application/json' -d '{"chat_id": "${{secrets.CHAT_ID}}", "text": "TestResult=${{steps.run-tests.outcome}}, region=${{matrix.region}}, browser=${{matrix.browser}}, Environment=${{matrix.env}}, Job=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"}' https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage
+      #     else
+      #         echo "Test Passed, no alert!"
+      #     fi
+      #   continue-on-error: true
+
+      # - name: Upload test results
+      #   if: always()
+      #   uses: actions/upload-artifact@v3
       #   with:
-      #     project-name: ${{ matrix.cloudBuild }}
-      #     buildspec-override: ./buildspec.yml
-      #     env-vars-for-codebuild: |
-      #       PLATFORM,
-      #       MAILOSAUR_API_KEY,
-      #       MAILOSAUR_SERVER_ID,
-      #       MAILOSAUR_SERVER_DOMAIN,
-      #       FB_TEST_USER_EMAIL,
-      #       FB_TEST_USER_PASS,
-      #       FB_TEST_USER_NAME,
-      #       TWITTER_ACCOUNT,
-      #       TWITTER_PASSWORD
-      #   env:
-      #     PLATFORM: ${{ matrix.env }}
-      #     MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
-      #     MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
-      #     MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_API_KEY }}
-      #     FB_TEST_USER_EMAIL: ${{ secrets.FB_TEST_USER_EMAIL }}
-      #     FB_TEST_USER_PASS: ${{ secrets.FB_TEST_USER_PASS }}
-      #     FB_TEST_USER_NAME: ${{ secrets.FB_TEST_USER_NAME }}
-      #     TWITTER_ACCOUNT: ${{ secrets.TWITTER_ACCOUNT }}
-      #     TWITTER_PASSWORD: ${{ secrets.TWITTER_PASSWORD }}
+      #     name: test-results-on-${{ matrix.browser }}-${{ matrix.cloudBuild }}
+      #     path: test-results/
+      #     if-no-files-found: ignore
 
-      - id: telegram-alert
-        name: Alert to telegram channel
-        if: always()
-        run: |
-          if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
-          then
-              echo "Test Failed, sending telegram alert"
-              curl -X POST -H 'Content-Type: application/json' -d '{"chat_id": "${{secrets.CHAT_ID}}", "text": "TestResult=${{steps.run-tests.outcome}}, region=${{matrix.region}}, browser=${{matrix.browser}}, Environment=${{matrix.env}}, Job=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"}' https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage
-          else
-              echo "Test Passed, no alert!"
-          fi
-        continue-on-error: true
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results-on-${{ matrix.browser }}-${{ matrix.cloudBuild }}
-          path: test-results/
-          if-no-files-found: ignore
-
-  update-status:
-    name: Update OpenLogin - Tests status
-    needs: run-tests
-    if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update status
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.HOME_PAGE_COMPONENT_ID }}
-          customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-          method: PATCH
-          contentType: "application/json"
-          timeout: 10000
-          data: >-
-            { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }
+  # update-status:
+  #   name: Update OpenLogin - Tests status
+  #   needs: run-tests
+  #   if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Update status
+  #       uses: fjogeleit/http-request-action@master
+  #       with:
+  #         url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.HOME_PAGE_COMPONENT_ID }}
+  #         customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
+  #         method: PATCH
+  #         contentType: "application/json"
+  #         timeout: 10000
+  #         data: >-
+  #           { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }

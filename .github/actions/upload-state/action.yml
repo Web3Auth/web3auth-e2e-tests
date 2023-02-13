@@ -15,7 +15,7 @@ inputs:
   expiry_duration:
     description: "Expiry duration (in days) of state"
     required: false
-    default: 7
+    default: "7"
   aws_access_key_id:
     description: "AWS access key ID"
     required: true
