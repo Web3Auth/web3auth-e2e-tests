@@ -14,7 +14,7 @@ const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
 const testEmail = generateRandomEmail();
 
-test.describe.serial.skip("App authorization page test", () => {
+test.describe.serial("App authorization page test", () => {
   test.skip(() => process.env.PLATFORM === "local"); // skipping this test for local
   test.skip(() => process.env.PLATFORM === "testing"); // skipping this test for testing env
   test.skip(() => process.env.PLATFORM === "cyan"); // skipping this test for cyan since 100thieves is too slow.
@@ -36,7 +36,7 @@ test.describe.serial.skip("App authorization page test", () => {
   test.afterAll(async ({ browser }) => {
     browser.close();
   });
-  test(`should display "You are not connected to any applications yet." when no apps are connected.`, async ({
+  test.skip(`should display "You are not connected to any applications yet." when no apps are connected.`, async ({
     openloginURL,
   }) => {
     await page.goto(`${openloginURL}/wallet/apps`);
@@ -53,7 +53,7 @@ test.describe.serial.skip("App authorization page test", () => {
 
   // Below test use testEmail to login to solana wallet prod and there by generates an app share
   // which gets listed in list of apps
-  test(`should connect DApp  wallet with passwordless login and list app`, async ({
+  test.skip(`should connect DApp  wallet with passwordless login and list app`, async ({
     openloginURL,
     browser,
   }) => {
@@ -151,7 +151,7 @@ test.describe.serial.skip("App authorization page test", () => {
     }
   });
 
-  test(`should be able to delete app share from UI`, async ({
+  test.skip(`should be able to delete app share from UI`, async ({
     openloginURL,
   }) => {
     await page.click('button[aria-label="delete device share"]');
