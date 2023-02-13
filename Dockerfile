@@ -14,7 +14,6 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/
 COPY openlogin/ /app/openlogin
 COPY index.config.ts /app/
-COPY .env /app/
 COPY utils/ /app/utils
 COPY wallet/ /app/wallet
 
