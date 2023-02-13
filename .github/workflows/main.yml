@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - develop
-  schedule:
-    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 env:
