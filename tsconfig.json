@@ -1,4 +1,5 @@
 {
   "extends": "@tsconfig/node14",
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "esModuleInterop": true
 }
