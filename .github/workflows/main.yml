@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         env: [testing]
-        browser: [chromium]
+        browser: [firefox]
         cloudBuild: [TorusE2ETests]
         region: [ap-southeast-1]
     runs-on: ubuntu-latest
