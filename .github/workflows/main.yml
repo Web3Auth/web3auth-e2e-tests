@@ -17,7 +17,7 @@ jobs:
         env: [prod, cyan]
         browser: [chromium]
         cloudBuild: [TorusE2ETests]
-        region: [us-east-1]
+        region: [ap-southeast1]
     runs-on: ubuntu-latest
     env:
       PLATFORM: ${{ matrix.env }}
