@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test:browser": "playwright test --headed",
-    "test": "playwright test --browser=firefox",
+    "test": "playwright test",
     "trace": "playwright show-trace",
     "install-deps": "playwright install-deps"
   },
