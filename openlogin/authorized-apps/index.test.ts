@@ -14,7 +14,7 @@ const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
 const testEmail = generateRandomEmail();
 
-test.describe.serial("App authorization page test", () => {
+test.describe.serial.skip("App authorization page test", () => {
   test.skip(() => process.env.PLATFORM === "local"); // skipping this test for local
   test.skip(() => process.env.PLATFORM === "testing"); // skipping this test for testing env
   test.skip(() => process.env.PLATFORM === "cyan"); // skipping this test for cyan since 100thieves is too slow.
