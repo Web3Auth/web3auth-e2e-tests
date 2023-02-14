@@ -6,7 +6,9 @@
     "test:browser": "playwright test --headed",
     "test": "playwright test",
     "trace": "playwright show-trace",
-    "install-deps": "playwright install-deps"
+    "install-deps": "playwright install-deps",
+    "test:build": "docker build -t test-image .",
+    "test:docker": "docker run -it test-image /bin/bash"
   },
   "dependencies": {
     "@playwright/test": "^1.30.0",
