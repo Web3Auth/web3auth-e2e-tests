@@ -199,7 +199,7 @@ test.describe.serial("App authorization page test", () => {
   test(`should be able to delete app share from UI`, async ({
     openloginURL,
   }) => {
-    if (!["prod", "cyan"].includes(process.env.PLATFORM || "")) {
+    if (!["prod", "cyan", "beta"].includes(process.env.PLATFORM || "")) {
       return
     }
     await page.click('button[aria-label="delete device share"]');
