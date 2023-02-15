@@ -56,24 +56,25 @@ test.describe.serial("tkey Input test", () => {
     await signInWithEmail(page, testEmail, browser);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy()
-    await slowOperation(async () => {
-      await useAutoCancelShareTransfer(page);
-      await useAutoCancel2FASetup(page);
-      await page.waitForURL(`${openloginURL}/wallet/home`);
-    })
+    await useAutoCancelShareTransfer(page);
+    await useAutoCancel2FASetup(page);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      timeout: 3 * 60 * 1000
+    });
   });
 
-  test.afterAll(async ({ browser }) => {
-    browser.close();
-  });
+  // test.afterAll(async ({ browser }) => {
+  //   await browser.close();
+  // });
 
   test(`should setup 2FA for running further tkey_input tests`, async ({
     openloginURL,
   }) => {
-    test.setTimeout(100000); // adding more time to compensate high loading time
+    test.setTimeout(3 * 60000); // adding more time to compensate high loading time
+    // adding more time to compensate high loading time
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     await page.click('button:has-text("Enable 2FA")');
@@ -119,12 +120,12 @@ test.describe.serial("tkey Input test", () => {
 
     await page.click('button:has-text("Done")');
     await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     await page.waitForTimeout(2000);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     expect(await page.isVisible("text=Recovery email")).toBeTruthy();
     expect(await page.isVisible("text=Device(s)")).toBeTruthy();
@@ -133,7 +134,7 @@ test.describe.serial("tkey Input test", () => {
     await page.click(`text=Logout`);
     await page.goto(`${openloginURL}`);
     await page.waitForURL(`${openloginURL}`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
 
     expect(
@@ -153,14 +154,14 @@ test.describe.serial("tkey Input test", () => {
     await useAutoCancel2FASetup(page);
     let tkey = waitForTkeyRehydration(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     await page.waitForTimeout(2000);
     await tkey;
 
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     expect(await page.isVisible("text=Account")).toBeTruthy();
@@ -175,7 +176,7 @@ test.describe.serial("tkey Input test", () => {
     await page.click(`text=Logout`);
     await page.goto(`${openloginURL}`);
     await page.waitForURL(`${openloginURL}`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     expect(
       await page.isVisible(`text=Click Get Started to continue`)
@@ -193,7 +194,7 @@ test.describe.serial("tkey Input test", () => {
     await useAutoCancel2FASetup(page);
 
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     expect(await page.isVisible("text=Verify your login")).toBeTruthy();
     await page.fill('[placeholder="Enter backup phrase"]', emailBackupShare);
@@ -201,7 +202,7 @@ test.describe.serial("tkey Input test", () => {
 
     let tkey = waitForTkeyRehydration(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     await tkey;
     await page.waitForTimeout(2000);
@@ -210,7 +211,7 @@ test.describe.serial("tkey Input test", () => {
     let tkey2 = waitForTkeyRehydration(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     await tkey2;
 
@@ -227,7 +228,7 @@ test.describe.serial("tkey Input test", () => {
     await page.click(`text=Logout`);
     await page.goto(`${openloginURL}`);
     await page.waitForURL(`${openloginURL}`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     expect(
       await page.isVisible(`text=Click Get Started to continue`)
@@ -242,13 +243,13 @@ test.describe.serial("tkey Input test", () => {
     await signInWithEmail(page, testEmail, browser);
     // await catchError(page);
     await page.waitForURL(`${openloginURL}/tkey-input*`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     expect(await page.isVisible("text=Verify your login")).toBeTruthy();
     await page.fill('[placeholder="Account password"]', passwordShare);
     await page.click('button:has-text("Confirm")');
     await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
 
     expect(page.url()).toBe(`${openloginURL}/wallet/home`);

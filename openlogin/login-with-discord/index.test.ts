@@ -25,7 +25,7 @@ test.skip("Login with Discord - skipped bcz it requires captcha solving", async 
 
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
-    waitUntil: "load",
+    timeout: 3 * 60 * 1000
   });
 
   expect(page.url()).toBe(`${openloginURL}/wallet/home`);

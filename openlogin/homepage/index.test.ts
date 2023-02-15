@@ -18,27 +18,27 @@ const testEmail = generateRandomEmail();
 test.describe.serial("Home page tests", () => {
   let page: Page;
   test.beforeAll(async ({ openloginURL, browser }) => {
-    // test.setTimeout(60000); // adding more time to compensate high loading time
+    test.setTimeout(3 * 60000); // adding more time to compensate high loading time
     const context = await browser.newContext({});
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy()
-    await slowOperation(async () => {
-      await useAutoCancelShareTransfer(page);
-      await useAutoCancel2FASetup(page);
-      await page.waitForURL(`${openloginURL}/wallet/home`);
-    })
+    await useAutoCancelShareTransfer(page);
+    await useAutoCancel2FASetup(page);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      timeout: 3 * 60 * 1000
+    });
   });
 
-  test.afterAll(async ({ browser }) => {
-    browser.close();
-  });
+  // test.afterAll(async ({ browser }) => {
+  //   await browser.close();
+  // });
 
   test(`should display user email on top right`, async ({ openloginURL }) => {
     await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     expect(await page.isVisible(`text=${testEmail}`)).toBeTruthy();
   });

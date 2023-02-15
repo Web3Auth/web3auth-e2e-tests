@@ -35,13 +35,13 @@ test.skip("existing v2 user can log in correctly", async ({
       timeout: 10000,
     });
     await page.click('button:has-text("Maybe next time")');
-  } catch {}
+  } catch { }
 
   useAutoCancelShareTransfer(page);
 
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
-    timeout: 2 * 60 * 1000,
+    timeout: 3 * 60 * 1000,
   });
 
   // Go to Account page

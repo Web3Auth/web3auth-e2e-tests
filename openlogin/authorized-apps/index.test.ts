@@ -22,29 +22,30 @@ test.describe.serial("App authorization page test", () => {
   // test(() => process.env.PLATFORM === "cyan"); //ping this test for cyan since 100thieves is too slow.
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
-    // test.setTimeout(60000); // adding more time to compensate high loading time
+    test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy()
-    await slowOperation(async () => {
-      await useAutoCancelShareTransfer(page);
-      await useAutoCancel2FASetup(page);
-      await page.waitForURL(`${openloginURL}/wallet/home`);
-    })
+    await useAutoCancelShareTransfer(page);
+    await useAutoCancel2FASetup(page);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      timeout: 3 * 60 * 1000
+    });
+
   });
 
-  test.afterAll(async ({ browser }) => {
-    browser.close();
-  });
+  // test.afterAll(async ({ browser }) => {
+  //   await browser.close();
+  // });
   test(`should display "You are not connected to any applications yet." when no apps are connected.`, async ({
     openloginURL,
   }) => {
     await page.goto(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
     expect(
@@ -94,11 +95,11 @@ test.describe.serial("App authorization page test", () => {
       );
       await page3.close();
       await page2.waitForURL(`https://solana.tor.us/wallet/home`, {
-        waitUntil: "load",
+        timeout: 3 * 60 * 1000
       });
       await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
-        waitUntil: "load",
+        timeout: 3 * 60 * 1000
       });
 
       expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
@@ -142,11 +143,11 @@ test.describe.serial("App authorization page test", () => {
       );
       await page3.close();
       await page2.waitForURL(`https://solana-testing.tor.us/wallet/home`, {
-        waitUntil: "load",
+        timeout: 3 * 60 * 1000
       });
       await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
-        waitUntil: "load",
+        timeout: 3 * 60 * 1000
       });
 
       expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
@@ -199,7 +200,8 @@ test.describe.serial("App authorization page test", () => {
       });
       await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
-        waitUntil: "load",
+        timeout: 3 * 60 * 1000
+
       });
       await page.waitForSelector("text=LCS Drop");
       expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
@@ -217,7 +219,7 @@ test.describe.serial("App authorization page test", () => {
     await page.click('button[aria-label="delete device share"]');
     await page.goto(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {
-      waitUntil: "load",
+      timeout: 3 * 60 * 1000
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
     expect(

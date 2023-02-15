@@ -29,11 +29,11 @@ test.describe.serial('Login with passwordless', () => {
     await signInWithEmail(page, testEmail, browser);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy()
-    await slowOperation(async () => {
-      await useAutoCancelShareTransfer(page);
-      await useAutoCancel2FASetup(page);
-      await page.waitForURL(`${openloginURL}/wallet/home`);
-    })
+    await useAutoCancelShareTransfer(page);
+    await useAutoCancel2FASetup(page);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      timeout: 3 * 60 * 1000
+    });
 
     expect(page.url()).toBe(`${openloginURL}/wallet/home`);
     const welcome = await page.waitForSelector(`text=Welcome`);
