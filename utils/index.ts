@@ -250,7 +250,6 @@ async function signInWithTwitter({
 
   await page.waitForURL("https://api.twitter.com/oauth/**");
   const appName = process.env.PLATFORM === "testing" ? "torus-test-auth0" : "Web3Auth"
-  console.log({ appName })
   await page.waitForSelector(`h2:text("Authorize ${appName} to access your account")`);
   await page.click(`input:has-text("Sign in")`);
   // Only for the first time users, they have to click on authorize web3Auth app
@@ -279,7 +278,6 @@ async function signInWithTwitter({
       await page.fill('input[autocomplete="email"]', twitter.email);
       await page.press('body', 'enter')
     } catch (err) {
-      console.log("*************", err)
     }
     await useAutoCancelShareTransfer(page)
     await useAutoCancel2FASetup(page)

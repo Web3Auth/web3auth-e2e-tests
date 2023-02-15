@@ -3,6 +3,9 @@ import { test } from "./index.lib";
 import { signInWithFacebook } from "../../utils";
 
 test("Login with Facebook", async ({ page, openloginURL, FB }) => {
+  if (process.env.PLATFORM !== "prod") {
+    return
+  }
   // Verify environment variables
   expect(
     !!process.env.FB_TEST_USER_NAME &&

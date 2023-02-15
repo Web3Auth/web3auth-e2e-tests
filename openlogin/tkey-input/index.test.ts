@@ -1,4 +1,4 @@
-import { expect, Page } from "@playwright/test";
+import { chromium, expect, firefox, Page } from "@playwright/test";
 import { test } from "./index.lib";
 import {
   useAutoCancel2FASetup,
@@ -36,9 +36,14 @@ const passwordShare = generate({
 test.describe.serial("tkey Input test", () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser, openloginURL }) => {
-    // test.setTimeout(60000); // adding more time to compensate high loading time
+  test.beforeAll(async ({ openloginURL }) => {
+    test.setTimeout(3 * 60000); // adding more time to compensate high loading time
 
+    const browser = await firefox.launch({
+      args: [
+        '--disable-gpu'
+      ]
+    })
     const context = await browser.newContext();
     page = await context.newPage();
 
@@ -87,6 +92,9 @@ test.describe.serial("tkey Input test", () => {
       process.env.MAILOSAUR_SERVER_ID || "",
       {
         sentTo: backupEmail,
+      },
+      {
+        timeout: 30 * 1000
       }
     );
     await mailosaur.messages.del(seedEmail.id || ""); // Deleting emails in email server.

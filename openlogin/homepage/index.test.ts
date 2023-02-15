@@ -25,9 +25,9 @@ test.describe.serial("Home page tests", () => {
     await signInWithEmail(page, testEmail, browser);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy()
-    await useAutoCancelShareTransfer(page);
-    await useAutoCancel2FASetup(page);
     await slowOperation(async () => {
+      await useAutoCancelShareTransfer(page);
+      await useAutoCancel2FASetup(page);
       await page.waitForURL(`${openloginURL}/wallet/home`);
     })
   });
