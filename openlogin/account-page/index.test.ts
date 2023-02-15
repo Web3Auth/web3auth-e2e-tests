@@ -11,6 +11,8 @@ import {
   generateRandomEmail,
   catchError,
   waitForSessionStorage,
+  catchErrorAndExit,
+  slowOperation,
 } from "../../utils";
 import Mailosaur from "mailosaur";
 import { generate } from "generate-password";
@@ -40,17 +42,18 @@ const newRandomPassword = generate({
 test.describe.serial("Account page test", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
-    test.setTimeout(60000); // adding more time to compensate high loading time
+    // test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
-    await catchError(page);
-    await useAutoCancelShareTransfer(page);
-    await useAutoCancel2FASetup(page);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
+    const shouldExit = await catchErrorAndExit(page);
+    expect(shouldExit).toBeFalsy()
+    await slowOperation(async () => {
+      await useAutoCancelShareTransfer(page);
+      await useAutoCancel2FASetup(page);
+      await page.waitForURL(`${openloginURL}/wallet/home`);
+    })
   });
 
   test.afterAll(async ({ browser }) => {
@@ -93,7 +96,8 @@ test.describe.serial("Account page test", () => {
       process.env.MAILOSAUR_SERVER_ID || "",
       {
         sentTo: backupEmail,
-      }
+      },
+      { timeout: 30 * 1000 }
     );
     let seedArray =
       seedEmail.html?.body
@@ -137,7 +141,8 @@ test.describe.serial("Account page test", () => {
       process.env.MAILOSAUR_SERVER_ID || "",
       {
         sentTo: backupEmail,
-      }
+      },
+      { timeout: 30 * 1000 }
     );
     expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
 
@@ -168,7 +173,8 @@ test.describe.serial("Account page test", () => {
       process.env.MAILOSAUR_SERVER_ID || "",
       {
         sentTo: backupEmail,
-      }
+      },
+      { timeout: 30 * 1000 }
     );
     expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
 

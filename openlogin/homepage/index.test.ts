@@ -5,6 +5,8 @@ import {
   signInWithEmail,
   generateRandomEmail,
   catchError,
+  slowOperation,
+  catchErrorAndExit,
 } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import Mailosaur from "mailosaur";
@@ -16,18 +18,20 @@ const testEmail = generateRandomEmail();
 test.describe.serial("Home page tests", () => {
   let page: Page;
   test.beforeAll(async ({ openloginURL, browser }) => {
-    test.setTimeout(60000); // adding more time to compensate high loading time
+    // test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext({});
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
-    await catchError(page);
+    const shouldExit = await catchErrorAndExit(page);
+    expect(shouldExit).toBeFalsy()
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
+    await slowOperation(async () => {
+      await page.waitForURL(`${openloginURL}/wallet/home`);
+    })
   });
+
   test.afterAll(async ({ browser }) => {
     browser.close();
   });
@@ -43,7 +47,7 @@ test.describe.serial("Home page tests", () => {
   });
 
   //checks if the support button routes to correct url
-  test(`Clicking 'Support' button should redirect user to correct support page`, async ({}) => {
+  test(`Clicking 'Support' button should redirect user to correct support page`, async ({ }) => {
     const popupPromise = page.waitForEvent("popup");
     await page.click(`text=Support`);
     const popup = await popupPromise;
@@ -53,7 +57,7 @@ test.describe.serial("Home page tests", () => {
   });
 
   // checks if the learn more button routes to correct url
-  test(`Clicking 'Learn more' button should redirect user to correct docs page`, async ({}) => {
+  test(`Clicking 'Learn more' button should redirect user to correct docs page`, async ({ }) => {
     const popupPromise = page.waitForEvent("popup");
     await page.click('a:has-text("Learn more")');
     const popup = await popupPromise;
@@ -64,7 +68,7 @@ test.describe.serial("Home page tests", () => {
     ).toBeTruthy();
   });
 
-  test(`Clicking 'Logout' button should logout user`, async ({}) => {
+  test(`Clicking 'Logout' button should logout user`, async ({ }) => {
     await page.click(`text=Logout`);
     expect(
       await page.isVisible(`text=Manage all your web interactions in one place`)

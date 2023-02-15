@@ -6,6 +6,8 @@ import {
   signInWithEmail,
   generateRandomEmail,
   catchError,
+  catchErrorAndExit,
+  slowOperation,
 } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import Mailosaur from "mailosaur";
@@ -20,19 +22,20 @@ test.describe.serial("App authorization page test", () => {
   // test(() => process.env.PLATFORM === "cyan"); //ping this test for cyan since 100thieves is too slow.
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
-    test.setTimeout(60000); // adding more time to compensate high loading time
+    // test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
-    await catchError(page);
-
-    await useAutoCancelShareTransfer(page);
-    await useAutoCancel2FASetup(page);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
+    const shouldExit = await catchErrorAndExit(page);
+    expect(shouldExit).toBeFalsy()
+    await slowOperation(async () => {
+      await useAutoCancelShareTransfer(page);
+      await useAutoCancel2FASetup(page);
+      await page.waitForURL(`${openloginURL}/wallet/home`);
+    })
   });
+
   test.afterAll(async ({ browser }) => {
     browser.close();
   });
@@ -69,6 +72,9 @@ test.describe.serial("App authorization page test", () => {
         process.env.MAILOSAUR_SERVER_ID || "",
         {
           sentTo: testEmail,
+        },
+        {
+          timeout: 20 * 1000
         }
       );
       expect(newEmail.subject).toBe("Verify your email");
@@ -114,6 +120,9 @@ test.describe.serial("App authorization page test", () => {
         process.env.MAILOSAUR_SERVER_ID || "",
         {
           sentTo: testEmail,
+        },
+        {
+          timeout: 20 * 1000
         }
       );
       expect(newEmail.subject).toBe("Verify your email");
@@ -164,6 +173,9 @@ test.describe.serial("App authorization page test", () => {
         process.env.MAILOSAUR_SERVER_ID || "",
         {
           sentTo: testEmail,
+        },
+        {
+          timeout: 20 * 1000
         }
       );
       expect(newEmail.subject).toBe("Verify your email");

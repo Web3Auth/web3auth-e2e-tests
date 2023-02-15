@@ -6,6 +6,7 @@ dotenv.config();
 export interface TestArgs {
   openloginURL: string;
   twitter: {
+    account: string;
     email: string;
     password: string;
   }
@@ -14,7 +15,8 @@ export interface TestArgs {
 export const test = playwright.test.extend<TestArgs>({
   openloginURL: env_map[process.env.PLATFORM || DEFAULT_PLATFORM],
   twitter: {
-    email: process.env.TWITTER_ACCOUNT || "",
+    account: process.env.TWITTER_ACCOUNT || "",
+    email: process.env.TWITTER_EMAIL || "",
     password: process.env.TWITTER_PASSWORD || "",
   }
 });

@@ -128,6 +128,42 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   };
 }
 
+async function catchErrorAndExit(page: Page): Promise<boolean | undefined> {
+  try {
+    if (await page.isVisible("text=Too many requests")) {
+      console.log("Error: Test failed due to too many requests");
+      return true
+    }
+  } catch {
+  }
+  try {
+    if (
+      await page.isVisible(
+        "text=Unable to detect login share from the Auth Network"
+      )
+    ) {
+      console.log(
+        "Error: Test failed to detect login share from the Auth Network"
+      );
+      return true
+    }
+  } catch {
+  }
+  try {
+    if (
+      await page.isVisible(
+        "text=Unable to connect to Auth Network. The Network may be congested."
+      )
+    ) {
+      console.log(
+        "Error: Test failed to connect to Auth Network. The Network may be congested."
+      );
+      return true
+    }
+  } catch {
+  }
+}
+
 function catchError(page: Page): () => Promise<void> {
   let stopped = false;
   const promise = new Promise<void>(async (resolve) => {
@@ -135,7 +171,9 @@ function catchError(page: Page): () => Promise<void> {
       try {
         if (await page.isVisible("text=Too many requests"))
           console.log("Error: Test failed due to too many requests");
-      } catch { }
+      } catch {
+        return true
+      }
       try {
         if (
           await page.isVisible(
@@ -145,7 +183,9 @@ function catchError(page: Page): () => Promise<void> {
           console.log(
             "Error: Test failed to detect login share from the Auth Network"
           );
-      } catch { }
+      } catch {
+        return true
+      }
       try {
         if (
           await page.isVisible(
@@ -155,7 +195,9 @@ function catchError(page: Page): () => Promise<void> {
           console.log(
             "Error: Test failed to connect to Auth Network. The Network may be congested."
           );
-      } catch { }
+      } catch {
+        return true
+      }
     }
     resolve();
   });
@@ -196,6 +238,7 @@ async function signInWithTwitter({
 }: {
   page: Page;
   twitter: {
+    account: string;
     email: string;
     password: string;
   },
@@ -206,7 +249,9 @@ async function signInWithTwitter({
   await page.click("[aria-label='login with twitter']");
 
   await page.waitForURL("https://api.twitter.com/oauth/**");
-  await page.waitForSelector('h2:text("Authorize Web3Auth to access your account")');
+  const appName = process.env.PLATFORM === "testing" ? "torus-test-auth0" : "Web3Auth"
+  console.log({ appName })
+  await page.waitForSelector(`h2:text("Authorize ${appName} to access your account")`);
   await page.click(`input:has-text("Sign in")`);
   // Only for the first time users, they have to click on authorize web3Auth app
   try {
@@ -218,17 +263,28 @@ async function signInWithTwitter({
   } catch {
   }
   await page.waitForSelector('text="Sign in to Twitter"');
-  await page.fill('input[autocomplete="username"]', twitter.email);
+  await page.fill('input[autocomplete="username"]', twitter.account);
   await page.click(`div[role="button"] span:has-text("Next")`);
   await page.fill('input[type="password"]', twitter.password);
+
   // Login tests are slow tests, >1 min is consumed in the redirection loop from the social provider to finally reach wallet/home. Hence the max test timeout.
   // FLOW: social-redirections => [host]/auth(SLOW) => [host]/register(SLOW) => [host]/wallet/home
   await slowOperation(async () => {
     await page.click(`div[role="button"] span:has-text("Log in")`)
+    try {
+      // smaller timeout, we don't want to wait here for longer
+      await page.waitForSelector('text="Help you verify"', {
+        timeout: 1000
+      })
+      await page.fill('input[autocomplete="email"]', twitter.email);
+      await page.press('body', 'enter')
+    } catch (err) {
+      console.log("*************", err)
+    }
     await useAutoCancelShareTransfer(page)
     await useAutoCancel2FASetup(page)
     await page.waitForURL(`${openloginURL}/wallet/home`)
-  })
+  }, 3 * 60 * 1000)
 }
 
 export async function slowOperation(op: () => Promise<any>, timeout?: number) {
@@ -272,7 +328,7 @@ async function signInWithFacebook({
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
     await page.waitForURL(`${openloginURL}/wallet/home`)
-  })
+  }, 3 * 60 * 1000)
 }
 
 async function signInWithDiscord({ page, discord }: {
@@ -440,6 +496,7 @@ export {
   addPasswordShare,
   changePasswordShare,
   catchError,
+  catchErrorAndExit,
   waitForSessionStorage,
   env_map,
 };
