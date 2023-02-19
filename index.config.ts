@@ -15,6 +15,7 @@ const indexConfig: PlaywrightTestConfig = {
     screenshot: "only-on-failure",
     video: process.env.CI ? "retry-with-video" : "retain-on-failure",
     trace: process.env.CI ? "off" : "retain-on-failure",
+    // trace: "on",
   },
 };
 
