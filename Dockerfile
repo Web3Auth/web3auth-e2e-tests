@@ -11,11 +11,12 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 
 # COPY the needed files to the app folder in Docker image
-COPY package.json .env /app/
+COPY package.json /app/
 COPY openlogin/ /app/openlogin
 COPY index.config.ts /app/
 COPY utils/ /app/utils
 COPY wallet/ /app/wallet
+COPY --no-error .env /app/
 
 # Get the needed libraries to run Playwright
 # RUN apt-get update && apt-get -y install libnss3 libatk-bridge2.0-0 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libatspi2.0-0 libxshmfence-dev libx11-xcb1
