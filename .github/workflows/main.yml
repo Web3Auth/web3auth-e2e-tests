@@ -64,7 +64,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: web3auth-e2e-tests
         run: |
-          aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA --environment-variables-override PLATFORM=${{ matrix.env }}
+          aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
