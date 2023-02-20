@@ -14,6 +14,7 @@ phases:
   build:
     commands:
       - echo Running Tests
+      - chmod +x ./bin/runTestsCI.sh
       - ./bin/runTestsCI.sh
   post_build:
     commands:
