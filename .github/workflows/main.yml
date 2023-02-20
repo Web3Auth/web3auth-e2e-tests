@@ -12,12 +12,12 @@ env:
 jobs:
   build:
     name: Run OpenLogin - tests
-    # strategy:
-    #   matrix:
-    #     env: [prod, cyan]
-    #     browser: [chromium]
-    #     cloudBuild: [TorusE2ETests]
-    #     region: [us-east-1, ap-northeast-2, ap-southeast-1]
+    strategy:
+      matrix:
+        env: [testing]
+        browser: [firefox]
+        cloudBuild: [TorusE2ETests]
+        region: [us-east-1, ap-northeast-2, ap-southeast-1]
     runs-on: ubuntu-latest
     # env:
     #   PLATFORM: ${{ matrix.env }}
@@ -60,9 +60,9 @@ jobs:
         env:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_DEFAULT_REGION: "ap-southeast-1"
+          AWS_DEFAULT_REGION: ${{ matrix.region }}
         run: |
-          aws codebuild start-build --project-name TorusE2ETests --override-image $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+          aws codebuild start-build --project-name TorusE2ETests --override-image $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA --environment-variables-override PLATFORM${{ matrix.env }}
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
