@@ -14,8 +14,8 @@ phases:
   build:
     commands:
       - echo Running Tests
-      - chmod +x ./bin/runTestsCI.sh
-      - ./bin/runTestsCI.sh
+      - chmod +x ./bin/*
+      - npm run test:ci
   post_build:
     commands:
       - echo Tests Complete
