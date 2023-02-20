@@ -62,7 +62,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_DEFAULT_REGION: "ap-southeast-1"
         run: |
-          aws codebuild start-build --project-name TorusE2ETests --environment image=$ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+          aws codebuild start-build --project-name TorusE2ETests --override-image $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
