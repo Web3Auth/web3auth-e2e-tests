@@ -19,6 +19,9 @@ phases:
   post_build:
     commands:
       - echo Tests Complete
+      - ls -la
+      - cd bin
+      - ls -la
 artifacts:
   files:
     - '**/*'
