@@ -21,4 +21,4 @@ phases:
       - echo Tests Complete
 artifacts:
   files:
-    - 'test-results/*'
+    - './test-results/*'
