@@ -19,6 +19,8 @@ phases:
   post_build:
     commands:
       - echo Tests Complete
+      - cd ..
 artifacts:
   files:
-    - './test-results/*'
+    - '**/*'
+  base-directory: 'test-results'
