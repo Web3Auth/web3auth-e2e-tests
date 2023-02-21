@@ -22,4 +22,3 @@ phases:
 artifacts:
   files:
     - 'test-results/*'
-  base-directory: 'app'
