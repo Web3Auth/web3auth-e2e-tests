@@ -19,10 +19,7 @@ phases:
   post_build:
     commands:
       - echo Tests Complete
-      - ls -la
-      - cd bin
-      - ls -la
 artifacts:
   files:
     - '**/*'
-  base-directory: 'test-results'
+  base-directory: 'app/test-results'
