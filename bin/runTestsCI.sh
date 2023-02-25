@@ -8,6 +8,7 @@ TEST_RESULT_DIR="./test-results"
 for dir in ${dirs[@]}; do
   for child_dir in "$dir"/*; do
     if [[ -d "$child_dir" ]]; then
+      echo "Runnning tests"
       echo "$child_dir"
       npm run test:trace "test-results-${child_dir:2}" $child_dir
       code=$?
