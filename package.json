@@ -6,7 +6,7 @@
     "test:browser": "playwright test --headed",
     "test": "playwright test",
     "test:ci": "./bin/runTestsCI.sh",
-    "test:trace": "playwright test --trace retain-on-failure",
+    "test:trace": "playwright test --trace retain-on-failure --output",
     "trace:show": "playwright show-trace",
     "install-deps": "playwright install-deps",
     "docker:build": "docker build -t test-image .",

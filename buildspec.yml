@@ -22,5 +22,5 @@ phases:
       - ls -la
 artifacts:
   files:
-    - 'test-results/*'
-  base-directory: 'app'
+    - "**/*"
+  base-directory: "app"
