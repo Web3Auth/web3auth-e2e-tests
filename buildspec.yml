@@ -22,4 +22,4 @@ phases:
       - ls -la
 artifacts:
   files:
-    - "**/*"
+    - "test-results-*/*"
