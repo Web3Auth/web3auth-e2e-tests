@@ -22,4 +22,5 @@ phases:
       - ls -la
 artifacts:
   files:
-    - "test-results-*/*"
+    - "test-results-openlogin/*"
+    - "test-results-wallet/*"
