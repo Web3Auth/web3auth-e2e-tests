@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dirs=("./openlogin")
+dirs=("./openlogin" "./wallets")
 
 exitcode=0
 TEST_RESULT_DIR="./test-results"
