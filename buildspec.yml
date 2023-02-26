@@ -20,7 +20,4 @@ phases:
     commands:
       - echo Tests Complete
       - ls -la
-artifacts:
-  files:
-    - "test-results-openlogin/*"
-    - "test-results-wallet/*"
+      - aws s3 sync test-results-openlogin w3a-e2e-tests
