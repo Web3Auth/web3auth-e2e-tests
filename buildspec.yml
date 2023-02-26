@@ -23,4 +23,3 @@ phases:
 artifacts:
   files:
     - "**/*"
-  base-directory: "test*"
