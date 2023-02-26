@@ -21,7 +21,7 @@ for dir in ${dirs[@]}; do
 done
 if [[ $exitcode -ne 0 ]]; then
   echo "Test Failed, sending telegram alert"
-  echo "*******sending telegram alert*********"
+  echo "******sending telegram alert*********"
   curl -X POST -H 'Content-Type: application/json' -d '{"chat_id": "${{$CHAT_ID}}", "text": "TestResult=Tests failed"}' https://api.telegram.org/bot$BOT_API_TOKEN/sendMessage
 else
     echo "Test Passed, no alert!"
