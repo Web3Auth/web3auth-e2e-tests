@@ -40,14 +40,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: web3auth-e2e-tests
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA .
-          echo "Pushing image to ECR..."
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+      # - name: Build, tag, and push image to Amazon ECR
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPOSITORY: web3auth-e2e-tests
+      #   run: |
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA .
+      #     echo "Pushing image to ECR..."
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
 
       # - name: Build, tag, and push image to Amazon ECR with latest tag
       #   env:
@@ -73,7 +73,7 @@ jobs:
           MAILOSAUR_API_KEY: "ulm7QQm9Rt9yFWSseOgcwH3bw6lyUOci"
           MAILOSAUR_SERVER_ID: "plt46knv"
         run: |
-          ls && npm install && npm run test:trace
+          ls && npm install && npx playwright install chromium && npm run test:trace
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
