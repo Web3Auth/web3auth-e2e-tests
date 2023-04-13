@@ -42,7 +42,6 @@ const newRandomPassword = generate({
 test.describe.serial("Account page test", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
-    test.slow()// adding more time to compensate high loading time
     test.setTimeout(300000)
     const context = await browser.newContext();
     page = await context.newPage();
@@ -263,7 +262,6 @@ test.describe.serial("Account page test", () => {
 
   // below test check password share setup.
   test(`should setup account password`, async ({ openloginURL }) => {
-    test.slow();
     await waitForSessionStorage(page, openloginURL);
     let tkey = waitForTkeyRehydration(page);
     await page.goto(`${openloginURL}/wallet/account`);
