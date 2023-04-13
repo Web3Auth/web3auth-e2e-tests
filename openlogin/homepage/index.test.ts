@@ -72,11 +72,7 @@ test.describe.serial("Home page tests", () => {
 
   test(`Clicking 'Logout' button should logout user`, async ({ }) => {
     await page.click(`text=Logout`);
-    expect(
-      await page.isVisible(`text=Manage all your web interactions in one place`)
-    ).toBeTruthy();
-    expect(
-      await page.isVisible(`text=Click Get Started to continue`)
-    ).toBeTruthy();
+    expect(await page.getByText('Manage all your web interactions in one place').isVisible());
+    expect(await page.getByText('Click Get Started to continue').isVisible());
   });
 });

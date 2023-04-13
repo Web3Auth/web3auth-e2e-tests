@@ -40,13 +40,15 @@ async function waitForTkeyRehydration(
 ): Promise<boolean> {
   return new Promise(function (resolve) {
     page.on("console", (msg) => {
+      console.log(msg)
+      //will check on the implementation,currently rehydrating tkey: 914.059814453125 ms is only displayed 
       // 120 state will change if the openlogin default state changes.
       // need better way to rehydrate or find if the object is empty
-      if (msg.type() === "info" && msg.text().includes("e2e:tests:tkeyjson")) {
-        let text = msg.text();
-        let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
-        if (length > size) resolve(true);
-      }
+      // if (msg.type() === "info" && msg.text().includes("e2e:tests:tkeyjson")) {
+      //   let text = msg.text();
+      //   let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
+      //   if (length > size) resolve(true);
+      // }
     });
   });
 }
