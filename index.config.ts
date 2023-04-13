@@ -2,7 +2,8 @@ import { PlaywrightTestConfig } from "@playwright/test";
 
 const indexConfig: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
-  timeout: process.env.CI ? 3 * 60 * 1000 : 0,
+  timeout: process.env.CI ? 5 * 60 * 1000 : 0,
+  globalTimeout: process.env.CI ? 6 * 60 * 1000 : undefined,
   retries: process.env.CI ? 3 : 0,
   reporter: process.env.CI ? 'github' : [['list'],['html',{  outputFile: 'test-results.html' }]],
   use: {

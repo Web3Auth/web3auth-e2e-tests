@@ -6,7 +6,7 @@
     "test:browser": "playwright test --headed",
     "test": "playwright test",
     "test:ci": "./bin/runTestsCI.sh",
-    "test:trace": "playwright test --workers=1 --headed --trace retain-on-failure --reporter=html --output 'test-results' > test.log",
+    "test:trace": "playwright test --workers=1 --headed --trace retain-on-failure --reporter=html --config=index.config.ts --output 'test-results' > test.log",
     "trace:show": "playwright show-trace",
     "install-deps": "playwright install-deps",
     "docker:build": "docker build -t test-image .",
