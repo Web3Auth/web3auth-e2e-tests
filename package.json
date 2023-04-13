@@ -6,14 +6,14 @@
     "test:browser": "playwright test --headed",
     "test": "playwright test",
     "test:ci": "./bin/runTestsCI.sh",
-    "test:trace": "playwright test --trace retain-on-failure --output",
+    "test:trace": "playwright test --workers=1 --headed --trace retain-on-failure --reporter=html --config=index.config.ts --output 'test-results' > test.log",
     "trace:show": "playwright show-trace",
     "install-deps": "playwright install-deps",
     "docker:build": "docker build -t test-image .",
     "docker:run": "docker run -it test-image /bin/bash"
   },
   "dependencies": {
-    "@playwright/test": "^1.30.0",
+    "@playwright/test": "^1.32.3",
     "bip39": "^3.0.4",
     "dotenv": "^16.0.3",
     "generate-password": "^1.7.0",

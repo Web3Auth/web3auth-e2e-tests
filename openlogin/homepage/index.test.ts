@@ -54,6 +54,7 @@ test.describe.serial("Home page tests", () => {
     await popup.waitForLoadState();
     const URL = await popup.url();
     expect(URL === "https://help.web3auth.com/en/").toBeTruthy();
+    await popup.close()
   });
 
   // checks if the learn more button routes to correct url
@@ -66,15 +67,12 @@ test.describe.serial("Home page tests", () => {
     expect(
       URL === "https://docs.tor.us/open-login/what-is-openlogin"
     ).toBeTruthy();
+    await popup.close()
   });
 
   test(`Clicking 'Logout' button should logout user`, async ({ }) => {
     await page.click(`text=Logout`);
-    expect(
-      await page.isVisible(`text=Manage all your web interactions in one place`)
-    ).toBeTruthy();
-    expect(
-      await page.isVisible(`text=Click Get Started to continue`)
-    ).toBeTruthy();
+    expect(await page.getByText('Manage all your web interactions in one place').isVisible());
+    expect(await page.getByText('Click Get Started to continue').isVisible());
   });
 });

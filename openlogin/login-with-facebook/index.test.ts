@@ -19,5 +19,5 @@ test("Login with Facebook", async ({ page, openloginURL, FB }) => {
 
   // Logout;
   await page.click("text=Logout");
-  expect(page.url()).toBe(`${openloginURL}/`);
+  expect(page.url()).toContain(`${openloginURL}/`);
 });

@@ -40,9 +40,11 @@ async function waitForTkeyRehydration(
 ): Promise<boolean> {
   return new Promise(function (resolve) {
     page.on("console", (msg) => {
+      console.log(msg)
+      //will check on the implementation,currently rehydrating tkey: 914.059814453125 ms is only displayed 
       // 120 state will change if the openlogin default state changes.
       // need better way to rehydrate or find if the object is empty
-      if (msg.type() === "info" && msg.text().includes("e2e:tests:tkeyjson")) {
+      if (msg.text().includes("e2e:tests:tkeyjson")) {
         let text = msg.text();
         let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
         if (length > size) resolve(true);
@@ -341,6 +343,7 @@ async function signInWithDiscord({ page, discord }: {
     await page.fill('[name="email"]', discord.email);
     await page.fill('[name="password"]', discord.password);
     await page.click(`button:has-text("Log In")`);
+    await page.click("#checkbox");
     return true;
   } catch {
     return false;
@@ -430,6 +433,7 @@ function findLink(links: Link[], text: string) {
   for (const link of links) {
     if (link.text === text) return link;
   }
+ 
   return null;
 }
 
@@ -450,7 +454,7 @@ async function signInWithEmail(
         sentTo: email,
       }
     );
-    let link = findLink(mailBox.html?.links || [], "Confirm my email");
+    let link = findLink(mailBox.html?.links || [], "Approve login request");
     if (!link) {
       link = findLink(mailBox.html?.links || [], "Verify my email");
     }

@@ -78,12 +78,12 @@ test.describe.serial("App authorization page test", () => {
           timeout: 20 * 1000
         }
       );
-      expect(newEmail.subject).toBe("Verify your email");
-      let link = findLink(newEmail.html?.links || [], "Confirm my email");
+      expect(newEmail.subject).toContain("Verify your email");
+      let link = findLink(newEmail.html?.links || [], "Approve login request");
       if (!link) {
         link = findLink(newEmail.html?.links || [], "Verify my email");
       }
-      expect(link?.text).toBe("Verify my email");
+      expect(link?.text).toContain("Approve login request");
       const href = link?.href || "";
       const page3 = await context3.newPage();
       await page3.goto(href);

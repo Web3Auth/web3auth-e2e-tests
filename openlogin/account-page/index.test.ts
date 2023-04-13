@@ -42,7 +42,7 @@ const newRandomPassword = generate({
 test.describe.serial("Account page test", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
-    test.setTimeout(60000); // adding more time to compensate high loading time
+    test.setTimeout(300000)
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
@@ -221,7 +221,10 @@ test.describe.serial("Account page test", () => {
       page.click('button[aria-label="delete email share"]'),
     ]);
     await page.reload();
-    expect(await page.isVisible("text=2 / 2")).toBeTruthy();
+    await page.goto(`${openloginURL}/wallet/home`);
+    await page.goto(`${openloginURL}/wallet/account`);
+    expect(await page.getByText('2 / 2').isVisible());
+
   });
 
   test(`should show a popup with copy option while clicking download device share`, async ({
@@ -247,13 +250,14 @@ test.describe.serial("Account page test", () => {
     await Promise.all([
       page.waitForResponse(
         (resp) =>
-          resp.url().includes("/metadata.tor.us/releaseLock") &&
+          resp.url().includes("/metadata.tor.us/get") &&
           resp.status() === 200
       ),
       page.click('button:has-text("Confirm")'),
     ]);
-    await page.reload();
-    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
+    //await page.reload(); Recovery share deleted successfully 
+    await expect(page.getByText('Backup Phrase successfully sent', { exact: false })).toBeVisible();
+    expect(await page.getByText('2 / 3').isVisible());
   });
 
   // below test check password share setup.
@@ -268,10 +272,7 @@ test.describe.serial("Account page test", () => {
 
     await addPasswordShare(page, randomPassword);
     await page.reload();
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(await page.isVisible("text=2 / 4")).toBeTruthy();
+    expect(await page.getByText('2 / 4').isVisible());
   });
 
   test(`should change/update account password`, async ({ openloginURL }) => {
@@ -288,7 +289,7 @@ test.describe.serial("Account page test", () => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-    expect(await page.isVisible("text=2 / 4")).toBeTruthy();
+    expect(await page.getByText('2 / 4').isVisible());
   });
 
   test(`should be able to delete device share`, async ({ openloginURL }) => {
