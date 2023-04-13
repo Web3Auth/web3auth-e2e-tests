@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - develop
+  # schedule:
+  #   - cron: "* 0 * * *"
   workflow_dispatch:
 
 env:
@@ -56,15 +58,18 @@ jobs:
       #     echo "Pushing image to ECR..."
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-      - name: Trigger Cloud Build
-        env:
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_DEFAULT_REGION: ${{ matrix.region }}
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: web3auth-e2e-tests
+      # - name: Trigger Cloud Build
+      #   env:
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_DEFAULT_REGION: ${{ matrix.region }}
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPOSITORY: web3auth-e2e-tests
+      #   run: |
+      #     aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+      - name: Trigger GitHub Build
         run: |
-          aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+          ls && npm install && npm run test:trace
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
@@ -79,13 +84,13 @@ jobs:
       #     fi
       #   continue-on-error: true
 
-      # - name: Upload test results
-      #   if: always()
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: test-results-on-${{ matrix.browser }}-${{ matrix.cloudBuild }}
-      #     path: test-results/
-      #     if-no-files-found: ignore
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: index.html
+          path: playwright-report
+          if-no-files-found: ignore
 
   # update-status:
   #   name: Update OpenLogin - Tests status
