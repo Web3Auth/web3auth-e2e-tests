@@ -67,13 +67,25 @@ jobs:
       #     ECR_REPOSITORY: web3auth-e2e-tests
       #   run: |
       #     aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
-      - name: Trigger GitHub Build
+      - name: Trigger tests
         env:
-          MAILOSAUR_SERVER_DOMAIN: "plt46knv.mailosaur.net"
-          MAILOSAUR_API_KEY: "ulm7QQm9Rt9yFWSseOgcwH3bw6lyUOci"
-          MAILOSAUR_SERVER_ID: "plt46knv"
+          FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
+          FB_TEST_USER_PASS:	"VerySecurePassword"
+          FB_TEST_USER_NAME:	"Jennifer Alhiegffddbbg Brownman"
+          GOOGLE_ACCOUNT:	"torus.e2e.tests@gmail.com"
+          GOOGLE_PASSWORD:	"VerySecurePassword@123"
+          GOOGLE_NAME:	"Torus E2E tests"
+          DISCORD_EMAIL:	"torus.e2e.tests@gmail.com"
+          DISCORD_PASSWORD:	"VerySecurePassword@123"
+          TWITTER_ACCOUNT:	"toruse2etests"
+          TWITTER_PASSWORD:	"VerySecurePassword@123"
+          CI:	true	
+          MAILOSAUR_API_KEY:	"ulm7QQm9Rt9yFWSseOgcwH3bw6lyUOci"
+          MAILOSAUR_SERVER_ID:	"plt46knv"
+          MAILOSAUR_SERVER_DOMAIN:	"plt46knv.mailosaur.net"
+          PLATFORM:	"testing"
         run: |
-          ls && npm install && npx playwright install chromium && npm run test:trace
+          ls && npm install && npx playwright install chromium && npm run test:config
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
