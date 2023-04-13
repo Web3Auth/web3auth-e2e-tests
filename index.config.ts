@@ -4,7 +4,7 @@ const indexConfig: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
   timeout: process.env.CI ? 3 * 60 * 1000 : 0,
   retries: process.env.CI ? 3 : 0,
-  reporter: process.env.CI ? 'github' : 'list',
+  reporter: process.env.CI ? 'github' : [['list'],['html',{  outputFile: 'test-results.html' }]],
   use: {
     // Emulate browsing in San Francisco, CA, USA
     locale: "en-US",

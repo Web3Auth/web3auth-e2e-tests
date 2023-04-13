@@ -44,11 +44,11 @@ async function waitForTkeyRehydration(
       //will check on the implementation,currently rehydrating tkey: 914.059814453125 ms is only displayed 
       // 120 state will change if the openlogin default state changes.
       // need better way to rehydrate or find if the object is empty
-      // if (msg.type() === "info" && msg.text().includes("e2e:tests:tkeyjson")) {
-      //   let text = msg.text();
-      //   let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
-      //   if (length > size) resolve(true);
-      // }
+      if (msg.text().includes("e2e:tests:tkeyjson")) {
+        let text = msg.text();
+        let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
+        if (length > size) resolve(true);
+      }
     });
   });
 }
@@ -343,6 +343,7 @@ async function signInWithDiscord({ page, discord }: {
     await page.fill('[name="email"]', discord.email);
     await page.fill('[name="password"]', discord.password);
     await page.click(`button:has-text("Log In")`);
+    await page.click("#checkbox");
     return true;
   } catch {
     return false;
