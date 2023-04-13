@@ -68,6 +68,10 @@ jobs:
       #   run: |
       #     aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
       - name: Trigger GitHub Build
+        env:
+          MAILOSAUR_SERVER_DOMAIN: "plt46knv.mailosaur.net"
+          MAILOSAUR_API_KEY: "ulm7QQm9Rt9yFWSseOgcwH3bw6lyUOci"
+          MAILOSAUR_SERVER_ID: "plt46knv"
         run: |
           ls && npm install && npm run test:trace
 
