@@ -6,7 +6,6 @@ logs
 *.log
 .env.*
 .env
-package-lock.json
 
 # Node.js
 node_modules
