@@ -42,6 +42,7 @@ const newRandomPassword = generate({
 test.describe.serial("Account page test", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
+    console.log(openloginURL)
     test.setTimeout(60000); // adding more time to compensate high loading time
     const context = await browser.newContext();
     page = await context.newPage();

@@ -428,8 +428,10 @@ async function changePasswordShare(page: Page, password: string) {
 
 function findLink(links: Link[], text: string) {
   for (const link of links) {
+    console.log(link.text)
     if (link.text === text) return link;
   }
+ 
   return null;
 }
 
@@ -450,7 +452,9 @@ async function signInWithEmail(
         sentTo: email,
       }
     );
-    let link = findLink(mailBox.html?.links || [], "Confirm my email");
+    console.log(mailBox.html?.links?.length + "mailbox")
+    let link = findLink(mailBox.html?.links || [], "Approve login request");
+    console.log(link + "link")
     if (!link) {
       link = findLink(mailBox.html?.links || [], "Verify my email");
     }

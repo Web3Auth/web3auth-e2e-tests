@@ -79,7 +79,7 @@ test.describe.serial("App authorization page test", () => {
         }
       );
       expect(newEmail.subject).toBe("Verify your email");
-      let link = findLink(newEmail.html?.links || [], "Confirm my email");
+      let link = findLink(newEmail.html?.links || [], "Approve login request");
       if (!link) {
         link = findLink(newEmail.html?.links || [], "Verify my email");
       }

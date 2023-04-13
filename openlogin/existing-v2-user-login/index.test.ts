@@ -3,12 +3,13 @@ import { confirmEmail } from "../../utils";
 import { test } from "./index.lib";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test.skip("existing v2 user can log in correctly", async ({
+test("existing v2 user can log in correctly", async ({
   context,
   page,
   openloginURL,
   user,
 }) => {
+  test.setTimeout(120000);
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
 
