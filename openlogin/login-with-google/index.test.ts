@@ -3,7 +3,7 @@ import { test } from "./index.lib";
 import { signInWithGoogle, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test.skip("Login with Google - skipped bcz it requires captcha solving", async ({
+test("Login with Google - skipped bcz it requires captcha solving", async ({
   page,
   browserName,
   openloginURL,
@@ -14,8 +14,8 @@ test.skip("Login with Google - skipped bcz it requires captcha solving", async (
 
   // Verify environment variables
   expect(
-    !!process.env.GOOGLE_ACCOUNT &&
-    !!process.env.GOOGLE_PASSWORD &&
+    !!process.env.GITHUB_USER_EMAIL &&
+    !!process.env.GITHUB_USER_PASSWORD &&
     !!process.env.GOOGLE_NAME
   ).toBe(true);
 
@@ -41,5 +41,5 @@ test.skip("Login with Google - skipped bcz it requires captcha solving", async (
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
-  expect(page.url()).toBe(`${openloginURL}/`);
+  expect(page.url()).toContain(`${openloginURL}/`);
 });

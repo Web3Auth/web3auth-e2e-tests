@@ -17,5 +17,4 @@ node_modules
 **/backup-phrase.txt
 test-results
 /test-results/
-/playwright-report/
 /playwright/.cache/

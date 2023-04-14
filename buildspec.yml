@@ -23,9 +23,11 @@ phases:
 reports:
   test-report:
     files:
-      - "results.xml"
+      - "index.html"
+    base-directory: playwright-report
     file-format: "JUNITXML" 
 
 artifacts:
   files:
-    - playwright-report/index.html
+    - index.html
+  base-directory: playwright-report/
