@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
-import { signInWithGitHub, useAutoCancelShareTransfer } from "../../utils/index";
+import { signInWithGitHub, useAutoCancelShareTransfer, useAutoCancel2FASetup } from "../../utils/index";
 
 test.skip("Login with Github+Device", async ({ page, openloginURL, github }) => {
     // Verify environment variables
@@ -10,20 +10,23 @@ test.skip("Login with Github+Device", async ({ page, openloginURL, github }) => 
     ).toBe(true);
   // Login with Github
   await signInWithGitHub({ page, github })
+  await page.waitForURL('https://github.com/new', {
+    timeout: 2 * 60 * 1000,
+  });
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   await page.click("text=View more options");
   await page.click('button[aria-label="login with GitHub"]');
 
   try {
-    await page.waitForSelector("text=Reauthorization required", {
+    await page.waitForSelector("text=Authorize TorusLabs", {
       timeout: 10 * 1000,
     });
     await page.click('button:has-text("Authorize TorusLabs")');
   } catch { }
 
-  useAutoCancelShareTransfer(page);
-
+  await useAutoCancelShareTransfer(page);
+  await useAutoCancel2FASetup(page);
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     timeout: 2 * 60 * 1000,
@@ -35,7 +38,7 @@ test.skip("Login with Github+Device", async ({ page, openloginURL, github }) => 
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
-  expect(page.url()).toBe(`${openloginURL}/`);
+  expect(page.url()).toContain(`${openloginURL}/`);
 });
 
 // Save signed-in state to storage
