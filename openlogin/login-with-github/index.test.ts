@@ -1,12 +1,19 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
-import { useAutoCancelShareTransfer } from "../../utils/index";
+import { signInWithGitHub, useAutoCancelShareTransfer } from "../../utils/index";
 
-test.skip("Login with Github+Device", async ({ page, openloginURL, user }) => {
+test.skip("Login with Github+Device", async ({ page, openloginURL, github }) => {
+    // Verify environment variables
+    expect(
+      !!process.env.GITHUB_USER_EMAIL &&
+      !!process.env.GITHUB_USER_PASSWORD
+    ).toBe(true);
   // Login with Github
+  await signInWithGitHub({ page, github })
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
-  await page.click("text=Continue with existing GitHub");
+  await page.click("text=View more options");
+  await page.click('button[aria-label="login with GitHub"]');
 
   try {
     await page.waitForSelector("text=Reauthorization required", {
@@ -24,7 +31,7 @@ test.skip("Login with Github+Device", async ({ page, openloginURL, user }) => {
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
+  expect(await page.isVisible(`text=${github.email}`)).toBeTruthy();
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);

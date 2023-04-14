@@ -233,6 +233,28 @@ async function signInWithGoogle({
   }
 }
 
+async function signInWithGitHub({
+  page,
+  github,
+}: {
+  page: Page;
+  github: {
+    email: string;
+    password: string;
+  }
+}): Promise<boolean> {
+  try {
+    await page.waitForURL("https://github.com/login");
+    await page.isVisible("text=Sign in");
+    await page.fill('input[autocomplete="username"]', github.email);
+    await page.fill('input[autocomplete="current-password"]', github.password);
+    await page.isVisible("text=Sign in");
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function signInWithTwitter({
   page,
   twitter,
@@ -500,5 +522,6 @@ export {
   catchError,
   catchErrorAndExit,
   waitForSessionStorage,
+  signInWithGitHub,
   env_map,
 };
