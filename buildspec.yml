@@ -29,5 +29,5 @@ reports:
 
 artifacts:
   files:
-    - index.html
-  base-directory: playwright-report/
+    - ./playwright-report/*
+    - ./test-results/*
