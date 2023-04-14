@@ -15,8 +15,8 @@ export interface TestArgs {
 export const test = playwright.test.extend<TestArgs>({
   openloginURL: env_map[process.env.PLATFORM || DEFAULT_PLATFORM],
   google: {
-    email: process.env.GOOGLE_ACCOUNT || "",
-    password: process.env.GOOGLE_PASSWORD || "",
+    email: process.env.GITHUB_USER_EMAIL || "",
+    password: process.env.GITHUB_USER_PASSWORD || "",
     name: process.env.GOOGLE_NAME || ""
   }
 });

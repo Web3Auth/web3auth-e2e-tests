@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 import { signInWithGitHub, useAutoCancelShareTransfer, useAutoCancel2FASetup } from "../../utils/index";
 
-test.skip("Login with Github+Device", async ({ page, openloginURL, github }) => {
+test("Login with Github+Device", async ({ page, openloginURL, github }) => {
     // Verify environment variables
     expect(
       !!process.env.GITHUB_USER_EMAIL &&
