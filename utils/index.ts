@@ -1,4 +1,4 @@
-import { test, Page, PlaywrightWorkerOptions, Browser } from "@playwright/test";
+import { test, Page, PlaywrightWorkerOptions, Browser, expect } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
 import config from "./../index.config"
 import { Link } from "mailosaur/lib/models";
@@ -244,11 +244,13 @@ async function signInWithGitHub({
   }
 }): Promise<boolean> {
   try {
-    await page.waitForURL("https://github.com/login");
+    await page.goto("https://github.com/login");
     await page.isVisible("text=Sign in");
     await page.fill('input[autocomplete="username"]', github.email);
     await page.fill('input[autocomplete="current-password"]', github.password);
-    await page.isVisible("text=Sign in");
+    await page.click('input[value="Sign in"]');
+    expect(page.isVisible("text=Create repository"));
+    await page.click("text=Create repository");
     return true;
   } catch {
     return false;
@@ -276,6 +278,11 @@ async function signInWithTwitter({
   const appName = process.env.PLATFORM === "testing" ? "torus-test-auth0" : "Web3Auth"
   await page.waitForSelector(`h2:text("Authorize ${appName} to access your account")`);
   await page.click(`input:has-text("Sign in")`);
+  try {
+    if (await page.isVisible('input[autocomplete="useremail"]'))
+      await page.fill('input[autocomplete="useremail"]', twitter.account);
+      await page.click(`div[role="button"] span:has-text("Next")`);
+  } catch { }
   // Only for the first time users, they have to click on authorize web3Auth app
   try {
     // smaller timeout, we don't want to wait here for longer
