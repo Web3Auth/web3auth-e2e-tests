@@ -40,14 +40,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      # - name: Build, tag, and push image to Amazon ECR
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: web3auth-e2e-tests
-      #   run: |
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA .
-      #     echo "Pushing image to ECR..."
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: web3auth-e2e-tests
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA .
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
 
       # - name: Build, tag, and push image to Amazon ECR with latest tag
       #   env:
@@ -58,34 +58,34 @@ jobs:
       #     echo "Pushing image to ECR..."
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-      # - name: Trigger Cloud Build
-      #   env:
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_DEFAULT_REGION: ${{ matrix.region }}
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: web3auth-e2e-tests
-      #   run: |
-      #     aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
-      - name: Trigger tests
+      - name: Trigger Cloud Build
         env:
-          FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
-          FB_TEST_USER_PASS:	"VerySecurePassword"
-          FB_TEST_USER_NAME:	"Jennifer Alhiegffddbbg Brownman"
-          GOOGLE_ACCOUNT:	"torus.e2e.tests@gmail.com"
-          GOOGLE_PASSWORD:	"VerySecurePassword@123"
-          GOOGLE_NAME:	"Torus E2E tests"
-          DISCORD_EMAIL:	"torus.e2e.tests@gmail.com"
-          DISCORD_PASSWORD:	"VerySecurePassword@123"
-          TWITTER_ACCOUNT:	"toruse2etests"
-          TWITTER_PASSWORD:	"VerySecurePassword@123"
-          CI:	true	
-          MAILOSAUR_API_KEY:	"ulm7QQm9Rt9yFWSseOgcwH3bw6lyUOci"
-          MAILOSAUR_SERVER_ID:	"plt46knv"
-          MAILOSAUR_SERVER_DOMAIN:	"plt46knv.mailosaur.net"
-          PLATFORM:	"testing"
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_DEFAULT_REGION: ${{ matrix.region }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: web3auth-e2e-tests
         run: |
-          ls && npm install && npx playwright install chromium && npm run test:config
+          aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+      # - name: Trigger tests
+      #   env:
+      #     FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
+      #     FB_TEST_USER_PASS:	"VerySecurePassword"
+      #     FB_TEST_USER_NAME:	"Jennifer Alhiegffddbbg Brownman"
+      #     GOOGLE_ACCOUNT:	"torus.e2e.tests@gmail.com"
+      #     GOOGLE_PASSWORD:	"VerySecurePassword@123"
+      #     GOOGLE_NAME:	"Torus E2E tests"
+      #     DISCORD_EMAIL:	"torus.e2e.tests@gmail.com"
+      #     DISCORD_PASSWORD:	"VerySecurePassword@123"
+      #     TWITTER_ACCOUNT:	"toruse2etests"
+      #     TWITTER_PASSWORD:	"VerySecurePassword@123"
+      #     CI:	true	
+      #     MAILOSAUR_API_KEY:	"ulm7QQm9Rt9yFWSseOgcwH3bw6lyUOci"
+      #     MAILOSAUR_SERVER_ID:	"plt46knv"
+      #     MAILOSAUR_SERVER_DOMAIN:	"plt46knv.mailosaur.net"
+      #     PLATFORM:	"testing"
+      #   run: |
+      #     ls && npm install && npx playwright install chromium && npm run test:config
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
