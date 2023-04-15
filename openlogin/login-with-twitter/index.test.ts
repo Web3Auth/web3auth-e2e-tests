@@ -10,7 +10,8 @@ test("Login with twitter", async ({
   // Verify environment variables
   expect(
     !!process.env.TWITTER_ACCOUNT &&
-    !!process.env.TWITTER_PASSWORD
+    !!process.env.TWITTER_PASSWORD &&
+    !!process.env.TWITTER_EMAIL
   ).toBe(true);
   // Login with twitter
   await signInWithTwitter({ page, twitter, openloginURL })

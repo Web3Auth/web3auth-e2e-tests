@@ -3,16 +3,18 @@ import confirmEmail from "./confirmEmail";
 import config from "./../index.config"
 import { Link } from "mailosaur/lib/models";
 import Mailosaur from "mailosaur";
+import { version } from "os";
 
 export const DEFAULT_PLATFORM = "cyan"
-
+export var openloginversion= process.env.APPVERSION || 'v3';
 const env_map: { [key: string]: string } = {
+
   prod: "https://app.openlogin.com",
   beta: "https://beta.openlogin.com",
   cyan: "https://cyan.openlogin.com",
   testing: "https://testing.openlogin.com",
   celeste: "https://celeste.openlogin.com",
-  local: "http://localhost:3000",
+  local: "http://localhost:3000"
 };
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
@@ -227,6 +229,7 @@ async function signInWithGoogle({
     await page.click(`button:has-text("Next")`);
     await page.fill('[aria-label="Enter your password"]', google.password);
     await page.click(`button:has-text("Next")`);
+    await page.waitForURL("https://myaccount.google.com/**");
     return true;
   } catch {
     return false;
@@ -278,11 +281,6 @@ async function signInWithTwitter({
   const appName = process.env.PLATFORM === "testing" ? "torus-test-auth0" : "Web3Auth"
   await page.waitForSelector(`h2:text("Authorize ${appName} to access your account")`);
   await page.click(`input:has-text("Sign in")`);
-  try {
-    if (await page.isVisible('input[autocomplete="useremail"]'))
-      await page.fill('input[autocomplete="useremail"]', twitter.account);
-      await page.click(`div[role="button"] span:has-text("Next")`);
-  } catch { }
   // Only for the first time users, they have to click on authorize web3Auth app
   try {
     // smaller timeout, we don't want to wait here for longer
@@ -303,11 +301,11 @@ async function signInWithTwitter({
     await page.click(`div[role="button"] span:has-text("Log in")`)
     try {
       // smaller timeout, we don't want to wait here for longer
-      await page.waitForSelector('text="Help you verify"', {
+      await page.waitForSelector('text="Help us keep your account safe."', {
         timeout: 1000
       })
       await page.fill('input[autocomplete="email"]', twitter.email);
-      await page.press('body', 'enter')
+      await page.click(`div[role="button"] span:has-text("Next")`);
     } catch (err) {
     }
     await useAutoCancelShareTransfer(page)

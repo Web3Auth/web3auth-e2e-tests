@@ -2,8 +2,9 @@ import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 import { signInWithGoogle, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
+import { url } from "inspector";
 
-test("Login with Google - skipped bcz it requires captcha solving", async ({
+test.skip("Login with Google - skipped bcz it requires captcha solving", async ({
   page,
   browserName,
   openloginURL,
@@ -26,20 +27,20 @@ test("Login with Google - skipped bcz it requires captcha solving", async ({
   await page.click("[aria-label='login with google']");
 
   await signInWithGoogle({ page, google })
-
-  useAutoCancelShareTransfer(page);
-  useAutoCancel2FASetup(page);
-
+  await useAutoCancelShareTransfer(page)
+  await useAutoCancel2FASetup(page)
+  console.log(page,url())
+  await page.waitForNavigation();
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     timeout: 3 * 60 * 1000
   });
-
+  
+  console.log(page,url())
   expect(page.url()).toBe(`${openloginURL}/wallet/home`);
-
+  console.log(page,url())
   await page.waitForSelector(`text=Welcome, ${google.name}`);
-
   // Logout
-  await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
+  await page.click("text=Logout")
   expect(page.url()).toContain(`${openloginURL}/`);
 });
