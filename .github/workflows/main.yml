@@ -78,7 +78,8 @@ jobs:
       #     DISCORD_EMAIL:	"torus.e2e.tests@gmail.com"
       #     DISCORD_PASSWORD:	"VerySecurePassword@123"
       #     TWITTER_ACCOUNT:	"toruse2etests"
-      #     TWITTER_PASSWORD:	"VerySecurePassword@123"
+      #     TWITTER_PASSWORD:	"VerySecurePassword@123",
+      #     TWITTER_EMAIL:	"torus.e2e.tests@gmail.com",
       #     CI:	true	
       #     MAILOSAUR_API_KEY:	"ulm7QQm9Rt9yFWSseOgcwH3bw6lyUOci"
       #     MAILOSAUR_SERVER_ID:	"plt46knv"

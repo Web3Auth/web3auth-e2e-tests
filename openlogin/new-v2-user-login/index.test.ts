@@ -3,7 +3,7 @@ import { confirmEmail } from "../../utils";
 import { test } from "./index.lib";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test.skip("new v2 user can log in correctly", async ({
+test.skip("new v2 user can log in correctly - new user would turn to be existing user for the next run", async ({
   context,
   page,
   openloginURL,

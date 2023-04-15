@@ -23,6 +23,7 @@
     "serve-handler": "^6.1.3"
   },
   "devDependencies": {
+    "@reportportal/agent-js-playwright": "^5.0.11",
     "@tsconfig/node16": "^1.0.3",
     "@types/node": "^16",
     "@types/serve-handler": "^6.1.1",

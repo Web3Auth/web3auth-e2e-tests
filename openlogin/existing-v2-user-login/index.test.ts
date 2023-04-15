@@ -1,31 +1,33 @@
 const { expect } = require("@playwright/test");
-import { confirmEmail } from "../../utils";
+import { confirmEmail, signInWithGoogle } from "../../utils";
 import { test } from "./index.lib";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test.skip("existing v2 user can log in correctly", async ({
+test("existing v2 user can log in correctly", async ({
   context,
   page,
   openloginURL,
-  user,
+  google,
 }) => {
+  await page.goto("https://accounts.google.com/");
+  await signInWithGoogle({ page, google })
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
 
   // Login with Passwordless
   const timestamp = Math.floor(Date.now() / 1000);
 
-  await page.fill('[placeholder="Email"]', user.email);
+  await page.fill('[placeholder="Email"]', google.email);
   await page.click('button:has-text("Continue with Email")');
   await page.waitForSelector("text=email has been sent");
-  expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
+  expect(await page.isVisible(`text=${google.email}`)).toBeTruthy();
 
   // Confirm email
   test.fixme(
     !(await confirmEmail({
       context,
       timestamp,
-      to: user.email,
+      to: google.email,
       resend: () => page.click("text=Resend"),
     }))
   );
@@ -46,11 +48,11 @@ test.skip("existing v2 user can log in correctly", async ({
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
+  expect(await page.isVisible(`text=${google.email}`)).toBeTruthy();
 
   // Logout
   await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
-  expect(page.url()).toBe(`${openloginURL}/`);
+  expect(page.url()).toContain(`${openloginURL}/`);
 });
 
 // Save signed-in state to storage

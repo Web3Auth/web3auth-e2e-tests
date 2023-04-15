@@ -42,15 +42,17 @@ export async function confirmEmail({
     await emailPage.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );
+    console.log(`https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`)
     await emailPage.waitForSelector("a[title='Gmail']", { state: "attached" });
 
     // Try click on the verify link
-    const maxReloads = 20;
+    const maxReloads = 2;
     let reloads = 0;
     while (reloads < maxReloads) {
       try {
         reloads++;
-        await emailPage.click('div[role="link"] >> text=Approve login request', {
+        //await emailPage.locator('//tr/td//span[text()="email"]').click()
+        await emailPage.click('//tr/td//span[text()="email"]', {
           timeout: 10 * 1000,
         });
         break;
