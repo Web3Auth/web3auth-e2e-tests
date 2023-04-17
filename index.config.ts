@@ -12,32 +12,9 @@ const RPconfig = {
     }
   ],
   description: 'Web3auth e2e test run',
-  isLaunchMergeRequired: true
+  isLaunchMergeRequired: true,
+  id: 'mergeid'
 };
-// const rpClient = new RPClient({
-//   token: '4311671d-eb96-4d46-aba8-16afc95cc015',
-//   endpoint: 'http://54.179.212.129:8080/api/v1',
-//   project: 'web3auth_e2e_tests',
-//   launch: 'Web3auth E2E Tests',
-// });
-
-// const launchObj = rpClient.startLaunch({
-//   name: "Client test",
-//   startTime: rpClient.helpers.now(),
-//   description: "description of the launch",
-//   attributes: [
-//       {
-//           "key": "yourKey",
-//           "value": "yourValue"
-//       },
-//       {
-//           "value": "yourValue"
-//       }
-//   ],
-//   //this param used only when you need client to send data into the existing launch
-//   id: 'id'
-// });
-// console.log(launchObj.tempId);
 
 const indexConfig: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
