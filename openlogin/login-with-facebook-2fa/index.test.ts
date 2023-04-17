@@ -3,7 +3,8 @@ import { test } from "./index.lib";
 import { deleteCurrentDeviceShare, signInWithFacebook } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test.skip("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
+test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
+  test.skip()
   test.setTimeout(process.env.CI ? 15 * 60 * 1000 : 0);
 
   await page.goto(openloginURL);

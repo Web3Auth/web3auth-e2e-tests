@@ -4,15 +4,12 @@ const RPconfig = {
   endpoint: 'http://54.179.212.129:8080/api/v1',
   project: 'web3auth_e2e_tests',
   launch: 'Web3auth E2E Tests',
-  // attributes: [
-  //   {
-  //     key: 'key',
-  //     value: 'value',
-  //   },
-  //   {
-  //     value: 'value',
-  //   },
-  // ],
+  attributes: [
+    {
+      key: 'Launch_Id',
+      value: '123',
+    }
+  ],
   description: 'Web3auth e2e test run',
 };
 
@@ -23,7 +20,7 @@ const indexConfig: PlaywrightTestConfig = {
   globalTimeout: process.env.CI ? 6 * 60 * 1000 : undefined,
   retries: process.env.CI ? 3 : 0,
    // Opt out of parallel tests on CI.
-  // workers: process.env.CI ? 1 : 1,
+  workers: process.env.CI ? 1 : 1,
   reporter: process.env.CI ? [['github'],['@reportportal/agent-js-playwright', RPconfig]] : [['list'],['html',{  outputFile: 'test-results.html' }]],
   use: {
     // Emulate browsing in San Francisco, CA, USA

@@ -3,11 +3,12 @@ import { test } from "./index.lib";
 import { signInWithDiscord, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test.skip("Login with Discord - skipped bcz it requires captcha solving", async ({
+test("Login with Discord - skipped bcz it requires captcha solving", async ({
   page,
   openloginURL,
   discord,
 }) => {
+  test.skip();
   // Verify environment variables
   expect(
     !!process.env.DISCORD_EMAIL &&

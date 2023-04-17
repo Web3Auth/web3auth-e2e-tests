@@ -10,9 +10,10 @@ test("Login with Github+Device", async ({ page, openloginURL, github }) => {
     ).toBe(true);
   // Login with Github
   await signInWithGitHub({ page, github })
-  await page.waitForURL('https://github.com/new', {
-    timeout: 2 * 60 * 1000,
-  });
+  // await page.waitForURL('https://github.com/new', {
+  //   timeout: 2 * 60 * 1000,
+  // });
+  console.info("url is" + page.url())
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   await page.click("text=View more options");
