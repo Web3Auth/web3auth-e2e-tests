@@ -20,7 +20,7 @@ jobs:
         browser: [firefox]
         cloudBuild: [TorusE2ETests]
         region: [ap-southeast-1]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     # env:
     #   PLATFORM: ${{ matrix.env }}
     # outputs:
