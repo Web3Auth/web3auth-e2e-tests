@@ -23,14 +23,12 @@ test("existing v2 user can log in correctly", async ({
   expect(await page.isVisible(`text=${google.email}`)).toBeTruthy();
 
   // Confirm email
-  test.fixme(
     !(await confirmEmail({
       context,
       timestamp,
       to: google.email,
       resend: () => page.click("text=Resend"),
     }))
-  );
 
   try {
     await page.waitForSelector("text=Enable 2 Factor Authentication (2FA)", {
