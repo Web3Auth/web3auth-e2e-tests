@@ -1,4 +1,4 @@
-import { PlaywrightTestConfig } from "@playwright/test";
+import { PlaywrightTestConfig, devices } from "@playwright/test";
 const RPClient = require('@reportportal/client-javascript');
 const RPconfig = {
   token: '4311671d-eb96-4d46-aba8-16afc95cc015',
@@ -12,8 +12,7 @@ const RPconfig = {
     }
   ],
   description: 'Web3auth e2e test run',
-  isLaunchMergeRequired: true,
-  id: 'mergeid'
+  isLaunchMergeRequired: true
 };
 
 const indexConfig: PlaywrightTestConfig = {
@@ -38,6 +37,12 @@ const indexConfig: PlaywrightTestConfig = {
       mode: "retain-on-failure",
     },
   },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
   
 };
 
