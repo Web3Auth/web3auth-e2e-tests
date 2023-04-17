@@ -32,7 +32,7 @@ const indexConfig: PlaywrightTestConfig = {
 
     // Report failure(s)
     screenshot: "only-on-failure",
-    video: process.env.CI ? "retry-with-video" : "retain-on-failure",
+    video: process.env.CI ? "retain-on-failure" : "retain-on-failure",
     trace: {
       mode: "retain-on-failure",
     },
