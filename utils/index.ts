@@ -247,13 +247,21 @@ async function signInWithGitHub({
   }
 }): Promise<boolean> {
   try {
+    console.log(1)
     await page.goto("https://github.com/login");
+    console.log(1)
     await page.isVisible("text=Sign in");
+    console.log(1)
     await page.fill('input[autocomplete="username"]', github.email);
+    console.log(1)
     await page.fill('input[autocomplete="current-password"]', github.password);
+    console.log(1)
     await page.click('input[value="Sign in"]');
+    console.log(1)
     expect(page.isVisible("text=Create repository"));
+    console.log(1)
     await page.click("text=Create repository");
+    console.log(1)
     return true;
   } catch {
     return false;
