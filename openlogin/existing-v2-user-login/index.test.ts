@@ -9,11 +9,11 @@ test("existing v2 user can log in correctly", async ({
   openloginURL,
   google,
 }) => {
-  test.skip()
+  //test.skip()
   await page.goto("https://accounts.google.com/");
   await signInWithGoogle({ page, google })
   await page.goto(openloginURL);
-  await page.click('button:has-text("Get Started")');
+  await page.click('button:has-text("Get Started1")');
 
   // Login with Passwordless
   const timestamp = Math.floor(Date.now() / 1000);
