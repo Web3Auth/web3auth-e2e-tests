@@ -36,13 +36,7 @@ const indexConfig: PlaywrightTestConfig = {
     trace: {
       mode: "retain-on-failure",
     },
-  },
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ],
+  }
   
 };
 
