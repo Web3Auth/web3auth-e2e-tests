@@ -6,8 +6,8 @@ const RPconfig = {
   launch: 'Web3auth E2E Tests',
   attributes: [
     {
-      key: 'Launch_Id',
-      value: '123',
+      key: 'Environment',
+      value: process.env.PLATFORM || "production",
     }
   ],
   description: 'Web3auth e2e test run',
@@ -16,8 +16,8 @@ const RPconfig = {
 
 const indexConfig: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
-  timeout: process.env.CI ? 5 * 60 * 1000 : 0,
-  globalTimeout: process.env.CI ? 5 * 60 * 1000 : undefined,
+  timeout: process.env.CI ? 5 * 1000 : 0,
+  globalTimeout: process.env.CI ? 5 * 1000 : undefined,
   retries: process.env.CI ? 3 : 0,
    // Opt out of parallel tests on CI.
   workers: process.env.CI ? 1 : 1,
