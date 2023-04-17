@@ -3,6 +3,7 @@ import { test } from "./index.lib";
 import { signInWithGitHub, useAutoCancelShareTransfer, useAutoCancel2FASetup } from "../../utils/index";
 
 test("Login with Github+Device", async ({ page, openloginURL, github }) => {
+  // test.skip()
     // Verify environment variables
     expect(
       !!process.env.GITHUB_USER_EMAIL &&
@@ -13,7 +14,7 @@ test("Login with Github+Device", async ({ page, openloginURL, github }) => {
   // await page.waitForURL('https://github.com/new', {
   //   timeout: 2 * 60 * 1000,
   // });
-  console.info("url is" + page.url())
+
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   await page.click("text=View more options");
