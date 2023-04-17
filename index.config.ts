@@ -1,20 +1,20 @@
 import { PlaywrightTestConfig } from "@playwright/test";
-// const RPconfig = {
-//   token: '47eaf491-bfef-4c68-8f47-820211dacbc5',
-//   endpoint: 'http://localhost:8080/api/v1',
-//   project: 'superadmin_personal',
-//   launch: 'superadmin_TEST_EXAMPLE',
-//   // attributes: [
-//   //   {
-//   //     key: 'key',
-//   //     value: 'value',
-//   //   },
-//   //   {
-//   //     value: 'value',
-//   //   },
-//   // ],
-//   description: 'Your launch description',
-// };
+const RPconfig = {
+  token: '4311671d-eb96-4d46-aba8-16afc95cc015',
+  endpoint: 'http://54.179.212.129:8080/api/v1',
+  project: 'web3auth_e2e_tests',
+  launch: 'Web3auth E2E Tests',
+  // attributes: [
+  //   {
+  //     key: 'key',
+  //     value: 'value',
+  //   },
+  //   {
+  //     value: 'value',
+  //   },
+  // ],
+  description: 'Web3auth e2e test run',
+};
 
 
 const indexConfig: PlaywrightTestConfig = {
@@ -22,8 +22,9 @@ const indexConfig: PlaywrightTestConfig = {
   timeout: process.env.CI ? 5 * 60 * 1000 : 0,
   globalTimeout: process.env.CI ? 6 * 60 * 1000 : undefined,
   retries: process.env.CI ? 3 : 0,
-  // reporter: [['@reportportal/agent-js-playwright', RPconfig]],
-  reporter: process.env.CI ? 'github' : [['list'],['html',{  outputFile: 'test-results.html' }]],
+   // Opt out of parallel tests on CI.
+  // workers: process.env.CI ? 1 : 1,
+  reporter: process.env.CI ? [['github'],['@reportportal/agent-js-playwright', RPconfig]] : [['list'],['html',{  outputFile: 'test-results.html' }]],
   use: {
     // Emulate browsing in San Francisco, CA, USA
     locale: "en-US",

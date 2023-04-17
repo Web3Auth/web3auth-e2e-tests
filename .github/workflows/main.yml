@@ -105,8 +105,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: index.html
-          path: playwright-report
+          path: web3auth-e2e-tests
           if-no-files-found: ignore
 
   # update-status:
