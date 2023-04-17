@@ -39,12 +39,13 @@ export async function confirmEmail({
       after: timestamp,
       to: to,
     });
+    console.log(timestamp)
     await emailPage.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );
     console.log(`https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`)
     await emailPage.waitForSelector("a[title='Gmail']", { state: "attached" });
-
+    console.log(timestamp)
     // Try click on the verify link
     const maxReloads = 2;
     let reloads = 0;

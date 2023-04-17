@@ -224,10 +224,12 @@ async function signInWithGoogle({
 }): Promise<boolean> {
   try {
     await page.waitForURL("https://accounts.google.com/**");
-    await page.isVisible("text=Sign in");
-    await page.fill('[aria-label="Email or phone"]', google.email);
+    await page.waitForSelector('input[type="Email"]')
+    expect(await page.isVisible('input[type="Email"]'))
+    await page.fill('input[type="Email"]', google.email);
+    expect(await page.isVisible('button:has-text("Next")'))
     await page.click(`button:has-text("Next")`);
-    await page.fill('[aria-label="Enter your password"]', google.password);
+    await page.fill('input[type="password"]', google.password);
     await page.click(`button:has-text("Next")`);
     await page.waitForURL("https://myaccount.google.com/**");
     return true;
@@ -247,21 +249,19 @@ async function signInWithGitHub({
   }
 }): Promise<boolean> {
   try {
-    console.log(1)
+
     await page.goto("https://github.com/login");
-    console.log(1)
+    await page.waitForSelector("text=Sign in");
     await page.isVisible("text=Sign in");
-    console.log(1)
+
     await page.fill('input[autocomplete="username"]', github.email);
-    console.log(1)
+
     await page.fill('input[autocomplete="current-password"]', github.password);
-    console.log(1)
+
     await page.click('input[value="Sign in"]');
-    console.log(1)
+
+    await page.waitForSelector("text=Create repository");
     expect(page.isVisible("text=Create repository"));
-    console.log(1)
-    await page.click("text=Create repository");
-    console.log(1)
     return true;
   } catch {
     return false;
@@ -284,10 +284,9 @@ async function signInWithTwitter({
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   await page.click("[aria-label='login with twitter']");
-
   await page.waitForURL("https://api.twitter.com/oauth/**");
   const appName = process.env.PLATFORM === "testing" ? "torus-test-auth0" : "Web3Auth"
-  await page.waitForSelector(`h2:text("Authorize ${appName} to access your account")`);
+  await page.waitForSelector(`h2:text("Authorize ${appName} to access your account?")`);
   await page.click(`input:has-text("Sign in")`);
   // Only for the first time users, they have to click on authorize web3Auth app
   try {
@@ -298,7 +297,9 @@ async function signInWithTwitter({
     await page.click(`input:has-text("Authorize app")`)
   } catch {
   }
+
   await page.waitForSelector('text="Sign in to Twitter"');
+  await page.screenshot({ path: 'screenshot.png' });
   await page.fill('input[autocomplete="username"]', twitter.account);
   await page.click(`div[role="button"] span:has-text("Next")`);
   await page.fill('input[type="password"]', twitter.password);

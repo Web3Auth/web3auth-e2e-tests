@@ -10,7 +10,7 @@ test("Login with Google - skipped bcz it requires captcha solving", async ({
   openloginURL,
   google,
 }) => {
-  test.skip()
+  //test.skip()
   page.setDefaultTimeout(8 * 60 * 1000);
   page.setDefaultNavigationTimeout(8 * 60 * 1000);
 
@@ -30,16 +30,12 @@ test("Login with Google - skipped bcz it requires captcha solving", async ({
   await signInWithGoogle({ page, google })
   await useAutoCancelShareTransfer(page)
   await useAutoCancel2FASetup(page)
-  console.log(page,url())
-  await page.waitForNavigation();
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
-    timeout: 3 * 60 * 1000
+    timeout: 3 * 60 * 100
   });
   
-  console.log(page,url())
   expect(page.url()).toBe(`${openloginURL}/wallet/home`);
-  console.log(page,url())
   await page.waitForSelector(`text=Welcome, ${google.name}`);
   // Logout
   await page.click("text=Logout")

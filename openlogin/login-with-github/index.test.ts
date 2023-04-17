@@ -14,10 +14,10 @@ test("Login with Github+Device", async ({ page, openloginURL, github }) => {
   // await page.waitForURL('https://github.com/new', {
   //   timeout: 2 * 60 * 1000,
   // });
-  console.log(1)
+
   await page.goto(openloginURL);
-  console.log(1)
-  await page.click('button:has-text("Get Started")');
+  await page.waitForSelector('span:has-text("Get Started")')
+  await page.click('span:has-text("Get Started")');
   await page.click("text=View more options");
   await page.click('button[aria-label="login with GitHub"]');
 
@@ -25,7 +25,7 @@ test("Login with Github+Device", async ({ page, openloginURL, github }) => {
     await page.waitForSelector("text=Authorize TorusLabs", {
       timeout: 10 * 1000,
     });
-    await page.click('button:has-text("Authorize TorusLabs")');
+    await page.click('button:has-text("Authorize TorusLabs")',{timeout: 9000});
   } catch { }
 
   await useAutoCancelShareTransfer(page);
