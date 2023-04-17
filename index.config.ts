@@ -17,7 +17,7 @@ const RPconfig = {
 
 const indexConfig: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
-  timeout: process.env.CI ? 5 * 60 * 1000 : 0,
+//  timeout: process.env.CI ? 5 * 6 * 1000 : 0,
   globalTimeout: process.env.CI ? 6 * 100 * 1000 : undefined,
   retries: process.env.CI ? 0 : 0,
    // Opt out of parallel tests on CI.
@@ -33,9 +33,9 @@ const indexConfig: PlaywrightTestConfig = {
     // Report failure(s)
     screenshot: "only-on-failure",
     video: process.env.CI ? "retain-on-failure" : "retain-on-failure",
-    trace: {
-      mode: "retain-on-failure",
-    },
+    // trace: {
+    //   mode: "retain-on-failure",
+    // },
   }
   
 };
