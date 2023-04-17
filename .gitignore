@@ -18,3 +18,5 @@ node_modules
 test-results
 /test-results/
 /playwright/.cache/
+playwright-report
+/playwright-report/

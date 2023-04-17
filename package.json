@@ -6,7 +6,7 @@
     "test:browser": "playwright test --headed",
     "test": "playwright test",
     "test:ci": "./bin/runTestsCI.sh",
-    "test:trace": "playwright test --trace retain-on-failure --config=index.config.ts",
+    "test:trace": "playwright test --headed --trace retain-on-failure --config=index.config.ts",
     "test:config": "playwright test --workers=1 --trace retain-on-failure --reporter=html --config=index.config.ts",
     "trace:show": "playwright show-trace",
     "install-deps": "playwright install-deps",
