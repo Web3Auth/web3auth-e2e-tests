@@ -22,8 +22,7 @@ const indexConfig: PlaywrightTestConfig = {
   retries: process.env.CI ? 0 : 0,
    // Opt out of parallel tests on CI.
   workers: process.env.CI ? 1 : 1,
-  reporter: [['@reportportal/agent-js-playwright', RPconfig]],
-  //reporter: process.env.CI ? [['github'],['@reportportal/agent-js-playwright', RPconfig]] : [['list'],['html',{  outputFile: 'test-results.html' }]],
+  reporter: process.env.CI ? [['@reportportal/agent-js-playwright', RPconfig]] : [['html']],
   use: {
     // Emulate browsing in San Francisco, CA, USA
     locale: "en-US",

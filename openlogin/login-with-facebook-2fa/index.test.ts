@@ -3,8 +3,8 @@ import { test } from "./index.lib";
 import { deleteCurrentDeviceShare, signInWithFacebook } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test("Login with Facebook+2FA", async ({ page, openloginURL, FB, backupPhrase }) => {
-  //test.skip()
+test("Login with Facebook+2FA skipped since account creation is in process", async ({ page, openloginURL, FB, backupPhrase }) => {
+  test.skip()
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   await page.click('[aria-label="login with facebook"]');
