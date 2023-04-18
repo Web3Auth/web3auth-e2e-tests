@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - develop
-  # schedule:
-  #   - cron: "* 0 * * *"
+  schedule:
+    - cron: "0 0 10 1/1 * ? *"
   workflow_dispatch:
 
 env:
@@ -88,7 +88,7 @@ jobs:
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
         run: |
-          ls && npm install && npx playwright install chromium && npm run test:config
+          ls && npm install && npx playwright install && npm run test:config
 
       # - id: telegram-alert
       #   name: Alert to telegram channel
