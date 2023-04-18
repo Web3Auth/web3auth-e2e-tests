@@ -299,7 +299,6 @@ async function signInWithTwitter({
   }
 
   await page.waitForSelector('text="Sign in to Twitter"');
-  await page.screenshot({ path: 'screenshot.png' });
   await page.fill('input[autocomplete="username"]', twitter.account);
   await page.click(`div[role="button"] span:has-text("Next")`);
   await page.fill('input[type="password"]', twitter.password);
@@ -316,6 +315,13 @@ async function signInWithTwitter({
       await page.fill('input[autocomplete="email"]', twitter.email);
       await page.click(`div[role="button"] span:has-text("Next")`);
     } catch (err) {
+    }
+    try {
+      await page.waitForSelector('input#allow', {
+        timeout: 1000
+      })
+      await page.click('input#allow')
+    } catch {
     }
     await useAutoCancelShareTransfer(page)
     await useAutoCancel2FASetup(page)
