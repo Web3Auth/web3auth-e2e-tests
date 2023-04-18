@@ -4,13 +4,13 @@ import { signInWithGoogle, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import { url } from "inspector";
 
-test("Login with Google - skipped bcz it requires captcha solving", async ({
+test("Login with Google - skipped since it requires captcha solving", async ({
   page,
   browserName,
   openloginURL,
   google,
 }) => {
-  //test.skip()
+  test.skip()
   page.setDefaultTimeout(8 * 60 * 1000);
   page.setDefaultNavigationTimeout(8 * 60 * 1000);
 

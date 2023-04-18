@@ -1,4 +1,4 @@
-name: OpenLogin - TorusE2ETests
+name: OpenLogin - TorusE2ETests - GitHub
 
 on:
   push:
@@ -29,44 +29,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      # - name: Configure AWS Credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: "ap-southeast-1"
-
-      # - name: Login to Amazon ECR
-      #   id: login-ecr
-      #   uses: aws-actions/amazon-ecr-login@v1
-
-      # - name: Build, tag, and push image to Amazon ECR
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: web3auth-e2e-tests
-      #   run: |
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA .
-      #     echo "Pushing image to ECR..."
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
-
-      # - name: Build, tag, and push image to Amazon ECR with latest tag
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: web3auth-e2e-tests
-      #   run: |
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-      #     echo "Pushing image to ECR..."
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-      # - name: Trigger Cloud Build
-      #   env:
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_DEFAULT_REGION: ${{ matrix.region }}
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: web3auth-e2e-tests
-      #   run: |
-      #     aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
@@ -90,39 +52,9 @@ jobs:
         run: |
           ls && npm install && npx playwright install && npm run test:config
 
-      # - id: telegram-alert
-      #   name: Alert to telegram channel
-      #   if: always()
-      #   run: |
-      #     if [[ ${{ steps.run-tests.outcome }} != 'success' ]]
-      #     then
-      #         echo "Test Failed, sending telegram alert"
-      #         curl -X POST -H 'Content-Type: application/json' -d '{"chat_id": "${{secrets.CHAT_ID}}", "text": "TestResult=${{steps.run-tests.outcome}}, region=${{matrix.region}}, browser=${{matrix.browser}}, Environment=${{matrix.env}}, Job=${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"}' https://api.telegram.org/bot${{secrets.BOT_API_TOKEN}}/sendMessage
-      #     else
-      #         echo "Test Passed, no alert!"
-      #     fi
-      #   continue-on-error: true
-
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
           path: test-results/*
           if-no-files-found: ignore
-
-  # update-status:
-  #   name: Update OpenLogin - Tests status
-  #   needs: run-tests
-  #   if: (success() || failure()) && (needs.run-tests.outputs.conclusion != 'skipped')
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Update status
-  #       uses: fjogeleit/http-request-action@master
-  #       with:
-  #         url: https://api.statuspage.io/v1/pages/${{ secrets.PAGE_ID }}/components/${{ secrets.HOME_PAGE_COMPONENT_ID }}
-  #         customHeaders: '{ "Authorization": "OAuth ${{ secrets.STATUS_PAGE_API_KEY }}" }'
-  #         method: PATCH
-  #         contentType: "application/json"
-  #         timeout: 10000
-  #         data: >-
-  #           { "component": { "status": "${{ needs.run-tests.result == 'success' && 'operational' || 'major_outage' }}" } }

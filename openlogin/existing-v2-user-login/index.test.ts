@@ -3,6 +3,7 @@ import { confirmEmail, signInWithGoogle } from "../../utils";
 import { test } from "./index.lib";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
+test.describe.serial("Existing user login scenarios", () => {
 test("existing v2 user can log in correctly", async ({
   context,
   page,
@@ -59,4 +60,5 @@ test.afterEach(async ({ page, browserName }) => {
   await page
     .context()
     .storageState({ path: `${__dirname}/${browserName}.json` });
+});
 });
