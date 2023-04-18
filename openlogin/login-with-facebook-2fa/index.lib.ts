@@ -6,23 +6,23 @@ import path from "path";
 dotenv.config();
 
 export interface TestArgs {
-  backupPhrase: string,
   openloginURL: string;
   FB: {
     password: string;
     email: string;
     name: string;
     firstName: string;
+    backupPhrase: string;
   };
 }
 
 export const test = playwright.test.extend<TestArgs>({
-  backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString(),
   openloginURL: env_map[process.env.PLATFORM || DEFAULT_PLATFORM],
   FB: {
-    name: process.env.FB_TEST_USER_NAME || "",
-    email: process.env.FB_TEST_USER_EMAIL || "",
-    password: process.env.FB_TEST_USER_PASS || "",
-    firstName: (process.env.FB_TEST_USER_NAME || "").split(" ")[0],
+    name: "Torus Solana",
+    email: "torus.e2e.gb@gmail.com",
+    password: process.env.GITHUB_USER_PASSWORD || "",
+    firstName: "Torus",
+    backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString(),
   },
 });
