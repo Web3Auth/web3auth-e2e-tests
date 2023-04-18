@@ -39,7 +39,7 @@ const newRandomPassword = generate({
   strict: true,
 });
 
-test.describe.serial("Account page test", () => {
+test.describe.serial("Account page scenarios", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
     test.setTimeout(300000)

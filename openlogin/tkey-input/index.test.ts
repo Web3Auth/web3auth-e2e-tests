@@ -33,7 +33,7 @@ const passwordShare = generate({
   strict: true,
 });
 
-test.describe.serial("tkey Input test", () => {
+test.describe.serial("tkey Input scenarios", () => {
   let page: Page;
 
   test.beforeAll(async ({ openloginURL }) => {
@@ -67,7 +67,7 @@ test.describe.serial("tkey Input test", () => {
   //   await browser.close();
   // });
 
-  test(`should setup 2FA for running further tkey_input tests`, async ({
+  test(`setup 2FA for running further tkey_input tests`, async ({
     openloginURL,
   }) => {
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time
@@ -142,7 +142,7 @@ test.describe.serial("tkey Input test", () => {
     ).toBeTruthy();
   });
 
-  test(`should login with social + device and delete device share`, async ({
+  test(`login with social + device and delete device share`, async ({
     openloginURL,
     browser,
   }) => {
@@ -183,7 +183,7 @@ test.describe.serial("tkey Input test", () => {
     ).toBeTruthy();
   });
 
-  test(`should login with social + email backup`, async ({
+  test(`login with social + email backup`, async ({
     openloginURL,
     browser,
   }) => {
@@ -235,7 +235,7 @@ test.describe.serial("tkey Input test", () => {
     ).toBeTruthy();
   });
 
-  test(`should login with social + password`, async ({
+  test(`login with social account + password`, async ({
     openloginURL,
     browser,
   }) => {
