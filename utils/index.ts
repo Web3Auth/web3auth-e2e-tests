@@ -358,6 +358,7 @@ async function signInWithFacebook({
 
   await page.waitForURL("https://www.facebook.com/**");
   await page.isVisible("text=Log in")
+  await page.waitForSelector('[placeholder="Email address or phone number"]')
   await page.fill(
     '[placeholder="Email address or phone number"]',
     FB.email
