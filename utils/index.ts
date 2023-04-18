@@ -348,6 +348,7 @@ async function signInWithFacebook({
     password: string;
     name: string;
     firstName: string;
+    backupPhrase: string;
   };
   openloginURL: string
 }): Promise<void> {
@@ -361,12 +362,25 @@ async function signInWithFacebook({
     '[placeholder="Email address or phone number"]',
     FB.email
   )
+  await page.waitForSelector('[placeholder="Password"]')
   await page.fill('[placeholder="Password"]', FB.password)
   await page.click(`button:has-text("Login"), [name="login"]`)
   await slowOperation(async () => {
     await page.click(
       `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
     )
+    try{
+      console.log(1)
+      await page.waitForURL(`${openloginURL}/tkey-input*`, {
+        timeout: 1 * 60 * 1000,
+      });
+      console.log(1)
+      await page.fill('[placeholder="Enter backup phrase"]', FB.backupPhrase);
+      await page.click('button:has-text("Confirm")');
+    }
+    catch(err){
+
+    }
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
     await page.waitForURL(`${openloginURL}/wallet/home`)
