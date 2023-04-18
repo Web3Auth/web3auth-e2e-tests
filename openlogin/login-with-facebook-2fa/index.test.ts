@@ -3,14 +3,12 @@ import { test } from "./index.lib";
 import { deleteCurrentDeviceShare, signInWithFacebook } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
-  test.skip()
-  test.setTimeout(process.env.CI ? 15 * 60 * 1000 : 0);
-
+test("Login with Facebook+2FA", async ({ page, openloginURL, FB, backupPhrase }) => {
+  //test.skip()
   await page.goto(openloginURL);
   await page.click('button:has-text("Get Started")');
   await page.click('[aria-label="login with facebook"]');
-  test.fixme(!(await signInWithFacebook({ page, name: user.name })));
+  await signInWithFacebook({ page, FB, openloginURL });
 
   await page.waitForURL(`${openloginURL}/tkey-input*`, {
     timeout: 2 * 60 * 1000,
@@ -19,7 +17,7 @@ test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
   // fill and submit backup phrase
   await page.fill(
     "[placeholder='Enter backup phrase']",
-    user.backupPhrase.trim()
+    backupPhrase.trim()
   );
   await page.click('button:has-text("Confirm")');
   useAutoCancelShareTransfer(page);
@@ -29,7 +27,7 @@ test("Login with Facebook+2FA", async ({ page, openloginURL, user }) => {
 
   // Go to Account page
   await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
+  expect(await page.isVisible(`text=${FB.email}`)).toBeTruthy();
 
   /**
    * Delete current device share
