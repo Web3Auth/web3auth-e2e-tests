@@ -231,12 +231,11 @@ test.describe.serial("Account page scenarios", () => {
     openloginURL,
   }) => {
     await waitForSessionStorage(page, openloginURL);
-    await Promise.all([
+    await page.click(`button[aria-label='export device share']`),
+    await page.waitForSelector("text=Save a copy of your backup phrase"),
       expect(
-        page.isVisible("text=Save a copy of your backup phrase")
+        await page.isVisible("text=Save a copy of your backup phrase")
       ).toBeTruthy(),
-      page.click(`button[aria-label='export device share']`),
-    ]);
     await page.click('button:has-text("Close")');
   });
 
