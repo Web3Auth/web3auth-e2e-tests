@@ -457,11 +457,11 @@ async function addPasswordShare(page: Page, password: string) {
   // wait for password to be visible
   await page.isVisible("input[name='openlogin-password']");
   await page.isVisible("input[name='openlogin-confirm-password']");
-
   await page.locator("input[name='openlogin-password']").fill(password);
   await page.locator("input[name='openlogin-confirm-password']").fill(password);
 
   let y = waitForAddPassword(page);
+  await page.isEnabled('button:has-text("Confirm")');
   await page.click('button:has-text("Confirm")');
   await page.isVisible('button:has-text("Change password")');
   await page.locator("text=Password successfully changed").isVisible();

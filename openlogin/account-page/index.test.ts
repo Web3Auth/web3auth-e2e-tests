@@ -198,67 +198,6 @@ test.describe.serial("Account page scenarios", () => {
     await page.click('button:has-text("Close")');
   });
 
-  test(`should be able to delete email share`, async ({ openloginURL }) => {
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
-
-    // not reliable, either rewrite or await for some other marker
-    await waitForSessionStorage(page, openloginURL);
-    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
-
-    // No need to rely on API response, its incorrect.
-    // because state changes locally aren't guaranteed
-    // checkout how await for delete share works in utils
-    await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/metadata.tor.us/bulk_set_stream") &&
-          resp.status() === 200
-      ),
-      page.click('button[aria-label="delete email share"]'),
-    ]);
-    await page.reload();
-    await page.goto(`${openloginURL}/wallet/home`);
-    await page.goto(`${openloginURL}/wallet/account`);
-    expect(await page.getByText('2 / 2').isVisible());
-
-  });
-
-  test(`should show a popup with copy option while clicking download device share`, async ({
-    openloginURL,
-  }) => {
-    await waitForSessionStorage(page, openloginURL);
-    await page.click(`button[aria-label='export device share']`),
-    await page.waitForSelector("text=Save a copy of your backup phrase"),
-      expect(
-        await page.isVisible("text=Save a copy of your backup phrase")
-      ).toBeTruthy(),
-    await page.click('button:has-text("Close")');
-  });
-
-  // should test setting up email backup again after deleting email share.
-  test(`should be able to setup email backup again`, async ({
-    openloginURL,
-  }) => {
-    await waitForSessionStorage(page, openloginURL);
-    expect(await page.isVisible("text=2 / 2")).toBeTruthy();
-    await page.fill('[placeholder="Enter recovery email"]', testEmail);
-    await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/metadata.tor.us/get") &&
-          resp.status() === 200
-      ),
-      page.click('button:has-text("Confirm")'),
-    ]);
-    //await page.reload(); Recovery share deleted successfully 
-    await expect(page.getByText('Backup Phrase successfully sent', { exact: false })).toBeVisible();
-    expect(await page.getByText('2 / 3').isVisible());
-  });
-
   // below test check password share setup.
   test(`should setup account password`, async ({ openloginURL }) => {
     await waitForSessionStorage(page, openloginURL);
@@ -291,11 +230,75 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.getByText('2 / 4').isVisible());
   });
 
+  test(`should be able to delete email share`, async ({ openloginURL }) => {
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    expect(page.url()).toBe(`${openloginURL}/wallet/account`);
+
+    // not reliable, either rewrite or await for some other marker
+    await waitForSessionStorage(page, openloginURL);
+    expect(await page.isVisible("text=2 / 4")).toBeTruthy();
+
+    // No need to rely on API response, its incorrect.
+    // because state changes locally aren't guaranteed
+    // checkout how await for delete share works in utils
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/metadata.tor.us/bulk_set_stream") &&
+          resp.status() === 200
+      ),
+      page.click('button[aria-label="delete email share"]'),
+    ]);
+    await page.reload();
+    await page.goto(`${openloginURL}/wallet/home`);
+    await page.goto(`${openloginURL}/wallet/account`);
+    expect(await page.getByText('2 / 3').isVisible());
+
+  });
+
+  test(`should show a popup with copy option while clicking download device share`, async ({
+    openloginURL,
+  }) => {
+    await waitForSessionStorage(page, openloginURL);
+    await page.click(`button[aria-label='export device share']`),
+    await page.waitForSelector("text=Save a copy of your backup phrase"),
+      expect(
+        await page.isVisible("text=Save a copy of your backup phrase")
+      ).toBeTruthy(),
+    await page.click('button:has-text("Close")');
+  });
+
+  // should test setting up email backup again after deleting email share.
+  test(`should be able to setup email backup again`, async ({
+    openloginURL,
+  }) => {
+    await waitForSessionStorage(page, openloginURL);
+    expect(await page.isVisible("text=2 / 3")).toBeTruthy();
+    await page.fill('[placeholder="Enter recovery email"]', testEmail);
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes("/metadata.tor.us/get") &&
+          resp.status() === 200
+      ),
+      page.click('button:has-text("Confirm")'),
+    ]);
+    //await page.reload(); Recovery share deleted successfully 
+    await expect(page.getByText('Backup Phrase successfully sent', { exact: false })).toBeVisible();
+    expect(await page.getByText('2 / 4').isVisible());
+  });
+
   test(`should be able to delete device share`, async ({ openloginURL }) => {
     let tkey = waitForTkeyRehydration(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
+    });
+    page.on("console", (msg) => {
+      console.log(msg)
     });
     await tkey;
     await waitForSessionStorage(page, openloginURL);
