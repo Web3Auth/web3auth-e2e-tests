@@ -57,7 +57,7 @@ buttonsTest.describe("In Login modal,", () => {
     async ({ page, iframe }) => {
       const [popup] = await Promise.all([
         page.waitForEvent("popup"),
-        iframe.click('button:has-text("Continue with Google")'),
+        await iframe.click('button:has-text("Continue with Google")'),
       ]);
       await popup.waitForURL("https://accounts.google.com/**")
       // await popup.waitForNavigation({ waitUntil: "networkidle" });
