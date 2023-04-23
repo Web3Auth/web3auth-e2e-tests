@@ -54,8 +54,8 @@ test.only("focus this test", async ({ page }) => {
 });
 ```
 ```ts
-test.skip("focus this test", async ({ page }) => {
-  // Skips this test during execution
+test.skip('skip this test', async ({ page }) => {
+  // This test is not run
 });
 ```
 When you've done writing the test, change `test.only` to `test` to turn off focus mode.
