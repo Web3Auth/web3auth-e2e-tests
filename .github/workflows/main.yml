@@ -5,7 +5,7 @@ on:
     branches:
       - develop
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 10 * * *'
   workflow_dispatch:
 
 env:
@@ -28,7 +28,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-
+        with:
+          ref: develop
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
