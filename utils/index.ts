@@ -344,9 +344,9 @@ async function signInWithFacebook({
 }: {
   page: Page;
   FB: {
+    name: string;
     email: string;
     password: string;
-    name: string;
     firstName: string;
     backupPhrase: string;
   };
@@ -358,9 +358,10 @@ async function signInWithFacebook({
 
   await page.waitForURL("https://www.facebook.com/**");
   await page.isVisible("text=Log in")
-  await page.waitForSelector('[placeholder="Email address or phone number"]')
+  await page.waitForSelector('#email')
+  console.log("Email:" + FB.email)
   await page.fill(
-    '[placeholder="Email address or phone number"]',
+    '#email',
     FB.email
   )
   await page.waitForSelector('[placeholder="Password"]')
@@ -371,11 +372,9 @@ async function signInWithFacebook({
       `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
     )
     try{
-      console.log(1)
       await page.waitForURL(`${openloginURL}/tkey-input*`, {
         timeout: 1 * 60 * 1000,
       });
-      console.log(1)
       await page.fill('[placeholder="Enter backup phrase"]', FB.backupPhrase);
       await page.click('button:has-text("Confirm")');
     }

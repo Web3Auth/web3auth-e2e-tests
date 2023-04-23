@@ -1,4 +1,0 @@
-env varaiables => secrets repo
-execution patterns  - try default
-add new poipeline per test
-send notification - failed thrice in a row  - email notification | telegram | no discord
