@@ -4,7 +4,7 @@ import { test } from "./index.lib";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 
 test.describe.serial("Existing user login scenarios", () => {
-test("existing v2 user can log in correctly", async ({
+test.skip("existing v2 user can log in correctly - skipped since it requires captcha solving", async ({
   context,
   page,
   openloginURL,
