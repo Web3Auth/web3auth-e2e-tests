@@ -263,6 +263,7 @@ test.describe.serial("Account page scenarios", () => {
     openloginURL,
   }) => {
     await waitForSessionStorage(page, openloginURL);
+    await page.waitForSelector("button[aria-label='export device share']"),
     await page.click(`button[aria-label='export device share']`),
     await page.waitForSelector("text=Save a copy of your backup phrase"),
       expect(
