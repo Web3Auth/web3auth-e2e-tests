@@ -1,59 +1,41 @@
-import { expect } from "@playwright/test";
-import { confirmEmail } from "../../utils";
+import { chromium, expect, firefox, Page } from "@playwright/test";
 import { test } from "./index.lib";
+import {
+  useAutoCancel2FASetup,
+  signInWithEmail,
+  generateRandomEmail,
+  slowOperation,
+  catchError,
+  catchErrorAndExit,
+} from "../../utils";
+
 import { useAutoCancelShareTransfer } from "../../utils/index";
+import Mailosaur from "mailosaur";
 
-test("Login with Passwordless+Device", async ({
-  context,
-  page,
-  openloginURL,
-  user,
-}) => {
-  await page.goto(openloginURL);
-  await page.click('button:has-text("Get Started")');
+const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
-  // Login with Passwordless
-  const timestamp = Math.floor(Date.now() / 1000);
-  await page.fill('[placeholder="Email"]', user.email);
-  await page.click('button:has-text("Continue with Email")');
-  await page.waitForSelector("text=email has been sent");
-  expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
+const testEmail = generateRandomEmail();
 
-  // Confirm email
-  test.fixme(
-    !(await confirmEmail({
-      context,
-      timestamp,
-      to: user.email,
-      resend: () => page.click("text=Resend"),
-    }))
-  );
-
-  try {
-    await page.waitForSelector("text=Enable 2 Factor Authentication (2FA)", {
-      timeout: 10000,
+test.describe.serial('Passwordless Login scenarios', () => {
+  test("check passwordless login", async ({ browser, openloginURL, page }) => {
+    // Verify environment variables
+    test.setTimeout(3 * 60000); // adding more time to compensate high loading time
+    expect(
+      !!process.env.MAILOSAUR_SERVER_ID &&
+      !!process.env.MAILOSAUR_API_KEY &&
+      !!process.env.MAILOSAUR_SERVER_DOMAIN
+    ).toBe(true);
+    await page.goto(openloginURL);
+    await signInWithEmail(page, testEmail, browser);
+    const shouldExit = await catchErrorAndExit(page);
+    expect(shouldExit).toBeFalsy()
+    await useAutoCancelShareTransfer(page);
+    await useAutoCancel2FASetup(page);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      timeout: 3 * 60 * 1000
     });
-    await page.click('button:has-text("Maybe next time")');
-  } catch {}
 
-  useAutoCancelShareTransfer(page);
-  // Should be signed in in <2 minutes
-  await page.waitForURL(`${openloginURL}/wallet/home`, {
-    timeout: 2 * 60 * 1000,
+    expect(page.url()).toBe(`${openloginURL}/wallet/home`);
+    const welcome = await page.waitForSelector(`text=Welcome`);
   });
-
-  // Go to Account page
-  await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
-
-  // Logout
-  await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
-  expect(page.url()).toBe(`${openloginURL}/`);
-});
-
-// Save signed-in state to storage
-test.afterEach(async ({ page, browserName }) => {
-  await page
-    .context()
-    .storageState({ path: `${__dirname}/${browserName}.json` });
-});
+})

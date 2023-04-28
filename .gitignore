@@ -5,6 +5,7 @@
 logs
 *.log
 .env.*
+.env
 
 # Node.js
 node_modules
@@ -13,5 +14,9 @@ node_modules
 **/chromium.json
 **/firefox.json
 **/webkit.json
-**/backup-phrase.txt
-test-results/
+test-results
+/test-results/
+/playwright/.cache/
+playwright-report
+/playwright-report/
+rplaunch-*

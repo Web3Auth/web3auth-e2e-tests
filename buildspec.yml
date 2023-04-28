@@ -1,0 +1,32 @@
+# Do not change version. This is the version of aws buildspec, not the version of your buldspec file.
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 16
+  pre_build:
+    commands:
+      - echo Installing source NPM dependencies...
+      - cd /app
+      - ls -la
+      - npm install
+  build:
+    commands:
+      - echo Running Tests
+      - chmod +x ./bin/*
+      - npm run test:ci
+  post_build:
+    commands:
+      - echo Tests Complete
+      - ls -la
+# reports:
+#   test-report:
+#     files:
+#       - "index.html"
+#     base-directory: playwright-report
+#     file-format: "JUNITXML" 
+
+artifacts:
+  files:
+    - /test-results/*

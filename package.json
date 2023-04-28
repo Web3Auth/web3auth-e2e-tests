@@ -3,15 +3,28 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "test:browser": "playwright test --headed",
     "test": "playwright test",
-    "trace": "playwright show-trace"
+    "test:ci": "./bin/runTestsCI.sh",
+    "test:trace": "playwright test --trace retain-on-failure --config=index.config.ts",
+    "test:config": "playwright test --workers=1 --headed --browser=Chromium --config=index.config.ts",
+    "trace:show": "playwright show-trace",
+    "install-deps": "playwright install-deps",
+    "docker:build": "docker build -t test-image .",
+    "docker:run": "docker run -it test-image /bin/bash"
   },
   "dependencies": {
-    "@playwright/test": "^1.22.1",
-    "playwright": "^1.22.1",
-    "serve-handler": "^6.1.3"
+    "@playwright/test": "^1.32.3",
+    "bip39": "^3.0.4",
+    "dotenv": "^16.0.3",
+    "generate-password": "^1.7.0",
+    "mailosaur": "^8.5.0",
+    "playwright": "^1.30.0",
+    "serve-handler": "^6.1.3",
+    "reportportal-client": "https://github.com/wiibaker/client-javascript.git#master"
   },
   "devDependencies": {
+    "@reportportal/agent-js-playwright": "^5.0.11",
     "@tsconfig/node16": "^1.0.3",
     "@types/node": "^16",
     "@types/serve-handler": "^6.1.1",

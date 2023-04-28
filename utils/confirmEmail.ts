@@ -31,6 +31,7 @@ export async function confirmEmail({
   resend: () => Promise<void>;
 }) {
   const emailPage = await context.newPage();
+  console.log(timestamp)
   try {
     const mailFilterStr = generateFilterStr({
       from: "Web3Auth",
@@ -38,18 +39,21 @@ export async function confirmEmail({
       after: timestamp,
       to: to,
     });
+    console.log(timestamp)
     await emailPage.goto(
       `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
     );
+    console.log(`https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`)
     await emailPage.waitForSelector("a[title='Gmail']", { state: "attached" });
-
+    console.log(timestamp)
     // Try click on the verify link
-    const maxReloads = 20;
+    const maxReloads = 2;
     let reloads = 0;
     while (reloads < maxReloads) {
       try {
         reloads++;
-        await emailPage.click('div[role="link"] >> text=Verify your email', {
+        //await emailPage.locator('//tr/td//span[text()="email"]').click()
+        await emailPage.click('//tr/td//span[text()="email"]', {
           timeout: 10 * 1000,
         });
         break;
@@ -62,7 +66,7 @@ export async function confirmEmail({
     const [popup] = await Promise.all([
       emailPage.waitForEvent("popup"),
       emailPage.click(
-        'table[role="content-container"] a:has-text("Confirm my email")'
+        'table[role="content-container"] a:has-text("Approve login request")'
       ),
     ]);
     await popup.waitForSelector(

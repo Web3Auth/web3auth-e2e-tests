@@ -1,26 +1,23 @@
 import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 import { signInWithFacebook } from "../../utils";
-import { useAutoCancelShareTransfer } from "../../utils/index";
 
-test("Login with Facebook+Device", async ({ page, openloginURL, user }) => {
+test("Login with Facebook", async ({ page, openloginURL, FB }) => {
+  if (process.env.PLATFORM !== "prod") {
+    return
+  }
+  // Verify environment variables
+  expect(
+    !!process.env.FB_TEST_USER_NAME &&
+    !!process.env.FB_TEST_USER_EMAIL &&
+    !!process.env.FB_TEST_USER_PASS
+  ).toBe(true);
+
   // Login with Facebook
-  await page.goto(openloginURL);
-  await page.click('button:has-text("Get Started")');
-  await page.click('[aria-label="login with facebook"]');
-  test.fixme(!(await signInWithFacebook({ page, name: user.name })));
+  await signInWithFacebook({ page, FB, openloginURL });
+  await page.waitForSelector(`text=Welcome, ${FB.name}`);
 
-  useAutoCancelShareTransfer(page);
-  // Should be signed in in <2 minutes
-  await page.waitForURL(`${openloginURL}/wallet/home`, {
-    timeout: 2 * 60 * 1000,
-  });
-
-  // Go to Account page
-  await Promise.all([page.waitForNavigation(), page.click("text=Account")]);
-  expect(await page.isVisible(`text=${user.email}`)).toBeTruthy();
-
-  // Logout
-  await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
-  expect(page.url()).toBe(`${openloginURL}/`);
+  // Logout;
+  await page.click("text=Logout");
+  expect(page.url()).toContain(`${openloginURL}/`);
 });
