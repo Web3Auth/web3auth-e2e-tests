@@ -44,7 +44,7 @@ async function waitForTkeyRehydration(
   return new Promise(function (resolve) {
     page.on("console", (msg) => {
       console.log(msg)
-      //will check on the implementation,currently rehydrating tkey: 914.059814453125 ms is only displayed 
+      //will check on the implementation,currently rehydrating tkey: 914.059814453125 ms is only displayed
       // 120 state will change if the openlogin default state changes.
       // need better way to rehydrate or find if the object is empty
       if (msg.text().includes("e2e:tests:tkeyjson")) {
@@ -490,7 +490,7 @@ function findLink(links: Link[], text: string) {
   for (const link of links) {
     if (link.text === text) return link;
   }
- 
+
   return null;
 }
 
