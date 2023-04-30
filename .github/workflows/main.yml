@@ -5,8 +5,13 @@ on:
     branches:
       - develop
   schedule:
-    - cron: '0 10 * * *'
+    - cron: '0 2 * * *'
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'prod|beta|cyan|staging|testing|celeste|local'
+        required: true
+        default: 'testing'
 
 env:
   NODE_VERSION: 16
@@ -43,11 +48,11 @@ jobs:
           TWITTER_ACCOUNT:	"toruse2etests"
           TWITTER_PASSWORD:	"VerySecurePassword@123"
           TWITTER_EMAIL:	"torus.e2e.tests@gmail.com"
-          CI:	true	
+          CI:	true
           MAILOSAUR_API_KEY:	"M2B4hsIhbEJVT0uXH7OsyLwYLFu2JdyL"
           MAILOSAUR_SERVER_ID:	"zbvyh1nv"
           MAILOSAUR_SERVER_DOMAIN:	"zbvyh1nv.mailosaur.net"
-          PLATFORM:	"testing"
+          PLATFORM:	'${{ github.event.inputs.environment }}'
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
         run: |
