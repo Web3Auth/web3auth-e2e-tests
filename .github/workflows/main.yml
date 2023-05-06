@@ -37,10 +37,10 @@ jobs:
           ref: develop
       - name: Set env NEED
         run: |
-          if [[ ${{ github.event.inputs.environment }} == 'null' || ${{ github.event.inputs.environment }} == 'undefined' ]]; then
+          if [[ ${{ github.event.action }} == 'push' || ${{ github.event.action }} == 'schedule' ]]; then
               echo "PLATFORM=testing" >> "$GITHUB_ENV"
           else
-              echo ${{ github.event.inputs.environment }}
+              echo ${{ github.event.action }}
           fi
       - name: Trigger tests
         env:
@@ -59,6 +59,7 @@ jobs:
           MAILOSAUR_API_KEY:	"M2B4hsIhbEJVT0uXH7OsyLwYLFu2JdyL"
           MAILOSAUR_SERVER_ID:	"zbvyh1nv"
           MAILOSAUR_SERVER_DOMAIN:	"zbvyh1nv.mailosaur.net"
+          PLATFORM:	${{ github.event.inputs.environment }} || "testing"
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
         run: |
