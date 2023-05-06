@@ -36,12 +36,8 @@ jobs:
         with:
           ref: develop
       - name: Set env NEED
-        run: |
-          if [[ ${{ github.event.action }} == 'push' || ${{ github.event.action }} == 'schedule' ]]; then
-              echo "PLATFORM=testing" >> "$GITHUB_ENV"
-          else
-              echo ${{ github.event.action }}
-          fi
+        run: echo ${{ github.event.action }}
+
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
