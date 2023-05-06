@@ -37,7 +37,6 @@ jobs:
           ref: develop
       - name: Set env NEED
         run: echo ${{ github.event.action }}
-
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
@@ -52,6 +51,7 @@ jobs:
           TWITTER_PASSWORD:	"VerySecurePassword@123"
           TWITTER_EMAIL:	"torus.e2e.tests@gmail.com"
           CI:	true
+          PLATFORM:	${{ github.event.inputs.environment || "testing" }}
           MAILOSAUR_API_KEY:	"M2B4hsIhbEJVT0uXH7OsyLwYLFu2JdyL"
           MAILOSAUR_SERVER_ID:	"zbvyh1nv"
           MAILOSAUR_SERVER_DOMAIN:	"zbvyh1nv.mailosaur.net"
