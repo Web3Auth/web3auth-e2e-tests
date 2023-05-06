@@ -35,6 +35,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: develop
+      - name: Set env NEED
+        run: |
+          if [[ ${{ github.event.inputs.environment }} == 'null' || ${{ github.event.inputs.environment }} == 'undefined' ]]; then
+              echo "PLATFORM=testing" >> "$GITHUB_ENV"
+          else
+              echo ${{ github.event.inputs.environment }}
+          fi
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
@@ -52,7 +59,6 @@ jobs:
           MAILOSAUR_API_KEY:	"M2B4hsIhbEJVT0uXH7OsyLwYLFu2JdyL"
           MAILOSAUR_SERVER_ID:	"zbvyh1nv"
           MAILOSAUR_SERVER_DOMAIN:	"zbvyh1nv.mailosaur.net"
-          PLATFORM:	${{ github.event.inputs.environment || "testing" }}
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
         run: |
