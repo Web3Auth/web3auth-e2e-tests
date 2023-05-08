@@ -26,7 +26,7 @@
   "devDependencies": {
     "@reportportal/agent-js-playwright": "^5.0.11",
     "@tsconfig/node16": "^1.0.3",
-    "@types/node": "^16",
+    "@types/node": "^20",
     "@types/serve-handler": "^6.1.1",
     "lighthouse": "^9.6.3",
     "prettier": "^2.7.1",
