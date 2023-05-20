@@ -4,6 +4,7 @@ import config from "./../index.config"
 import { Link } from "mailosaur/lib/models";
 import Mailosaur from "mailosaur";
 import { version } from "os";
+import { generate } from "generate-password";
 
 export const DEFAULT_PLATFORM = "cyan"
 export var openloginversion= process.env.APPVERSION || 'v3';
@@ -17,6 +18,10 @@ const env_map: { [key: string]: string } = {
   celeste: "https://celeste.openlogin.com",
   local: "http://localhost:3000"
 };
+const randomEmail = generate({
+  length: 20,
+  lowercase: true,
+});
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
@@ -269,6 +274,15 @@ async function signInWithGitHub({
   }
 }
 
+async function authorizeWithGitHub({ page }:{  page: Page }){
+  try {
+    await page.waitForSelector("text=Authorize TorusLabs", {
+      timeout: 10 * 1000,
+    });
+    await page.click('button:has-text("Authorize TorusLabs")',{timeout: 9000});
+  } catch { }
+}
+
 async function signInWithTwitter({
   page,
   twitter,
@@ -324,9 +338,48 @@ async function signInWithTwitter({
       await page.click('input#allow')
     } catch {
     }
-    await useAutoCancelShareTransfer(page)
-    await useAutoCancel2FASetup(page)
-    await page.waitForURL(`${openloginURL}/wallet/home`)
+  }, 3 * 60 * 1000)
+}
+
+async function signInWithTwitterWithoutLogin({
+  page,
+  twitter,
+  openloginURL
+}: {
+  page: Page;
+  twitter: {
+    account: string;
+    email: string;
+    password: string;
+  },
+  openloginURL: string;
+}): Promise<void> {
+
+  await page.waitForSelector('text="Sign in to Twitter"');
+  await page.fill('input[autocomplete="username"]', twitter.account);
+  await page.click(`div[role="button"] span:has-text("Next")`);
+  await page.fill('input[type="password"]', twitter.password);
+
+  // Login tests are slow tests, >1 min is consumed in the redirection loop from the social provider to finally reach wallet/home. Hence the max test timeout.
+  // FLOW: social-redirections => [host]/auth(SLOW) => [host]/register(SLOW) => [host]/wallet/home
+  await slowOperation(async () => {
+    await page.click(`div[role="button"] span:has-text("Log in")`)
+    try {
+      // smaller timeout, we don't want to wait here for longer
+      await page.waitForSelector('text="Help us keep your account safe."', {
+        timeout: 1000
+      })
+      await page.fill('input[autocomplete="email"]', twitter.email);
+      await page.click(`div[role="button"] span:has-text("Next")`);
+    } catch (err) {
+    }
+    try {
+      await page.waitForSelector('input#allow', {
+        timeout: 1000
+      })
+      await page.click('input#allow')
+    } catch {
+    }
   }, 3 * 60 * 1000)
 }
 
@@ -353,10 +406,6 @@ async function signInWithFacebook({
   };
   openloginURL: string
 }): Promise<void> {
-  await page.goto(openloginURL);
-  await page.click('button:has-text("Get Started")');
-  await page.click('[aria-label="login with facebook"]');
-
   await page.waitForURL("https://www.facebook.com/**");
   await page.isVisible("text=Log in")
   await page.waitForSelector('#email')
@@ -368,24 +417,10 @@ async function signInWithFacebook({
   await page.waitForSelector('[placeholder="Password"]')
   await page.fill('[placeholder="Password"]', FB.password)
   await page.click(`button:has-text("Login"), [name="login"]`)
-  await slowOperation(async () => {
-    await page.click(
-      `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
-    )
-    try{
-      await page.waitForURL(`${openloginURL}/tkey-input*`, {
-        timeout: 1 * 60 * 1000,
-      });
-      await page.fill('[placeholder="Enter backup phrase"]', FB.backupPhrase);
-      await page.click('button:has-text("Confirm")');
-    }
-    catch(err){
-
-    }
-    await useAutoCancelShareTransfer(page);
-    await useAutoCancel2FASetup(page);
-    await page.waitForURL(`${openloginURL}/wallet/home`)
-  }, 3 * 60 * 1000)
+  try{
+  await page.waitForSelector(`button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`)
+  await page.click(`button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`)
+  }catch{}
 }
 
 async function signInWithDiscord({ page, discord }: {
@@ -500,9 +535,9 @@ async function signInWithEmail(
   browser: Browser
 ): Promise<boolean> {
   try {
-    await page.click('button:has-text("Get Started")');
-    await page.fill('[placeholder="Email"]', email);
-    await page.click('button:has-text("Continue with Email")');
+    console.log("Email:" +  email)
+    await page.fill('#passwordless-email', email);
+    await page.getByLabel('Connect with Phone or Email').click();
     // await page.waitForSelector("text=email has been sent");
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
     const mailBox = await mailosaur.messages.get(
@@ -535,8 +570,40 @@ async function signInWithEmail(
   }
 }
 
+async function signInWithMobileNumber({
+  page,
+  user,
+  browser
+}: {
+  page: Page;
+  browser: Browser
+  user: {
+    mobileNumberForLogin: string,
+    mobileNumberForSMS: string
+  }
+}){
+    await delay(20000);
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto("https://receive-sms.cc/Finland-Phone-Number/"+ user.mobileNumberForSMS);
+    try{
+    await page2.waitForSelector('div:has-text("is your verification code on Web3Auth")');
+    }catch{
+      await page2.reload()
+    }
+    let otp =  await page2.locator("xpath=.//div[contains(text(),'is your verification code on Web3Auth')]/span").first().textContent() || '';
+    await page2.close();
+    await page.locator("xpath=.//input[@aria-label='Please enter verification code. Digit 1']").fill(otp);
+}
+
 function generateRandomEmail() {
-  return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+  return randomEmail +`${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+}
+
+function delay(time: number | undefined) {
+  return new Promise(function(resolve) {
+      setTimeout(resolve, time)
+  });
 }
 
 export {
@@ -558,5 +625,8 @@ export {
   catchErrorAndExit,
   waitForSessionStorage,
   signInWithGitHub,
+  signInWithTwitterWithoutLogin,
+  authorizeWithGitHub,
+  signInWithMobileNumber,
   env_map,
 };

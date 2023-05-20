@@ -35,8 +35,21 @@ const indexConfig: PlaywrightTestConfig = {
     // trace: {
     //   mode: "retain-on-failure",
     // },
-  }
-  
+  },
+  projects: [
+    {
+      name: 'chromium',
+
+      use: {
+        ...devices['Desktop Chromium'],
+        viewport: null,
+
+        launchOptions: {
+          args: ["--start-maximized"]
+      }
+      },
+    }]
+
 };
 
 export default indexConfig;
