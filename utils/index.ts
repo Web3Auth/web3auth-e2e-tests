@@ -5,7 +5,7 @@ import { Link } from "mailosaur/lib/models";
 import Mailosaur from "mailosaur";
 import { version } from "os";
 import { generate } from "generate-password";
-
+const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 export const DEFAULT_PLATFORM = "cyan"
 export var openloginversion= process.env.APPVERSION || 'v3';
 const env_map: { [key: string]: string } = {
@@ -596,6 +596,51 @@ async function signInWithMobileNumber({
     await page.locator("xpath=.//input[@aria-label='Please enter verification code. Digit 1']").fill(otp);
 }
 
+async function signInWithDapps({
+  page,
+  browser,
+  testEmail
+}: {
+  page: Page;
+  browser: Browser;
+  testEmail: string;
+}){
+  const context2 = await browser.newContext();
+  const context3 = await browser.newContext();
+  const page2 = await context2.newPage();
+    await page2.goto("https://demo-openlogin.web3auth.io/");
+    await page2.locator('select.select').last().selectOption('email_passwordless')
+    await page2.fill('[placeholder="Enter an email"]', testEmail);
+    await page2.click('button:has-text("Login with email passwordless")');
+    const newEmail = await mailosaur.messages.get(
+      process.env.MAILOSAUR_SERVER_ID || "",
+      {
+        sentTo: testEmail,
+      },
+      {
+        timeout: 20 * 1000
+      }
+    );
+    expect(newEmail.subject).toContain("Verify your email");
+    let link = findLink(newEmail.html?.links || [], "Approve login request");
+    if (!link) {
+      link = findLink(newEmail.html?.links || [], "Verify my email");
+    }
+    expect(link?.text).toContain("Approve login request");
+    const href = link?.href || "";
+    const page3 = await context3.newPage();
+    await page3.goto(href);
+    await page3.waitForSelector(
+      "text=Close this and return to your previous window",
+      {
+        timeout: 10000,
+      }
+    );
+    await page3.close();
+    await page2.getByLabel('Set up 2FA').waitFor();
+    await page2.close()
+}
+
 function generateRandomEmail() {
   return randomEmail +`${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 }
@@ -629,4 +674,5 @@ export {
   authorizeWithGitHub,
   signInWithMobileNumber,
   env_map,
+  signInWithDapps
 };
