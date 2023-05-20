@@ -3,7 +3,7 @@ import { AccountsPage } from './AccountsPage';
 import Mailosaur from "mailosaur";
 import { DEFAULT_PLATFORM, env_map } from "../../utils/index";
 import { generate } from "generate-password";
-import { signInWithGitHub } from "../../utils";
+import { signInWithGitHub, signInWithMobileNumber } from "../../utils";
 import { validateMnemonic } from "bip39";
 import {
   useAutoCancel2FASetup,
@@ -22,14 +22,13 @@ import {
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
-const twitter = {
-  account: process.env.TWITTER_ACCOUNT || "",
-  email: process.env.TWITTER_EMAIL || "",
-  password: process.env.TWITTER_PASSWORD || "",
-};
 const github = {
   email: process.env.GITHUB_USER_EMAIL || "",
   password: process.env.GITHUB_USER_PASSWORD || ""
+};
+const user = {
+  mobileNumberForLogin: "+358-4573986537",
+  mobileNumberForSMS: "3584573986537"
 };
 
 const testEmail =  generateRandomEmail();
@@ -164,6 +163,22 @@ test(`should display 2FA enable window for single factor account`, async ({  }) 
     });
     await accountsPage.addPasswordShare(randomPassword);
     await page.reload();
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    expect(await page.getByText('2 / 5').isVisible());
+  });
+
+  test(`should be able to change social factor`, async ({ browser }) => {
+    const accountsPage = new AccountsPage(page);
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForURL(`${openloginURL}/wallet/account`, {
+      waitUntil: "load",
+    });
+    await accountsPage.changeSocialFactor();
+    await page.fill('#passwordless-email', user.mobileNumberForLogin);
+    await page.getByLabel('Connect with Phone').click();
+    await signInWithMobileNumber({ page, user, browser })
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });

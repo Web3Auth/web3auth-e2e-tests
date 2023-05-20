@@ -592,6 +592,7 @@ async function signInWithMobileNumber({
       await page2.reload()
     }
     let otp =  await page2.locator("xpath=.//div[contains(text(),'is your verification code on Web3Auth')]/span").first().textContent() || '';
+    console.log("otp:"+ otp)
     await page2.close();
     await page.locator("xpath=.//input[@aria-label='Please enter verification code. Digit 1']").fill(otp);
 }

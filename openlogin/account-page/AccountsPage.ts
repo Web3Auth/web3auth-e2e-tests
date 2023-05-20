@@ -153,6 +153,10 @@ export class AccountsPage {
     await this.page.locator("text=Password successfully changed").isVisible();
   }
 
+  async changeSocialFactor() {
+    await this.page.locator('span:has-text("Change Social Factor")').click();
+  }
+
   async clickChangePassword() {
     await this.page.locator('button:has-text("Change Password")').click();
   }
