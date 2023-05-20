@@ -1,5 +1,5 @@
 import { test, expect , Page} from '@playwright/test';
-import { DEFAULT_PLATFORM, env_map, signInWithTwitterWithoutLogin } from "../../utils/index";
+import { DEFAULT_PLATFORM, env_map, signInWithTwitterWithoutLogin, useAutoCancel2FASetup } from "../../utils/index";
 import { signInWithTwitter,authorizeWithGitHub } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import { AccountsPage } from '../../openlogin/account-page/AccountsPage';
@@ -16,6 +16,7 @@ test("Login with twitter", async ({ page }) => {
   await page.goto(openloginURL);
   await accountsPage.addSocialRecoveryFactor("twitter");
   await signInWithTwitterWithoutLogin({ page, twitter, openloginURL })
+  await useAutoCancel2FASetup(page);
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     waitUntil: "load",
   });

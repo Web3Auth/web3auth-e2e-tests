@@ -25,9 +25,9 @@ const indexConfig: PlaywrightTestConfig = {
   reporter: process.env.CI ? [['@reportportal/agent-js-playwright', RPconfig]] : [['html']],
   use: {
     // Emulate browsing in San Francisco, CA, USA
-    locale: "en-US",
-    timezoneId: "America/Los_Angeles",
-    geolocation: { latitude: 37.773972, longitude: -122.431297 },
+    locale: "en-GB",
+    timezoneId: "IST",
+    geolocation: { latitude: 13.081585811267423, longitude: 80.27697382248456 },
 
     // Report failure(s)
     screenshot: "only-on-failure",

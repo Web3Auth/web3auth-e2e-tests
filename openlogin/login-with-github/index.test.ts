@@ -1,6 +1,6 @@
 import { test, expect , Page} from '@playwright/test';
 import { DEFAULT_PLATFORM, env_map } from "../../utils/index";
-import { signInWithGitHub,authorizeWithGitHub } from "../../utils";
+import { signInWithGitHub,authorizeWithGitHub, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import { AccountsPage } from '../../openlogin/account-page/AccountsPage';
 
@@ -16,6 +16,7 @@ test("Login with Github+Device skipped since it requires captcha solving", async
   await page.goto(openloginURL);
   await accountsPage.addSocialRecoveryFactor("GitHub");
   await authorizeWithGitHub({page});
+  await useAutoCancel2FASetup(page);
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     waitUntil: "load",
   });

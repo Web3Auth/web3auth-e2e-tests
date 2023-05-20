@@ -125,8 +125,8 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   const promise = new Promise<void>(async (resolve) => {
     while (!stopped) {
       try {
-        if (await page.isVisible("text=secure your account"))
-          await page.click('button:has-text("Maybe next time")');
+        if (await page.getByLabel('Set up 2FA').isVisible())
+          await page.locator("xpath=.//button").first().click();
       } catch { }
     }
     resolve();
@@ -675,5 +675,6 @@ export {
   authorizeWithGitHub,
   signInWithMobileNumber,
   env_map,
-  signInWithDapps
+  signInWithDapps,
+  delay
 };
