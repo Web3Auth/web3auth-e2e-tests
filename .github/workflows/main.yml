@@ -49,9 +49,9 @@ jobs:
           TWITTER_PASSWORD:	"VerySecurePassword@123"
           TWITTER_EMAIL:	"torus.e2e.tests@gmail.com"
           CI:	true
-          MAILOSAUR_API_KEY:	"M2B4hsIhbEJVT0uXH7OsyLwYLFu2JdyL"
-          MAILOSAUR_SERVER_ID:	"zbvyh1nv"
-          MAILOSAUR_SERVER_DOMAIN:	"zbvyh1nv.mailosaur.net"
+          MAILOSAUR_API_KEY:	"vYvsbJM6DAodSTdGHAnSbH7e5VAH2WcT"
+          MAILOSAUR_SERVER_ID:	"r92dvfcg"
+          MAILOSAUR_SERVER_DOMAIN:	"r92dvfcg.mailosaur.net"
           PLATFORM:	'${{ github.event.inputs.environment }}'
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
