@@ -32,7 +32,8 @@ const user = {
 const testEmail =  "demo@r92dvfcg.mailosaur.net";
 const backupPhrase= readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString().trim();
 
-test.skip("Login as an existing user with recovery phrase as 2FA", async ({ page, browser }) => {
+test("Login as an existing user with recovery phrase as 2FA", async ({ page, browser }) => {
+  test.slow()
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
   await signInWithEmail(page, testEmail, browser);
