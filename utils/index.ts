@@ -516,7 +516,8 @@ async function signInWithEmail(
     console.log("Email:" +  email)
     await page.fill('#passwordless-email', email);
     await page.getByLabel('Connect with Phone or Email').click();
-    // await page.waitForSelector("text=email has been sent");
+    await page.waitForSelector("text=Verify your email");
+    await delay(3000);
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
     const mailBox = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",

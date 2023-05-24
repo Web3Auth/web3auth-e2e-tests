@@ -67,6 +67,12 @@ export class AccountsPage {
     await this.page.click('button:has-text("Verify")');
   }
 
+  async verifySocialFactor() {
+    await this.page.waitForSelector('xpath=.//*[text()="Continue with sms"]');
+    await this.page.click('xpath=.//*[text()="Continue with sms"]');
+  }
+
+
   async setRecoveryPassword(password: string) {
     await this.page.fill('#openlogin-password', password);
     await this.page.fill('#openlogin-confirm-password', password);
