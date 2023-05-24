@@ -11,7 +11,7 @@ const FB = {
   email: "torus.e2e.gb@gmail.com",
   password: process.env.GITHUB_USER_PASSWORD || "",
   firstName: "Torus",
-  backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString(),
+  backupPhrase: ""
 };
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 

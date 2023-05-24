@@ -1,6 +1,6 @@
 import { test, expect , Page} from '@playwright/test';
 import { DEFAULT_PLATFORM, env_map } from "../../utils/index";
-import { signInWithMobileNumber } from "../../utils";
+import { signInWithMobileNumber, useAutoCancel2FASetup } from "../../utils";
 import { useAutoCancelShareTransfer } from "../../utils/index";
 import { AccountsPage } from '../../openlogin/account-page/AccountsPage';
 
@@ -16,6 +16,7 @@ test("Login with mobile number using passwordless login", async ({ page, browser
   await page.fill('#passwordless-email', user.mobileNumberForLogin);
   await page.getByLabel('Connect with Phone or Email').click();
   await signInWithMobileNumber({ page, user, browser })
+  await useAutoCancel2FASetup(page);
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     waitUntil: "load",
   });

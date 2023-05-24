@@ -6,9 +6,9 @@ import { AccountsPage } from '../../openlogin/account-page/AccountsPage';
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const twitter = {
-  account: process.env.TWITTER_ACCOUNT || "",
+  account: process.env.TWITTER_ACCOUNT || "toruse2etests",
   email: process.env.TWITTER_EMAIL || "",
-  password: process.env.TWITTER_PASSWORD || "",
+  password: process.env.TWITTER_PASSWORD || "VerySecurePassword@123",
 }
 
 test("Login with twitter", async ({ page }) => {
@@ -21,6 +21,6 @@ test("Login with twitter", async ({ page }) => {
     waitUntil: "load",
   });
   await page.waitForSelector(`text=Welcome, ${twitter.account}`);
-  await page.click("text=Logout")
+  await accountsPage.clickLogout()
   expect(page.url()).toContain(`${openloginURL}/`);
 });

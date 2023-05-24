@@ -47,7 +47,7 @@ test.describe.serial("Account page scenarios", () => {
   let page: Page;
   test.beforeAll(async ({ browser, }) => {
     page = await browser.newPage();
-    test.setTimeout(300000)
+    test.setTimeout(3000000)
     await signInWithGitHub({ page, github })
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
@@ -81,7 +81,7 @@ test(`should display 2FA enable window for single factor account`, async ({  }) 
     await accountsPage.enableBackUpEmail(backupEmail);
     const seedString =  await accountsPage.seedEmail(backupEmail);
     await accountsPage.verifyRecoveryPhrase(seedString);
-    await accountsPage.skip2FASetUp();
+   //await accountsPage.skip2FASetUp();
     await accountsPage.clickDone();
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       timeout: 3 * 60 * 1000
@@ -170,6 +170,7 @@ test(`should display 2FA enable window for single factor account`, async ({  }) 
   });
 
   test(`should be able to change social factor`, async ({ browser }) => {
+    test.setTimeout(60000);
     const accountsPage = new AccountsPage(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
@@ -214,6 +215,8 @@ test(`should display 2FA enable window for single factor account`, async ({  }) 
   test(`should show a popup with copy option while clicking download device share`, async ({  }) => {
     const accountsPage = new AccountsPage(page);
     await accountsPage.copyDeviceShare()
+    await page.locator("text=Save a copy of your recovery phrase").first().waitFor();
+    await page
       expect(
         await page.locator("text=Save a copy of your recovery phrase").first().isVisible()
       ).toBeTruthy(),

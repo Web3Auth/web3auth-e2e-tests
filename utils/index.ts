@@ -10,7 +10,7 @@ export const DEFAULT_PLATFORM = "cyan"
 export var openloginversion= process.env.APPVERSION || 'v3';
 const env_map: { [key: string]: string } = {
 
-  prod: "https://app.openlogin.com",
+  prod: "https://app.openlogin.com/v4",
   beta: "https://beta.openlogin.com",
   cyan: "https://cyan.openlogin.com",
   staging: "https://staging.openlogin.com",
@@ -355,32 +355,10 @@ async function signInWithTwitterWithoutLogin({
   openloginURL: string;
 }): Promise<void> {
 
-  await page.waitForSelector('text="Sign in to Twitter"');
-  await page.fill('input[autocomplete="username"]', twitter.account);
-  await page.click(`div[role="button"] span:has-text("Next")`);
+  await page.waitForSelector('text=Authorise Web3Auth to access your account?');
+  await page.fill('#username_or_email', twitter.account);
   await page.fill('input[type="password"]', twitter.password);
-
-  // Login tests are slow tests, >1 min is consumed in the redirection loop from the social provider to finally reach wallet/home. Hence the max test timeout.
-  // FLOW: social-redirections => [host]/auth(SLOW) => [host]/register(SLOW) => [host]/wallet/home
-  await slowOperation(async () => {
-    await page.click(`div[role="button"] span:has-text("Log in")`)
-    try {
-      // smaller timeout, we don't want to wait here for longer
-      await page.waitForSelector('text="Help us keep your account safe."', {
-        timeout: 1000
-      })
-      await page.fill('input[autocomplete="email"]', twitter.email);
-      await page.click(`div[role="button"] span:has-text("Next")`);
-    } catch (err) {
-    }
-    try {
-      await page.waitForSelector('input#allow', {
-        timeout: 1000
-      })
-      await page.click('input#allow')
-    } catch {
-    }
-  }, 3 * 60 * 1000)
+  await page.click("xpath=.//input[@value='Sign In']")
 }
 
 export async function slowOperation(op: () => Promise<any>, timeout?: number) {
@@ -582,7 +560,7 @@ async function signInWithMobileNumber({
     mobileNumberForSMS: string
   }
 }){
-    await delay(20000);
+    await delay(15000);
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();
     await page2.goto("https://receive-sms.cc/Finland-Phone-Number/"+ user.mobileNumberForSMS);

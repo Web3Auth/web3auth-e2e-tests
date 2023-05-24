@@ -20,6 +20,6 @@ test.skip("Login with Discord - skipped since it requires captcha solving", asyn
   });
   expect(page.url()).toBe(`${openloginURL}/wallet/home`);
   await page.waitForSelector(`text=Welcome, ${discord.email}`);
-  await Promise.all([page.waitForNavigation(), page.click("text=Logout")]);
+  await accountsPage.clickLogout();
   expect(page.url()).toBe(`${openloginURL}/`);
 });
