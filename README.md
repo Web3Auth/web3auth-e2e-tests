@@ -4,6 +4,12 @@ End-to-end testing for Torus products.
 [Torus]
 [Web3Auth]
 
+### Built With
+
+- [Playwright](https://playwright.dev)
+- [Typescript](https://www.typescriptlang.org/)
+- [Lighthouse](https://developers.google.com/web/tools/lighthouse)
+
 ## Getting Started
 
 ### Prerequisites
@@ -31,6 +37,8 @@ npm install
 3. For first time installation run below command to download required browsers
 
 ```sh
+npm i -D @playwright/test
+# install supported browsers
 npx playwright install
 ```
 
