@@ -14,7 +14,7 @@ The following software are required:
   ```sh
   https://nodejs.org/en/download/
   ```
-  
+
 ### Installation
 
 1. Clone the repo using below URL
@@ -68,31 +68,9 @@ Duplicate `openlogin/homepage/` and `.github/workflows/openlogin.homepage.yml`, 
 
 ### OpenLogin
 
-[![OpenLogin - Homepage](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.homepage.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.homepage.yml)
-
-[![OpenLogin - Google Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-google.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-google.yml)
-
-[![OpenLogin - Facebook Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-facebook.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-facebook.yml)
-
-[![OpenLogin - Facebook Login 2FA](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-facebook-2fa.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-facebook-2fa.yml)
-
-[![OpenLogin - Discord Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-discord.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-discord.yml)
-
-[![OpenLogin - Passwordless Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-passwordless.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-passwordless.yml)
+[![OpenLogin Test Run](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/main.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/main.yml)
 
 [![OpenLogin - Lighthouse](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/lighthouse.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/lighthouse.yml)
-
-[![OpenLogin - Existing v2 User Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.existing-v2-user-login.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.existing-v2-user-login.yml)
-
-[![OpenLogin - GitHub Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-github.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.login-with-github.yml)
-
-[![OpenLogin - New v2 User Login](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.new-v2-user-login.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.new-v2-user-login.yml)
-
-[![OpenLogin - Setup 2fa](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.setup-2fa.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/openlogin.setup-2fa.yml)
-
-### Wallet
-
-[![Wallet - SDK](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/wallet.sdk.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/wallet.sdk.yml)
 
 ### Select elements
 
@@ -102,15 +80,17 @@ Prefer text or accessibility selectors:
 await page.click("text=Welcome onboard");
 await page.click('button:has-text("Get Started")');
 await page.click('[aria-label="Continue with Facebook"]');
+await page.click("xpath=.//div[text()='Login']");
 ```
 
 See [full list of selectors](https://playwright.dev/docs/selectors/#quick-guide).
 
-[Framework Design]
+## Framework Execution Pattern
+
+![alt text](https://github.com/Web3Auth/web3auth-e2e-tests/blob/new_ui_openlogin/FW.png)
 
 <!-- Links -->
 
 [torus]: https://tor.us
 [Web3Auth]: https://app.openlogin.com/
 [Framework Design]: https://lucid.app/lucidchart/0a243786-3d3c-4dcb-b31d-f5c2a224ea42/edit?viewport_loc=-291%2C-13%2C2266%2C1146%2C0_0&invitationId=inv_8cb3a0f7-3930-427f-b82e-259d5b27fa99
-
