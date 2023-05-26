@@ -20,6 +20,8 @@ jobs:
   build:
     name: Run OpenLogin - tests
     strategy:
+      fail-fast: false
+      max-parallel: 1
       matrix:
         include:
           - env:
@@ -37,9 +39,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
         with:
-          ref: develop
-      - name: Set env NEED
-        run: echo ${{ github.event.action }}
+          ref: new_ui_openlogin
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
