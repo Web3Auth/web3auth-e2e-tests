@@ -10,7 +10,7 @@ const github = {
   password: process.env.GITHUB_USER_PASSWORD || ""
 };
 
-test("Login with Github+Device skipped since it requires captcha solving", async ({ page }) => {
+test.skip("Login with Github+Device skipped since it requires captcha solving", async ({ page }) => {
   const accountsPage = new AccountsPage(page);
   await signInWithGitHub({ page, github })
   await page.goto(openloginURL);

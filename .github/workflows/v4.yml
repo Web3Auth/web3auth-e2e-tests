@@ -25,6 +25,11 @@ jobs:
         browser: [chrome]
         cloudBuild: [TorusE2ETests]
         region: [ap-southeast-1]
+        include:
+          - env:
+              PLATFORM: prod
+          - env:
+              PLATFORM: aqua
     runs-on: macos-latest
     # env:
     #   PLATFORM: ${{ matrix.env }}
@@ -54,11 +59,12 @@ jobs:
           MAILOSAUR_API_KEY:	"M2B4hsIhbEJVT0uXH7OsyLwYLFu2JdyL"
           MAILOSAUR_SERVER_ID:	"zbvyh1nv"
           MAILOSAUR_SERVER_DOMAIN:	"zbvyh1nv.mailosaur.net"
-          PLATFORM: ${{ matrix.platform }}
+          PLATFORM: ${{ matrix.env.PLATFORM }}
+          APPVERSION: "v4"
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
         run: |
-          ls && npm install && npx playwright install && npm run test:config
+          echo "Platform: $PLATFORM" && ls && npm install && npx playwright install && npm run test:config
 
       - name: Upload test results
         if: always()

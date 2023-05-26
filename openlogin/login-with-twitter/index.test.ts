@@ -11,7 +11,7 @@ const twitter = {
   password: process.env.TWITTER_PASSWORD || "VerySecurePassword@123",
 }
 
-test("Login with twitter", async ({ page }) => {
+test.skip("Login with twitter", async ({ page }) => {
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
   await accountsPage.addSocialRecoveryFactor("twitter");

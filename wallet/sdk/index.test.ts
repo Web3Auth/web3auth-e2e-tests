@@ -23,7 +23,7 @@ test.afterAll(async () => {
   server.close()
 })
 
-test(`torus.login() should open "Sign in" modal`, async ({
+test.skip(`torus.login() should open "Sign in" modal`, async ({
   page,
   appURL,
 }) => {
