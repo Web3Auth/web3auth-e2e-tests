@@ -21,10 +21,6 @@ jobs:
     name: Run OpenLogin - tests
     strategy:
       matrix:
-        platform: [prod,aqua,cyan]
-        browser: [chrome]
-        cloudBuild: [TorusE2ETests]
-        region: [ap-southeast-1]
         include:
           - env:
               PLATFORM: prod
@@ -64,7 +60,7 @@ jobs:
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
         run: |
-          echo "Platform: $PLATFORM" && ls && npm install && npx playwright install && npm run test:config
+          echo "Platform: ${{ matrix.env.PLATFORM }}" && ls && npm install && npx playwright install && npm run test:config
 
       - name: Upload test results
         if: always()
