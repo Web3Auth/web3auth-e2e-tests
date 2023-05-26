@@ -6,16 +6,19 @@ import Mailosaur from "mailosaur";
 import { version } from "os";
 import { generate } from "generate-password";
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
-export const DEFAULT_PLATFORM = "cyan"
+export const DEFAULT_PLATFORM = "prod"
 export var openloginversion= process.env.APPVERSION || 'v3';
+console.log("Environment:" + process.env.PLATFORM)
+console.log("App Version:" + openloginversion)
 const env_map: { [key: string]: string } = {
 
-  prod: "https://app.openlogin.com/v4",
-  beta: "https://beta.openlogin.com",
-  cyan: "https://cyan.openlogin.com",
-  staging: "https://staging.openlogin.com",
-  testing: "https://testing.openlogin.com",
-  celeste: "https://celeste.openlogin.com",
+  prod: `https://app.openlogin.com/${openloginversion}`,
+  beta: `https://beta.openlogin.com/${openloginversion}`,
+  cyan: `https://cyan.openlogin.com/${openloginversion}`,
+  staging: `https://staging.openlogin.com/${openloginversion}`,
+  testing: `https://testing.openlogin.com/${openloginversion}`,
+  celeste: `https://celeste.openlogin.com/${openloginversion}`,
+  aqua: `https://aqua.openlogin.com/${openloginversion}`,
   local: "http://localhost:3000"
 };
 const randomEmail = generate({
@@ -587,11 +590,10 @@ async function signInWithDapps({
 }){
   const context2 = await browser.newContext();
   const context3 = await browser.newContext();
-  const page2 = await context2.newPage();
-    await page2.goto("https://demo-openlogin.web3auth.io/");
-    await page2.locator('select.select').last().selectOption('email_passwordless')
-    await page2.fill('[placeholder="Enter an email"]', testEmail);
-    await page2.click('button:has-text("Login with email passwordless")');
+    await page.goto("https://demo-openlogin.web3auth.io/");
+    await page.locator('select.select').last().selectOption('email_passwordless')
+    await page.fill('[placeholder="Enter an email"]', testEmail);
+    await page.click('button:has-text("Login with email passwordless")');
     const newEmail = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
       {
@@ -617,8 +619,9 @@ async function signInWithDapps({
       }
     );
     await page3.close();
-    await page2.getByLabel('Set up 2FA').waitFor();
-    await page2.close()
+    await page.getByLabel('Set up 2FA').waitFor();
+    await page.locator("xpath=.//button").first().click();
+    await delay(5000);
 }
 
 function generateRandomEmail() {

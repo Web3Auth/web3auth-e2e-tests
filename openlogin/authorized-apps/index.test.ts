@@ -61,7 +61,7 @@ test.describe.serial("Authorized Apps page scenarios", () => {
   }) => {
     test.setTimeout(120000);
     await signInWithDapps({ page, browser, testEmail })
-      await page.reload();
+      await page.goto(`${openloginURL}/wallet/apps`);
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
         timeout: 3 * 60 * 1000
       });

@@ -30,7 +30,7 @@ const user = {
 };
 
 const testEmail =  "demo@r92dvfcg.mailosaur.net";
-const backupPhrase= readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString().trim();
+const backupPhrase= readFileSync(path.resolve(__dirname, `backup-phrase-${process.env.PLATFORM}.txt`)).toString().trim();
 
 test("Login as an existing user with recovery phrase as 2FA", async ({ page, browser }) => {
   test.slow()
