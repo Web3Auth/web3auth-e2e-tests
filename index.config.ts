@@ -8,7 +8,11 @@ const RPconfig = {
   attributes: [
     {
       key: 'Environment',
-      value: process.env.PLATFORM || "production",
+      value: process.env.PLATFORM,
+    },
+    {
+      key: 'Version',
+      value: process.env.APPVERSION,
     }
   ],
   description: 'Web3auth e2e test run',
