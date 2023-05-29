@@ -7,7 +7,7 @@ import { version } from "os";
 import { generate } from "generate-password";
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 export const DEFAULT_PLATFORM = "prod"
-export var openloginversion= process.env.APPVERSION || 'v3';
+export var openloginversion= process.env.APP_VERSION || 'v3';
 console.log("Environment:" + process.env.PLATFORM)
 console.log("App Version:" + openloginversion)
 const env_map: { [key: string]: string } = {
