@@ -4,8 +4,12 @@ version: 0.2
 phases:
   install:
     commands:
-      - sudo apt-get update
-      - sudo apt-get --assume-yes install chromium-browser
+      # Get Chrome Information
+      - curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+      - echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+      - apt-get -y update
+      # Install chrome
+      - apt-get -y install google-chrome-stable
     runtime-versions:
       nodejs: 16
   pre_build:
