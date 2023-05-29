@@ -26,10 +26,6 @@ jobs:
         cloudBuild: [TorusE2ETests]
         region: [ap-southeast-1]
     runs-on: macos-latest
-    # env:
-    #   PLATFORM: ${{ matrix.env }}
-    # outputs:
-    #   conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2

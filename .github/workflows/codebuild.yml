@@ -1,8 +1,11 @@
 name: OpenLogin - TorusE2ETests - CodeBuild
 
 on:
-  # schedule:
-  #   - cron: "* 0 * * *"
+  push:
+    branches:
+      - new_ui_openlogin
+  schedule:
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 env:
@@ -12,11 +15,16 @@ jobs:
   build:
     name: Run OpenLogin - tests
     strategy:
+      fail-fast: false
+      max-parallel: 1
       matrix:
-        env: [testing]
-        browser: [chrome]
-        cloudBuild: [TorusE2ETests]
-        region: [ap-southeast-1]
+        include:
+          - env:
+              PLATFORM: prod
+          - env:
+              PLATFORM: cyan
+          - env:
+              PLATFORM: aqua
     runs-on: macos-latest
     # env:
     #   PLATFORM: ${{ matrix.env }}
@@ -53,7 +61,6 @@ jobs:
           AWS_DEFAULT_REGION: ${{ matrix.region }}
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: web3auth-e2e-tests
+          PLATFORM: ${{ matrix.env.PLATFORM }}
         run: |
           aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
-
-

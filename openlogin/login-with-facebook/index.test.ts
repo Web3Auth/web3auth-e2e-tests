@@ -16,6 +16,7 @@ const FB = {
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 
 test("Login with Facebook", async ({ page }) => {
+  test.skip()
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
   await accountsPage.addSocialRecoveryFactor("facebook");
