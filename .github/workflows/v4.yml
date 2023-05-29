@@ -3,7 +3,7 @@ name: OpenLogin - TorusE2ETests - GitHub
 on:
   push:
     branches:
-      - new_ui_openlogin
+      - develop
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
@@ -58,7 +58,7 @@ jobs:
           MAILOSAUR_SERVER_ID:	"r92dvfcg"
           MAILOSAUR_SERVER_DOMAIN:	"r92dvfcg.mailosaur.net"
           PLATFORM: ${{ matrix.env.PLATFORM }}
-          APPVERSION: "v4"
+          APP_VERSION: "v4"
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
         run: |
