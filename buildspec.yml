@@ -16,6 +16,7 @@ phases:
     commands:
       - echo Running Tests
       - chmod +x ./bin/*
+      - npx playwright install
       - npm run test:ci
   post_build:
     commands:
