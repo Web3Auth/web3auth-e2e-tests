@@ -11,12 +11,12 @@ phases:
       - cd /app
       - ls -la
       - npm install
-      - npx playwright install
+      - npm playwright install
   build:
     commands:
       - echo Running Tests
       - chmod +x ./bin/*
-      - npx playwright install
+      - npm playwright install
       - npm run test:ci
   post_build:
     commands:
