@@ -25,7 +25,7 @@ jobs:
               PLATFORM: cyan
           - env:
               PLATFORM: aqua
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     # env:
     #   PLATFORM: ${{ matrix.env }}
     # outputs:
