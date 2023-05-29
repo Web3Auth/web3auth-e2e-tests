@@ -11,6 +11,7 @@ const user = {
 };
 
 test("Login with mobile number using passwordless login", async ({ page, browser }) => {
+  test.slow()
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
   await page.fill('#passwordless-email', user.mobileNumberForLogin);
