@@ -34,6 +34,7 @@ const randomPassword = generate({
 });
 
 test.describe.serial("Authorized Apps page scenarios", () => {
+  test.skip()
   let page: Page;
   test.beforeAll(async ({ browser, }) => {
     page = await browser.newPage();

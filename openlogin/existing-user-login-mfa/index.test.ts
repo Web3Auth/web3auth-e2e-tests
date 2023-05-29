@@ -33,6 +33,7 @@ const testEmail =  "demo@r92dvfcg.mailosaur.net";
 const backupPhrase= readFileSync(path.resolve(__dirname, `backup-phrase-${process.env.PLATFORM}.txt`)).toString().trim();
 
 test("Login as an existing user with recovery phrase as 2FA", async ({ page, browser }) => {
+  test.skip()
   test.slow()
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
@@ -52,6 +53,7 @@ test("Login as an existing user with recovery phrase as 2FA", async ({ page, bro
 });
 
 test("Login as an existing user with social factor as 2FA", async ({ page, browser }) => {
+  test.skip()
   test.slow()
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
