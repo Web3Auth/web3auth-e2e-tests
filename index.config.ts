@@ -12,7 +12,7 @@ const RPconfig = {
     },
     {
       key: 'Version',
-      value: process.env.APPVERSION,
+      value: process.env.APP_VERSION,
     }
   ],
   description: 'Web3auth e2e test run',
