@@ -61,6 +61,5 @@ jobs:
           AWS_DEFAULT_REGION: ${{ matrix.region }}
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: web3auth-e2e-tests
-          PLATFORM: ${{ matrix.env.PLATFORM }}
         run: |
           aws codebuild start-build --project-name TorusE2ETests --image-override $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
