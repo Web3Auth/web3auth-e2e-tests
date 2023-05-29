@@ -11,6 +11,7 @@ phases:
       - cd /app
       - ls -la
       - npm install
+      - npx playwright install
   build:
     commands:
       - echo Running Tests
@@ -25,7 +26,7 @@ phases:
 #     files:
 #       - "index.html"
 #     base-directory: playwright-report
-#     file-format: "JUNITXML" 
+#     file-format: "JUNITXML"
 
 artifacts:
   files:
