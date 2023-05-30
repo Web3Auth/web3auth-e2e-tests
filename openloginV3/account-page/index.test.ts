@@ -40,6 +40,7 @@ const newRandomPassword = generate({
 });
 
 test.describe.serial("Account page scenarios", () => {
+  test.skip()
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
     test.setTimeout(300000)

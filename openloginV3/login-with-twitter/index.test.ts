@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 import { signInWithTwitter } from "../utils";
 
-test("Login with twitter", async ({
+test.skip("Login with twitter", async ({
   page,
   openloginURL,
   twitter

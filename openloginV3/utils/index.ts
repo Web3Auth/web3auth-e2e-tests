@@ -7,7 +7,7 @@ import { version } from "os";
 
 export const DEFAULT_PLATFORM = "cyan"
 console.log("Environment:" + process.env.PLATFORM)
-console.log("App Version:" + process.env.APPVERSION)
+console.log("App Version:" + process.env.APP_VERSION)
 const env_map: { [key: string]: string } = {
 
   prod: "https://app.openlogin.com",
