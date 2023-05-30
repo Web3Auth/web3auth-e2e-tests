@@ -507,7 +507,8 @@ async function signInWithEmail(
     await page.click('button:has-text("Get Started")');
     await page.fill('[placeholder="Email"]', email);
     await page.click('button:has-text("Continue with Email")');
-    // await page.waitForSelector("text=email has been sent");
+    await page.waitForSelector("text=Verify your email");
+    await delay(3000);
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
     const mailBox = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
@@ -543,6 +544,12 @@ function generateRandomEmail() {
   return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 }
 
+function delay(time: number | undefined) {
+  return new Promise(function(resolve) {
+      setTimeout(resolve, time)
+  });
+}
+
 export {
   useAutoCancelShareTransfer,
   useAutoCancel2FASetup,
@@ -562,5 +569,6 @@ export {
   catchErrorAndExit,
   waitForSessionStorage,
   signInWithGitHub,
+  delay,
   env_map,
 };

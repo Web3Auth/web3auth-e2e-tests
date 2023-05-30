@@ -17,7 +17,6 @@ const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const testEmail = generateRandomEmail();
 
 test.describe.serial("App authorization page scenarios", () => {
-  test.skip()
   // test(() => process.env.PLATFORM === "local"); //ping this test for local
   // test(() => process.env.PLATFORM === "testing"); //ping this test for testing env
   // test(() => process.env.PLATFORM === "cyan"); //ping this test for cyan since 100thieves is too slow.

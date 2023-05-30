@@ -14,10 +14,10 @@ import Mailosaur from "mailosaur";
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
-const testEmail = generateRandomEmail();
+const testEmail = `automation@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 
 test.describe.serial('Passwordless Login scenarios', () => {
-  test("check passwordless login", async ({ browser, openloginURL, page }) => {
+  test("check passwordless login @smoke", async ({ browser, openloginURL, page }) => {
     // Verify environment variables
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time
     expect(

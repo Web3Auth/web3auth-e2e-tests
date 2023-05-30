@@ -34,7 +34,6 @@ const passwordShare = generate({
 });
 
 test.describe.serial("tkey Input scenarios", () => {
-  test.skip()
   let page: Page;
 
   test.beforeAll(async ({ openloginURL }) => {

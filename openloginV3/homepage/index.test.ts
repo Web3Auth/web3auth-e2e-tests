@@ -16,7 +16,6 @@ const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const testEmail = generateRandomEmail();
 
 test.describe.serial("Home page scenarios", () => {
-  test.skip()
   let page: Page;
   test.beforeAll(async ({ openloginURL, browser }) => {
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time

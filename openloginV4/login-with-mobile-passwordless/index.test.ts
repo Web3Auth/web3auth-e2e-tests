@@ -10,7 +10,7 @@ const user = {
   mobileNumberForSMS: "3584573986537"
 };
 
-test("Login with mobile number using passwordless login", async ({ page, browser }) => {
+test("Login with mobile number using passwordless login @smoke", async ({ page, browser }) => {
   test.slow()
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
