@@ -18,7 +18,7 @@ env:
 
 jobs:
   build:
-    name: Run OpenLogin - tests
+    name: Run OpenLogin - tests - V3
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -70,3 +70,9 @@ jobs:
         with:
           path: test-results/*
           if-no-files-found: ignore
+      - name: Update Discord
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}

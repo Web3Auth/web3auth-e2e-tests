@@ -15,7 +15,8 @@ const env_map: { [key: string]: string } = {
   cyan: "https://cyan.openlogin.com",
   testing: "https://testing.openlogin.com",
   celeste: "https://celeste.openlogin.com",
-  local: "http://localhost:3000"
+  local: "http://localhost:3000",
+  aqua: "https://aqua.openlogin.com"
 };
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
