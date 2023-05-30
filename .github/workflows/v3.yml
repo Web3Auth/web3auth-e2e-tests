@@ -1,11 +1,11 @@
-name: OpenLogin - TorusE2ETests - GitHub - V4
+name: OpenLogin - TorusE2ETests - GitHub - V3
 
 on:
   push:
     branches:
-      - new_ui_openlogin
+      - develop
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 1 * * *'
   workflow_dispatch:
     inputs:
       environment:
@@ -31,15 +31,13 @@ jobs:
           - env:
               PLATFORM: aqua
     runs-on: macos-latest
-    # env:
-    #   PLATFORM: ${{ matrix.env }}
-    # outputs:
-    #   conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
         with:
-          ref: new_ui_openlogin
+          ref: develop
+      - name: Set env NEED
+        run: echo ${{ github.event.action }}
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
@@ -58,11 +56,11 @@ jobs:
           MAILOSAUR_SERVER_ID:	"r92dvfcg"
           MAILOSAUR_SERVER_DOMAIN:	"r92dvfcg.mailosaur.net"
           PLATFORM: ${{ matrix.env.PLATFORM }}
-          APP_VERSION: "v4"
+          APP_VERSION: "v3"
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
         run: |
-          echo "Platform: ${{ matrix.env.PLATFORM }}" && ls && npm install && npx playwright install && npm run testV4:config
+          echo "Platform: ${{ matrix.env.PLATFORM }}" && ls && npm install && npx playwright install && npm run testV3:config
 
       - name: Upload test results
         if: always()
