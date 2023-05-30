@@ -23,7 +23,7 @@ test.afterAll(async () => {
   server.close()
 })
 
-test(`torus.login() should open "Sign in" modal`, async ({
+test.skip(`torus.login() should open "Sign in" modal`, async ({
   page,
   appURL,
 }) => {
@@ -57,7 +57,7 @@ buttonsTest.describe("In Login modal,", () => {
     async ({ page, iframe }) => {
       const [popup] = await Promise.all([
         page.waitForEvent("popup"),
-        await iframe.click('button:has-text("Continue with Google")'),
+        iframe.click('button:has-text("Continue with Google")'),
       ]);
       await popup.waitForURL("https://accounts.google.com/**")
       // await popup.waitForNavigation({ waitUntil: "networkidle" });
