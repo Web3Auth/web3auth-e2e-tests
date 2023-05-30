@@ -77,3 +77,4 @@ jobs:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           title: ${{ github.workflow}} - ${{ matrix.env.PLATFORM }}
           status: ${{ job.status }}
+          nocontext: true
