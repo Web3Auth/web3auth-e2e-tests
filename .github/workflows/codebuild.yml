@@ -1,12 +1,7 @@
 ---
 name: OpenLogin - TorusE2ETests - CodeBuild
 on:
-  push:
-    branches:
-      - new_ui_openlogin
-  schedule:
-    - cron: 0 * * * *
-  workflow_dispatch: null
+  workflow_dispatch:
 env:
   NODE_VERSION: 16
 jobs:
