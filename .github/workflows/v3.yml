@@ -1,4 +1,4 @@
-name: OpenLogin - TorusE2ETests - GitHub - V3
+name: OpenLogin - E2ETests - V3
 
 on:
   push:
@@ -75,5 +75,5 @@ jobs:
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: ${{ github.workflow}}
+          title: ${{ github.workflow}} - ${{ matrix.env.PLATFORM }}
           status: ${{ job.status }}

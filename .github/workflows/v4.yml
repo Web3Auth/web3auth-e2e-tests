@@ -1,11 +1,11 @@
-name: OpenLogin - TorusE2ETests - GitHub
+name: OpenLogin - E2ETests - V4
 
 on:
   push:
     branches:
-      - develop
+      - new_ui_openlogin
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 1 * * *'
   workflow_dispatch:
     inputs:
       environment:
@@ -18,13 +18,18 @@ env:
 
 jobs:
   build:
-    name: Run OpenLogin - tests
+    name: Run OpenLogin - tests - V4
     strategy:
+      fail-fast: false
+      max-parallel: 1
       matrix:
-        env: [testing]
-        browser: [chrome]
-        cloudBuild: [TorusE2ETests]
-        region: [ap-southeast-1]
+        include:
+          - env:
+              PLATFORM: prod
+          - env:
+              PLATFORM: cyan
+          - env:
+              PLATFORM: aqua
     runs-on: macos-latest
     # env:
     #   PLATFORM: ${{ matrix.env }}
@@ -34,7 +39,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
         with:
-          ref: develop
+          ref: new_ui_openlogin
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
@@ -52,11 +57,12 @@ jobs:
           MAILOSAUR_API_KEY:	"vYvsbJM6DAodSTdGHAnSbH7e5VAH2WcT"
           MAILOSAUR_SERVER_ID:	"r92dvfcg"
           MAILOSAUR_SERVER_DOMAIN:	"r92dvfcg.mailosaur.net"
-          PLATFORM:	'${{ github.event.inputs.environment }}'
+          PLATFORM: ${{ matrix.env.PLATFORM }}
+          APP_VERSION: "v4"
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
         run: |
-          ls && npm install && npx playwright install && npm run test:config
+          echo "Platform: ${{ matrix.env.PLATFORM }}" && ls && npm install && npx playwright install && npm run testV4:config
 
       - name: Upload test results
         if: always()
@@ -64,3 +70,11 @@ jobs:
         with:
           path: test-results/*
           if-no-files-found: ignore
+      - name: Update Discord
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: ${{ github.workflow}} - ${{ matrix.env.PLATFORM }}
+          status: ${{ job.status }}
+          nocontext: true
