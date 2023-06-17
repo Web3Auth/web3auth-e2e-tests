@@ -63,6 +63,7 @@ export class AccountsPage {
 }
 
   async verifyRecoveryPhrase(seedString: string) {
+    await this.page.locator('[placeholder="Paste your Recovery Factor"]').clear();
     await this.page.fill('[placeholder="Paste your Recovery Factor"]', seedString);
     await this.page.click('button:has-text("Verify")');
   }
@@ -132,6 +133,9 @@ export class AccountsPage {
     await this.page.fill('[placeholder="Enter recovery email"]', testEmail);
   }
 
+  async verifyErrorMessage(message: string) {
+    expect(await this.page.isVisible(`xpath=.//*[text()='${message}']`)).toBeTruthy();
+  }
 
   async verifyFactorsSetUp(factorcount: string) {
     expect(await this.page.isVisible("text=Factor 1: Social Login")).toBeTruthy();
@@ -147,12 +151,30 @@ export class AccountsPage {
     await this.page.waitForTimeout(5000);
   }
 
+  async verifyRecoveryEmailDetails(email: string) {
+    expect(await this.page.locator(`xpath=.//input[@aria-placeholder='TextField Placeholder']`).textContent()).toContain(email);
+  }
+
+  async verifySocialFactorDetails(details: string) {
+    expect(await this.page.isVisible(`text=${details}`)).toBeTruthy();
+  }
+
   async copyEmailRecoveryShare() {
     await this.page.click('button[aria-label="copy recovery phrase"]');
   }
 
-  async addPasswordShare(password: string) {
+  async verifyPasswordRequirements(password: string) {
+    await this.page.locator("#openlogin-password").clear();
     await this.page.locator("#openlogin-password").fill(password);
+    await this.page.locator("#openlogin-confirm-password").clear();
+    await this.page.locator("#openlogin-confirm-password").fill(password);
+    expect(await this.page.locator('button:has-text("Confirm")').isDisabled()).toBeTruthy();
+  }
+
+  async addPasswordShare(password: string) {
+    await this.page.locator("#openlogin-password").clear();
+    await this.page.locator("#openlogin-password").fill(password);
+    await this.page.locator("#openlogin-confirm-password").clear();
     await this.page.locator("#openlogin-confirm-password").fill(password);
     await this.page.click('button:has-text("Confirm")');
     await this.page.waitForSelector('button:has-text("Change Password")');

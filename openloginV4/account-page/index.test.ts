@@ -80,6 +80,8 @@ test(`should display 2FA enable window for single factor account`, async ({  }) 
     await accountsPage.addSocialRecoveryFactor("GitHub");
     await accountsPage.enableBackUpEmail(backupEmail);
     const seedString =  await accountsPage.seedEmail(backupEmail);
+    await accountsPage.verifyRecoveryPhrase(seedString + "additional text");
+    await accountsPage.verifyErrorMessage("Incorrect recovery factor");
     await accountsPage.verifyRecoveryPhrase(seedString);
    //await accountsPage.skip2FASetUp();
     await accountsPage.clickDone();
@@ -97,6 +99,7 @@ test(`should display 2FA enable window for single factor account`, async ({  }) 
 
   test(`should resend recovery email share`, async ({  }) => {
     const accountsPage = new AccountsPage(page);
+    await accountsPage.verifyRecoveryEmailDetails(backupEmail);
     await accountsPage.resendRecoveryEmail();
     const resentBackup = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
@@ -176,6 +179,7 @@ test(`should display 2FA enable window for single factor account`, async ({  }) 
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
+    await accountsPage.verifySocialFactorDetails(github.email);
     await accountsPage.changeSocialFactor();
     await page.fill('#passwordless-email', user.mobileNumberForLogin);
     await page.getByLabel('Connect with Phone').click();
@@ -183,6 +187,7 @@ test(`should display 2FA enable window for single factor account`, async ({  }) 
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
+    await accountsPage.verifySocialFactorDetails(user.mobileNumberForLogin);
     expect(await page.getByText('2 / 5').isVisible());
   });
 
