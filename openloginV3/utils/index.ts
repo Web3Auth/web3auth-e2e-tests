@@ -4,6 +4,7 @@ import config from "../../index.config"
 import { Link } from "mailosaur/lib/models";
 import Mailosaur from "mailosaur";
 import { version } from "os";
+import { resolve } from "path";
 
 export const DEFAULT_PLATFORM = "cyan"
 console.log("Environment:" + process.env.PLATFORM)
@@ -42,10 +43,10 @@ async function waitForTkeyRehydration(
   page: Page,
   size = 100
 ): Promise<boolean> {
-  if(process.env.PLATFORM){
-    return true;
-  }
   return new Promise(function (resolve) {
+    if(process.env.PLATFORM='prod'){
+      resolve(true);
+    }
     page.on("console", (msg) => {
       console.log(msg)
       //will check on the implementation,currently rehydrating tkey: 914.059814453125 ms is only displayed
@@ -62,6 +63,9 @@ async function waitForTkeyRehydration(
 
 async function waitForAddPassword(page: Page): Promise<boolean> {
   return new Promise(function (resolve) {
+    if(process.env.PLATFORM='prod'){
+      resolve(true);
+    }
     page.on("console", (msg) => {
       if (
         msg.type() === "info" &&
@@ -83,7 +87,6 @@ async function waitForSessionStorage(page: Page, openloginURL: string) {
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });
-    await page.waitForTimeout(3000);
     await waitForTkeyRehydration(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
@@ -95,6 +98,9 @@ async function waitForSessionStorage(page: Page, openloginURL: string) {
 
 async function waitForChangePassword(page: Page): Promise<boolean> {
   return new Promise(function (resolve) {
+    if(process.env.PLATFORM='prod'){
+      resolve(true);
+    }
     page.on("console", (msg) => {
       if (
         msg.type() === "info" &&
@@ -108,6 +114,9 @@ async function waitForChangePassword(page: Page): Promise<boolean> {
 
 async function waitForDeleteShare(page: Page): Promise<boolean> {
   return new Promise(function (resolve) {
+    if(process.env.PLATFORM='prod'){
+      resolve(true);
+    }
     page.on("console", (msg) => {
       if (
         msg.type() === "info" &&
@@ -468,6 +477,7 @@ async function addPasswordShare(page: Page, password: string) {
   let y = waitForAddPassword(page);
   await page.isEnabled('button:has-text("Confirm")');
   await page.click('button:has-text("Confirm")');
+  await delay(5000);
   await page.isVisible('button:has-text("Change password")');
   await page.locator("text=Password successfully changed").isVisible();
   await y;

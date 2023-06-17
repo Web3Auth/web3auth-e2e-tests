@@ -23,7 +23,6 @@ const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const testEmail =  generateRandomEmail();
 
 test.describe.serial("Home page scenarios", () => {
-  test.skip()
   let page: Page;
   test.beforeAll(async ({ browser, }) => {
     page = await browser.newPage();
