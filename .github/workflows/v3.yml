@@ -62,7 +62,7 @@ jobs:
           GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
           GITHUB_USER_PASSWORD: "VerySecurePassword@123"
         run: |
-          echo "Platform: ${{ matrix.env.PLATFORM }}" && ls && npm install && npx playwright install && npm run testV3:config
+          echo ipconfig getifaddr en0 && "Platform: ${{ matrix.env.PLATFORM }}" && ls && npm install && npx playwright install && npm run testV3:config
 
       - name: Upload test results
         if: always()
