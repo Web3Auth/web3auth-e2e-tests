@@ -15,7 +15,7 @@ const env_map: { [key: string]: string } = {
   prod: `https://app.openlogin.com/${openloginversion}`,
   beta: `https://beta.openlogin.com/${openloginversion}`,
   cyan: `https://cyan.openlogin.com/${openloginversion}`,
-  staging: `https://staging.openlogin.com/${openloginversion}`,
+  staging: `https://dev-dashboard.web3auth.io/`,
   testing: `https://testing.openlogin.com/${openloginversion}`,
   celeste: `https://celeste.openlogin.com/${openloginversion}`,
   aqua: `https://aqua.openlogin.com/${openloginversion}`,
@@ -517,8 +517,8 @@ async function signInWithEmail(
 ): Promise<boolean> {
   try {
     console.log("Email:" +  email)
-    await page.fill('#passwordless-email', email);
-    await page.getByLabel('Connect with Phone or Email').click();
+    await page.fill("xpath=.//input[@type='email']", email);
+    await page.getByLabel('Continue with Email').click();
     await page.waitForSelector("text=Verify your email");
     await delay(3000);
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");

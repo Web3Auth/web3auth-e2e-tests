@@ -25,6 +25,11 @@ test.describe.serial('Passwordless Login scenarios', () => {
       !!process.env.MAILOSAUR_API_KEY &&
       !!process.env.MAILOSAUR_SERVER_DOMAIN
     ).toBe(true);
+    // Listen for all console events and handle errors
+    page.on('console', msg => {
+    if (msg.type() === 'error')
+    console.log(`Error text: "${msg.text()}"`);
+    });
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
     const shouldExit = await catchErrorAndExit(page);

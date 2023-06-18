@@ -14,6 +14,7 @@ export class DeveloperDashboardPage {
   }
 
   async createProject(name:string, environment:string, platform:string ) {
+    await this.page.waitForSelector('#CreateProjectName');
     await this.page.locator('#CreateProjectName').fill(name)
     await this.page.locator('#networkEnvironment').click()
     await this.page.locator(`div:has-text(${platform})`).click()
@@ -28,7 +29,8 @@ export class DeveloperDashboardPage {
     await this.page.click('button:has-text(" Create Verifier ")');
   }
 
-  async createMainnetProject(name:string, environment:string, platform:string ) {
+  async createMainnetProject(name:string, platform:string ) {
+    await this.page.waitForSelector('#projectName');
     await this.page.locator('#projectName').fill(name)
     await this.page.locator('#networkEnvironment').click()
     await this.page.locator(`div:has-text(${platform})`).click()
@@ -43,17 +45,29 @@ export class DeveloperDashboardPage {
       await this.page.click(`div:has-text("${option})`);
      }
 
+
+     async verifyUserRole(email:string,role: string) {
+      expect(await this.page.locator(`xpath=.//p[text()='${email}']/ancestor::td/following-sibling::td/div"`).first().textContent()).toContain(role);
+     }
+
   async searchAndSelectProject(name: string, environment:string) {
+    await this.page.locator(`xpath=.//input[@aria-placeholder='Search for projects']`).first().fill(name);
     await this.page.locator(`xpath=.//h6[text()='${name}']/parent::td/following-sibling::td[text()='${environment}']`).first().click()
 
   }
 
   async verifyProject(name:string, environment:string, platform:string ) {
     expect (await this.page.locator('#projectName').textContent()).toEqual(name);
+    expect (await this.page.locator('#EnvironmentNetwork').textContent()).toEqual(environment);
+    expect (await this.page.locator("xpath=.//input[@aria-placeholder='1 platforms selected']").textContent()).toEqual(platform);
   }
 
   async verifyTeamName(name:string ) {
     expect (await this.page.locator('xpath=.//p[text()="Team Workspace"]/preceding-sibling::h6').textContent()).toEqual(name);
+  }
+
+  async verifyMessageIsDisplayed(message:string ) {
+    expect (await this.page.locator(`xpath=.//p[text()="${message}"]`).isVisible());
   }
 
   async updateProject(chain:string) {
@@ -80,13 +94,33 @@ export class DeveloperDashboardPage {
     await this.page.click('button:has-text(" Create Mainnet Project ")');
   }
 
-  async addNewTeam(teamName: string) {
+  async addNewTeam(teamName: string, email:string) {
     await this.page.click('p:has-text("Personal Workspace")');
     await this.page.click('button:has-text("+ Add a new team")');
+    await this.page.waitForSelector("xpath=.//input[contains(@aria-label, 'Enter a team name')]");
     await this.page.locator(`xpath=.//input[contains(@aria-label, 'Enter a team name')]`).fill(teamName);
-    await this.page.locator(`xpath=.//input[contains(@aria-label, 'Enter a team email')]`).fill(teamName+"@mailinator.com");
-    await this.page.locator(`xpath=.//input[contains(@aria-label, 'Enter a team size')]`).fill("1");
+    await this.page.locator(`xpath=.//input[contains(@aria-label, 'Enter a team email')]`).fill(email);
+    await this.page.locator(`xpath=.//input[contains(@aria-label, 'Enter a team size')]`).fill("10");
     await this.page.click('button:has-text("Create Team")');
+  }
+
+  async upgradePlan() {
+    await this.page.click('button:has-text(" Upgrade Plan")');
+    await this.page.locator('button:has-text("Choose Plan")').first().click();
+    await this.page.locator('#Field-numberInput').fill("4242 4242 4242 4242");
+    await this.page.locator('#Field-expiryInput').fill("0245");
+    await this.page.locator('#Field-cvcInput').fill("123");
+    await this.page.locator('#agreePolicy').click();
+    await this.page.locator('button:has-text("Change Plan")').first().click();
+  }
+
+  async inviteNewTeamMember(email:string) {
+    await this.page.click('button:has-text("+ Add Member")');
+    await this.page.waitForSelector("#EmailAddress");
+    await this.page.locator('#EmailAddress').fill(email);
+    await this.page.locator('#Role').click();
+    await this.page.click('span:has-text("Admin")');
+    await this.page.click('button:has-text("Add Member")');
   }
 
   async seedEmail(backupEmail: string) {
