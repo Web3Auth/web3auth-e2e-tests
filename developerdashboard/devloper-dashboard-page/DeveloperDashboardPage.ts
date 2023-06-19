@@ -13,6 +13,14 @@ export class DeveloperDashboardPage {
     await this.page.locator('span:has-text("Create a Project")').click()
   }
 
+  async registerUser() {
+    await this.page.locator('button:has-text("Others")').click()
+    await this.page.locator(`xpath=.//input[@placeholder='e.g. Project manager, business manager']`).first().fill("QA Engineer")
+    await this.page.locator('button:has-text(" Next: Account Info ")').click()
+    await this.page.locator('#agree-terms').click()
+    await this.page.locator('button:has-text(" Create Profile ")').click()
+  }
+
   async createProject(name:string, environment:string, platform:string ) {
     await this.page.waitForSelector('#CreateProjectName');
     await this.page.locator('#CreateProjectName').fill(name)

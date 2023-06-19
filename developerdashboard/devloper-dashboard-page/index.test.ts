@@ -59,11 +59,12 @@ test.describe.serial("Account page scenarios", () => {
 
 
 test(`Verify user is able to register`, async ({  }) => {
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
+  const accountsPage = new DeveloperDashboardPage(page);
+  await accountsPage.registerUser()
+  await page.waitForURL(`${openloginURL}/home`, {
       waitUntil: "load",
     });
-    expect(await page.isVisible("text=Account")).toBeTruthy();
+    expect(await page.isVisible("text=Getting Started")).toBeTruthy();
   });
 
 test(`Verify user is able to create a new project`, async ({  }) => {
