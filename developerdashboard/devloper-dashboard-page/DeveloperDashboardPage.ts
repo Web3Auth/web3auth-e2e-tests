@@ -1,5 +1,6 @@
 // playwright-dev-page.ts
 import { expect, Locator, Page } from '@playwright/test';
+import { delay } from 'cypress/types/bluebird';
 import Mailosaur from "mailosaur";
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 export class DeveloperDashboardPage {
@@ -22,13 +23,15 @@ export class DeveloperDashboardPage {
   }
 
   async createProject(name:string, environment:string, platform:string ) {
-    await this.page.waitForSelector('#CreateProjectName');
-    await this.page.locator('#CreateProjectName').fill(name)
-    await this.page.locator('#networkEnvironment').click()
-    await this.page.locator(`div:has-text(${platform})`).click()
+    await this.page.locator('#projectName').first().waitFor();
+    await this.page.locator('#projectName').first().fill(name)
     await this.page.locator(`xpath=.//input[@placeholder='0 platforms selected']`).first().click()
-    await this.page.locator(`span:has-text(${environment})`).click()
-    await this.page.click('button:has-text(" Create Project ")');
+    await this.page.locator(`span:has-text("${platform}")`).first().click()
+    await this.page.locator('#projectName').first().click()
+    await this.page.locator('#networkEnvironment').first().click();
+    await this.page.waitForSelector(`div:has-text("${environment}")`)
+    await this.page.locator(`xpath=.//div[text()="${environment}"]`).first().click()
+    await this.page.locator('button:has-text(" Create Project ")').first().click();
   }
 
     async createVerifier(name:string, provider:string, platform:string ) {
@@ -37,37 +40,39 @@ export class DeveloperDashboardPage {
     await this.page.click('button:has-text(" Create Verifier ")');
   }
 
-  async createMainnetProject(name:string, platform:string ) {
-    await this.page.waitForSelector('#projectName');
-    await this.page.locator('#projectName').fill(name)
-    await this.page.locator('#networkEnvironment').click()
-    await this.page.locator(`div:has-text(${platform})`).click()
-    await this.page.click('button:has-text(" Create Mainnet Project ")');
+  async createMainnetProject(name:string, environment:string ) {
+    await this.page.waitForSelector('#CreateProjectName');
+    await this.page.locator('#CreateProjectName').fill(name)
+    await this.page.locator('#networkEnvironment').first().click();
+    await this.page.waitForSelector(`div:has-text("${environment}")`)
+    await this.page.locator(`xpath=.//div[text()="${environment}"]`).first().click()
+    await this.page.locator('button:has-text(" Create Mainnet Project ")').last().click();
   }
 
   async navigateTo(option: string) {
-     await this.page.click(`span:has-text("${option})`);
+     await this.page.click(`span:has-text("${option}")`);
     }
 
     async navigateToTab(option: string) {
-      await this.page.click(`div:has-text("${option})`);
+      await this.page.locator(`xpath=.//div[text()="${option}"]`).click();
      }
 
-
      async verifyUserRole(email:string,role: string) {
-      expect(await this.page.locator(`xpath=.//p[text()='${email}']/ancestor::td/following-sibling::td/div"`).first().textContent()).toContain(role);
+      expect(await this.page.locator(`xpath=.//p[text()="${email}"]/ancestor::td/following-sibling::td/div`).first().textContent()).toContain(role);
      }
 
   async searchAndSelectProject(name: string, environment:string) {
     await this.page.locator(`xpath=.//input[@aria-placeholder='Search for projects']`).first().fill(name);
-    await this.page.locator(`xpath=.//h6[text()='${name}']/parent::td/following-sibling::td[text()='${environment}']`).first().click()
+    await this.page.locator(`xpath=.//h6[text()="${name}"]/parent::td/following-sibling::td[text()="${environment}"]`).first().click()
 
   }
 
   async verifyProject(name:string, environment:string, platform:string ) {
-    expect (await this.page.locator('#projectName').textContent()).toEqual(name);
-    expect (await this.page.locator('#EnvironmentNetwork').textContent()).toEqual(environment);
-    expect (await this.page.locator("xpath=.//input[@aria-placeholder='1 platforms selected']").textContent()).toEqual(platform);
+    await this.page.waitForSelector(`h1:has-text("${name}")`)
+    console.log("text" + await this.page.locator('#ProjectName').first().inputValue())
+    expect (await this.page.locator('#ProjectName').first().inputValue()).toContain(name);
+    expect (await this.page.locator('#EnvironmentNetwork').first().inputValue()).toContain(environment);
+    expect (await this.page.locator("xpath=.//input[@aria-placeholder='1 platforms selected']").first().inputValue()).toContain(platform);
   }
 
   async verifyTeamName(name:string ) {
@@ -79,9 +84,10 @@ export class DeveloperDashboardPage {
   }
 
   async updateProject(chain:string) {
+    await this.page.waitForSelector('#ChainId')
     await this.page.locator('#ChainId').click()
-    await this.page.click(`span:has-text("${chain})`);
-    await this.page.locator(`xpath=.//input[@placeholder='Explain a bit about your project (optional)']`).first().fill("description")
+    await this.page.click(`span:has-text("${chain}")`);
+    await this.page.locator(`xpath=.//textarea[@placeholder='Explain a bit about your project (optional)']`).first().fill("description")
   }
 
   async clickSave() {
@@ -115,11 +121,11 @@ export class DeveloperDashboardPage {
   async upgradePlan() {
     await this.page.click('button:has-text(" Upgrade Plan")');
     await this.page.locator('button:has-text("Choose Plan")').first().click();
-    await this.page.locator('#Field-numberInput').fill("4242 4242 4242 4242");
-    await this.page.locator('#Field-expiryInput').fill("0245");
-    await this.page.locator('#Field-cvcInput').fill("123");
+    await this.page.frameLocator('[title="Secure payment input frame"]').locator('#Field-numberInput').fill("4242 4242 4242 4242");
+    await this.page.frameLocator('[title="Secure payment input frame"]').locator('#Field-expiryInput').fill("0245");
+    await this.page.frameLocator('[title="Secure payment input frame"]').locator('#Field-cvcInput').fill("123");
     await this.page.locator('#agreePolicy').click();
-    await this.page.locator('button:has-text("Change Plan")').first().click();
+    await this.page.locator('button:has-text("Change Plan")').last().click();
   }
 
   async inviteNewTeamMember(email:string) {
@@ -128,7 +134,7 @@ export class DeveloperDashboardPage {
     await this.page.locator('#EmailAddress').fill(email);
     await this.page.locator('#Role').click();
     await this.page.click('span:has-text("Admin")');
-    await this.page.click('button:has-text("Add Member")');
+    await this.page.locator('button:has-text("Add Member")').last().click();
   }
 
   async seedEmail(backupEmail: string) {

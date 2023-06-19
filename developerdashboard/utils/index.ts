@@ -12,10 +12,10 @@ console.log("Environment:" + process.env.PLATFORM)
 console.log("App Version:" + openloginversion)
 const env_map: { [key: string]: string } = {
 
-  prod: `https://app.openlogin.com/${openloginversion}`,
+  prod: `https://dev-dashboard.web3auth.io`,
   beta: `https://beta.openlogin.com/${openloginversion}`,
   cyan: `https://cyan.openlogin.com/${openloginversion}`,
-  staging: `https://dev-dashboard.web3auth.io/`,
+  staging: `https://dev-dashboard.web3auth.io`,
   testing: `https://testing.openlogin.com/${openloginversion}`,
   celeste: `https://celeste.openlogin.com/${openloginversion}`,
   aqua: `https://aqua.openlogin.com/${openloginversion}`,
@@ -519,7 +519,7 @@ async function signInWithEmail(
     console.log("Email:" +  email)
     await page.fill("xpath=.//input[@type='email']", email);
     await page.getByLabel('Continue with Email').click();
-    await page.waitForSelector("text=Verify your email");
+    //await page.waitForSelector("text=Verify your email");
     await delay(3000);
     const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
     const mailBox = await mailosaur.messages.get(

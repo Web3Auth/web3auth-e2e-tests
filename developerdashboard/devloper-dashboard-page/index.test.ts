@@ -19,6 +19,7 @@ import {
   catchErrorAndExit,
   slowOperation
 } from "../utils";
+import { delay } from 'cypress/types/bluebird';
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
@@ -53,7 +54,7 @@ test.describe.serial("Account page scenarios", () => {
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy()
     await page.waitForURL(`${openloginURL}/register`, {
-      timeout: 3 * 60 * 1000
+      waitUntil: "load",
     });
   });
 
@@ -64,16 +65,20 @@ test(`Verify user is able to register`, async ({  }) => {
   await page.waitForURL(`${openloginURL}/home`, {
       waitUntil: "load",
     });
-    expect(await page.isVisible("text=Getting Started")).toBeTruthy();
+    await page.waitForSelector('span:has-text("Create a Project")')
+    expect(await page.locator('span:has-text("Create a Project")').first().isVisible()).toBeTruthy();
   });
 
 test(`Verify user is able to create a new project`, async ({  }) => {
   const accountsPage = new DeveloperDashboardPage(page);
   await accountsPage.clickCreateAProject()
-  await accountsPage.createProject(testEmail+"_project", "Testnet", "Android")
+  await accountsPage.createProject(testEmail+"_project", "Sapphire Devnet", "Android")
   await accountsPage.navigateTo("Project")
-  await accountsPage.searchAndSelectProject(testEmail+"_project", "Testnet");
-  await accountsPage.verifyProject(testEmail+"_project", "Testnet","Android");
+  await page.waitForURL(`${openloginURL}/home/projects`, {
+    waitUntil: "load",
+  });
+  await accountsPage.searchAndSelectProject(testEmail+"_project", "Sapphire Devnet");
+  await accountsPage.verifyProject(testEmail+"_project", "Sapphire Devnet","Android");
   });
 
   test(`Verify user is able to able to update project details`, async ({  }) => {
@@ -87,26 +92,36 @@ test(`Verify user is able to create a new project`, async ({  }) => {
     await accountsPage.clickCreateMainnet();
     await accountsPage.createMainnetProject(testEmail+"_project", "Mainnet (Asia)")
     await accountsPage.navigateTo("Project")
+    await page.waitForURL(`${openloginURL}/home/projects`, {
+      waitUntil: "load",
+    });
     await accountsPage.searchAndSelectProject(testEmail+"_project", "Mainnet (Asia)");
   });
 
   test(`Verify user is able to add new team and verify role`, async ({  }) => {
     const accountsPage = new DeveloperDashboardPage(page);
+    const teamName = testEmail.split("@")[0];
     await accountsPage.addNewTeam(testEmail.split("@")[0],testEmail);
     await accountsPage.verifyMessageIsDisplayed("Team Created Successfully");
     await accountsPage.navigateTo("Settings")
-    await accountsPage.navigateToTab("Member")
+    await page.waitForURL(`${openloginURL}/home/team/${teamName}/settings`, {
+      waitUntil: "load",
+    });
+    await accountsPage.navigateToTab(" Member")
     await accountsPage.verifyUserRole(testEmail,"Owner")
   });
 
   test(`Verify user is able to upgrade to new plan`, async ({  }) => {
     const accountsPage = new DeveloperDashboardPage(page);
+    await accountsPage.navigateToTab(" Member")
+    expect(await page.isVisible('text=You do not have enough seats to invite another member')).toBeTruthy();
     await accountsPage.upgradePlan();
     await accountsPage.verifyMessageIsDisplayed("Subscription Updated Successfully");
   });
 
   test(`Verify user is able to add invite new team member`, async ({  }) => {
     const accountsPage = new DeveloperDashboardPage(page);
+    await accountsPage.navigateToTab(" Member")
     await accountsPage.inviteNewTeamMember(backupEmail);
     await accountsPage.verifyMessageIsDisplayed("Invite Sent Successfully");
   });
