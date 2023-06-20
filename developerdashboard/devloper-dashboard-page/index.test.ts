@@ -98,6 +98,14 @@ test(`Verify user is able to create a new project`, async ({  }) => {
     await accountsPage.searchAndSelectProject(testEmail+"_project", "Mainnet (Asia)");
   });
 
+  test(`Verify user is able to add custom verifiers to the project`, async ({  }) => {
+    const accountsPage = new DeveloperDashboardPage(page);
+    await accountsPage.navigateToTab(" Custom Authentication ")
+    await accountsPage.clickCreateAVerifier()
+    await accountsPage.createVerifier(testEmail.split("@")[0], "Discord")
+    await accountsPage.verifyMessageIsDisplayed("Verifier Created Successfully");
+  });
+
   test(`Verify user is able to add new team and verify role`, async ({  }) => {
     const accountsPage = new DeveloperDashboardPage(page);
     const teamName = testEmail.split("@")[0];
@@ -117,6 +125,8 @@ test(`Verify user is able to create a new project`, async ({  }) => {
     expect(await page.isVisible('text=You do not have enough seats to invite another member')).toBeTruthy();
     await accountsPage.upgradePlan();
     await accountsPage.verifyMessageIsDisplayed("Subscription Updated Successfully");
+    await accountsPage.navigateToTab(" Payment")
+    await accountsPage.verifyInvoiceAndCardAddedIsDisplayed("Visa ending with 4242");
   });
 
   test(`Verify user is able to add invite new team member`, async ({  }) => {
