@@ -17,15 +17,6 @@ env:
   NODE_VERSION: 16
 
 jobs:
-  deploy:
-    name: Test git-crypt-unlock
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Unlock secrets
-        uses: sliteteam/github-action-git-crypt-unlock@1.2.0
-        env:
-          GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
   build:
     name: Run OpenLogin - tests - V4
     strategy:
@@ -49,6 +40,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: new_ui_openlogin
+      - name: Unlock secrets
+        uses: sliteteam/github-action-git-crypt-unlock@1.2.0
+        env:
+          GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	${{ secrets.FB_TEST_USER_EMAIL }}
