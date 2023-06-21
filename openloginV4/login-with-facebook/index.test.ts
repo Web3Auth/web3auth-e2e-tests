@@ -8,7 +8,7 @@ import path from "path";
 
 const FB = {
   name: "Torus Solana",
-  email: "torus.e2e.gb@gmail.com",
+  email: process.env.FB_2FA_TEST_USER_EMAIL || "",
   password: process.env.GITHUB_USER_PASSWORD || "",
   firstName: "Torus",
   backupPhrase: ""

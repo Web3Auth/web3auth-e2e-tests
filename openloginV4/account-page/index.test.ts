@@ -27,8 +27,8 @@ const github = {
   password: process.env.GITHUB_USER_PASSWORD || ""
 };
 const user = {
-  mobileNumberForLogin: "+358-4573986537",
-  mobileNumberForSMS: "3584573986537"
+  mobileNumberForLogin: process.env.LOGIN_MOBILE_NUMBER || "",
+  mobileNumberForSMS: process.env.SMS_MOBILE_NUMBER || "",
 };
 
 const testEmail =  generateRandomEmail();

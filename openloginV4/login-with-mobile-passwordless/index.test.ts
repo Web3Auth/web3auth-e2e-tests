@@ -6,8 +6,8 @@ import { AccountsPage } from '../account-page/AccountsPage';
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const user = {
-  mobileNumberForLogin: "+358-4573986537",
-  mobileNumberForSMS: "3584573986537"
+  mobileNumberForLogin: process.env.LOGIN_MOBILE_NUMBER || "",
+  mobileNumberForSMS: process.env.SMS_MOBILE_NUMBER || "",
 };
 
 test("Login with mobile number using passwordless login @smoke", async ({ page, browser }) => {

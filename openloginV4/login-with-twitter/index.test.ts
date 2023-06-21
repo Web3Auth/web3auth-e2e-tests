@@ -6,9 +6,9 @@ import { AccountsPage } from '../account-page/AccountsPage';
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const twitter = {
-  account: process.env.TWITTER_ACCOUNT || "toruse2etests",
+  account: process.env.TWITTER_ACCOUNT || "",
   email: process.env.TWITTER_EMAIL || "",
-  password: process.env.TWITTER_PASSWORD || "VerySecurePassword@123",
+  password: process.env.TWITTER_PASSWORD || "",
 }
 
 test.skip("Login with twitter", async ({ page }) => {

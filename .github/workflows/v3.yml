@@ -52,6 +52,7 @@ jobs:
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	${{ secrets.FB_TEST_USER_EMAIL }}
+          FB_2FA_TEST_USER_EMAIL:	${{ secrets.FB_2FA_TEST_USER_EMAIL }}
           FB_TEST_USER_PASS:	${{ secrets.FB_TEST_USER_PASS }}
           FB_TEST_USER_NAME:	${{ secrets.FB_TEST_USER_NAME }}
           GOOGLE_ACCOUNT:	${{ secrets.GOOGLE_ACCOUNT }}
@@ -70,6 +71,8 @@ jobs:
           APP_VERSION: "v3"
           GITHUB_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           GITHUB_USER_PASSWORD: ${{ secrets.GIT_USER_PASSWORD }}
+          SMS_MOBILE_NUMBER: ${{ secrets.GIT_USER_EMAIL }}
+          LOGIN_MOBILE_NUMBER: ${{ secrets.GIT_USER_PASSWORD }}
         run: |
           echo "Platform: ${{ matrix.env.PLATFORM }}" && ipconfig getifaddr en0 && ls && npm install && npx playwright install && npm run testV3:config
 

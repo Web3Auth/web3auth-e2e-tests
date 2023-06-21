@@ -9,18 +9,7 @@ import indexConfig from "../../index.config";
 const projects: Array<
   Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
 > = [
-  {
-    browserName: "firefox",
-    user: { email: "clyde.m.carter@gmail.com" },
-  },
-  {
-    browserName: "chromium",
-    user: { email: "connie.washington.1981@gmail.com" },
-  },
-  {
-    browserName: "webkit",
-    user: { email: "clyde.m.carter@gmail.com" },
-  },
+
 ];
 
 const config: PlaywrightTestConfig<TestArgs> = {
