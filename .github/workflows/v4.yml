@@ -71,8 +71,8 @@ jobs:
           APP_VERSION: "v4"
           GITHUB_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           GITHUB_USER_PASSWORD: ${{ secrets.GIT_USER_PASSWORD }}
-          SMS_MOBILE_NUMBER: ${{ secrets.GIT_USER_EMAIL }}
-          LOGIN_MOBILE_NUMBER: ${{ secrets.GIT_USER_PASSWORD }}
+          SMS_MOBILE_NUMBER: ${{ secrets.SMS_MOBILE_NUMBER }}
+          LOGIN_MOBILE_NUMBER: ${{ secrets.LOGIN_MOBILE_NUMBER }}
         run: |
           echo "Platform: ${{ matrix.env.PLATFORM }}" && ipconfig getifaddr en0 && ls && npm install && npx playwright install && npm run testV4:config
 
