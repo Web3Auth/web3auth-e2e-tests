@@ -42,8 +42,8 @@ jobs:
           ref: new_ui_openlogin
       - name: Unlock secrets
         uses: korti11/git-crypt-unlock@v1.0
-        env:
-          GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
+        with:
+          GIT_CRYPT_KEY: ${{secrets.GIT_CRYPT_KEY}}
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL:	${{ secrets.FB_TEST_USER_EMAIL }}
