@@ -619,8 +619,9 @@ async function signInWithDapps({
       }
     );
     await page3.close();
+    await delay(3000);
     await page.getByLabel('Set up 2FA').waitFor();
-    await page.locator("xpath=.//button").first().click();
+    await page.locator("xpath=.//button[text()='Skip for Now']").first().click();
     await delay(5000);
 }
 

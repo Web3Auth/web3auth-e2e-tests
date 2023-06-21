@@ -152,7 +152,7 @@ export class AccountsPage {
   }
 
   async verifyRecoveryEmailDetails(email: string) {
-    expect(await this.page.locator(`xpath=.//input[@aria-placeholder='TextField Placeholder']`).textContent()).toContain(email);
+    expect(await this.page.locator(`xpath=.//input[@aria-placeholder='TextField Placeholder']`).inputValue()).toContain(email);
   }
 
   async verifySocialFactorDetails(details: string) {

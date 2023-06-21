@@ -42,25 +42,25 @@ jobs:
           ref: new_ui_openlogin
       - name: Trigger tests
         env:
-          FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
-          FB_TEST_USER_PASS:	"VerySecurePassword"
-          FB_TEST_USER_NAME:	"Jennifer Alhiegffddbbg Brownman"
-          GOOGLE_ACCOUNT:	"torus.e2e@gmail.com"
-          GOOGLE_PASSWORD:	"VerySecurePassword@123"
-          GOOGLE_NAME:	"torus"
-          DISCORD_EMAIL:	"torus.e2e.tests@gmail.com"
-          DISCORD_PASSWORD:	"VerySecurePassword@123"
-          TWITTER_ACCOUNT:	"toruse2etests"
-          TWITTER_PASSWORD:	"VerySecurePassword@123"
-          TWITTER_EMAIL:	"torus.e2e.tests@gmail.com"
+          FB_TEST_USER_EMAIL:	${{ secrets.FB_TEST_USER_EMAIL }}
+          FB_TEST_USER_PASS:	${{ secrets.FB_TEST_USER_PASS }}
+          FB_TEST_USER_NAME:	${{ secrets.FB_TEST_USER_NAME }}
+          GOOGLE_ACCOUNT:	${{ secrets.GOOGLE_ACCOUNT }}
+          GOOGLE_PASSWORD:	${{ secrets.GOOGLE_PASSWORD }}
+          GOOGLE_NAME:	${{ secrets.GOOGLE_NAME }}
+          DISCORD_EMAIL:	${{ secrets.DISCORD_EMAIL }}
+          DISCORD_PASSWORD:	${{ secrets.DISCORD_PASSWORD }}
+          TWITTER_ACCOUNT:	${{ secrets.TWITTER_ACCOUNT }}
+          TWITTER_PASSWORD:	${{ secrets.TWITTER_PASSWORD }}
+          TWITTER_EMAIL:	${{ secrets.TWITTER_EMAIL }}
           CI:	true
-          MAILOSAUR_API_KEY:	"iByTqYO8FrdDDiEcoPHiqDwJoBxW1LCc"
-          MAILOSAUR_SERVER_ID:	"feshr2xd"
-          MAILOSAUR_SERVER_DOMAIN:	"feshr2xd.mailosaur.net"
+          MAILOSAUR_API_KEY:	${{ secrets.MAILOSAUR_API_KEY }}
+          MAILOSAUR_SERVER_ID:	${{ secrets.MAILOSAUR_SERVER_ID }}
+          MAILOSAUR_SERVER_DOMAIN:	${{ secrets.MAILOSAUR_SERVER_DOMAIN }}
           PLATFORM: ${{ matrix.env.PLATFORM }}
           APP_VERSION: "v4"
-          GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
-          GITHUB_USER_PASSWORD: "VerySecurePassword@123"
+          GITHUB_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
+          GITHUB_USER_PASSWORD: ${{ secrets.GIT_USER_PASSWORD }}
         run: |
           echo "Platform: ${{ matrix.env.PLATFORM }}" && ipconfig getifaddr en0 && ls && npm install && npx playwright install && npm run testV4:config
 
