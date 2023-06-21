@@ -41,7 +41,7 @@ jobs:
         with:
           ref: new_ui_openlogin
       - name: Unlock secrets
-        uses: sliteteam/github-action-git-crypt-unlock@1.2.0
+        uses: korti11/git-crypt-unlock@v1.0
         env:
           GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
       - name: Trigger tests
