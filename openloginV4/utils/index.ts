@@ -129,7 +129,7 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
     while (!stopped) {
       try {
         if (await page.getByLabel('Set up 2FA').isVisible())
-          await page.locator("xpath=.//button").first().click();
+        await page.locator("xpath=.//button[text()='Skip for Now']").first().click();
       } catch { }
     }
     resolve();
