@@ -28,8 +28,8 @@ const github = {
   password: process.env.GITHUB_USER_PASSWORD || ""
 };
 const user = {
-  mobileNumberForLogin: "+358-4573986537",
-  mobileNumberForSMS: "3584573986537"
+  mobileNumberForLogin: process.env.LOGIN_MOBILE_NUMBER || "",
+  mobileNumberForSMS: process.env.SMS_MOBILE_NUMBER || "",
 };
 
 const testEmail =  generateRandomEmail();
@@ -112,6 +112,7 @@ test(`Verify user is able to create a new project`, async ({  }) => {
     await accountsPage.addNewTeam(testEmail.split("@")[0],testEmail);
     await accountsPage.verifyMessageIsDisplayed("Team Created Successfully");
     await accountsPage.navigateTo("Settings")
+    await page.goto(`${openloginURL}/home/team/${teamName}/settings`);
     await page.waitForURL(`${openloginURL}/home/team/${teamName}/settings`, {
       waitUntil: "load",
     });

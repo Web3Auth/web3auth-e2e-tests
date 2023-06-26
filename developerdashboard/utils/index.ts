@@ -12,7 +12,7 @@ console.log("Environment:" + process.env.PLATFORM)
 console.log("App Version:" + openloginversion)
 const env_map: { [key: string]: string } = {
 
-  prod: `https://dev-dashboard.web3auth.io`,
+  prod: `https://test-dashboard.web3auth.io`,
   beta: `https://beta.openlogin.com/${openloginversion}`,
   cyan: `https://cyan.openlogin.com/${openloginversion}`,
   staging: `https://dev-dashboard.web3auth.io`,
