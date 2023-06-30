@@ -70,14 +70,14 @@ When you've done writing the test, change `test.only` to `test` to turn off focu
 
 ### Create a new test suite
 
-Duplicate `openlogin/homepage/` and `.github/workflows/openlogin.homepage.yml`, rename and update the tests.
+Duplicate `openloginV3/account-page/` rename and update the tests.
 
 ## Status
 
 ### OpenLogin
 
-[![OpenLogin Test Run](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/main.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/main.yml)
-
+[![OpenLoginV4 Test Run](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/v4.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/v4.yml)
+[![OpenLoginV3 Test Run](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/v3.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/v3.yml)
 [![OpenLogin - Lighthouse](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/lighthouse.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/lighthouse.yml)
 
 ### Select elements
