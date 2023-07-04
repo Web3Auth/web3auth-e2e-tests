@@ -1,5 +1,5 @@
-import { test, expect , Page} from '@playwright/test';
-import { AccountsPage } from '../account-page/AccountsPage';
+import { test, expect, Page } from "@playwright/test";
+import { AccountsPage } from "../account-page/AccountsPage";
 import Mailosaur from "mailosaur";
 import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 import { generate } from "generate-password";
@@ -26,19 +26,26 @@ const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const user = {
   mobileNumberForLogin: "+358-4573986537",
-  mobileNumberForSMS: "3584573986537"
+  mobileNumberForSMS: "3584573986537",
 };
 
-const testEmail =  "demo@r92dvfcg.mailosaur.net";
-const backupPhrase= readFileSync(path.resolve(__dirname, `backup-phrase-${process.env.PLATFORM}.txt`)).toString().trim();
+const testEmail = "demo" + `@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+const backupPhrase = readFileSync(
+  path.resolve(__dirname, `backup-phrase-${process.env.PLATFORM}.txt`)
+)
+  .toString()
+  .trim();
 
-test("Login as an existing user with recovery phrase as 2FA", async ({ page, browser }) => {
-  test.slow()
+test("Login as an existing user with recovery phrase as 2FA", async ({
+  page,
+  browser,
+}) => {
+  test.slow();
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
   await signInWithEmail(page, testEmail, browser);
   const shouldExit = await catchErrorAndExit(page);
-  expect(shouldExit).toBeFalsy()
+  expect(shouldExit).toBeFalsy();
   await page.waitForSelector('button:has-text("Verify with other factors")');
   await accountsPage.clickVerifyWithOtherFactors();
   await accountsPage.verifyWithFactor("Recovery factor");
@@ -51,19 +58,22 @@ test("Login as an existing user with recovery phrase as 2FA", async ({ page, bro
   expect(page.url()).toContain(`${openloginURL}/`);
 });
 
-test("Login as an existing user with social factor as 2FA", async ({ page, browser }) => {
-  test.skip()
-  test.slow()
+test("Login as an existing user with social factor as 2FA", async ({
+  page,
+  browser,
+}) => {
+  test.skip();
+  test.slow();
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
   await signInWithEmail(page, testEmail, browser);
   const shouldExit = await catchErrorAndExit(page);
-  expect(shouldExit).toBeFalsy()
+  expect(shouldExit).toBeFalsy();
   await page.waitForSelector('button:has-text("Verify with other factors")');
   await accountsPage.clickVerifyWithOtherFactors();
   await accountsPage.verifyWithFactor("Social Factor");
   await accountsPage.verifySocialFactor();
-  await signInWithMobileNumber({ page, user, browser })
+  await signInWithMobileNumber({ page, user, browser });
   await page.waitForURL(`${openloginURL}/wallet/home`, {
     waitUntil: "load",
   });
