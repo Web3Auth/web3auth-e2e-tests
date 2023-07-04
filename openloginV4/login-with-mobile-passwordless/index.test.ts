@@ -60,7 +60,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await accountsPage.clickVerifyWithOtherFactors();
     await accountsPage.verifyWithFactor("Recovery factor");
     await accountsPage.verifyRecoveryPhrase(
-      getBackUpPhrase(process.env.PLATFORM) || ""
+      getBackUpPhrase(process.env.PLATFORM)!
     );
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",

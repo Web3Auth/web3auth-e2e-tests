@@ -73,7 +73,6 @@ test.describe.serial("Passwordless Login scenarios", () => {
       await page.waitForSelector('[placeholder="Enter backup phrase"]', {
         timeout: 1 * 60 * 1000,
       });
-      console.log("phrase" + getBackUpPhrase(process.env.PLATFORM)!);
       await page.fill(
         '[placeholder="Enter backup phrase"]',
         getBackUpPhrase(process.env.PLATFORM)!
