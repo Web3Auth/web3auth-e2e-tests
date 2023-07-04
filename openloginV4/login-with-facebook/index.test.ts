@@ -1,8 +1,8 @@
-import { test, expect , Page} from '@playwright/test';
+import { test, expect, Page } from "@playwright/test";
 import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 import { signInWithFacebook } from "../utils";
 import { useAutoCancelShareTransfer } from "../utils/index";
-import { AccountsPage } from '../account-page/AccountsPage';
+import { AccountsPage } from "../account-page/AccountsPage";
 import { readFileSync } from "fs";
 import path from "path";
 
@@ -11,12 +11,12 @@ const FB = {
   email: process.env.FB_2FA_TEST_USER_EMAIL || "",
   password: process.env.GITHUB_USER_PASSWORD || "",
   firstName: "Torus",
-  backupPhrase: ""
+  backupPhrase: process.env.BACKUP_PHRASE_PROD,
 };
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 
 test("Login with Facebook", async ({ page }) => {
-  test.skip()
+  test.skip();
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
   await accountsPage.addSocialRecoveryFactor("facebook");

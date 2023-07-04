@@ -702,6 +702,18 @@ function delay(time: number | undefined) {
   });
 }
 
+function getBackUpPhrase(environment: string | undefined) {
+  if (environment == "prod") {
+    return process.env.BACKUP_PHRASE_PROD;
+  }
+  if (environment == "cyan") {
+    return process.env.BACKUP_PHRASE_CYAN;
+  }
+  if (environment == "aqua") {
+    return process.env.BACKUP_PHRASE_AQUA;
+  }
+}
+
 export {
   useAutoCancelShareTransfer,
   useAutoCancel2FASetup,
@@ -728,4 +740,5 @@ export {
   signInWithDapps,
   signInWithEmailIntoTorusWallet,
   delay,
+  getBackUpPhrase,
 };

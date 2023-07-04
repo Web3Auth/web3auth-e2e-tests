@@ -5,13 +5,13 @@ on:
     branches:
       - new_ui_openlogin
   schedule:
-    - cron: '0 * * * *'
+    - cron: "0 * * * *"
   workflow_dispatch:
     inputs:
       environment:
-        description: 'prod|beta|cyan|staging|testing|celeste|local'
+        description: "prod|beta|cyan|staging|testing|celeste|local"
         required: true
-        default: 'testing'
+        default: "testing"
 
 env:
   NODE_VERSION: 16
@@ -46,28 +46,31 @@ jobs:
           GIT_CRYPT_KEY: ${{secrets.GIT_CRYPT_KEY}}
       - name: Trigger tests
         env:
-          FB_TEST_USER_EMAIL:	${{ secrets.FB_TEST_USER_EMAIL }}
-          FB_2FA_TEST_USER_EMAIL:	${{ secrets.FB_2FA_TEST_USER_EMAIL }}
-          FB_TEST_USER_PASS:	${{ secrets.FB_TEST_USER_PASS }}
-          FB_TEST_USER_NAME:	${{ secrets.FB_TEST_USER_NAME }}
-          GOOGLE_ACCOUNT:	${{ secrets.GOOGLE_ACCOUNT }}
-          GOOGLE_PASSWORD:	${{ secrets.GOOGLE_PASSWORD }}
-          GOOGLE_NAME:	${{ secrets.GOOGLE_NAME }}
-          DISCORD_EMAIL:	${{ secrets.DISCORD_EMAIL }}
-          DISCORD_PASSWORD:	${{ secrets.DISCORD_PASSWORD }}
-          TWITTER_ACCOUNT:	${{ secrets.TWITTER_ACCOUNT }}
-          TWITTER_PASSWORD:	${{ secrets.TWITTER_PASSWORD }}
-          TWITTER_EMAIL:	${{ secrets.TWITTER_EMAIL }}
-          CI:	true
-          MAILOSAUR_API_KEY:	${{ secrets.MAILOSAUR_API_KEY }}
-          MAILOSAUR_SERVER_ID:	${{ secrets.MAILOSAUR_SERVER_ID }}
-          MAILOSAUR_SERVER_DOMAIN:	${{ secrets.MAILOSAUR_SERVER_DOMAIN }}
+          FB_TEST_USER_EMAIL: ${{ secrets.FB_TEST_USER_EMAIL }}
+          FB_2FA_TEST_USER_EMAIL: ${{ secrets.FB_2FA_TEST_USER_EMAIL }}
+          FB_TEST_USER_PASS: ${{ secrets.FB_TEST_USER_PASS }}
+          FB_TEST_USER_NAME: ${{ secrets.FB_TEST_USER_NAME }}
+          GOOGLE_ACCOUNT: ${{ secrets.GOOGLE_ACCOUNT }}
+          GOOGLE_PASSWORD: ${{ secrets.GOOGLE_PASSWORD }}
+          GOOGLE_NAME: ${{ secrets.GOOGLE_NAME }}
+          DISCORD_EMAIL: ${{ secrets.DISCORD_EMAIL }}
+          DISCORD_PASSWORD: ${{ secrets.DISCORD_PASSWORD }}
+          TWITTER_ACCOUNT: ${{ secrets.TWITTER_ACCOUNT }}
+          TWITTER_PASSWORD: ${{ secrets.TWITTER_PASSWORD }}
+          TWITTER_EMAIL: ${{ secrets.TWITTER_EMAIL }}
+          CI: true
+          MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
+          MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
+          MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_SERVER_DOMAIN }}
           PLATFORM: ${{ matrix.env.PLATFORM }}
           APP_VERSION: "v4"
           GITHUB_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           GITHUB_USER_PASSWORD: ${{ secrets.GIT_USER_PASSWORD }}
           SMS_MOBILE_NUMBER: ${{ secrets.SMS_MOBILE_NUMBER }}
           LOGIN_MOBILE_NUMBER: ${{ secrets.LOGIN_MOBILE_NUMBER }}
+          BACKUP_PHRASE_PROD: ${{ secrets.BACKUP_PHRASE_PROD }}
+          BACKUP_PHRASE_CYAN: ${{ secrets.BACKUP_PHRASE_CYAN }}
+          BACKUP_PHRASE_AQUA: ${{ secrets.BACKUP_PHRASE_AQUA }}
         run: |
           echo "Platform: ${{ matrix.env.PLATFORM }}" && ipconfig getifaddr en0 && ls && npm install && npx playwright install && npm run testV4:config
 

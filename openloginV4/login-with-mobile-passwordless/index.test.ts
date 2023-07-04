@@ -1,5 +1,10 @@
 import { test, expect, Page } from "@playwright/test";
-import { DEFAULT_PLATFORM, catchErrorAndExit, env_map } from "../utils/index";
+import {
+  DEFAULT_PLATFORM,
+  catchErrorAndExit,
+  env_map,
+  getBackUpPhrase,
+} from "../utils/index";
 import {
   signInWithMobileNumber,
   useAutoCancel2FASetup,
@@ -16,11 +21,8 @@ const user = {
   mobileNumberForSMS: process.env.SMS_MOBILE_NUMBER || "",
 };
 const testEmail = "demo" + `@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
-const backupPhrase = readFileSync(
-  path.resolve(__dirname, `backup-phrase-${process.env.PLATFORM}.txt`)
-)
-  .toString()
-  .trim();
+const backupPhrase = process.env.BACKUP_PHRASE_PROD;
+
 test.describe.serial("Passwordless Login scenarios", () => {
   test("Login with mobile number using passwordless login @smoke", async ({
     page,
@@ -57,7 +59,9 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await page.waitForSelector('button:has-text("Verify with other factors")');
     await accountsPage.clickVerifyWithOtherFactors();
     await accountsPage.verifyWithFactor("Recovery factor");
-    await accountsPage.verifyRecoveryPhrase(backupPhrase);
+    await accountsPage.verifyRecoveryPhrase(
+      getBackUpPhrase(process.env.PLATFORM) || ""
+    );
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
     });

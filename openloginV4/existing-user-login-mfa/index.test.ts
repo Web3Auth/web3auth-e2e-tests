@@ -30,11 +30,7 @@ const user = {
 };
 
 const testEmail = "demo" + `@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
-const backupPhrase = readFileSync(
-  path.resolve(__dirname, `backup-phrase-${process.env.PLATFORM}.txt`)
-)
-  .toString()
-  .trim();
+const backupPhrase = process.env.BACKUP_PHRASE_PROD;
 
 test("Login as an existing user with recovery phrase as 2FA", async ({
   page,

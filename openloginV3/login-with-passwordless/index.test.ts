@@ -10,17 +10,14 @@ import {
 } from "../utils";
 import { readFileSync } from "fs";
 import path from "path";
-import { useAutoCancelShareTransfer } from "../utils/index";
+import { useAutoCancelShareTransfer, getBackUpPhrase } from "../utils/index";
 import Mailosaur from "mailosaur";
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
 const testEmail = generateRandomEmail();
-const backupPhrase = readFileSync(
-  path.resolve(__dirname, `backup-phrase-${process.env.PLATFORM}.txt`)
-)
-  .toString()
-  .trim();
+const backupPhrase = process.env.BACKUP_PHRASE_PROD;
+
 const existingTestEmail = `demo@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 
 test.describe.serial("Passwordless Login scenarios", () => {
@@ -76,7 +73,10 @@ test.describe.serial("Passwordless Login scenarios", () => {
       await page.waitForURL(`${openloginURL}/tkey-input*`, {
         timeout: 1 * 60 * 1000,
       });
-      await page.fill('[placeholder="Enter backup phrase"]', backupPhrase);
+      await page.fill(
+        '[placeholder="Enter backup phrase"]',
+        getBackUpPhrase(process.env.PLATFORM) || ""
+      );
       await page.click('button:has-text("Confirm")');
     } catch (err) {}
     await useAutoCancelShareTransfer(page);

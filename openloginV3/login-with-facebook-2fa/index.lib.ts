@@ -23,6 +23,6 @@ export const test = playwright.test.extend<TestArgs>({
     email: process.env.FB_2FA_TEST_USER_EMAIL || "",
     password: process.env.GITHUB_USER_PASSWORD || "",
     firstName: "Torus",
-    backupPhrase: readFileSync(path.resolve(__dirname, "backup-phrase.txt")).toString(),
+    backupPhrase: process.env.BACKUP_PHRASE_PROD,
   },
 });
