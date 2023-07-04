@@ -70,12 +70,13 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await page.goto(openloginURL);
     await signInWithEmail(page, existingTestEmail, browser);
     try {
-      await page.waitForURL(`${openloginURL}/tkey-input*`, {
+      await page.waitForSelector('[placeholder="Enter backup phrase"]', {
         timeout: 1 * 60 * 1000,
       });
+      console.log("phrase" + getBackUpPhrase(process.env.PLATFORM)!);
       await page.fill(
         '[placeholder="Enter backup phrase"]',
-        getBackUpPhrase(process.env.PLATFORM) || ""
+        getBackUpPhrase(process.env.PLATFORM)!
       );
       await page.click('button:has-text("Confirm")');
     } catch (err) {}
