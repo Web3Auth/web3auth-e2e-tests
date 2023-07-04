@@ -21,47 +21,48 @@ const backupPhrase = readFileSync(
 )
   .toString()
   .trim();
+test.describe.serial("Passwordless Login scenarios", () => {
+  test("Login with mobile number using passwordless login @smoke", async ({
+    page,
+    browser,
+  }) => {
+    test.slow();
+    const accountsPage = new AccountsPage(page);
+    // Listen for all console events and handle errors
+    page.on("console", (msg) => {
+      if (msg.type() === "error") console.log(`Error text: "${msg.text()}"`);
+    });
+    await page.goto(openloginURL);
+    await page.fill("#passwordless-email", user.mobileNumberForLogin);
+    await page.getByLabel("Connect with Phone or Email").click();
+    await signInWithMobileNumber({ page, user, browser });
+    await useAutoCancel2FASetup(page);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      waitUntil: "load",
+    });
+    await accountsPage.clickLogout();
+    expect(page.url()).toContain(`${openloginURL}/`);
+  });
 
-test("Login with mobile number using passwordless login @smoke", async ({
-  page,
-  browser,
-}) => {
-  test.slow();
-  const accountsPage = new AccountsPage(page);
-  // Listen for all console events and handle errors
-  page.on("console", (msg) => {
-    if (msg.type() === "error") console.log(`Error text: "${msg.text()}"`);
+  test("Login as an existing user with recovery phrase as 2FA @smoke", async ({
+    page,
+    browser,
+  }) => {
+    test.slow();
+    const accountsPage = new AccountsPage(page);
+    await page.goto(openloginURL);
+    await signInWithEmail(page, testEmail, browser);
+    const shouldExit = await catchErrorAndExit(page);
+    expect(shouldExit).toBeFalsy();
+    await page.waitForSelector('button:has-text("Verify with other factors")');
+    await accountsPage.clickVerifyWithOtherFactors();
+    await accountsPage.verifyWithFactor("Recovery factor");
+    await accountsPage.verifyRecoveryPhrase(backupPhrase);
+    await page.waitForURL(`${openloginURL}/wallet/home`, {
+      waitUntil: "load",
+    });
+    await page.waitForSelector(`text=Welcome, ${testEmail}`);
+    await accountsPage.clickLogout();
+    expect(page.url()).toContain(`${openloginURL}/`);
   });
-  await page.goto(openloginURL);
-  await page.fill("#passwordless-email", user.mobileNumberForLogin);
-  await page.getByLabel("Connect with Phone or Email").click();
-  await signInWithMobileNumber({ page, user, browser });
-  await useAutoCancel2FASetup(page);
-  await page.waitForURL(`${openloginURL}/wallet/home`, {
-    waitUntil: "load",
-  });
-  await accountsPage.clickLogout();
-  expect(page.url()).toContain(`${openloginURL}/`);
-});
-
-test("Login as an existing user with recovery phrase as 2FA @smoke", async ({
-  page,
-  browser,
-}) => {
-  test.slow();
-  const accountsPage = new AccountsPage(page);
-  await page.goto(openloginURL);
-  await signInWithEmail(page, testEmail, browser);
-  const shouldExit = await catchErrorAndExit(page);
-  expect(shouldExit).toBeFalsy();
-  await page.waitForSelector('button:has-text("Verify with other factors")');
-  await accountsPage.clickVerifyWithOtherFactors();
-  await accountsPage.verifyWithFactor("Recovery factor");
-  await accountsPage.verifyRecoveryPhrase(backupPhrase);
-  await page.waitForURL(`${openloginURL}/wallet/home`, {
-    waitUntil: "load",
-  });
-  await page.waitForSelector(`text=Welcome, ${testEmail}`);
-  await accountsPage.clickLogout();
-  expect(page.url()).toContain(`${openloginURL}/`);
 });
