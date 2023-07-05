@@ -51,7 +51,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     const welcome = await page.waitForSelector(`text=Welcome`);
   });
 
-  test("Login as an existing user with recovery phrase as 2FA @smoke", async ({
+  test("Login as an existing user with recovery phrase as 2FA", async ({
     browser,
     openloginURL,
     page,
