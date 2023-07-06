@@ -31,6 +31,7 @@ jobs:
           yarn lighthouse https://app.openlogin.com --output-path lighthouse/app.openlogin.com.html --save-assets --chrome-flags="--headless"
           yarn lighthouse https://solana.tor.us --output-path lighthouse/solana.tor.us.html --save-assets --chrome-flags="--headless"
           yarn lighthouse https://casper.tor.us --output-path lighthouse/casper.tor.us.html --save-assets --chrome-flags="--headless"
+          yarn lighthouse https://app.openlogin.com/v4 --output-path lighthouse/app.openlogin.com.v4.html --save-assets --chrome-flags="--headless"
           cd lighthouse
           tree -H '.' -L 1 --noreport --charset utf-8 -P "*.html" -o index.html
 

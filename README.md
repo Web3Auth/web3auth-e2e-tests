@@ -34,6 +34,7 @@ https://github.com/Web3Auth/web3auth-e2e-tests.git
 ```sh
 npm install
 ```
+
 3. For first time installation run below command to download required browsers
 
 ```sh
@@ -46,11 +47,13 @@ npx playwright install
 
 ### Scripts
 
-| Script                                                                                    | Description                                          |
-| ----------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `test --config=<test-dir>/index.config.ts --project=<chromium\|firefox\|webkit>`          | Run tests in headless mode (no GUI, for CI)          |
-| `test --config=<test-dir>/index.config.ts --project=<chromium\|firefox\|webkit> --headed` | Run tests in headed mode (with GUI, for development) |
-| `trace <path-to-trace.zip>`                                                               | Trace test results (for development)                 |
+| Script                                                                                    | Description                                                              |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `test --config=<test-dir>/index.config.ts --project=<chromium\|firefox\|webkit>`          | Run tests in headless mode (no GUI, for CI) with feature specific config |
+| `test --config=<test-dir>/index.config.ts --project=<chromium\|firefox\|webkit> --headed` | Run tests in headed mode (with GUI, for development)                     |
+| `trace <path-to-trace.zip>`                                                               | Trace test results (for development)                                     |
+| `test --config=index.config.ts --project=<chromium\|firefox\|webkit>`                     | Run tests in headless mode (no GUI, for CI) using global config          |
+| `test --grep=@smoke --config=index.config.ts --project=<chromium\|firefox\|webkit>`       | Run tests with tags @smoke using global config                           |
 
 ### Add a test to an existing test suite
 
@@ -61,11 +64,21 @@ test.only("focus this test", async ({ page }) => {
   // Run only this test during development
 });
 ```
+
 ```ts
-test.skip('skip this test', async ({ page }) => {
+test.skip("skip this test", async ({ page }) => {
   // This test is not run
 });
 ```
+
+```ts
+test.serial("run tests in serial mode", async ({ page }) => {
+  // This runs the below test in a serial mode
+  test("scenario1", async ({ page }) => {});
+  test("scenario2", async ({ page }) => {});
+});
+```
+
 When you've done writing the test, change `test.only` to `test` to turn off focus mode.
 
 ### Create a new test suite
