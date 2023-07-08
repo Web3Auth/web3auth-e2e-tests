@@ -13,6 +13,9 @@ import { version } from "os";
 import { resolve } from "path";
 
 export const DEFAULT_PLATFORM = "cyan";
+import axios from "axios";
+const ChanceJS = require("chance");
+const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 console.log("Environment:" + process.env.PLATFORM);
 console.log("App Version:" + process.env.APP_VERSION);
 const env_map: { [key: string]: string } = {
@@ -549,6 +552,40 @@ async function signInWithEmail(
     return false;
   }
 }
+async function signInWithEmailWithTestEmailApp(
+  page: Page,
+  email: string,
+  browser: Browser,
+  tag: string
+): Promise<boolean> {
+  try {
+    await page.click('button:has-text("Get Started")');
+    await page.fill('[placeholder="Email"]', email);
+    await page.click('button:has-text("Continue with Email")');
+    await page.waitForSelector("text=Verify your email");
+    await delay(3000);
+    let inbox;
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
+    inbox = await res.data;
+    const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector(
+      "text=Close this and return to your previous window",
+      {
+        timeout: 10000,
+      }
+    );
+    await page2.close();
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
 
 async function signInWithEmailIntoTorusWallet(
   page: Page,
@@ -596,6 +633,16 @@ function generateRandomEmail() {
   return `hello+apps+${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 }
 
+function generateEmailWithTag() {
+  // Randomly generating the tag...
+  const chance = new ChanceJS();
+  const tag = chance.string({
+    length: 12,
+    pool: "abcdefghijklmnopqrstuvwxyz0123456789",
+  });
+  return `kelg8.${tag}@inbox.testmail.app`;
+}
+
 function delay(time: number | undefined) {
   return new Promise(function (resolve) {
     setTimeout(resolve, time);
@@ -635,6 +682,8 @@ export {
   signInWithGitHub,
   delay,
   signInWithEmailIntoTorusWallet,
+  signInWithEmailWithTestEmailApp,
+  generateEmailWithTag,
   env_map,
   getBackUpPhrase,
 };

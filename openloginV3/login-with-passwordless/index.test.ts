@@ -7,6 +7,8 @@ import {
   slowOperation,
   catchError,
   catchErrorAndExit,
+  generateEmailWithTag,
+  signInWithEmailWithTestEmailApp,
 } from "../utils";
 import { readFileSync } from "fs";
 import path from "path";
@@ -15,7 +17,7 @@ import Mailosaur from "mailosaur";
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
-const testEmail = generateRandomEmail();
+const testEmail = generateEmailWithTag();
 const backupPhrase = process.env.BACKUP_PHRASE_PROD;
 
 const existingTestEmail = `demo@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
@@ -38,7 +40,12 @@ test.describe.serial("Passwordless Login scenarios", () => {
       if (msg.type() === "error") console.log(`Error text: "${msg.text()}"`);
     });
     await page.goto(openloginURL);
-    await signInWithEmail(page, testEmail, browser);
+    await signInWithEmailWithTestEmailApp(
+      page,
+      testEmail,
+      browser,
+      testEmail.split("@")[0].split(".")[1]
+    );
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
     await useAutoCancelShareTransfer(page);

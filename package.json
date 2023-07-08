@@ -17,13 +17,16 @@
   },
   "dependencies": {
     "@playwright/test": "^1.32.3",
+    "axios": "^1.4.0",
     "bip39": "^3.0.4",
+    "chance": "^1.1.11",
     "dotenv": "^16.0.3",
     "generate-password": "^1.7.0",
     "mailosaur": "^8.5.0",
     "playwright": "^1.30.0",
+    "reportportal-client": "https://github.com/wiibaker/client-javascript.git#master",
     "serve-handler": "^6.1.3",
-    "reportportal-client": "https://github.com/wiibaker/client-javascript.git#master"
+    "testmail": "^1.0.0"
   },
   "devDependencies": {
     "@reportportal/agent-js-playwright": "^5.0.11",
