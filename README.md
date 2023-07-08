@@ -108,10 +108,10 @@ See [full list of selectors](https://playwright.dev/docs/selectors/#quick-guide)
 
 ## Framework Execution Pattern
 
-![alt text](https://github.com/Web3Auth/web3auth-e2e-tests/blob/new_ui_openlogin/FW.png)
+![alt text](https://github.com/Web3Auth/web3auth-e2e-tests/blob/new_ui_openlogin/fw.png)
 
 <!-- Links -->
 
 [torus]: https://tor.us
 [Web3Auth]: https://app.openlogin.com/
-[Framework Design]: https://lucid.app/lucidchart/0a243786-3d3c-4dcb-b31d-f5c2a224ea42/edit?viewport_loc=-291%2C-13%2C2266%2C1146%2C0_0&invitationId=inv_8cb3a0f7-3930-427f-b82e-259d5b27fa99
+[Framework Design]: https://lucid.app/lucidchart/0a243786-3d3c-4dcb-b31d-f5c2a224ea42/edit?viewport_loc=-81%2C41%2C2150%2C965%2C0_0&invitationId=inv_8cb3a0f7-3930-427f-b82e-259d5b27fa99
