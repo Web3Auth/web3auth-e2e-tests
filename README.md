@@ -93,6 +93,8 @@ Duplicate `openloginV3/account-page/` rename and update the tests.
 [![OpenLoginV3 Test Run](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/v3.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/v3.yml)
 [![OpenLogin - Lighthouse](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/lighthouse.yml/badge.svg)](https://github.com/torusresearch/torus-e2e-tests/actions/workflows/lighthouse.yml)
 
+To view smoke run results, join [discord](https://discord.gg/6XPmwznk).
+
 ### Select elements
 
 Prefer text or accessibility selectors:
