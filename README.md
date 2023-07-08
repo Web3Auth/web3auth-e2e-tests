@@ -108,7 +108,7 @@ See [full list of selectors](https://playwright.dev/docs/selectors/#quick-guide)
 
 ## Framework Execution Pattern
 
-![alt text](https://github.com/Web3Auth/web3auth-e2e-tests/blob/new_ui_openlogin/fw.png)
+![alt text](https://github.com/Web3Auth/web3auth-e2e-tests/blob/new_ui_openlogin/FW.png)
 
 <!-- Links -->
 
