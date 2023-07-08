@@ -58,7 +58,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     expect(shouldExit).toBeFalsy();
     await page.waitForSelector('button:has-text("Verify with other factors")');
     await accountsPage.clickVerifyWithOtherFactors();
-    await accountsPage.verifyWithFactor("Recovery factor");
+    await accountsPage.verifyWithFactor("Recovery password");
     await accountsPage.verifyRecoveryPhrase(
       getBackUpPhrase(process.env.PLATFORM)!
     );

@@ -77,3 +77,27 @@ test("Login as an existing user with social factor as 2FA", async ({
   await accountsPage.clickLogout();
   expect(page.url()).toContain(`${openloginURL}/`);
 });
+
+test("Login as an existing user with password as 2FA", async ({
+  page,
+  browser,
+}) => {
+  test.skip();
+  test.slow();
+  const accountsPage = new AccountsPage(page);
+  await page.goto(openloginURL);
+  await signInWithEmail(page, testEmail, browser);
+  const shouldExit = await catchErrorAndExit(page);
+  expect(shouldExit).toBeFalsy();
+  await page.waitForSelector('button:has-text("Verify with other factors")');
+  await accountsPage.clickVerifyWithOtherFactors();
+  await accountsPage.verifyWithFactor("Social Factor");
+  await accountsPage.verifyPassword("Torus@1234");
+  await signInWithMobileNumber({ page, user, browser });
+  await page.waitForURL(`${openloginURL}/wallet/home`, {
+    waitUntil: "load",
+  });
+  await page.waitForSelector(`text=Welcome, ${testEmail}`);
+  await accountsPage.clickLogout();
+  expect(page.url()).toContain(`${openloginURL}/`);
+});

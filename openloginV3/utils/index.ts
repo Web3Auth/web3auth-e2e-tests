@@ -16,6 +16,7 @@ export const DEFAULT_PLATFORM = "cyan";
 import axios from "axios";
 const ChanceJS = require("chance");
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
+console.log("Api Key:" + process.env.TESTMAIL_APP_APIKEY);
 console.log("Environment:" + process.env.PLATFORM);
 console.log("App Version:" + process.env.APP_VERSION);
 const env_map: { [key: string]: string } = {
