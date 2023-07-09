@@ -14,6 +14,9 @@ import { generate } from "generate-password";
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 export const DEFAULT_PLATFORM = "prod";
 export var openloginversion = process.env.APP_VERSION || "v3";
+import axios from "axios";
+const ChanceJS = require("chance");
+const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 console.log("Environment:" + process.env.PLATFORM);
 console.log("App Version:" + openloginversion);
 const env_map: { [key: string]: string } = {
@@ -605,6 +608,41 @@ async function signInWithEmail(
   }
 }
 
+async function signInWithEmailWithTestEmailApp(
+  page: Page,
+  email: string,
+  browser: Browser,
+  tag: string
+): Promise<boolean> {
+  try {
+    console.log("Email:" + email);
+    await page.fill("#passwordless-email", email);
+    await page.getByLabel("Connect with Phone or Email").click();
+    await page.waitForSelector("text=Verify your email");
+    await delay(3000);
+    let inbox;
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
+    inbox = await res.data;
+    const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector(
+      "text=Close this and return to your previous window",
+      {
+        timeout: 10000,
+      }
+    );
+    await page2.close();
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
 async function signInWithMobileNumber({
   page,
   user,
@@ -713,6 +751,15 @@ function getBackUpPhrase(environment: string | undefined) {
     return process.env.BACKUP_PHRASE_AQUA;
   }
 }
+function generateEmailWithTag() {
+  // Randomly generating the tag...
+  const chance = new ChanceJS();
+  const tag = chance.string({
+    length: 12,
+    pool: "abcdefghijklmnopqrstuvwxyz0123456789",
+  });
+  return `kelg8.${tag}@inbox.testmail.app`;
+}
 
 export {
   useAutoCancelShareTransfer,
@@ -741,4 +788,6 @@ export {
   signInWithEmailIntoTorusWallet,
   delay,
   getBackUpPhrase,
+  generateEmailWithTag,
+  signInWithEmailWithTestEmailApp,
 };

@@ -1,7 +1,9 @@
 // playwright-dev-page.ts
 import { expect, Locator, Page } from "@playwright/test";
+import axios from "axios";
 import Mailosaur from "mailosaur";
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 export class AccountsPage {
   readonly page: Page;
 
@@ -55,6 +57,31 @@ export class AccountsPage {
     }
     seedString += seedArray[23];
     await mailosaur.messages.del(seedEmail?.id || "");
+    console.log("Recovery phrase" + seedString);
+    return seedString;
+  }
+
+  async seedEmailWithTestMailApp(backupEmail: string) {
+    let seedEmail;
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(
+      `${ENDPOINT}&tag=${
+        backupEmail.split("@")[0].split(".")[1]
+      }&livequery=true`
+    );
+    seedEmail = await res.data;
+    let seedArray =
+      String(seedEmail.emails[0].html)
+        .replace(/(\r\n|\n|\r)/gm, "")
+        .slice(11084)
+        .split("<")[0]
+        .split(" ") || [];
+    let seedString = "";
+    for (let i = 0; i < 23; i++) {
+      seedString += seedArray[i] + " ";
+    }
+    seedString += seedArray[23];
     console.log("Recovery phrase" + seedString);
     return seedString;
   }
