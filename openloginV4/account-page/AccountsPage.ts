@@ -57,7 +57,6 @@ export class AccountsPage {
     }
     seedString += seedArray[23];
     await mailosaur.messages.del(seedEmail?.id || "");
-    console.log("Recovery phrase" + seedString);
     return seedString;
   }
 
@@ -82,7 +81,6 @@ export class AccountsPage {
       seedString += seedArray[i] + " ";
     }
     seedString += seedArray[23];
-    console.log("Recovery phrase" + seedString);
     return seedString;
   }
 
