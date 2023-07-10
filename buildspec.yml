@@ -20,9 +20,9 @@ phases:
       - echo Tests Complete
       - cd ./test-results/
       - ls
-artifacts:
-  type: zip
-  files:
-    - "./test-results/*"
-  name: $AWS_REGION-$(date +%Y-%m-%d).txt
-  discard-paths: yes
+  artifacts:
+    type: zip
+    files:
+      - "./**/*"
+    name: Web3auth-e2e-tests
+    base-directory: "app"
