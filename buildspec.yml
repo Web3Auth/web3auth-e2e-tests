@@ -20,9 +20,6 @@ phases:
       - echo Tests Complete
 artifacts:
   files:
-    - ./packages/tests/*.log
-    - ./packages/tests/test-results/*
     - test-results/*
-    - ./test-results/*
   name: $AWS_REGION-$(date +%Y-%m-%d).txt
   discard-paths: yes
