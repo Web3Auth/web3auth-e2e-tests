@@ -18,8 +18,9 @@ phases:
   post_build:
     commands:
       - echo Tests Complete
+      - ls
 artifacts:
   files:
-    - test-results/*
+    - ./test-results/*
   name: $AWS_REGION-$(date +%Y-%m-%d).txt
   discard-paths: yes
