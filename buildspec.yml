@@ -20,9 +20,9 @@ phases:
       - echo Tests Complete
       - cd ./test-results/
       - ls
-  artifacts:
-    type: zip
-    files:
-      - "./**/*"
-    name: Web3auth-e2e-tests
-    base-directory: "app"
+artifacts:
+  type: zip
+  files:
+    - "./**/*"
+  name: Web3auth-e2e-tests
+  base-directory: "app"
