@@ -13,7 +13,8 @@ phases:
     commands:
       - echo Running Tests
       - chmod +x ./bin/*
-      - npm run test:ci
+      - ls
+      - npm run testV4:config
   post_build:
     commands:
       - echo Tests Complete
