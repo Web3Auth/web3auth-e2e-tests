@@ -3,39 +3,25 @@ version: 0.2
 
 phases:
   install:
-    commands:
-      # Get Chrome Information
-      - curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-      - echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
-      - apt-get -y update
-      # Install chrome
-      - apt-get -y install google-chrome-stable
     runtime-versions:
       nodejs: 16
   pre_build:
     commands:
       - echo Installing source NPM dependencies...
       - cd /app
-      - ls -la
-      - npm install
-      - npx playwright install
   build:
     commands:
       - echo Running Tests
       - chmod +x ./bin/*
-      - npx playwright install
       - npm run test:ci
   post_build:
     commands:
       - echo Tests Complete
-      - ls -la
-# reports:
-#   test-report:
-#     files:
-#       - "index.html"
-#     base-directory: playwright-report
-#     file-format: "JUNITXML"
-
 artifacts:
   files:
-    - /test-results/*
+    - ./packages/tests/*.log
+    - ./packages/tests/test-results/*
+    - test-results/*
+    - ./test-results/*
+  name: $AWS_REGION-$(date +%Y-%m-%d).txt
+  discard-paths: yes

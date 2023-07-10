@@ -577,20 +577,32 @@ async function signInWithEmail(
     await page.getByLabel("Connect with Phone or Email").click();
     await page.waitForSelector("text=Verify your email");
     await delay(3000);
-    const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
-    const mailBox = await mailosaur.messages.get(
-      process.env.MAILOSAUR_SERVER_ID || "",
-      {
-        sentTo: email,
+    let href;
+    if (process.env.MAIL_APP == "mailosaur") {
+      const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+      const mailBox = await mailosaur.messages.get(
+        process.env.MAILOSAUR_SERVER_ID || "",
+        {
+          sentTo: email,
+        }
+      );
+      let link = findLink(mailBox.html?.links || [], "Approve login request");
+      if (!link) {
+        link = findLink(mailBox.html?.links || [], "Verify my email");
       }
-    );
-    let link = findLink(mailBox.html?.links || [], "Approve login request");
-    if (!link) {
-      link = findLink(mailBox.html?.links || [], "Verify my email");
+      await mailosaur.messages.del(mailBox?.id || "");
+      href = link?.href || "";
     }
-    await mailosaur.messages.del(mailBox?.id || "");
-    const href = link?.href || "";
-
+    if (process.env.MAIL_APP == "testmail") {
+      let inbox;
+      // Setup our JSON API endpoint
+      const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+      const res = await axios.get(
+        `${ENDPOINT}&tag=${email.split("@")[0].split(".")[1]}&livequery=true`
+      );
+      inbox = await res.data;
+      href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    }
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();
     await page2.goto(href);
@@ -731,7 +743,12 @@ async function signInWithDapps({
 }
 
 function generateRandomEmail() {
-  return randomEmail + `${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+  if (process.env.MAIL_APP == "mailosaur") {
+    return randomEmail + `${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+  }
+  if (process.env.MAIL_APP == "testmail") {
+    return generateEmailWithTag();
+  }
 }
 
 function delay(time: number | undefined) {

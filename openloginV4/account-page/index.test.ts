@@ -31,8 +31,8 @@ const user = {
   mobileNumberForSMS: process.env.SMS_MOBILE_NUMBER || "",
 };
 
-const testEmail = generateRandomEmail();
-const backupEmail = "backup" + generateRandomEmail();
+const testEmail = generateRandomEmail() || "";
+const backupEmail = generateRandomEmail() || "";
 
 const randomPassword = generate({
   length: 15,
