@@ -14,7 +14,7 @@ phases:
       - echo Running Tests
       - chmod +x ./bin/*
       - ls
-      - npm run testV4:config
+      - npm run test:trace
   post_build:
     commands:
       - echo Tests Complete
