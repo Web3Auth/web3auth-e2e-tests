@@ -14,8 +14,8 @@ node_modules
 **/chromium.json
 **/firefox.json
 **/webkit.json
-test-results
-/test-results/
+# test-results
+# /test-results/
 /playwright/.cache/
 playwright-report
 /playwright-report/
