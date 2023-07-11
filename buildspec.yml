@@ -18,11 +18,12 @@ phases:
   post_build:
     commands:
       - echo Tests Complete
-      - cd ./test-results/
+      - mv test-results openloginV4
+      - cd ./openloginV4/test-results/
       - ls
 artifacts:
   type: zip
   files:
     - "./**/*"
   name: Web3auth-e2e-tests
-  base-directory: "app"
+  base-directory: "/app"

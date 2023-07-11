@@ -103,7 +103,7 @@ test.describe.serial("Account page scenarios", () => {
     await accountsPage.clickCreateMainnet();
     await accountsPage.createMainnetProject(
       testEmail + "_project",
-      "Mainnet (Asia)"
+      "Sapphire Mainnet"
     );
     await accountsPage.navigateTo("Project");
     await page.waitForURL(`${openloginURL}/home/projects`, {
@@ -111,7 +111,7 @@ test.describe.serial("Account page scenarios", () => {
     });
     await accountsPage.searchAndSelectProject(
       testEmail + "_project",
-      "Mainnet (Asia)"
+      "Sapphire Mainnet"
     );
   });
 
