@@ -30,7 +30,7 @@ const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
 const testEmail = generateEmailWithTag();
 const backupPhrase = process.env.BACKUP_PHRASE_PROD;
-
+const consoleLogs: string[] = [];
 const existingTestEmail = `demo@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 
 test.describe.serial("Passwordless Login scenarios", () => {
@@ -43,7 +43,10 @@ test.describe.serial("Passwordless Login scenarios", () => {
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time
     // Listen for all console events and handle errors
     page.on("console", (msg) => {
-      if (msg.type() === "error") console.log(`Error text: "${msg.text()}"`);
+      if (msg.type() === "error") {
+        console.log(`Error text: "${msg.text()}"`);
+        consoleLogs.push(`${msg.text()}`);
+      }
     });
     await page.goto(openloginURL);
     await signInWithEmailWithTestEmailApp(
@@ -122,6 +125,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
       timestamp,
       version,
       ci_mode,
+      consoleLogs,
     };
 
     try {
