@@ -26,7 +26,8 @@
     "playwright": "^1.30.0",
     "reportportal-client": "https://github.com/wiibaker/client-javascript.git#master",
     "serve-handler": "^6.1.3",
-    "testmail": "^1.0.0"
+    "testmail": "^1.0.0",
+    "@opensearch-project/opensearch": "^2.2.1"
   },
   "devDependencies": {
     "@reportportal/agent-js-playwright": "^5.0.11",

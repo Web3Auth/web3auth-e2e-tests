@@ -1,5 +1,6 @@
 import { chromium, expect, firefox, Page } from "@playwright/test";
 import { test } from "./index.lib";
+import { Client } from "@opensearch-project/opensearch";
 import {
   useAutoCancel2FASetup,
   signInWithEmail,
@@ -14,6 +15,15 @@ import { readFileSync } from "fs";
 import path from "path";
 import { useAutoCancelShareTransfer, getBackUpPhrase } from "../utils/index";
 import Mailosaur from "mailosaur";
+const eventPostURL =
+  process.env.ES_ENDPOINT === undefined
+    ? "search-sapphire-latency-stats-7n6qd4g6m3au5fpre3gwvwo6vm.eu-west-1.es.amazonaws.com"
+    : process.env.ES_ENDPOINT;
+const region =
+  process.env.REGION === undefined ? "singapore" : process.env.REGION;
+const username = "devops";
+const password = process.env.PASSWORD;
+const version = process.env.APP_VERSION;
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
@@ -30,11 +40,6 @@ test.describe.serial("Passwordless Login scenarios", () => {
   }) => {
     // Verify environment variables
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time
-    expect(
-      !!process.env.MAILOSAUR_SERVER_ID &&
-        !!process.env.MAILOSAUR_API_KEY &&
-        !!process.env.MAILOSAUR_SERVER_DOMAIN
-    ).toBe(true);
     // Listen for all console events and handle errors
     page.on("console", (msg) => {
       if (msg.type() === "error") console.log(`Error text: "${msg.text()}"`);
@@ -94,5 +99,41 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     expect(page.url()).toBe(`${openloginURL}/wallet/home`);
     const welcome = await page.waitForSelector(`text=Welcome`);
+  });
+  // eslint-disable-next-line no-empty-pattern
+  test.afterEach(async ({}, testInfo) => {
+    const client = new Client({
+      node: `https://${username}:${password}@${eventPostURL}`,
+    });
+    console.log(testInfo.stderr);
+    const { title, status, errors } = testInfo;
+    let errorMessage = "";
+    errors.forEach((element) => {
+      errorMessage += `${element.message}\n`;
+    });
+    const timestamp = new Date().toISOString();
+
+    const document = {
+      title,
+      status,
+      errorMessage,
+      region,
+      timestamp,
+      version,
+    };
+
+    try {
+      await client.index({
+        index: "web3authtests",
+        body: document,
+      });
+      console.log(
+        `Pushed test information to Elasticsearch: ${JSON.stringify(document)}`
+      );
+    } catch (er) {
+      console.error(
+        `Failed to push failed test information to Elasticsearch: ${er}`
+      );
+    }
   });
 });

@@ -72,6 +72,7 @@ jobs:
           BACKUP_PHRASE_CYAN: ${{ secrets.BACKUP_PHRASE_CYAN }}
           BACKUP_PHRASE_AQUA: ${{ secrets.BACKUP_PHRASE_AQUA }}
           TESTMAIL_APP_APIKEY: ${{ secrets.TESTMAIL_APP_APIKEY }}
+          MAIL_APP: ${{ secrets.MAIL_APP }}
         run: |
           echo "Platform: ${{ matrix.env.PLATFORM }}" && ipconfig getifaddr en0 && ls && npm install && npx playwright install && npm run testV3:config
 
