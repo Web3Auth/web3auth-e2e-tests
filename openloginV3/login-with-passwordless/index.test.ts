@@ -24,6 +24,7 @@ const region =
 const username = "devops";
 const password = process.env.PASSWORD;
 const version = process.env.APP_VERSION;
+const ci_mode = process.env.CI_MODE;
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
@@ -120,6 +121,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
       region,
       timestamp,
       version,
+      ci_mode,
     };
 
     try {
