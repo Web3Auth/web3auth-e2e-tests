@@ -31,6 +31,7 @@ const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const testEmail = generateEmailWithTag();
 const backupPhrase = process.env.BACKUP_PHRASE_PROD;
 const consoleLogs: string[] = [];
+const platform = process.env.PLATFORM;
 const existingTestEmail = `demo@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 
 test.describe.serial("Passwordless Login scenarios", () => {
@@ -126,11 +127,12 @@ test.describe.serial("Passwordless Login scenarios", () => {
       version,
       ci_mode,
       consoleLogs,
+      platform,
     };
 
     try {
       await client.index({
-        index: "web3authtests",
+        index: `${version}-${platform}`,
         body: document,
       });
       console.log(
