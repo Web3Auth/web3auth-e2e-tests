@@ -19,7 +19,7 @@ phases:
     commands:
       - echo Tests Complete
       - mv test-results openloginV3
-      - cd ./openloginV4/test-results/
+      - cd ./openloginV3/test-results/
       - ls
 artifacts:
   type: zip
