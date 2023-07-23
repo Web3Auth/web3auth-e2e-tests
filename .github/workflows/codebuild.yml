@@ -14,6 +14,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
+        platform: [prod, cyan, aqua]
         region: [ap-southeast-1, us-east-1]
 
     runs-on: ubuntu-latest
@@ -43,7 +44,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_DEFAULT_REGION: ${{ matrix.region }}
+          PLATFORM: ${{ matrix.platform }}
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: web3auth-e2e-tests
         run: >
-          aws codebuild start-build --project-name TorusE2ETests --region $AWS_DEFAULT_REGION
+          aws codebuild start-build --project-name TorusE2ETests --region $AWS_DEFAULT_REGION --environment-variables-override name=PLATFORM,value=${{ matrix.env.PLATFORM }},type=PLAINTEXT
