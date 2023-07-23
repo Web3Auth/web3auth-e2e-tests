@@ -15,7 +15,7 @@ jobs:
       max-parallel: 1
       matrix:
         platform: [prod, cyan, aqua]
-        region: [ap-southeast-1, us-east-1]
+        region: [ap-southeast-1, us-east-1, sa-east-1, eu-west-1]
 
     runs-on: ubuntu-latest
     steps:
