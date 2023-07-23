@@ -48,4 +48,4 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: web3auth-e2e-tests
         run: >
-          aws codebuild start-build --project-name TorusE2ETests --region $AWS_DEFAULT_REGION --environment-variables-override name=PLATFORM,value=${{ matrix.env.PLATFORM }},type=PLAINTEXT --buildspec-override buildspec.yml
+          aws codebuild start-build --project-name TorusE2ETests --region $AWS_DEFAULT_REGION --environment-variables-override name=PLATFORM,value=$PLATFORM,type=PLAINTEXT --buildspec-override buildspec.yml
