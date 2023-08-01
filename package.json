@@ -17,7 +17,7 @@
     "docker:run": "docker run -it test-image /bin/bash"
   },
   "dependencies": {
-    "@playwright/test": "^1.32.3",
+    "@playwright/test": "^1.36.2",
     "axios": "^1.4.0",
     "bip39": "^3.0.4",
     "chance": "^1.1.11",
