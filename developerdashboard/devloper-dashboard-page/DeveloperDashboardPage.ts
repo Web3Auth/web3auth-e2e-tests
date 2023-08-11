@@ -18,22 +18,40 @@ export class DeveloperDashboardPage {
     await this.page.locator('button:has-text(" Create Verifier ")').click();
   }
 
-  async registerUser() {
-    await this.page.locator('button:has-text("Others")').click();
+  async registerUser(name: string) {
+    await this.page.locator("xpath=.//input[@type='checkbox']").click();
+    await this.page.locator('button:has-text("Next")').click();
     await this.page
-      .locator(
-        `xpath=.//input[@placeholder='e.g. Project manager, business manager']`
-      )
+      .locator(`xpath=.//input[@placeholder='Select an industry']`)
       .first()
-      .fill("QA Engineer");
+      .click();
+    await this.page.locator('span:has-text("Gaming")').click();
+    await this.page
+      .locator(`xpath=.//input[@placeholder='Select an organization size']`)
+      .first()
+      .click();
+    await this.page.locator('span:has-text("1-9")').click();
+    await this.page
+      .locator(`xpath=.//input[@placeholder='e.g. Acme Corp / Bonnie Green']`)
+      .first()
+      .fill(name);
     await this.page.locator('button:has-text(" Next: Account Info ")').click();
-    await this.page.locator("#agree-terms").click();
-    await this.page.locator('button:has-text(" Create Profile ")').click();
+    await this.page.locator('button:has-text("Next")').click();
   }
 
-  async createProject(name: string, environment: string, platform: string) {
+  async createProject(
+    name: string,
+    product: string,
+    environment: string,
+    platform: string
+  ) {
     await this.page.locator("#projectName").first().waitFor();
     await this.page.locator("#projectName").first().fill(name);
+    await this.page
+      .locator(`xpath=.//input[@placeholder='0 products selected']`)
+      .first()
+      .click();
+    await this.page.locator(`span:has-text("${product}")`).first().click();
     await this.page
       .locator(`xpath=.//input[@placeholder='0 platforms selected']`)
       .first()
@@ -81,12 +99,12 @@ export class DeveloperDashboardPage {
   async createMainnetProject(name: string, environment: string) {
     await this.page.waitForSelector("#CreateProjectName");
     await this.page.locator("#CreateProjectName").fill(name);
-    await this.page.locator("#networkEnvironment").first().click();
-    await this.page.waitForSelector(`div:has-text("${environment}")`);
-    await this.page
-      .locator(`xpath=.//div[text()="${environment}"]`)
-      .first()
-      .click();
+    // await this.page.locator("#networkEnvironment").first().click();
+    // await this.page.waitForSelector(`div:has-text("${environment}")`);
+    // await this.page
+    //   .locator(`xpath=.//div[text()="${environment}"]`)
+    //   .first()
+    //   .click();
     await this.page
       .locator('button:has-text(" Create Mainnet Project ")')
       .last()
@@ -236,7 +254,7 @@ export class DeveloperDashboardPage {
   }
 
   async upgradePlan() {
-    await this.page.click('button:has-text(" Upgrade Plan")');
+    await this.page.click('xpath=.//a[text()="upgrade your plan."]');
     await this.page.locator('button:has-text("Choose Plan")').first().click();
     await this.page
       .frameLocator('[title="Secure payment input frame"]')

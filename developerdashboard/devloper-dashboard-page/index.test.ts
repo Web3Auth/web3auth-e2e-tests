@@ -30,7 +30,7 @@ const user = {
 
 const testEmail = generateRandomEmail() || "";
 const backupEmail = generateRandomEmail() || "";
-
+var organizationName = "";
 const randomPassword = generate({
   length: 15,
   numbers: true,
@@ -49,15 +49,16 @@ test.describe.serial("Account page scenarios", () => {
     await signInWithEmail(page, testEmail, browser);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
-    await page.waitForURL(`${openloginURL}/register`, {
+    await page.waitForURL(`${openloginURL}/profile/create`, {
       waitUntil: "load",
     });
   });
 
   test(`Verify user is able to register`, async ({}) => {
     const accountsPage = new DeveloperDashboardPage(page);
-    await accountsPage.registerUser();
-    await page.waitForURL(`${openloginURL}/home`, {
+    organizationName = testEmail.split("@")[0].split(".")[1];
+    await accountsPage.registerUser(organizationName);
+    await page.waitForURL(`${openloginURL}/organization/${organizationName}`, {
       waitUntil: "load",
     });
     await page.waitForSelector('span:has-text("Create a Project")');
@@ -74,20 +75,24 @@ test.describe.serial("Account page scenarios", () => {
     await accountsPage.clickCreateAProject();
     await accountsPage.createProject(
       testEmail + "_project",
-      "Sapphire Devnet",
+      "Core Kit",
+      "Sapphire Devnet (MPC Only)",
       "Android"
     );
     await accountsPage.navigateTo("Project");
-    await page.waitForURL(`${openloginURL}/home/projects`, {
-      waitUntil: "load",
-    });
+    await page.waitForURL(
+      `${openloginURL}/organization/${organizationName}/projects`,
+      {
+        waitUntil: "load",
+      }
+    );
     await accountsPage.searchAndSelectProject(
       testEmail + "_project",
-      "Sapphire Devnet"
+      "Sapphire Devnet (MPC Only)"
     );
     await accountsPage.verifyProject(
       testEmail + "_project",
-      "Sapphire Devnet",
+      "Sapphire Devnet (MPC Only)",
       "Android"
     );
   });
@@ -103,15 +108,18 @@ test.describe.serial("Account page scenarios", () => {
     await accountsPage.clickCreateMainnet();
     await accountsPage.createMainnetProject(
       testEmail + "_project",
-      "Sapphire Mainnet"
+      "Sapphire Mainnet (MPC Only)"
     );
     await accountsPage.navigateTo("Project");
-    await page.waitForURL(`${openloginURL}/home/projects`, {
-      waitUntil: "load",
-    });
+    await page.waitForURL(
+      `${openloginURL}/organization/${organizationName}/projects`,
+      {
+        waitUntil: "load",
+      }
+    );
     await accountsPage.searchAndSelectProject(
       testEmail + "_project",
-      "Sapphire Mainnet"
+      "Sapphire Mainnet (MPC Only)"
     );
   });
 
@@ -128,21 +136,18 @@ test.describe.serial("Account page scenarios", () => {
     );
   });
 
-  test(`Verify user is able to add new team and verify role`, async ({}) => {
+  test(`Verify users role`, async ({}) => {
     const accountsPage = new DeveloperDashboardPage(page);
-    const teamName = testEmail
-      .split("@")[0]
-      .substr(testEmail.split("@")[0].length - 6);
-    await accountsPage.addNewTeam(
-      testEmail.split("@")[0].substr(testEmail.split("@")[0].length - 6),
-      testEmail
-    );
-    await accountsPage.verifyMessageIsDisplayed("Team Created Successfully");
     await accountsPage.navigateTo("Settings");
-    await page.goto(`${openloginURL}/home/team/${teamName}/settings`);
-    await page.waitForURL(`${openloginURL}/home/team/${teamName}/settings`, {
-      waitUntil: "load",
-    });
+    await page.goto(
+      `${openloginURL}/organization/${organizationName}/settings`
+    );
+    await page.waitForURL(
+      `${openloginURL}/organization/${organizationName}/settings`,
+      {
+        waitUntil: "load",
+      }
+    );
     await accountsPage.navigateToTab(" Member");
     await accountsPage.verifyUserRole(testEmail, "Owner");
   });
