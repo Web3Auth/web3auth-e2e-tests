@@ -9,7 +9,7 @@
     "test:trace": "playwright test --grep=@smoke --config=index.config.ts --trace retain-on-failure",
     "test:traceV4": "playwright test openloginV4 --grep=@smoke --config=index.config.ts --trace retain-on-failure",
     "testV3:config": "playwright test openloginV3 --grep=@smoke --workers=1 --headed --config=index.config.ts",
-    "testV4:config": "playwright test openloginV4 --grep=--grep 'Login with mobile number using passwordless login' --workers=1 --headed --config=index.config.ts",
+    "testV4:config": "playwright test openloginV4 --grep 'Login with mobile number using passwordless login' --workers=1 --headed --config=index.config.ts",
     "developerdashboard:config": "playwright test opendeveloperdashboard --grep=@smoke --workers=1 --headed --config=index.config.ts",
     "trace:show": "playwright show-trace",
     "install-deps": "playwright install-deps",
