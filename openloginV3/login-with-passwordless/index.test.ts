@@ -107,41 +107,45 @@ test.describe.serial("Passwordless Login scenarios", () => {
   });
   // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {
-    const client = new Client({
-      node: `https://${username}:${password}@${eventPostURL}`,
-    });
-    console.log(testInfo.stderr);
-    const { title, status, errors } = testInfo;
-    let errorMessage = "";
-    errors.forEach((element) => {
-      errorMessage += `${element.message}\n`;
-    });
-    const timestamp = new Date().toISOString();
-
-    const document = {
-      title,
-      status,
-      errorMessage,
-      region,
-      timestamp,
-      version,
-      ci_mode,
-      consoleLogs,
-      platform,
-    };
-
-    try {
-      await client.index({
-        index: `${version}-${platform}`,
-        body: document,
+    if (ci_mode == "AWS") {
+      const client = new Client({
+        node: `https://${username}:${password}@${eventPostURL}`,
       });
-      console.log(
-        `Pushed test information to Elasticsearch: ${JSON.stringify(document)}`
-      );
-    } catch (er) {
-      console.error(
-        `Failed to push failed test information to Elasticsearch: ${er}`
-      );
+      console.log(testInfo.stderr);
+      const { title, status, errors } = testInfo;
+      let errorMessage = "";
+      errors.forEach((element) => {
+        errorMessage += `${element.message}\n`;
+      });
+      const timestamp = new Date().toISOString();
+
+      const document = {
+        title,
+        status,
+        errorMessage,
+        region,
+        timestamp,
+        version,
+        ci_mode,
+        consoleLogs,
+        platform,
+      };
+
+      try {
+        await client.index({
+          index: `${version}-${platform}`,
+          body: document,
+        });
+        console.log(
+          `Pushed test information to Elasticsearch: ${JSON.stringify(
+            document
+          )}`
+        );
+      } catch (er) {
+        console.error(
+          `Failed to push failed test information to Elasticsearch: ${er}`
+        );
+      }
     }
   });
 });
