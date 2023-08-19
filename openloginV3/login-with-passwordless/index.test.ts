@@ -15,6 +15,8 @@ import { readFileSync } from "fs";
 import path from "path";
 import { useAutoCancelShareTransfer, getBackUpPhrase } from "../utils/index";
 import Mailosaur from "mailosaur";
+
+process.env.APP_VERSION = "v3";
 const eventPostURL =
   process.env.ES_ENDPOINT === undefined
     ? "search-sapphire-latency-stats-7n6qd4g6m3au5fpre3gwvwo6vm.eu-west-1.es.amazonaws.com"

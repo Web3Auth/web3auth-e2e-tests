@@ -15,6 +15,7 @@ import { resolve } from "path";
 export const DEFAULT_PLATFORM = "cyan";
 import axios from "axios";
 const ChanceJS = require("chance");
+process.env.APP_VERSION = "v3";
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 console.log("Api Key:" + process.env.TESTMAIL_APP_APIKEY);
 console.log("Environment:" + process.env.PLATFORM);
