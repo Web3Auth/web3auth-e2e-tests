@@ -79,6 +79,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
         consoleLogs.push(`${msg.text()}`);
       }
     });
+    await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto(openloginURL);
     await signInWithEmailWithTestEmailApp(
       page,

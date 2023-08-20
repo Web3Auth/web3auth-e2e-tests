@@ -561,6 +561,7 @@ async function signInWithEmailWithTestEmailApp(
   tag: string
 ): Promise<boolean> {
   try {
+    console.log("Email:" + email);
     await page.click('button:has-text("Get Started")');
     await page.fill('[placeholder="Email"]', email);
     await page.click('button:has-text("Continue with Email")');
