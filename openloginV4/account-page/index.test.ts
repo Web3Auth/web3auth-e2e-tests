@@ -1,7 +1,12 @@
 import { test, expect, Page } from "@playwright/test";
 import { AccountsPage } from "./AccountsPage";
 import Mailosaur from "mailosaur";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
+import {
+  DEFAULT_PLATFORM,
+  env_map,
+  generateEmailWithTag,
+  signInWithEmailWithTestEmailApp,
+} from "../utils/index";
 import { generate } from "generate-password";
 import { signInWithGitHub, signInWithMobileNumber } from "../utils";
 import { validateMnemonic } from "bip39";
@@ -31,8 +36,8 @@ const user = {
   mobileNumberForSMS: process.env.SMS_MOBILE_NUMBER || "",
 };
 
-const testEmail = generateRandomEmail() || "";
-const backupEmail = generateRandomEmail() || "";
+const testEmail = generateEmailWithTag() || "";
+const backupEmail = generateEmailWithTag() || "";
 
 const randomPassword = generate({
   length: 15,
@@ -50,7 +55,12 @@ test.describe.serial("Account page scenarios", () => {
     test.setTimeout(3000000);
     await signInWithGitHub({ page, github });
     await page.goto(openloginURL);
-    await signInWithEmail(page, testEmail, browser);
+    await signInWithEmailWithTestEmailApp(
+      page,
+      testEmail,
+      browser,
+      testEmail.split("@")[0].split(".")[1]
+    );
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
     await page.waitForURL(`${openloginURL}/wallet/home`, {

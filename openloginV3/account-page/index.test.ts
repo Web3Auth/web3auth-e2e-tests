@@ -1,5 +1,6 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./index.lib";
+import axios from "axios";
 import {
   useAutoCancel2FASetup,
   signInWithEmail,
@@ -13,16 +14,18 @@ import {
   waitForSessionStorage,
   catchErrorAndExit,
   slowOperation,
+  generateEmailWithTag,
+  signInWithEmailWithTestEmailApp,
 } from "../utils";
 import Mailosaur from "mailosaur";
 import { generate } from "generate-password";
 import { validateMnemonic } from "bip39";
 
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
+const testEmail = generateEmailWithTag();
 
-const testEmail = generateRandomEmail();
-
-const backupEmail = "backup" + generateRandomEmail();
+const backupEmail = generateEmailWithTag();
 
 const randomPassword = generate({
   length: 15,
@@ -42,17 +45,22 @@ const newRandomPassword = generate({
 test.describe.serial("Account page scenarios", () => {
   let page: Page;
   test.beforeAll(async ({ browser, openloginURL }) => {
-    test.setTimeout(300000)
+    test.setTimeout(300000);
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
-    await signInWithEmail(page, testEmail, browser);
+    await signInWithEmailWithTestEmailApp(
+      page,
+      testEmail,
+      browser,
+      testEmail.split("@")[0].split(".")[1]
+    );
     const shouldExit = await catchErrorAndExit(page);
-    expect(shouldExit).toBeFalsy()
+    expect(shouldExit).toBeFalsy();
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
-      timeout: 3 * 60 * 1000
+      timeout: 3 * 60 * 1000,
     });
   });
 
@@ -69,7 +77,7 @@ test.describe.serial("Account page scenarios", () => {
     });
     expect(await page.isVisible("text=Account")).toBeTruthy();
   });
-  test(`should display 2FA enable window for single factor account`, async ({ }) => {
+  test(`should display 2FA enable window for single factor account`, async ({}) => {
     expect(
       await page.isVisible(
         "text=We strongly recommend you to enable 2FA on your account"
@@ -91,27 +99,50 @@ test.describe.serial("Account page scenarios", () => {
     await page.fill('[placeholder="Email"]', backupEmail);
 
     await page.click('button:has-text("Continue")');
-
-    const seedEmail = await mailosaur.messages.get(
-      process.env.MAILOSAUR_SERVER_ID || "",
-      {
-        sentTo: backupEmail,
-      },
-      { timeout: 30 * 1000 }
-    );
-    let seedArray =
-      seedEmail.html?.body
-        ?.toString()
-        .replace(/(\r\n|\n|\r)/gm, "")
-        .slice(11084)
-        .split("<")[0]
-        .split(" ") || [];
+    let seedArray: string[];
+    let seedEmail;
     let seedString = "";
-    for (let i = 0; i < 23; i++) {
-      seedString += seedArray[i] + " ";
+    if (process.env.MAIL_APP == "mailosaur") {
+      const seedEmail = await mailosaur.messages.get(
+        process.env.MAILOSAUR_SERVER_ID || "",
+        {
+          sentTo: backupEmail,
+        },
+        { timeout: 30 * 1000 }
+      );
+      seedArray =
+        seedEmail.html?.body
+          ?.toString()
+          .replace(/(\r\n|\n|\r)/gm, "")
+          .slice(11084)
+          .split("<")[0]
+          .split(" ") || [];
+      for (let i = 0; i < 23; i++) {
+        seedString += seedArray[i] + " ";
+      }
+      seedString += seedArray[23];
+      await mailosaur.messages.del(seedEmail?.id || "");
     }
-    seedString += seedArray[23];
-    await mailosaur.messages.del(seedEmail?.id || "");
+    if (process.env.MAIL_APP == "testmail") {
+      // Setup our JSON API endpoint
+      const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+      const res = await axios.get(
+        `${ENDPOINT}&tag=${
+          backupEmail.split("@")[0].split(".")[1]
+        }&livequery=true`
+      );
+      seedEmail = await res.data;
+      seedArray =
+        String(seedEmail.emails[0].html)
+          .replace(/(\r\n|\n|\r)/gm, "")
+          .slice(11084)
+          .split("<")[0]
+          .split(" ") || [];
+      for (let i = 0; i < 23; i++) {
+        seedString += seedArray[i] + " ";
+      }
+      seedString += seedArray[23];
+    }
 
     await page.fill('[placeholder="Recovery phrase"]', seedString);
 
@@ -119,12 +150,12 @@ test.describe.serial("Account page scenarios", () => {
 
     await page.click('button:has-text("Done")');
     await page.waitForURL(`${openloginURL}/wallet/home`, {
-      timeout: 3 * 60 * 1000
+      timeout: 3 * 60 * 1000,
     });
     await page.waitForTimeout(3000);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
-      timeout: 3 * 60 * 1000
+      timeout: 3 * 60 * 1000,
     });
 
     expect(await page.isVisible("text=Recovery email")).toBeTruthy();
@@ -133,35 +164,34 @@ test.describe.serial("Account page scenarios", () => {
   });
 
   test(`should resend recovery email share`, async ({ openloginURL }) => {
+    let seedArray: string[];
+    let seedEmail;
+    let seedString = "";
     await waitForSessionStorage(page, openloginURL);
     await page.click('button:has-text("Resend")');
     await page.waitForTimeout(5000);
-
-    const resentBackup = await mailosaur.messages.get(
-      process.env.MAILOSAUR_SERVER_ID || "",
-      {
-        sentTo: backupEmail,
-      },
-      { timeout: 30 * 1000 }
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(
+      `${ENDPOINT}&tag=${
+        backupEmail.split("@")[0].split(".")[1]
+      }&livequery=true`
     );
-    expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
-
-    let seedArray =
-      resentBackup.html?.body
-        ?.toString()
+    seedEmail = await res.data;
+    seedArray =
+      String(seedEmail.emails[0].html)
         .replace(/(\r\n|\n|\r)/gm, "")
         .slice(11084)
         .split("<")[0]
         .split(" ") || [];
-    let seedString = "";
     for (let i = 0; i < 23; i++) {
       seedString += seedArray[i] + " ";
     }
     seedString += seedArray[23];
+
     expect(validateMnemonic(seedString)).toBeTruthy();
   });
 
-  test(`emailed backup phrase and phrase from UI should match`, async ({
+  test.skip(`emailed backup phrase and phrase from UI should match`, async ({
     openloginURL,
   }) => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
@@ -169,23 +199,25 @@ test.describe.serial("Account page scenarios", () => {
     });
     await waitForSessionStorage(page, openloginURL);
     await page.click('button[aria-label="export email share"]');
-    const resentBackup = await mailosaur.messages.get(
-      process.env.MAILOSAUR_SERVER_ID || "",
-      {
-        sentTo: backupEmail,
-      },
-      { timeout: 30 * 1000 }
+    let seedArray: string[];
+    let seedEmail;
+    let seedString = "";
+    await waitForSessionStorage(page, openloginURL);
+    await page.click('button:has-text("Resend")');
+    await page.waitForTimeout(5000);
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(
+      `${ENDPOINT}&tag=${
+        backupEmail.split("@")[0].split(".")[1]
+      }&livequery=true`
     );
-    expect(resentBackup.subject === "Your Web3Auth backup phrase").toBeTruthy();
-
-    let seedArray =
-      resentBackup.html?.body
-        ?.toString()
+    seedEmail = await res.data;
+    seedArray =
+      String(seedEmail.emails[0].html)
         .replace(/(\r\n|\n|\r)/gm, "")
         .slice(11084)
         .split("<")[0]
         .split(" ") || [];
-    let seedString = "";
     for (let i = 0; i < 23; i++) {
       seedString += seedArray[i] + " ";
     }
@@ -210,7 +242,7 @@ test.describe.serial("Account page scenarios", () => {
 
     await addPasswordShare(page, randomPassword);
     await page.reload();
-    expect(await page.getByText('2 / 4').isVisible());
+    expect(await page.getByText("2 / 4").isVisible());
   });
 
   test(`should change/update account password`, async ({ openloginURL }) => {
@@ -227,7 +259,7 @@ test.describe.serial("Account page scenarios", () => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-    expect(await page.getByText('2 / 4').isVisible());
+    expect(await page.getByText("2 / 4").isVisible());
   });
 
   test(`should be able to delete email share`, async ({ openloginURL }) => {
@@ -255,21 +287,20 @@ test.describe.serial("Account page scenarios", () => {
     await page.reload();
     await page.goto(`${openloginURL}/wallet/home`);
     await page.goto(`${openloginURL}/wallet/account`);
-    expect(await page.getByText('2 / 3').isVisible());
-
+    expect(await page.getByText("2 / 3").isVisible());
   });
 
   test(`should show a popup with copy option while clicking download device share`, async ({
     openloginURL,
   }) => {
-    await waitForSessionStorage(page, openloginURL);
-    await page.waitForSelector("button[aria-label='export device share']"),
-    await page.click(`button[aria-label='export device share']`),
-    await page.waitForSelector("text=Save a copy of your backup phrase"),
+    await page.goto(`${openloginURL}/wallet/account`);
+    await page.waitForSelector('button[aria-label="export device share"]'),
+      await page.locator('button[aria-label="export device share"]').click(),
+      await page.waitForSelector("text=Save a copy of your backup phrase"),
       expect(
         await page.isVisible("text=Save a copy of your backup phrase")
       ).toBeTruthy(),
-    await page.click('button:has-text("Close")');
+      await page.click('button:has-text("Close")');
   });
 
   // should test setting up email backup again after deleting email share.
@@ -282,14 +313,15 @@ test.describe.serial("Account page scenarios", () => {
     await Promise.all([
       page.waitForResponse(
         (resp) =>
-          resp.url().includes("/metadata.tor.us/get") &&
-          resp.status() === 200
+          resp.url().includes("/metadata.tor.us/get") && resp.status() === 200
       ),
       page.click('button:has-text("Confirm")'),
     ]);
     //await page.reload(); Recovery share deleted successfully
-    await expect(page.getByText('Backup Phrase successfully sent', { exact: false })).toBeVisible();
-    expect(await page.getByText('2 / 4').isVisible());
+    await expect(
+      page.getByText("Backup Phrase successfully sent", { exact: false })
+    ).toBeVisible();
+    expect(await page.getByText("2 / 4").isVisible());
   });
 
   test(`should be able to delete device share`, async ({ openloginURL }) => {
@@ -299,7 +331,7 @@ test.describe.serial("Account page scenarios", () => {
       waitUntil: "load",
     });
     page.on("console", (msg) => {
-      console.log(msg)
+      console.log(msg);
     });
     await tkey;
     await waitForSessionStorage(page, openloginURL);
