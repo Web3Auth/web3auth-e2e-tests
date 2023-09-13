@@ -600,7 +600,10 @@ async function signInWithEmailWithTestEmailOnDemoApp(
 ): Promise<boolean> {
   try {
     await page.waitForSelector('xpath=.//select[@class="select"]');
-    await page.locator('xpath=.//select[@class="select"]').selectOption(option);
+    await page
+      .locator('xpath=.//select[@class="select"]')
+      .first()
+      .selectOption(option);
     console.log("Email:" + email);
     await page.fill('[placeholder="Enter an email"]', email);
     await page.click('button:has-text("Login with email passwordless")');
