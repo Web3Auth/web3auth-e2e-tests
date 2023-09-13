@@ -30,6 +30,7 @@ const env_map: { [key: string]: string } = {
   aqua: `https://aqua.openlogin.com/${openloginversion}`,
   local: "http://localhost:3000",
   torusV2: "https://app.tor.us",
+  demo: "https://demo-openlogin.web3auth.io/",
 };
 const randomEmail = generate({
   length: 20,
@@ -656,6 +657,47 @@ async function signInWithEmailWithTestEmailApp(
   }
 }
 
+async function signInWithEmailWithTestEmailOnDemoApp(
+  page: Page,
+  email: string,
+  browser: Browser,
+  tag: string,
+  option: string
+): Promise<boolean> {
+  try {
+    await page.waitForSelector('xpath=.//select[@class="select"]');
+    await page
+      .locator('xpath=.//select[@class="select"]')
+      .first()
+      .selectOption(option);
+    console.log("Email:" + email);
+    await page.fill('[placeholder="Enter an email"]', email);
+    await page.click('button:has-text("Login with email passwordless")');
+    await page.waitForSelector("text=Verify your email");
+    await delay(3000);
+    let inbox;
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
+    inbox = await res.data;
+    const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector(
+      "text=Close this and return to your previous window",
+      {
+        timeout: 10000,
+      }
+    );
+    await page2.close();
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
 async function signInWithMobileNumber({
   page,
   user,
@@ -808,4 +850,5 @@ export {
   getBackUpPhrase,
   generateEmailWithTag,
   signInWithEmailWithTestEmailApp,
+  signInWithEmailWithTestEmailOnDemoApp,
 };

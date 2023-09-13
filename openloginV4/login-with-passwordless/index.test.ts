@@ -6,6 +6,7 @@ import {
   generateEmailWithTag,
   getBackUpPhrase,
   signInWithEmailWithTestEmailApp,
+  signInWithEmailWithTestEmailOnDemoApp,
 } from "../utils/index";
 import {
   signInWithMobileNumber,
@@ -17,7 +18,7 @@ import { AccountsPage } from "../account-page/AccountsPage";
 import { readFileSync } from "fs";
 import path from "path";
 import { Client } from "@opensearch-project/opensearch";
-
+const demoAppUrl = env_map["demo"];
 const eventPostURL =
   process.env.ES_ENDPOINT === undefined
     ? "search-sapphire-latency-stats-7n6qd4g6m3au5fpre3gwvwo6vm.eu-west-1.es.amazonaws.com"
@@ -25,11 +26,10 @@ const eventPostURL =
 const region =
   process.env.REGION === undefined ? "singapore" : process.env.REGION;
 const username = "devops";
-const platform = process.env.PLATFORM;
+const platform = process.env.PLATFORM || "";
 const password = process.env.PASSWORD;
 const version = process.env.APP_VERSION;
 const ci_mode = process.env.CI_MODE;
-
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const user = {
   mobileNumberForLogin: process.env.LOGIN_MOBILE_NUMBER || "",
@@ -93,6 +93,39 @@ test.describe.serial("Passwordless Login scenarios", () => {
     });
     await accountsPage.clickLogout();
     expect(page.url()).toContain(`${openloginURL}/`);
+  });
+
+  test("Login with email using passwordless login @demoApp", async ({
+    browser,
+    page,
+  }) => {
+    // Verify environment variables
+    test.setTimeout(3 * 60000); // adding more time to compensate high loading time
+    // Listen for all console events and handle errors
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
+        console.log(`Error text: "${msg.text()}"`);
+        consoleLogs.push(`${msg.text()}`);
+      }
+    });
+    await page.goto(demoAppUrl);
+    await signInWithEmailWithTestEmailOnDemoApp(
+      page,
+      testEmail,
+      browser,
+      testEmail.split("@")[0].split(".")[1],
+      platform
+    );
+    const shouldExit = await catchErrorAndExit(page);
+    expect(shouldExit).toBeFalsy();
+    await useAutoCancelShareTransfer(page);
+    await useAutoCancel2FASetup(page);
+    await page.waitForURL(`${demoAppUrl}`, {
+      timeout: 3 * 60 * 1000,
+    });
+
+    expect(page.url()).toBe(`${demoAppUrl}`);
+    const welcome = await page.waitForSelector(`text=Get openlogin state`);
   });
 
   test("Login as an existing user with recovery phrase as 2FA", async ({
