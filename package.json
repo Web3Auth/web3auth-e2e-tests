@@ -11,6 +11,7 @@
     "testV3:config": "playwright test openloginV3 --grep=@smoke --workers=1 --headed --config=index.config.ts",
     "testV4:config": "playwright test openloginV4 --grep 'Login with mobile number using passwordless login' --workers=1 --headed --config=index.config.ts",
     "developerdashboard:config": "playwright test opendeveloperdashboard --grep=@smoke --workers=1 --headed --config=index.config.ts",
+    "authservice:config": "playwright test openloginV3 --grep=@demoApp --workers=1 --headed --config=index.config.ts",
     "trace:show": "playwright show-trace",
     "install-deps": "playwright install-deps",
     "docker:build": "docker build -t test-image .",

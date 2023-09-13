@@ -10,6 +10,8 @@ import {
   catchErrorAndExit,
   generateEmailWithTag,
   signInWithEmailWithTestEmailApp,
+  signInWithEmailWithTestEmailOnDemoApp,
+  env_map,
 } from "../utils";
 import { readFileSync } from "fs";
 import path from "path";
@@ -27,13 +29,13 @@ const username = "devops";
 const password = process.env.PASSWORD;
 const version = process.env.APP_VERSION;
 const ci_mode = process.env.CI_MODE;
-
+const demoAppUrl = env_map["demo"];
 const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
 const testEmail = generateEmailWithTag();
 const backupPhrase = process.env.BACKUP_PHRASE_PROD;
 const consoleLogs: string[] = [];
-const platform = process.env.PLATFORM;
+const platform = process.env.PLATFORM || "";
 const existingTestEmail = `demo@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 
 test.describe.serial("Passwordless Login scenarios", () => {
@@ -68,6 +70,40 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     expect(page.url()).toBe(`${openloginURL}/wallet/home`);
     const welcome = await page.waitForSelector(`text=Welcome`);
+  });
+
+  test("Login with email using passwordless login @demoApp", async ({
+    browser,
+    openloginURL,
+    page,
+  }) => {
+    // Verify environment variables
+    test.setTimeout(3 * 60000); // adding more time to compensate high loading time
+    // Listen for all console events and handle errors
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
+        console.log(`Error text: "${msg.text()}"`);
+        consoleLogs.push(`${msg.text()}`);
+      }
+    });
+    await page.goto(demoAppUrl);
+    await signInWithEmailWithTestEmailOnDemoApp(
+      page,
+      testEmail,
+      browser,
+      testEmail.split("@")[0].split(".")[1],
+      platform
+    );
+    const shouldExit = await catchErrorAndExit(page);
+    expect(shouldExit).toBeFalsy();
+    await useAutoCancelShareTransfer(page);
+    await useAutoCancel2FASetup(page);
+    await page.waitForURL(`${demoAppUrl}`, {
+      timeout: 3 * 60 * 1000,
+    });
+
+    expect(page.url()).toBe(`${demoAppUrl}`);
+    const welcome = await page.waitForSelector(`text=Get openlogin state`);
   });
 
   test("Login as an existing user with recovery phrase as 2FA", async ({
