@@ -1,11 +1,11 @@
 name: OpenLogin - E2ETests - V4
 
 on:
-  push:
-    branches:
-      - new_ui_openlogin
-  schedule:
-    - cron: "0 * * * *"
+  # push:
+  #   branches:
+  #     - new_ui_openlogin
+  # schedule:
+  #   - cron: "0 * * * *"
   workflow_dispatch:
     inputs:
       environment:
