@@ -43,7 +43,7 @@ jobs:
     #   conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: new_ui_openlogin
       - name: Unlock secrets
