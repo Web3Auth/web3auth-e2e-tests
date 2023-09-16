@@ -601,7 +601,7 @@ async function signInWithEmailWithTestEmailOnDemoApp(
   try {
     await page.waitForSelector('xpath=.//select[@class="select"]');
     await page
-      .locator('xpath=.//select[@class="select"]')
+      .locator(`xpath=.//option[text()='${option}']/parent::select`)
       .first()
       .selectOption(option);
     console.log("Email:" + email);
