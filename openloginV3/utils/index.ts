@@ -601,9 +601,13 @@ async function signInWithEmailWithTestEmailOnDemoApp(
   try {
     await page.waitForSelector('xpath=.//select[@class="select"]');
     await page
-      .locator(`xpath=.//option[text()='${option}']/parent::select`)
+      .locator(`xpath=.//option[text()="${option}"]/parent::select`)
       .first()
       .selectOption(option);
+    await page
+      .locator(`xpath=.//option[text()="email_passwordless"]/parent::select`)
+      .first()
+      .selectOption("email_passwordless");
     console.log("Email:" + email);
     await page.fill('[placeholder="Enter an email"]', email);
     await page.click('button:has-text("Login with email passwordless")');
