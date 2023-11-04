@@ -268,7 +268,7 @@ async function signInWithEmailIntoTorusWallet(
     await page.click('div:has-text("Continue with Email")');
     //await page.waitForSelector("text=Verify your email");
     await delay(3000);
-
+    const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
     const mailBox = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
       {
@@ -580,6 +580,7 @@ async function signInWithEmail(
     await delay(3000);
     let href;
     if (process.env.MAIL_APP == "mailosaur") {
+      const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
       const mailBox = await mailosaur.messages.get(
         process.env.MAILOSAUR_SERVER_ID || "",
         {
@@ -665,9 +666,9 @@ async function signInWithEmailWithTestEmailOnDemoApp(
   try {
     await page.waitForSelector('xpath=.//select[@class="select"]');
     await page
-      .locator(`xpath=.//option[text()="Production"]/parent::select`)
+      .locator(`xpath=.//option[text()="${option}"]/parent::select`)
       .first()
-      .selectOption("Production");
+      .selectOption(option);
     await page
       .locator(`xpath=.//option[text()="email_passwordless"]/parent::select`)
       .first()
