@@ -136,7 +136,10 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
     while (!stopped) {
       try {
         if (await page.getByLabel("Set up 2FA").isVisible())
-          await page.locator("xpath=.//button").first().click();
+          await page
+            .locator("xpath=.//button[text()='Skip for Now']")
+            .first()
+            .click();
       } catch {}
     }
     resolve();
@@ -530,23 +533,22 @@ async function signInWithEmailWithTestEmailApp(
     await page.fill('[placeholder="name@domain.com"]', email);
     await page.click('button:has-text("Login with Email")');
     await delay(10000);
+    const pages = await browser.contexts()[0].pages();
+    // pages[0] is the first page, and pages[1] is the new page
+    await pages[1].bringToFront(); // Bring the new page to the front
     let inbox;
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
     inbox = await res.data;
-    const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    let href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
-    const context2 = await browser.newContext();
-    const page2 = await context2.newPage();
-    await page2.goto(href);
-    await page2.waitForSelector(
-      "text=Close this and return to your previous window",
-      {
-        timeout: 10000,
-      }
-    );
-    await page2.close();
+    await pages[1]
+      .locator(
+        `xpath=.//input[@aria-label='Please enter verification code. Digit 1']`
+      )
+      .fill(href);
+    useAutoCancel2FASetup(pages[1]);
     return true;
   } catch (err) {
     console.error(err);

@@ -61,14 +61,16 @@ export class WalletServicesPage {
     ).toEqual(content);
   }
 
-  async verifyTransactionActivity(type: string, address: string, time: string) {
+  async verifyTransactionActivity(details: string) {
+    const parts = details.split("|");
     const block = await this.page.locator(`xpath=.//ul/li/ul/li/div/div`);
-    expect(
-      await block
-        .first()
-        .locator(`xpath=.//p[contains(text(),"${type}")]`)
-        .isVisible()
-    ).toBeTruthy();
+    for (const part of parts) {
+      expect(
+        await block
+          .locator(`xpath=.//p[contains(text(),"${part}")]`)
+          .isVisible()
+      ).toBeTruthy();
+    }
   }
 
   async navigateToSettingsWithOption(option: string) {
@@ -104,7 +106,7 @@ export class WalletServicesPage {
   }
 
   async clickLink(name: string) {
-    await this.page.locator(`xpath=.//a[text()='${name}']`).click();
+    await this.page.locator(`xpath=.//*[text()='${name}']`).click();
   }
 
   async enterRecipientAddress(address: string) {

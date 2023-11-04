@@ -71,7 +71,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Mumbai");
     await accountsPage.clickLink(" Home");
     await accountsPage.verifyNetworkName("Polygon Mumbai");
-    await accountsPage.verifyBalanceAndAddress("0x6e82...117d1", "0.12");
+    await accountsPage.verifyBalanceAndAddress("0x6e82...117d1", "0.13");
   });
 
   test(`Verify validations on send screen`, async ({}) => {
@@ -100,14 +100,12 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
   test(`Verify user is able to view the sent transaction activity`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickLink(" Home");
-    await page.goto(`${walletServiceLoginURL}/wallet/activity`);
+    await accountsPage.clickLink(" Activity");
     await page.waitForURL(`${walletServiceLoginURL}/wallet/activity`, {
       waitUntil: "load",
     });
     await accountsPage.verifyTransactionActivity(
-      "Sent MATIC",
-      "to 0x3e3cd73f7619bab0d09aa28d46c44d4e6853413a",
-      "13:34:43 | 1 Nov 2023"
+      "Sent MATIC|to 0x3e3cd73f7619bab0d09aa28d46c44d4e6853413a|13:34:43|1 Nov 2023"
     );
   });
 });

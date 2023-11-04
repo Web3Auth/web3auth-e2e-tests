@@ -20,7 +20,6 @@ import {
   slowOperation,
 } from "../utils";
 
-const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const testEmail = generateRandomEmail();
 

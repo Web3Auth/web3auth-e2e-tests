@@ -13,7 +13,6 @@ import { version } from "os";
 import { generate } from "generate-password";
 import axios from "axios";
 const ChanceJS = require("chance");
-const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 export const DEFAULT_PLATFORM = "prod";
 export var openloginversion = process.env.APP_VERSION || "v3";
 console.log("Environment:" + process.env.PLATFORM);
@@ -531,21 +530,6 @@ async function signInWithEmail(
     //await page.waitForSelector("text=Verify your email");
     await delay(3000);
     let href;
-    if (process.env.MAIL_APP == "mailosaur") {
-      const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
-      const mailBox = await mailosaur.messages.get(
-        process.env.MAILOSAUR_SERVER_ID || "",
-        {
-          sentTo: email,
-        }
-      );
-      let link = findLink(mailBox.html?.links || [], "Approve login request");
-      if (!link) {
-        link = findLink(mailBox.html?.links || [], "Verify my email");
-      }
-      await mailosaur.messages.del(mailBox?.id || "");
-      href = link?.href || "";
-    }
     if (process.env.MAIL_APP == "testmail") {
       let inbox;
       // Setup our JSON API endpoint

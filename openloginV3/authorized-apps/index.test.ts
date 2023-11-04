@@ -12,8 +12,6 @@ import {
 import { useAutoCancelShareTransfer } from "../utils/index";
 import Mailosaur from "mailosaur";
 
-const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
-
 const testEmail = generateRandomEmail();
 
 test.describe.serial("App authorization page scenarios", () => {
@@ -28,13 +26,12 @@ test.describe.serial("App authorization page scenarios", () => {
     await page.goto(openloginURL);
     await signInWithEmail(page, testEmail, browser);
     const shouldExit = await catchErrorAndExit(page);
-    expect(shouldExit).toBeFalsy()
+    expect(shouldExit).toBeFalsy();
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
-      timeout: 3 * 60 * 1000
+      timeout: 3 * 60 * 1000,
     });
-
   });
 
   // test.afterAll(async ({ browser }) => {
@@ -45,7 +42,7 @@ test.describe.serial("App authorization page scenarios", () => {
   }) => {
     await page.goto(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {
-      timeout: 3 * 60 * 1000
+      timeout: 3 * 60 * 1000,
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
     expect(
@@ -75,7 +72,7 @@ test.describe.serial("App authorization page scenarios", () => {
           sentTo: testEmail,
         },
         {
-          timeout: 20 * 1000
+          timeout: 20 * 1000,
         }
       );
       expect(newEmail.subject).toContain("Verify your email");
@@ -95,11 +92,11 @@ test.describe.serial("App authorization page scenarios", () => {
       );
       await page3.close();
       await page2.waitForURL(`https://solana.tor.us/wallet/home`, {
-        timeout: 3 * 60 * 1000
+        timeout: 3 * 60 * 1000,
       });
       await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
-        timeout: 3 * 60 * 1000
+        timeout: 3 * 60 * 1000,
       });
 
       expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
@@ -123,7 +120,7 @@ test.describe.serial("App authorization page scenarios", () => {
           sentTo: testEmail,
         },
         {
-          timeout: 20 * 1000
+          timeout: 20 * 1000,
         }
       );
       expect(newEmail.subject).toBe("Verify your email");
@@ -143,11 +140,11 @@ test.describe.serial("App authorization page scenarios", () => {
       );
       await page3.close();
       await page2.waitForURL(`https://solana-testing.tor.us/wallet/home`, {
-        timeout: 3 * 60 * 1000
+        timeout: 3 * 60 * 1000,
       });
       await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
-        timeout: 3 * 60 * 1000
+        timeout: 3 * 60 * 1000,
       });
 
       expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
@@ -176,7 +173,7 @@ test.describe.serial("App authorization page scenarios", () => {
           sentTo: testEmail,
         },
         {
-          timeout: 20 * 1000
+          timeout: 20 * 1000,
         }
       );
       expect(newEmail.subject).toBe("Verify your email");
@@ -200,8 +197,7 @@ test.describe.serial("App authorization page scenarios", () => {
       });
       await page.reload();
       await page.waitForURL(`${openloginURL}/wallet/apps`, {
-        timeout: 3 * 60 * 1000
-
+        timeout: 3 * 60 * 1000,
       });
       await page.waitForSelector("text=LCS Drop");
       expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
@@ -214,12 +210,12 @@ test.describe.serial("App authorization page scenarios", () => {
     openloginURL,
   }) => {
     if (!["prod", "cyan", "beta"].includes(process.env.PLATFORM || "")) {
-      return
+      return;
     }
     await page.click('button[aria-label="delete device share"]');
     await page.goto(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {
-      timeout: 3 * 60 * 1000
+      timeout: 3 * 60 * 1000,
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
     expect(

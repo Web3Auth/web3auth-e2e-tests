@@ -30,7 +30,6 @@ const password = process.env.PASSWORD;
 const version = process.env.APP_VERSION;
 const ci_mode = process.env.CI_MODE;
 const demoAppUrl = env_map["demo"];
-const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 
 const testEmail = generateEmailWithTag();
 const backupPhrase = process.env.BACKUP_PHRASE_PROD;

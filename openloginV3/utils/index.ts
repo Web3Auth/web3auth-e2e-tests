@@ -525,7 +525,7 @@ async function signInWithEmail(
     await page.click('button:has-text("Continue with Email")');
     await page.waitForSelector("text=Verify your email");
     await delay(3000);
-    const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+
     const mailBox = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
       {
@@ -647,7 +647,7 @@ async function signInWithEmailIntoTorusWallet(
     await page.click('div:has-text("Continue with Email")');
     //await page.waitForSelector("text=Verify your email");
     await delay(3000);
-    const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+
     const mailBox = await mailosaur.messages.get(
       process.env.MAILOSAUR_SERVER_ID || "",
       {

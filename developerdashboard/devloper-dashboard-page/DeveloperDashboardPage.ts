@@ -2,7 +2,6 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { delay } from "../utils/index";
 import Mailosaur from "mailosaur";
-const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 export class DeveloperDashboardPage {
   readonly page: Page;
 

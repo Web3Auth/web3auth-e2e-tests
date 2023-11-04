@@ -13,7 +13,6 @@ import {
 import { AccountsPage } from "../account-page/AccountsPage";
 import Mailosaur from "mailosaur";
 const torusLoginURL = env_map["torusV2"];
-const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const user = {
   mobileNumberForLogin: process.env.LOGIN_MOBILE_NUMBER || "",
   mobileNumberForSMS: process.env.SMS_MOBILE_NUMBER || "",

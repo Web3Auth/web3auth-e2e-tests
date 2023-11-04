@@ -13,8 +13,6 @@ import {
 import { useAutoCancelShareTransfer } from "../utils/index";
 import Mailosaur from "mailosaur";
 
-const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
-
 const testEmail = generateRandomEmail();
 
 test.describe.serial("Torus Wallet Login scenarios", () => {

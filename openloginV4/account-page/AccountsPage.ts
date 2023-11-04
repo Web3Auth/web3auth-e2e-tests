@@ -2,7 +2,6 @@
 import { expect, Locator, Page } from "@playwright/test";
 import axios from "axios";
 import Mailosaur from "mailosaur";
-const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 export class AccountsPage {
   readonly page: Page;

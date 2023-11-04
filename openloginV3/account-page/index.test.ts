@@ -21,7 +21,6 @@ import Mailosaur from "mailosaur";
 import { generate } from "generate-password";
 import { validateMnemonic } from "bip39";
 
-const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 const testEmail = generateEmailWithTag();
 
