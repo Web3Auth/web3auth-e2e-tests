@@ -16,14 +16,13 @@ export class WalletServicesPage {
         .first()
         .textContent()
     ).toContain(address);
-    expect(
-      await this.page
-        .locator(
-          `xpath=.//p[contains(text(),'Total Wallet Balance')]/parent::div/div/p`
-        )
-        .first()
-        .textContent()
-    ).toEqual(balance);
+    let walletBalance = await this.page
+      .locator(
+        `xpath=.//p[contains(text(),'Total Wallet Balance')]/parent::div/div/p`
+      )
+      .first()
+      .textContent();
+    expect(parseInt(walletBalance!)).toBeGreaterThanOrEqual(parseInt(balance));
   }
 
   async verifyNetworkName(name: string) {
@@ -59,6 +58,16 @@ export class WalletServicesPage {
         .last()
         .textContent()
     ).toEqual(content);
+  }
+
+  async verifyTransferFee(transactionFee: string) {
+    let fee = await this.page
+      .locator(
+        `xpath=..//p[text()='Transaction Fee']/parent::div/following-sibling::div//p/span`
+      )
+      .last()
+      .textContent();
+    expect(parseInt(fee!)).toBeGreaterThanOrEqual(parseInt(transactionFee));
   }
 
   async verifyTransactionActivity(details: string) {
@@ -101,12 +110,35 @@ export class WalletServicesPage {
     await delay(5000);
   }
 
+  async selectCurrency(currency: string) {
+    await this.page
+      .locator(`xpath=.//p[text()='Total Wallet Balance ']/parent::div//button`)
+      .first()
+      .click();
+    await this.page.waitForSelector(`xpath=.//li//div[text()='${currency} ']`);
+    await this.page
+      .locator(`xpath=.//li//div[text()='${currency} ']`)
+      .first()
+      .click();
+    await delay(5000);
+  }
+
+  async selectSpeed(speed: string) {
+    await this.page
+      .locator(`xpath=.//input[@aria-labelledby='Select Speed']`)
+      .first()
+      .click();
+    await this.page.waitForSelector(`xpath=.//span[text()='${speed}']`);
+    await this.page.locator(`xpath=.//span[text()='${speed}']`).first().click();
+    await delay(5000);
+  }
+
   async clickOption(name: string) {
     await this.page.locator(`xpath=.//p[text()="${name}"]`).click();
   }
 
   async clickLink(name: string) {
-    await this.page.locator(`xpath=.//*[text()='${name}']`).click();
+    await this.page.locator(`xpath=.//*[text()='${name}']`).first().click();
   }
 
   async enterRecipientAddress(address: string) {

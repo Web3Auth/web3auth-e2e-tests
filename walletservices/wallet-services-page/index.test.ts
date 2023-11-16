@@ -46,11 +46,13 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     page = await browser.newPage();
     test.setTimeout(3000000);
     await page.goto(walletServiceLoginURL);
+    const currentTimestamp = Math.floor(Date.now() / 1000);
     await signInWithEmailWithTestEmailApp(
       page,
       testEmail,
       browser,
-      testEmail.split("@")[0].split(".")[1]
+      testEmail.split("@")[0].split(".")[1],
+      currentTimestamp
     );
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
@@ -97,6 +99,16 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.verifyTransferAddress("0x6e82...117d10x9904...ADE6A");
   });
 
+  test(`Verify transaction fee is updated on selection of different speed levels`, async ({}) => {
+    const accountsPage = new WalletServicesPage(page);
+    await accountsPage.selectSpeed("Slow");
+    await accountsPage.verifyTransferFee("0.00002");
+    await accountsPage.selectSpeed("Medium");
+    await accountsPage.verifyTransferFee("0.00003");
+    await accountsPage.selectSpeed("Fast");
+    await accountsPage.verifyTransferFee("0.00004");
+  });
+
   test(`Verify user is able to view the sent transaction activity`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickLink(" Home");
@@ -107,5 +119,12 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.verifyTransactionActivity(
       "Sent MATIC|to 0x3e3cd73f7619bab0d09aa28d46c44d4e6853413a|13:34:43|1 Nov 2023"
     );
+  });
+
+  test(`Verify user is able to switch currency`, async ({}) => {
+    const accountsPage = new WalletServicesPage(page);
+    await accountsPage.clickLink(" Home");
+    await accountsPage.selectCurrency("ETH");
+    await accountsPage.verifyBalanceAndAddress("0x6e82...117d1", "0.000080");
   });
 });

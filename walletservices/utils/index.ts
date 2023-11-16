@@ -526,20 +526,23 @@ async function signInWithEmailWithTestEmailApp(
   page: Page,
   email: string,
   browser: Browser,
-  tag: string
+  tag: string,
+  timestamp: number
 ): Promise<boolean> {
   try {
     console.log("Email:" + email);
     await page.fill('[placeholder="name@domain.com"]', email);
     await page.click('button:has-text("Login with Email")');
-    await delay(10000);
+    await delay(15000);
     const pages = await browser.contexts()[0].pages();
     // pages[0] is the first page, and pages[1] is the new page
     await pages[1].bringToFront(); // Bring the new page to the front
     let inbox;
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
+    const res = await axios.get(
+      `${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`
+    );
     inbox = await res.data;
     let href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
