@@ -114,7 +114,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
       testEmail,
       browser,
       testEmail.split("@")[0].split(".")[1],
-      "development"
+      "testing"
     );
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
