@@ -10,9 +10,10 @@ export class WalletServicesPage {
   }
 
   async verifyBalanceAndAddress(address: string, balance: string) {
+    await delay(2000);
     expect(
       await this.page
-        .locator(`xpath=.//*[@class='flex items-center gap-4']/p`)
+        .locator(`xpath=.//*[@class='flex items-center gap-4']/span`)
         .first()
         .textContent()
     ).toContain(address);
@@ -63,7 +64,7 @@ export class WalletServicesPage {
   async verifyTransferFee(transactionFee: string) {
     let fee = await this.page
       .locator(
-        `xpath=..//p[text()='Transaction Fee']/parent::div/following-sibling::div//p/span`
+        `xpath=.//p[text()='Transaction Fee']/parent::div/following-sibling::div//p/span`
       )
       .last()
       .textContent();
@@ -112,7 +113,9 @@ export class WalletServicesPage {
 
   async selectCurrency(currency: string) {
     await this.page
-      .locator(`xpath=.//p[text()='Total Wallet Balance ']/parent::div//button`)
+      .locator(
+        `xpath=.//p[contains(text(),'Select Default Currency')]/parent::div/div//button`
+      )
       .first()
       .click();
     await this.page.waitForSelector(`xpath=.//li//div[text()='${currency} ']`);

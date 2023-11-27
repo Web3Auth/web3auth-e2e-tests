@@ -63,7 +63,10 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
 
   test(`Verify token address and balance is displayed as expected`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
-    await accountsPage.verifyBalanceAndAddress("0x6e82...117d1", "0");
+    await accountsPage.verifyBalanceAndAddress(
+      "0x6e825ddBDf...C183184117d1",
+      "0"
+    );
   });
 
   test(`Verify network switch and balance on wallet services`, async ({}) => {
@@ -73,7 +76,10 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Mumbai");
     await accountsPage.clickLink(" Home");
     await accountsPage.verifyNetworkName("Polygon Mumbai");
-    await accountsPage.verifyBalanceAndAddress("0x6e82...117d1", "0.13");
+    await accountsPage.verifyBalanceAndAddress(
+      "0x6e825ddBDf...C183184117d1",
+      "0.13"
+    );
   });
 
   test(`Verify validations on send screen`, async ({}) => {
@@ -124,7 +130,12 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
   test(`Verify user is able to switch currency`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickLink(" Home");
+    await accountsPage.navigateToSettingsWithOption("General");
     await accountsPage.selectCurrency("ETH");
-    await accountsPage.verifyBalanceAndAddress("0x6e82...117d1", "0.000080");
+    await accountsPage.clickLink(" Home");
+    await accountsPage.verifyBalanceAndAddress(
+      "0x6e825ddBDf...C183184117d1",
+      "0.000073"
+    );
   });
 });
