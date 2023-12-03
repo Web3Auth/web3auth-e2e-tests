@@ -78,11 +78,11 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.verifyNetworkName("Polygon Mumbai");
     await accountsPage.verifyBalanceAndAddress(
       "0x6e825ddBDf...C183184117d1",
-      "0.13"
+      "0.000074"
     );
   });
 
-  test(`Verify validations on send screen`, async ({}) => {
+  test(`Verify validations on send transaction screen`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickOption("Send");
     await accountsPage.enterRecipientAddress(
@@ -136,6 +136,20 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.verifyBalanceAndAddress(
       "0x6e825ddBDf...C183184117d1",
       "0.000073"
+    );
+  });
+
+  test(`Verify user is able to import account`, async ({}) => {
+    const accountsPage = new WalletServicesPage(page);
+    await accountsPage.navigateToSettingsWithOption("Manage Wallets");
+    await accountsPage.clickButton(" Import Account");
+    await accountsPage.inputPrivateKey(
+      "18a6aa7e43a8f7f57c4cfb8d322cc9c12cd4cc573ea137c9bcd6d2b5d060a90a"
+    );
+    await accountsPage.clickLink(" Home");
+    await accountsPage.verifyBalanceAndAddress(
+      "0x2b7f47e9bb...B99a8a33151c",
+      "0.00013"
     );
   });
 });

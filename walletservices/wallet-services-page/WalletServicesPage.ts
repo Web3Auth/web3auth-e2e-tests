@@ -89,6 +89,13 @@ export class WalletServicesPage {
     await this.page.locator(`xpath=.//div[text()="${option}"]`).click();
   }
 
+  async inputPrivateKey(key: string) {
+    await this.page
+      .locator(`xpath=.//input[@aria-placeholder='Private Key']`)
+      .fill(key);
+    await this.page.locator(`xpath=.//button/p[text()='Import']`).click();
+  }
+
   async enableTestNet() {
     await this.page
       .locator(`xpath=.//*[contains(@class,'switch round')]`)
@@ -353,7 +360,7 @@ export class WalletServicesPage {
   }
 
   async clickButton(name: string) {
-    await this.page.click(`xpath=.//button[text()='${name}']`);
+    await this.page.locator(`xpath=.//button[text()='${name}']`).last().click();
   }
 
   async clickCreateVerifier() {
