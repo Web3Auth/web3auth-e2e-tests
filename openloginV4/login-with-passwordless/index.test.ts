@@ -7,6 +7,7 @@ import {
   getBackUpPhrase,
   signInWithEmailWithTestEmailApp,
   signInWithEmailWithTestEmailOnDemoApp,
+  signInWithEmailWithTestEmailOnDemoAppV4,
 } from "../utils/index";
 import {
   signInWithMobileNumber,
@@ -19,6 +20,7 @@ import { readFileSync } from "fs";
 import path from "path";
 import { Client } from "@opensearch-project/opensearch";
 const demoAppUrl = env_map["demo"];
+const demoAppUrlV4 = env_map["demoV4"];
 const eventPostURL =
   process.env.ES_ENDPOINT === undefined
     ? "search-sapphire-latency-stats-7n6qd4g6m3au5fpre3gwvwo6vm.eu-west-1.es.amazonaws.com"
@@ -38,6 +40,12 @@ const user = {
 const consoleLogs: string[] = [];
 const testEmail = generateEmailWithTag();
 const backupPhrase = process.env.BACKUP_PHRASE_PROD;
+let oAuthPrivateKey: string = "";
+let privKey: string = "";
+let tkey: string = "";
+let oAuthPrivateKeyV4: string = "";
+let privKeyV4: string = "";
+let tkeyV4: string = "";
 
 test.describe.serial("Passwordless Login scenarios", () => {
   test("Login with mobile number using passwordless login", async ({
@@ -114,7 +122,8 @@ test.describe.serial("Passwordless Login scenarios", () => {
       testEmail,
       browser,
       testEmail.split("@")[0].split(".")[1],
-      "production"
+      "production",
+      platform
     );
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
@@ -125,7 +134,67 @@ test.describe.serial("Passwordless Login scenarios", () => {
     });
 
     expect(page.url()).toBe(`${demoAppUrl}`);
-    const welcome = await page.waitForSelector(`text=Get openlogin state`);
+    if (platform == "mainnet") {
+      const welcome = await page.waitForSelector(`text=Get openlogin state`);
+      const accountsPage = new AccountsPage(page);
+      const keys: string | null = await accountsPage.getOpenLoginState();
+      if (keys !== null) {
+        const jsonObject = JSON.parse(keys);
+        tkey = jsonObject.tkey;
+        privKey = jsonObject.privKey;
+        oAuthPrivateKey = jsonObject.oAuthPrivateKey;
+      }
+      await page.goto(demoAppUrlV4);
+      await signInWithEmailWithTestEmailOnDemoAppV4(
+        page,
+        testEmail,
+        browser,
+        testEmail.split("@")[0].split(".")[1],
+        "mainnet"
+      );
+      const shouldExit = await catchErrorAndExit(page);
+      expect(shouldExit).toBeFalsy();
+      await useAutoCancelShareTransfer(page);
+      await useAutoCancel2FASetup(page);
+      await page.waitForURL(`${demoAppUrlV4}`, {
+        timeout: 3 * 60 * 1000,
+      });
+
+      expect(page.url()).toBe(`${demoAppUrlV4}`);
+      await page.waitForSelector(`text=Get openlogin state`);
+      const keysV4: string | null = await accountsPage.getOpenLoginState();
+      if (keys !== null) {
+        const jsonObject = JSON.parse(keys);
+        tkeyV4 = jsonObject.tkey;
+        privKeyV4 = jsonObject.privKey;
+        oAuthPrivateKeyV4 = jsonObject.oAuthPrivateKey;
+      }
+      expect(tkeyV4).toEqual(tkey);
+      expect(privKeyV4).toEqual(privKey);
+      expect(oAuthPrivateKeyV4).toEqual(oAuthPrivateKey);
+    }
+  });
+
+  test("Login with email using passwordless login", async ({
+    browser,
+    page,
+  }) => {
+    // Verify environment variables
+    test.setTimeout(3 * 60000); // adding more time to compensate high loading time
+    // Listen for all console events and handle errors
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
+        console.log(`Error text: "${msg.text()}"`);
+        consoleLogs.push(`${msg.text()}`);
+      }
+    });
+
+    if (keys !== null) {
+      const jsonObject = JSON.parse(keys);
+      tkey = jsonObject.tkey;
+      privKey = jsonObject.privKey;
+      oAuthPrivateKey = jsonObject.oAuthPrivateKey;
+    }
   });
 
   test("Login as an existing user with recovery phrase as 2FA", async ({

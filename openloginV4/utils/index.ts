@@ -30,6 +30,7 @@ const env_map: { [key: string]: string } = {
   local: "http://localhost:3000",
   torusV2: "https://app.tor.us",
   demo: "https://demo-openlogin.web3auth.io/",
+  demoV4: "https://demo-openlogin-v4.web3auth.io/",
 };
 const randomEmail = generate({
   length: 20,
@@ -661,6 +662,61 @@ async function signInWithEmailWithTestEmailOnDemoApp(
   email: string,
   browser: Browser,
   tag: string,
+  option: string,
+  platform: string
+): Promise<boolean> {
+  try {
+    await page.waitForSelector('xpath=.//select[@class="select"]');
+    await page
+      .locator(`xpath=.//option[text()="${option}"]/parent::select`)
+      .first()
+      .selectOption(option);
+    await page
+      .locator(`xpath=.//option[text()="${platform}"]/parent::select`)
+      .first()
+      .selectOption(platform);
+    await page
+      .locator(`xpath=.//option[text()="email_passwordless"]/parent::select`)
+      .first()
+      .selectOption("email_passwordless");
+    console.log("Email:" + email);
+    await page.fill('[placeholder="Enter an email"]', email);
+    await page
+      .locator(`xpath=.//option[text()="code"]/parent::select`)
+      .first()
+      .selectOption("link");
+    await delay(5000);
+    await page.click('button:has-text("Login with email passwordless")');
+    await page.waitForSelector("text=Verify your email");
+    await delay(3000);
+    let inbox;
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
+    inbox = await res.data;
+    const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector(
+      "text=Close this and return to your previous window",
+      {
+        timeout: 10000,
+      }
+    );
+    await page2.close();
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
+async function signInWithEmailWithTestEmailOnDemoAppV4(
+  page: Page,
+  email: string,
+  browser: Browser,
+  tag: string,
   option: string
 ): Promise<boolean> {
   try {
@@ -675,10 +731,10 @@ async function signInWithEmailWithTestEmailOnDemoApp(
       .selectOption("email_passwordless");
     console.log("Email:" + email);
     await page.fill('[placeholder="Enter an email"]', email);
-    await page
-      .locator(`xpath=.//option[text()="code"]/parent::select`)
-      .first()
-      .selectOption("link");
+    // await page
+    //   .locator(`xpath=.//option[text()="code"]/parent::select`)
+    //   .first()
+    //   .selectOption("link");
     await page.click('button:has-text("Login with email passwordless")');
     await page.waitForSelector("text=Verify your email");
     await delay(3000);
@@ -858,4 +914,5 @@ export {
   generateEmailWithTag,
   signInWithEmailWithTestEmailApp,
   signInWithEmailWithTestEmailOnDemoApp,
+  signInWithEmailWithTestEmailOnDemoAppV4,
 };

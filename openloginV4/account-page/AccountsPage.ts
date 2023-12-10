@@ -288,4 +288,13 @@ export class AccountsPage {
   async deleteDeviceShare() {
     await this.page.locator('button:has-text("Revoke")').click();
   }
+
+  async getOpenLoginState() {
+    await this.page.locator('button:has-text("Get openlogin state")').click();
+    const keys = await this.page
+      .locator("xpath=.//div[@id='console']//pre")
+      .first()
+      .textContent();
+    return keys;
+  }
 }
