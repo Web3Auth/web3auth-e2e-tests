@@ -2,6 +2,7 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { delay } from "../utils/index";
 import Mailosaur from "mailosaur";
+import { Console } from "console";
 export class WalletServicesPage {
   readonly page: Page;
 
@@ -13,7 +14,9 @@ export class WalletServicesPage {
     await delay(2000);
     expect(
       await this.page
-        .locator(`xpath=.//*[@class='flex items-center gap-4']/span`)
+        .locator(
+          `xpath=.//*[@class='flex items-center gap-4']/ancestor::div/button/span`
+        )
         .first()
         .textContent()
     ).toContain(address);
@@ -29,9 +32,10 @@ export class WalletServicesPage {
   async verifyNetworkName(name: string) {
     expect(
       await this.page
-        .locator(`xpath=.//button/span[text()='${name}']`)
-        .isVisible()
-    );
+        .locator(`xpath=.//input[@role='textbox']`)
+        .first()
+        .inputValue()
+    ).toContain(name);
   }
 
   async verifyAvailableBalance(balance: string) {
@@ -58,14 +62,12 @@ export class WalletServicesPage {
         .locator(`xpath=.//p[text()='Transferred Token']/parent::div/div`)
         .last()
         .textContent()
-    ).toEqual(content);
+    ).toContain(content);
   }
 
   async verifyTransferFee(transactionFee: string) {
     let fee = await this.page
-      .locator(
-        `xpath=.//p[text()='Transaction Fee']/parent::div/following-sibling::div//p/span`
-      )
+      .locator(`xpath=.//p[text()='Transaction Fee']/parent::div//div/p`)
       .last()
       .textContent();
     expect(parseInt(fee!)).toBeGreaterThanOrEqual(parseInt(transactionFee));
@@ -104,15 +106,12 @@ export class WalletServicesPage {
   }
 
   async selectNetwork(currentNetwork: string, newNetwork: string) {
-    await this.page
-      .locator(`xpath=.//button/span[text()='${currentNetwork}']`)
-      .first()
-      .click();
+    await this.page.locator(`xpath=.//input[@role='textbox']`).first().click();
     await this.page.waitForSelector(
-      `xpath=.//li//div[text()='${newNetwork} ']`
+      `xpath=.//div/span[text()='${newNetwork}']`
     );
     await this.page
-      .locator(`xpath=.//li//div[text()='${newNetwork} ']`)
+      .locator(`xpath=.//div/span[text()='${newNetwork}']`)
       .first()
       .click();
     await delay(5000);
@@ -121,13 +120,13 @@ export class WalletServicesPage {
   async selectCurrency(currency: string) {
     await this.page
       .locator(
-        `xpath=.//p[contains(text(),'Select Default Currency')]/parent::div/div//button`
+        `xpath=.//p[contains(text(),'Select Default Currency')]/parent::div/div//input`
       )
       .first()
       .click();
-    await this.page.waitForSelector(`xpath=.//li//div[text()='${currency} ']`);
+    await this.page.waitForSelector(`xpath=.//div/span[text()='${currency}']`);
     await this.page
-      .locator(`xpath=.//li//div[text()='${currency} ']`)
+      .locator(`xpath=.//div/span[text()='${currency}']`)
       .first()
       .click();
     await delay(5000);

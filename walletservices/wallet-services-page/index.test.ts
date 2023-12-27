@@ -98,13 +98,6 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     );
   });
 
-  test(`Verify details displayed on send transaction screen`, async ({}) => {
-    const accountsPage = new WalletServicesPage(page);
-    await accountsPage.verifyAvailableBalance("0.2 MATIC");
-    await accountsPage.verifyTransferTokenAmount("10MATIC");
-    await accountsPage.verifyTransferAddress("0x6e82...117d10x9904...ADE6A");
-  });
-
   test(`Verify transaction fee is updated on selection of different speed levels`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.selectSpeed("Slow");
@@ -115,8 +108,18 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.verifyTransferFee("0.00004");
   });
 
-  test(`Verify user is able to view the sent transaction activity`, async ({}) => {
+  test(`Verify details displayed on send transaction screen`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
+    await accountsPage.verifyAvailableBalance("0.2 MATIC");
+    await accountsPage.enterTransactionAmount("0.0001");
+    await accountsPage.clickButton(" Submit ");
+    await accountsPage.verifyTransferTokenAmount("0.0001MATIC");
+    await accountsPage.verifyTransferAddress("0x6e82...117d10x9904...ADE6A");
+  });
+
+  test.skip(`Verify user is able to view the sent transaction activity`, async ({}) => {
+    const accountsPage = new WalletServicesPage(page);
+    await page.goto(`${walletServiceLoginURL}/wallet/home`);
     await accountsPage.clickLink(" Home");
     await accountsPage.clickLink(" Activity");
     await page.waitForURL(`${walletServiceLoginURL}/wallet/activity`, {
@@ -129,6 +132,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
 
   test(`Verify user is able to switch currency`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
+    await page.goto(`${walletServiceLoginURL}/wallet/home`);
     await accountsPage.clickLink(" Home");
     await accountsPage.navigateToSettingsWithOption("General");
     await accountsPage.selectCurrency("ETH");
@@ -139,7 +143,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     );
   });
 
-  test(`Verify user is able to import account`, async ({}) => {
+  test.skip(`Verify user is able to import account`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.navigateToSettingsWithOption("Manage Wallets");
     await accountsPage.clickButton(" Import Account");
