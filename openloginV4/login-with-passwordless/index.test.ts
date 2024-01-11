@@ -103,7 +103,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     expect(page.url()).toContain(`${openloginURL}/`);
   });
 
-  test("Login with email using passwordless login @demoApp", async ({
+  test("Login with email using passwordless login @demo auth service", async ({
     browser,
     page,
   }) => {
@@ -122,7 +122,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
       testEmail,
       browser,
       testEmail.split("@")[0].split(".")[1],
-      "production",
+      "testing",
       platform
     );
     const shouldExit = await catchErrorAndExit(page);
@@ -172,28 +172,6 @@ test.describe.serial("Passwordless Login scenarios", () => {
       expect(tkeyV4).toEqual(tkey);
       expect(privKeyV4).toEqual(privKey);
       expect(oAuthPrivateKeyV4).toEqual(oAuthPrivateKey);
-    }
-  });
-
-  test("Login with email using passwordless login", async ({
-    browser,
-    page,
-  }) => {
-    // Verify environment variables
-    test.setTimeout(3 * 60000); // adding more time to compensate high loading time
-    // Listen for all console events and handle errors
-    page.on("console", (msg) => {
-      if (msg.type() === "error") {
-        console.log(`Error text: "${msg.text()}"`);
-        consoleLogs.push(`${msg.text()}`);
-      }
-    });
-
-    if (keys !== null) {
-      const jsonObject = JSON.parse(keys);
-      tkey = jsonObject.tkey;
-      privKey = jsonObject.privKey;
-      oAuthPrivateKey = jsonObject.oAuthPrivateKey;
     }
   });
 
