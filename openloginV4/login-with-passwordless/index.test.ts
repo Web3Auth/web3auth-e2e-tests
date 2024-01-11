@@ -103,7 +103,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     expect(page.url()).toContain(`${openloginURL}/`);
   });
 
-  test("Login with email using passwordless login @demo auth service", async ({
+  test("Login with email using passwordless login @demoauth service", async ({
     browser,
     page,
   }) => {
