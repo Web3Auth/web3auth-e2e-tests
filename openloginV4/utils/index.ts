@@ -761,6 +761,43 @@ async function signInWithEmailWithTestEmailOnDemoAppV4(
   }
 }
 
+async function signInWithEmailWithTestEmailOnW3ADemoApp(
+  page: Page,
+  email: string,
+  browser: Browser,
+  tag: string,
+  timestamp: number
+): Promise<boolean> {
+  try {
+    console.log("Email:" + email);
+    await page.fill('[placeholder="name@example.com"]', email);
+    await page.click('button:has-text("Continue With Email")');
+    await delay(15000);
+    const pages = await browser.contexts()[0].pages();
+    // pages[0] is the first page, and pages[1] is the new page
+    await pages[1].bringToFront(); // Bring the new page to the front
+    let inbox;
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(
+      `${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`
+    );
+    inbox = await res.data;
+    let href = inbox.emails[0].subject.match(/\d+/)[0];
+    console.error(href);
+    await pages[1]
+      .locator(
+        `xpath=.//input[@aria-label='Please enter verification code. Digit 1']`
+      )
+      .fill(href);
+    useAutoCancel2FASetup(pages[1]);
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
 async function signInWithMobileNumber({
   page,
   user,
@@ -915,4 +952,5 @@ export {
   signInWithEmailWithTestEmailApp,
   signInWithEmailWithTestEmailOnDemoApp,
   signInWithEmailWithTestEmailOnDemoAppV4,
+  signInWithEmailWithTestEmailOnW3ADemoApp,
 };

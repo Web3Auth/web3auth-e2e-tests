@@ -13,12 +13,7 @@ export class WalletServicesPage {
   async verifyBalanceAndAddress(address: string, balance: string) {
     await delay(2000);
     expect(
-      await this.page
-        .locator(
-          `xpath=.//*[@class='flex items-center gap-4']/ancestor::div/button/span`
-        )
-        .first()
-        .textContent()
+      await this.page.locator(`xpath=.//div/button/span`).first().textContent()
     ).toContain(address);
     let walletBalance = await this.page
       .locator(
@@ -86,7 +81,10 @@ export class WalletServicesPage {
   }
 
   async navigateToSettingsWithOption(option: string) {
-    await this.page.locator(`xpath=.//a[@href='/wallet/settings']`).click();
+    await this.page
+      .locator(`xpath=.//div[contains(@class,'avatar-container')]`)
+      .click();
+    await this.page.locator(`xpath=.//p[text()='Settings']`).click();
     await this.page.waitForSelector(`xpath=.//div[text()="${option}"]`);
     await this.page.locator(`xpath=.//div[text()="${option}"]`).click();
   }
@@ -108,13 +106,22 @@ export class WalletServicesPage {
   async selectNetwork(currentNetwork: string, newNetwork: string) {
     await this.page.locator(`xpath=.//input[@role='textbox']`).first().click();
     await this.page.waitForSelector(
-      `xpath=.//div/span[text()='${newNetwork}']`
+      `xpath=.//li/div/p[text()='${newNetwork}']`
     );
     await this.page
-      .locator(`xpath=.//div/span[text()='${newNetwork}']`)
+      .locator(`xpath=.//li/div/p[text()='${newNetwork}']`)
       .first()
       .click();
     await delay(5000);
+  }
+
+  async verifyBuyOption() {
+    expect(
+      await this.page
+        .frameLocator("iframe")
+        .locator('xpath=.//*[@title="Web3Auth checkout widget"]')
+        .isVisible()
+    ).toBeTruthy();
   }
 
   async selectCurrency(currency: string) {
@@ -143,11 +150,16 @@ export class WalletServicesPage {
   }
 
   async clickOption(name: string) {
-    await this.page.locator(`xpath=.//p[text()="${name}"]`).click();
+    await delay(2000);
+    await this.page.locator(`xpath=.//p[text()="${name}"]`).last().click();
   }
 
   async clickLink(name: string) {
     await this.page.locator(`xpath=.//*[text()='${name}']`).first().click();
+  }
+
+  async clickHome() {
+    await this.page.locator(`xpath=.//a[@href='/wallet/home']`).first().click();
   }
 
   async enterRecipientAddress(address: string) {
