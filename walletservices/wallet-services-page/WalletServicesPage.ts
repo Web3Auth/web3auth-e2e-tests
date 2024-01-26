@@ -72,9 +72,11 @@ export class WalletServicesPage {
     const parts = details.split("|");
     const block = await this.page.locator(`xpath=.//ul/li/ul/li/div/div`);
     for (const part of parts) {
+      console.log(part);
       expect(
         await block
           .locator(`xpath=.//p[contains(text(),"${part}")]`)
+          .last()
           .isVisible()
       ).toBeTruthy();
     }
@@ -119,7 +121,7 @@ export class WalletServicesPage {
     expect(
       await this.page
         .frameLocator("iframe")
-        .locator('xpath=.//*[@title="Web3Auth checkout widget"]')
+        .locator('xpath=.//input[@data-testid="buy-crypto-fiat-amount-input"]')
         .isVisible()
     ).toBeTruthy();
   }
@@ -371,7 +373,19 @@ export class WalletServicesPage {
   }
 
   async clickButton(name: string) {
+    await this.page
+      .locator(`xpath=.//button[text()='${name}']`)
+      .last()
+      .waitFor();
     await this.page.locator(`xpath=.//button[text()='${name}']`).last().click();
+  }
+
+  async verifyNftIsPresent(name: string) {
+    await this.page.waitForSelector(`xpath=.//button/div[text()='NFT']`);
+    await this.page.locator(`xpath=.//button/div[text()='NFT']`).last().click();
+    expect(
+      await this.page.locator(`xpath=.//div/p[text()='${name}']`).isVisible()
+    ).toBeTruthy();
   }
 
   async clickCreateVerifier() {

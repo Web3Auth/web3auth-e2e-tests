@@ -63,6 +63,9 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
 
   test(`Verify token address and balance is displayed as expected`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
+    await accountsPage.navigateToSettingsWithOption("General");
+    await accountsPage.selectNetwork("Ethereum", "Ethereum");
+    await accountsPage.clickHome();
     await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "0");
   });
 
@@ -112,16 +115,21 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.verifyTransferAddress("0x0dBa...4e49F⟶0x9904...ADE6A");
   });
 
-  test.skip(`Verify user is able to view the sent transaction activity`, async ({}) => {
+  test(`Verify user is able to view the sent transaction activity`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await page.goto(`${walletServiceLoginURL}/wallet/home`);
+    await accountsPage.navigateToSettingsWithOption("General");
+    await accountsPage.selectNetwork("Ethereum", "Polygon Mumbai");
     await accountsPage.clickHome();
     await accountsPage.clickLink(" Activity");
     await page.waitForURL(`${walletServiceLoginURL}/wallet/activity`, {
       waitUntil: "load",
     });
     await accountsPage.verifyTransactionActivity(
-      "Sent MATIC|to 0x3e3cd73f7619bab0d09aa28d46c44d4e6853413a|13:34:43|1 Nov 2023"
+      "Sent MATIC|to 0x3e3cd73f7619bab0d09aa28d46c44d4e6853413a|09:31:24 | 26 Jan 2024"
+    );
+    await accountsPage.verifyTransactionActivity(
+      "Received final_touch|to 0x0dba2ce4784849fa4e42936ca0c5d8bc1cd4e49f|09:24:21 | 25 Jan 2024"
     );
   });
 
@@ -149,7 +157,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     );
   });
 
-  test.skip(`Verify user is able to buy tokens`, async ({}) => {
+  test(`Verify user is able to buy tokens`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.navigateToSettingsWithOption("General");
     await accountsPage.selectNetwork("Main Ethereum Network", "Ethereum");
@@ -158,23 +166,27 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await page.waitForURL(`${walletServiceLoginURL}/wallet/checkout`, {
       waitUntil: "load",
     });
-    await delay(10000);
+    await delay(3000);
     await accountsPage.verifyBuyOption();
   });
 
-  test.skip(`Verify user is able to connect via wallet connect`, async ({}) => {
+  test(`Verify user is able to connect via wallet connect`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickButton(" Wallet connect");
+    await delay(3000);
     expect(
-      await page.locator('[aria-placeholder="Paste QR link here"]').isVisible()
+      await page
+        .locator('[aria-placeholder="Paste QR link here"]')
+        .first()
+        .isVisible()
     ).toBeTruthy();
   });
 
-  test.skip(`Verify existing assets are displayed`, async ({}) => {
+  test(`Verify existing assets are displayed`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
-    await accountsPage.clickButton(" Wallet connect");
-    expect(
-      await page.locator('[aria-placeholder="Paste QR link here"]').isVisible()
-    ).toBeTruthy();
+    await accountsPage.navigateToSettingsWithOption("General");
+    await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Mumbai");
+    await page.goto(`${walletServiceLoginURL}/wallet/home`);
+    await accountsPage.verifyNftIsPresent("final_touch");
   });
 });
