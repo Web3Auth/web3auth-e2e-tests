@@ -172,6 +172,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
 
   test(`Verify user is able to connect via wallet connect`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
+    await page.goto(`${walletServiceLoginURL}/wallet/home`);
     await accountsPage.clickButton(" Wallet connect");
     await delay(3000);
     expect(
@@ -184,6 +185,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
 
   test(`Verify existing assets are displayed`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
+    await page.goto(`${walletServiceLoginURL}/wallet/home`);
     await accountsPage.navigateToSettingsWithOption("General");
     await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Mumbai");
     await page.goto(`${walletServiceLoginURL}/wallet/home`);
