@@ -27,9 +27,9 @@ export class WalletServicesPage {
   async verifyNetworkName(name: string) {
     expect(
       await this.page
-        .locator(`xpath=.//input[@role='textbox']`)
+        .locator(`xpath=.//div[contains(@class,'!hidden @lg/wallet')]//button`)
         .first()
-        .inputValue()
+        .textContent()
     ).toContain(name);
   }
 
@@ -106,7 +106,12 @@ export class WalletServicesPage {
   }
 
   async selectNetwork(currentNetwork: string, newNetwork: string) {
-    await this.page.locator(`xpath=.//input[@role='textbox']`).first().click();
+    await this.page
+      .locator(
+        `xpath=.//p[text()='Select Default Network']/parent::div//button`
+      )
+      .first()
+      .click();
     await this.page.waitForSelector(
       `xpath=.//li/div/p[text()='${newNetwork}']`
     );
@@ -129,7 +134,7 @@ export class WalletServicesPage {
   async selectCurrency(currency: string) {
     await this.page
       .locator(
-        `xpath=.//p[contains(text(),'Select Default Currency')]/parent::div/div//input`
+        `xpath=.//p[text()='Select Default Currency']/parent::div//button`
       )
       .first()
       .click();
@@ -143,7 +148,7 @@ export class WalletServicesPage {
 
   async selectSpeed(speed: string) {
     await this.page
-      .locator(`xpath=.//input[@aria-labelledby='Select Speed']`)
+      .locator(`xpath=.//label[text()='Select Speed ']/parent::div//button`)
       .first()
       .click();
     await this.page.waitForSelector(`xpath=.//span[text()='${speed}']`);

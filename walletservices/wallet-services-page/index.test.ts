@@ -157,19 +157,6 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     );
   });
 
-  test(`Verify user is able to buy tokens`, async ({}) => {
-    const accountsPage = new WalletServicesPage(page);
-    await accountsPage.navigateToSettingsWithOption("General");
-    await accountsPage.selectNetwork("Main Ethereum Network", "Ethereum");
-    await page.goto(`${walletServiceLoginURL}/wallet/home`);
-    await accountsPage.clickOption("Buy");
-    await page.waitForURL(`${walletServiceLoginURL}/wallet/checkout`, {
-      waitUntil: "load",
-    });
-    await delay(3000);
-    await accountsPage.verifyBuyOption();
-  });
-
   test(`Verify user is able to connect via wallet connect`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await page.goto(`${walletServiceLoginURL}/wallet/home`);
@@ -185,10 +172,22 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
 
   test(`Verify existing assets are displayed`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
-    await page.goto(`${walletServiceLoginURL}/wallet/home`);
     await accountsPage.navigateToSettingsWithOption("General");
     await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Mumbai");
     await page.goto(`${walletServiceLoginURL}/wallet/home`);
     await accountsPage.verifyNftIsPresent("final_touch");
+  });
+
+  test(`Verify user is able to buy tokens`, async ({}) => {
+    const accountsPage = new WalletServicesPage(page);
+    await accountsPage.navigateToSettingsWithOption("General");
+    await accountsPage.selectNetwork("Main Ethereum Network", "Ethereum");
+    await page.goto(`${walletServiceLoginURL}/wallet/home`);
+    await accountsPage.clickOption("Buy");
+    await page.waitForURL(`${walletServiceLoginURL}/wallet/checkout`, {
+      waitUntil: "load",
+    });
+    await delay(3000);
+    await accountsPage.verifyBuyOption();
   });
 });
