@@ -187,7 +187,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await page.waitForURL(`${walletServiceLoginURL}/wallet/checkout`, {
       waitUntil: "load",
     });
-    await delay(3000);
+    await delay(5000);
     await accountsPage.verifyBuyOption();
   });
 });
