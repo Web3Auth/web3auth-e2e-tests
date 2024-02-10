@@ -29,7 +29,7 @@ const env_map: { [key: string]: string } = {
   aqua: `https://aqua.openlogin.com/${openloginversion}`,
   local: "http://localhost:3000",
   torusV2: "https://app.tor.us",
-  demo: "https://demo-openlogin-v6.web3auth.io/",
+  demo: "https://demo-openlogin.web3auth.io/",
   demoV4: "https://demo-openlogin-v4.web3auth.io/",
 };
 const randomEmail = generate({
