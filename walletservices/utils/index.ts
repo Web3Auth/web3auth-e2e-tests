@@ -547,10 +547,9 @@ async function signInWithEmailWithTestEmailApp(
     let href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
     await pages[1]
-      .locator(
-        `xpath=.//input[@aria-label='Please enter verification code. Digit 1']`
-      )
-      .fill(href);
+      .locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`)
+      .first()
+      .type(href);
     useAutoCancel2FASetup(pages[1]);
     return true;
   } catch (err) {
