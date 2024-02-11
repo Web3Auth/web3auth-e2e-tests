@@ -161,7 +161,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     const accountsPage = new WalletServicesPage(page);
     await page.goto(`${walletServiceLoginURL}/wallet/home`);
     await accountsPage.clickButton(" Wallet connect");
-    await delay(3000);
+    await page.waitForSelector('[aria-placeholder="Paste QR link here"]');
     expect(
       await page
         .locator('[aria-placeholder="Paste QR link here"]')

@@ -533,7 +533,7 @@ async function signInWithEmailWithTestEmailApp(
     console.log("Email:" + email);
     await page.fill('[placeholder="name@domain.com"]', email);
     await page.click('button:has-text("Login with Email")');
-    await delay(15000);
+    await delay(20000);
     const pages = await browser.contexts()[0].pages();
     // pages[0] is the first page, and pages[1] is the new page
     await pages[1].bringToFront(); // Bring the new page to the front
