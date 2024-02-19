@@ -45,16 +45,29 @@ export class WalletServicesPage {
   async verifyTransferTokenAmount(content: string) {
     expect(
       await this.page
-        .locator(`xpath=.//p[text()='Transferred Token']/parent::div/div`)
+        .locator(`xpath=.//div[text()='Amount']/following-sibling::div`)
         .first()
         .textContent()
     ).toContain(content);
   }
 
-  async verifyTransferAddress(content: string) {
+  async verifyTransferFromAddress(content: string) {
     expect(
       await this.page
-        .locator(`xpath=.//p[text()='Transferred Token']/parent::div/div`)
+        .locator(
+          `xpath=.//p[text()='Polygon Mumbai']/parent::div/following-sibling::div//p`
+        )
+        .first()
+        .textContent()
+    ).toContain(content);
+  }
+
+  async verifyTransferToAddress(content: string) {
+    expect(
+      await this.page
+        .locator(
+          `xpath=.//p[text()='Polygon Mumbai']/parent::div/following-sibling::div//p`
+        )
         .last()
         .textContent()
     ).toContain(content);
@@ -62,7 +75,7 @@ export class WalletServicesPage {
 
   async verifyTransferFee(transactionFee: string) {
     let fee = await this.page
-      .locator(`xpath=.//p[text()='Transaction Fee']/parent::div//div/p`)
+      .locator(`xpath=.//p[text()='Transaction cost']/parent::div//div/p`)
       .last()
       .textContent();
     expect(parseInt(fee!)).toBeGreaterThanOrEqual(parseInt(transactionFee));
@@ -83,8 +96,10 @@ export class WalletServicesPage {
   }
 
   async navigateToSettingsWithOption(option: string) {
+    await delay(5000);
     await this.page
       .locator(`xpath=.//div[contains(@class,'avatar-container')]`)
+      .last()
       .click();
     await this.page.locator(`xpath=.//p[text()='Settings']`).click();
     await this.page.waitForSelector(`xpath=.//div[text()="${option}"]`);
@@ -148,7 +163,7 @@ export class WalletServicesPage {
 
   async selectSpeed(speed: string) {
     await this.page
-      .locator(`xpath=.//label[text()='Select Speed ']/parent::div//button`)
+      .locator(`xpath=.//label[text()='Transaction Fee ']/parent::div//button`)
       .first()
       .click();
     await this.page.waitForSelector(`xpath=.//span[text()='${speed}']`);
@@ -158,7 +173,7 @@ export class WalletServicesPage {
 
   async clickOption(name: string) {
     await delay(2000);
-    await this.page.locator(`xpath=.//p[text()="${name}"]`).last().click();
+    await this.page.locator(`xpath=.//p[text()="${name}"]`).first().click();
   }
 
   async clickLink(name: string) {

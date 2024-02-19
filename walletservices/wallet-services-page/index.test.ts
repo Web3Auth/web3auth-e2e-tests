@@ -111,8 +111,9 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.verifyAvailableBalance("0.2 MATIC");
     await accountsPage.enterTransactionAmount("0.0001");
     await accountsPage.clickButton(" Submit ");
-    await accountsPage.verifyTransferTokenAmount("0.0001MATIC");
-    await accountsPage.verifyTransferAddress("0x0dBa...4e49F⟶0x9904...ADE6A");
+    await accountsPage.verifyTransferTokenAmount("0.0001 MATIC");
+    await accountsPage.verifyTransferFromAddress("0x0dBa...4e49F");
+    await accountsPage.verifyTransferToAddress("0x9904...ADE6A");
   });
 
   test(`Verify user is able to view the sent transaction activity`, async ({}) => {
