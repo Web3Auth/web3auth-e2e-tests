@@ -13,7 +13,10 @@ export class WalletServicesPage {
   async verifyBalanceAndAddress(address: string, balance: string) {
     await delay(2000);
     expect(
-      await this.page.locator(`xpath=.//div/button/span`).first().textContent()
+      await this.page
+        .locator(`xpath=.//div/button/span[contains(@class,'!text-xs')]`)
+        .first()
+        .textContent()
     ).toContain(address);
     let walletBalance = await this.page
       .locator(
