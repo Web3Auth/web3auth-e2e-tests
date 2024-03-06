@@ -144,7 +144,7 @@ export class WalletServicesPage {
     expect(
       await this.page
         .frameLocator("iframe")
-        .locator('xpath=.//input[@data-testid="buy-crypto-fiat-amount-input"]')
+        .locator(`xpath=.//input[@data-testid='buy-crypto-fiat-amount-input']`)
         .isVisible()
     ).toBeTruthy();
   }
