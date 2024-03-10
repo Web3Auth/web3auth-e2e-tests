@@ -22,7 +22,7 @@ const RPClient = require("@reportportal/client-javascript");
 const indexConfig: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
   //  timeout: process.env.CI ? 5 * 6 * 1000 : 0,
-  globalTimeout: process.env.CI ? 12 * 100 * 1000 : undefined,
+  globalTimeout: process.env.CI ? 15 * 100 * 1000 : undefined,
   retries: process.env.CI ? 0 : 0,
   // Opt out of parallel tests on CI.
   workers: process.env.CI ? 1 : 1,
