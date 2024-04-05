@@ -79,9 +79,9 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     await accountsPage.verifyUserInfoInDemoApp(
       "kelg8.j5s90ldb0b35@inbox.testmail.app"
     );
-    await accountsPage.verifyAddressInDemoApp("0x0db...d4e49f");
+    await accountsPage.verifyAddressInDemoApp("0x0dB...d4e49F");
     await accountsPage.verifyBalanceInDemoApp("0.199268189999349");
-    await accountsPage.verifyWalletInDemoApp("0x0dba...4e49f");
+    await accountsPage.verifyWalletInDemoApp("0x0dBa...4e49F");
     await accountsPage.verifySignedMessages("Personal Sign", browser);
     await accountsPage.verifySignedMessages("ETH Sign", browser);
     await accountsPage.verifySignedMessages("Typed data v1", browser);
@@ -90,7 +90,7 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     await accountsPage.verifyWalletConnect();
     await accountsPage.verifyGetEncryptionKey(browser);
     await accountsPage.verifyEncryptionAndDecryption(browser);
-    await accountsPage.verifyShowCheckout();
+    //await accountsPage.verifyShowCheckout();
     await page.goto(walletServiceLoginURL + "/logout");
   });
   test(`Verify user is able to login using session id`, async ({

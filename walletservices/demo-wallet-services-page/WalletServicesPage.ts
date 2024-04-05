@@ -546,14 +546,14 @@ export class WalletServicesPage {
   async verifyShowCheckout() {
     await this.page.locator(`xpath=.//button[text()='Show Checkout']`).click();
     await delay(10000);
-    const frame = await this.page.frameLocator(
+
+    const frame = await this.page.frame(
       "xpath=.//iframe[contains(@title,'Web3Auth checkout widget')]"
     );
     console.log(frame);
     expect(
-      frame
-        .first()
-        .locator(`xpath=.//input[@data-testid='buy-crypto-fiat-amount-input']`)
+      await frame
+        ?.locator(`xpath=.//input[@data-testid='buy-crypto-fiat-amount-input']`)
         .isVisible()
     ).toBeTruthy();
   }

@@ -66,7 +66,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.navigateToSettingsWithOption("General");
     await accountsPage.selectNetwork("Ethereum", "Ethereum");
     await accountsPage.clickHome();
-    await accountsPage.verifyBalanceAndAddress("0x0dba...4e49f", "0");
+    await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "0");
   });
 
   test(`Verify network switch and balance on wallet services`, async ({}) => {
@@ -77,7 +77,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectCurrency("USD");
     await accountsPage.clickHome();
     await accountsPage.verifyNetworkName("Polygon Mumbai");
-    await accountsPage.verifyBalanceAndAddress("0x0dba...4e49f", "0.15");
+    await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "0.15");
   });
 
   test(`Verify validations on send transaction screen`, async ({}) => {
@@ -112,7 +112,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.enterTransactionAmount("0.0001");
     await accountsPage.clickButton(" Submit ");
     await accountsPage.verifyTransferTokenAmount("0.0001 MATIC");
-    await accountsPage.verifyTransferFromAddress("0x0dba...4e49f");
+    await accountsPage.verifyTransferFromAddress("0x0dBa...4e49F");
     await accountsPage.verifyTransferToAddress("0x9904...ADE6A");
   });
 
@@ -141,7 +141,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.navigateToSettingsWithOption("General");
     await accountsPage.selectCurrency("SGD");
     await accountsPage.clickHome();
-    await accountsPage.verifyBalanceAndAddress("0x0dba...4e49f", "0.21");
+    await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "0.21");
   });
 
   test.skip(`Verify user is able to import account`, async ({}) => {
@@ -188,7 +188,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await page.waitForURL(`${walletServiceLoginURL}/wallet/checkout`, {
       waitUntil: "load",
     });
-    await delay(10000);
+    await delay(5000);
     await accountsPage.verifyBuyOption();
   });
 });
