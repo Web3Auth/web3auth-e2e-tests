@@ -29,7 +29,7 @@ import { signInWithEmailWithTestEmailOnDemoApp } from "../../openloginV4/utils";
 import { AccountsPage } from "../../openloginV4/account-page/AccountsPage";
 const consoleLogs: string[] = [];
 let sessionId: string = "";
-const walletServiceLoginURL = "https://demo-develop-wallet.web3auth.io";
+const walletServiceLoginURL = "https://demo-wallet.web3auth.io";
 const demoAppUrl = env_map["demo"];
 const user = {
   mobileNumberForLogin: process.env.LOGIN_MOBILE_NUMBER || "",
@@ -63,7 +63,9 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     });
     await page.goto(walletServiceLoginURL);
     const currentTimestamp = Math.floor(Date.now() / 1000);
+    await delay(5000);
     await page.locator(`xpath=.//button[text()='Login']`).click();
+    await delay(5000);
     await signInWithEmailWithTestEmailAppInDemoApp(
       page,
       testEmail,

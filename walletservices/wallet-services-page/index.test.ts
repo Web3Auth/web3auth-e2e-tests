@@ -73,10 +73,10 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.verifyNetworkName("Ethereum");
     await accountsPage.navigateToSettingsWithOption("General");
-    await accountsPage.selectNetwork("Ethereum", "Polygon Mumbai");
+    await accountsPage.selectNetwork("Ethereum", "Sepolia Test Network");
     await accountsPage.selectCurrency("USD");
     await accountsPage.clickHome();
-    await accountsPage.verifyNetworkName("Polygon Mumbai");
+    await accountsPage.verifyNetworkName("Sepolia Test Network");
     await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "0.15");
   });
 
@@ -108,20 +108,32 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
 
   test(`Verify details displayed on send transaction screen`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
-    await accountsPage.verifyAvailableBalance("0.2 MATIC");
+    await accountsPage.verifyAvailableBalance("0.64 ETH");
     await accountsPage.enterTransactionAmount("0.0001");
     await accountsPage.clickButton(" Submit ");
-    await accountsPage.verifyTransferTokenAmount("0.0001 MATIC");
+    await accountsPage.verifyTransferTokenAmount("0.0001 ETH");
     await accountsPage.verifyTransferFromAddress("0x0dBa...4e49F");
     await accountsPage.verifyTransferToAddress("0x9904...ADE6A");
+  });
+
+  test(`Verify existing assets are displayed`, async ({}) => {
+    const accountsPage = new WalletServicesPage(page);
+    await page.goto(`${walletServiceLoginURL}/wallet/home`);
+    await accountsPage.navigateToSettingsWithOption("General");
+    await accountsPage.selectNetwork(
+      "Main Ethereum Network",
+      "Sepolia Test Network"
+    );
+    await accountsPage.clickHome();
+    await accountsPage.navigateToSettingsWithOption("General");
+    await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Mumbai");
+    await accountsPage.clickHome();
+    await accountsPage.verifyNftIsPresent("final_touch");
   });
 
   test(`Verify user is able to view the sent transaction activity`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await page.goto(`${walletServiceLoginURL}/wallet/home`);
-    await accountsPage.navigateToSettingsWithOption("General");
-    await accountsPage.selectNetwork("Ethereum", "Polygon Mumbai");
-    await accountsPage.clickHome();
     await accountsPage.clickLink(" Activity");
     await page.waitForURL(`${walletServiceLoginURL}/wallet/activity`, {
       waitUntil: "load",
@@ -169,14 +181,6 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
         .first()
         .isVisible()
     ).toBeTruthy();
-  });
-
-  test(`Verify existing assets are displayed`, async ({}) => {
-    const accountsPage = new WalletServicesPage(page);
-    await accountsPage.navigateToSettingsWithOption("General");
-    await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Mumbai");
-    await page.goto(`${walletServiceLoginURL}/wallet/home`);
-    await accountsPage.verifyNftIsPresent("final_touch");
   });
 
   test(`Verify user is able to buy tokens`, async ({}) => {

@@ -58,7 +58,7 @@ export class WalletServicesPage {
     expect(
       await this.page
         .locator(
-          `xpath=.//p[text()='Polygon Mumbai']/parent::div/following-sibling::div//p`
+          `xpath=.//p[text()='Sepolia Test Network']/parent::div/following-sibling::div//p`
         )
         .first()
         .textContent()
@@ -69,7 +69,7 @@ export class WalletServicesPage {
     expect(
       await this.page
         .locator(
-          `xpath=.//p[text()='Polygon Mumbai']/parent::div/following-sibling::div//p`
+          `xpath=.//p[text()='Sepolia Test Network']/parent::div/following-sibling::div//p`
         )
         .last()
         .textContent()
