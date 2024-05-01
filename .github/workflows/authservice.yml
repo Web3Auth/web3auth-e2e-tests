@@ -94,6 +94,6 @@ jobs:
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: ${{ github.workflow}} - ${{ matrix.env.PLATFORM }}
+          title: ${{ github.workflow}} - ${{ matrix.env.PLATFORM }} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           status: ${{ job.status }}
           nocontext: true
