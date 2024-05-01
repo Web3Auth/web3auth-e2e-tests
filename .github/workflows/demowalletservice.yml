@@ -1,4 +1,4 @@
-name: WalletService - E2ETests
+name: DemoWalletService - E2ETests
 
 on:
   push:
@@ -18,7 +18,7 @@ env:
 
 jobs:
   build:
-    name: WalletService - E2ETests
+    name: DemoWalletService - E2ETests
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -67,7 +67,7 @@ jobs:
           TESTMAIL_APP_APIKEY: ${{ secrets.TESTMAIL_APP_APIKEY }}
           MAIL_APP: ${{ secrets.MAIL_APP }}
         run: |
-          echo "Platform: ${{ matrix.env.PLATFORM }}" && ipconfig getifaddr en0 && ls && npm install && npx playwright install && npm run walletservice:config
+          echo "Platform: ${{ matrix.env.PLATFORM }}" && ipconfig getifaddr en0 && ls && npm install && npx playwright install && npm run demowalletservice:config
 
       - name: Upload test results
         if: always()
@@ -79,7 +79,7 @@ jobs:
         uses: sarisia/actions-status-discord@v1
         if: always()
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK_WS }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK_DEMO_WS }}
           title: ${{ github.workflow}} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           status: ${{ job.status }}
           nocontext: true

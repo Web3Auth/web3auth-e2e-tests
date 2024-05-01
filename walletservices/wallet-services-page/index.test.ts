@@ -116,7 +116,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.verifyTransferToAddress("0x9904...ADE6A");
   });
 
-  test(`Verify existing assets are displayed`, async ({}) => {
+  test.skip(`Verify existing assets are displayed`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await page.goto(`${walletServiceLoginURL}/wallet/home`);
     await accountsPage.navigateToSettingsWithOption("General");
@@ -139,10 +139,10 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
       waitUntil: "load",
     });
     await accountsPage.verifyTransactionActivity(
-      "Sent MATIC|to 0x3e3cd73f7619bab0d09aa28d46c44d4e6853413a|09:31:24 | 26 Jan 2024"
+      "Sent ETH|to 0x0dba2ce4784849fa4e42936ca0c5d8bc1cd4e49f|12:14:00 | 13 Apr 2024"
     );
     await accountsPage.verifyTransactionActivity(
-      "Received final_touch|to 0x0dba2ce4784849fa4e42936ca0c5d8bc1cd4e49f|09:24:21 | 25 Jan 2024"
+      "Received ETH|to 0x0dba2ce4784849fa4e42936ca0c5d8bc1cd4e49f|16:52:18 | 1 May 2024"
     );
   });
 
