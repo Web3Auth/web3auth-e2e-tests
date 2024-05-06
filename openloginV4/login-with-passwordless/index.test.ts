@@ -20,7 +20,7 @@ import { readFileSync } from "fs";
 import path from "path";
 import { Client } from "@opensearch-project/opensearch";
 const demoAppUrl = env_map["demo"];
-const demoAppUrlV4 = env_map["demoV4"];
+const demoAppUrlV4 = env_map["demoV6"];
 const eventPostURL =
   process.env.ES_ENDPOINT === undefined
     ? "search-sapphire-latency-stats-7n6qd4g6m3au5fpre3gwvwo6vm.eu-west-1.es.amazonaws.com"
@@ -46,6 +46,7 @@ let tkey: string = "";
 let oAuthPrivateKeyV4: string = "";
 let privKeyV4: string = "";
 let tkeyV4: string = "";
+let idToken: string = "";
 
 test.describe.serial("Passwordless Login scenarios", () => {
   test("Login with mobile number using passwordless login", async ({
@@ -132,9 +133,24 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await page.waitForURL(`${demoAppUrl}`, {
       timeout: 3 * 60 * 1000,
     });
-
+    console.log("step 1");
     expect(page.url()).toBe(`${demoAppUrl}`);
+    console.log("step 1+");
+    const accountsPage = new AccountsPage(page);
+    const keys: string | null = await accountsPage.getOpenLoginState();
+    console.log("step 1++");
+    if (keys !== null) {
+      const jsonObject = JSON.parse(keys);
+      privKey = jsonObject.privKey;
+      idToken = jsonObject.userInfo.idToken;
+    }
+    expect(idToken).not.toBeNull();
+    expect(idToken).not.toBeUndefined();
+    expect(privKey).not.toBeNull();
+    expect(privKey).not.toBeUndefined();
+    console.log("step 2");
     if (platform == "mainnet") {
+      console.log("step 3");
       const welcome = await page.waitForSelector(`text=Get openlogin state`);
       const accountsPage = new AccountsPage(page);
       const keys: string | null = await accountsPage.getOpenLoginState();
@@ -174,6 +190,9 @@ test.describe.serial("Passwordless Login scenarios", () => {
       expect(oAuthPrivateKeyV4).toEqual(oAuthPrivateKey);
     }
   });
+
+  //id token key present and not empty ->
+  // priv key ->
 
   test("Login as an existing user with recovery phrase as 2FA", async ({
     page,

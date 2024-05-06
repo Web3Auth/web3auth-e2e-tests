@@ -31,6 +31,7 @@ const env_map: { [key: string]: string } = {
   torusV2: "https://app.tor.us",
   demo: "https://demo-openlogin.web3auth.io/",
   demoV4: "https://demo-openlogin-v4.web3auth.io/",
+  demoV6: "https://demo-openlogin-v6.web3auth.io/",
 };
 const randomEmail = generate({
   length: 20,

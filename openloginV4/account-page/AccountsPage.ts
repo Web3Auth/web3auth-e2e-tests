@@ -290,6 +290,7 @@ export class AccountsPage {
   }
 
   async getOpenLoginState() {
+    await this.page.waitForSelector('button:has-text("Get openlogin state")');
     await this.page.locator('button:has-text("Get openlogin state")').click();
     const keys = await this.page
       .locator("xpath=.//div[@id='console']//pre")
