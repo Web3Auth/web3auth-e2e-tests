@@ -161,12 +161,13 @@ test.describe.serial("Passwordless Login scenarios", () => {
         oAuthPrivateKey = jsonObject.oAuthPrivateKey;
       }
       await page.goto(demoAppUrlV4);
-      await signInWithEmailWithTestEmailOnDemoAppV4(
+      await signInWithEmailWithTestEmailOnDemoApp(
         page,
         testEmail,
         browser,
         testEmail.split("@")[0].split(".")[1],
-        "mainnet"
+        "production",
+        platform
       );
       const shouldExit = await catchErrorAndExit(page);
       expect(shouldExit).toBeFalsy();
