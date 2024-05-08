@@ -20,7 +20,7 @@ import { readFileSync } from "fs";
 import path from "path";
 import { Client } from "@opensearch-project/opensearch";
 const demoAppUrl = env_map["demo"];
-const demoAppUrlV4 = env_map["demoV6"];
+const demoAppUrlV4 = env_map["demoV4"];
 const eventPostURL =
   process.env.ES_ENDPOINT === undefined
     ? "search-sapphire-latency-stats-7n6qd4g6m3au5fpre3gwvwo6vm.eu-west-1.es.amazonaws.com"
@@ -111,12 +111,12 @@ test.describe.serial("Passwordless Login scenarios", () => {
     // Verify environment variables
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time
     // Listen for all console events and handle errors
-    page.on("console", (msg) => {
-      if (msg.type() === "error") {
-        console.log(`Error text: "${msg.text()}"`);
-        consoleLogs.push(`${msg.text()}`);
-      }
-    });
+    // page.on("console", (msg) => {
+    //   if (msg.type() === "error") {
+    //     console.log(`Error text: "${msg.text()}"`);
+    //     consoleLogs.push(`${msg.text()}`);
+    //   }
+    // });
     await page.goto(demoAppUrl);
     await signInWithEmailWithTestEmailOnDemoApp(
       page,
