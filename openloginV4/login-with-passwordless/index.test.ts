@@ -20,7 +20,7 @@ import { readFileSync } from "fs";
 import path from "path";
 import { Client } from "@opensearch-project/opensearch";
 const demoAppUrl = env_map["demo"];
-const demoAppUrlV4 = env_map["demoV4"];
+const demoAppUrlV4 = env_map["demoV6"];
 const eventPostURL =
   process.env.ES_ENDPOINT === undefined
     ? "search-sapphire-latency-stats-7n6qd4g6m3au5fpre3gwvwo6vm.eu-west-1.es.amazonaws.com"

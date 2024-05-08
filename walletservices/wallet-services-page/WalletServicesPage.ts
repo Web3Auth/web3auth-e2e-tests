@@ -86,12 +86,13 @@ export class WalletServicesPage {
 
   async verifyTransactionActivity(details: string) {
     const parts = details.split("|");
+    console.log(parts);
     const block = await this.page.locator(`xpath=.//ul/li/ul/li/div/div`);
     for (const part of parts) {
-      console.log(part);
+      console.log(part.trim());
       expect(
         await block
-          .locator(`xpath=.//p[contains(text(),"${part}")]`)
+          .locator(`xpath=.//p[contains(text(),"${part.trim()}")]`)
           .last()
           .isVisible()
       ).toBeTruthy();
