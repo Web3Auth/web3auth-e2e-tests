@@ -143,6 +143,8 @@ test.describe.serial("Passwordless Login scenarios", () => {
       const jsonObject = JSON.parse(keys);
       privKey = jsonObject.privKey;
       idToken = jsonObject.userInfo.idToken;
+      tkey = jsonObject.tkey;
+      oAuthPrivateKey = jsonObject.oAuthPrivateKey;
     }
     expect(idToken).not.toBeNull();
     expect(idToken).not.toBeUndefined();
@@ -151,15 +153,6 @@ test.describe.serial("Passwordless Login scenarios", () => {
     console.log("step 2");
     if (platform == "mainnet") {
       console.log("step 3");
-      const welcome = await page.waitForSelector(`text=Get openlogin state`);
-      const accountsPage = new AccountsPage(page);
-      const keys: string | null = await accountsPage.getOpenLoginState();
-      if (keys !== null) {
-        const jsonObject = JSON.parse(keys);
-        tkey = jsonObject.tkey;
-        privKey = jsonObject.privKey;
-        oAuthPrivateKey = jsonObject.oAuthPrivateKey;
-      }
       await page.goto(demoAppUrlV4);
       await signInWithEmailWithTestEmailOnDemoApp(
         page,
