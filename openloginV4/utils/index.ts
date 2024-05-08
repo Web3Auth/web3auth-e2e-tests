@@ -697,7 +697,6 @@ async function signInWithEmailWithTestEmailOnDemoApp(
     const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
     console.log(2);
     inbox = await res.data;
-    console.log(inbox);
     const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();
