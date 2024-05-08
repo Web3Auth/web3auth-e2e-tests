@@ -24,18 +24,18 @@ jobs:
       max-parallel: 1
       matrix:
         include:
-          - env:
-              PLATFORM: sapphire_devnet
-          - env:
-              PLATFORM: sapphire_mainnet
-          - env:
-              PLATFORM: testnet
+          # - env:
+          #     PLATFORM: sapphire_devnet
+          # - env:
+          #     PLATFORM: sapphire_mainnet
+          # - env:
+          #     PLATFORM: testnet
           - env:
               PLATFORM: mainnet
-          - env:
-              PLATFORM: cyan
-          - env:
-              PLATFORM: aqua
+          # - env:
+          #     PLATFORM: cyan
+          # - env:
+          #     PLATFORM: aqua
     runs-on: macos-latest
     # env:
     #   PLATFORM: ${{ matrix.env }}
