@@ -544,7 +544,7 @@ export class WalletServicesPage {
     ).toBeTruthy();
     expect(
       await frame
-        ?.locator(`xpath=.//img[contains(@src,'polygon')]`)
+        ?.locator(`xpath=.//img[contains(@src,'eth')]`)
         .first()
         .isVisible()
     ).toBeTruthy();
