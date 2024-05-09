@@ -81,8 +81,9 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     await accountsPage.verifyUserInfoInDemoApp(
       "kelg8.j5s90ldb0b35@inbox.testmail.app"
     );
+    await accountsPage.switchChain(browser);
     await accountsPage.verifyAddressInDemoApp("0x0dB...d4e49F");
-    await accountsPage.verifyBalanceInDemoApp("0.199268189999349");
+    await accountsPage.verifyBalanceInDemoApp("0.635632785708915");
     await accountsPage.verifyWalletInDemoApp("0x0dBa...4e49F");
     await accountsPage.verifySignedMessages("Personal Sign", browser);
     await accountsPage.verifySignedMessages("ETH Sign", browser);

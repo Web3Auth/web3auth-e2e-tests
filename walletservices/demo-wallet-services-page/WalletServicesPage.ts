@@ -505,6 +505,17 @@ export class WalletServicesPage {
         .textContent()
     ).toContain(balance);
   }
+
+  async switchChain(browser: Browser) {
+    await this.page
+      .locator(`xpath=.//button[text()='Switch Chain 0xaa36a7']`)
+      .click();
+    await delay(5000);
+    const pages = await browser.contexts()[0].pages();
+    await pages[1].bringToFront();
+    await pages[1].locator(`xpath=.//button[text()='Confirm']`).click();
+    await delay(3000);
+  }
   async verifyWalletInDemoApp(address: string) {
     await this.page.locator(`xpath=.//button[text()='Show Wallet']`).click();
     await delay(5000);
