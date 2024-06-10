@@ -630,7 +630,7 @@ export class WalletServicesPage {
     await this.page
       .locator(`xpath=.//button[text()='Get encryption key']`)
       .click();
-    await delay(5000);
+    await delay(8000);
     const pages = await browser.contexts()[0].pages();
     await pages[1].bringToFront();
     await pages[1].locator(`xpath=.//button[text()='Allow']`).click();

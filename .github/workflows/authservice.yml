@@ -87,6 +87,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
+          name: artifact-${{ github.run_id }}
           path: test-results/*
           if-no-files-found: ignore
       - name: Update Discord
