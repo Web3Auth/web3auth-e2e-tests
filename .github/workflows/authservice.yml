@@ -14,7 +14,7 @@ on:
         default: "testing"
 
 env:
-  NODE_VERSION: 16
+  NODE_VERSION: 20
 
 jobs:
   build:
@@ -43,7 +43,7 @@ jobs:
     #   conclusion: ${{ steps.run-tests.conclusion }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: new_ui_openlogin
       - name: Unlock secrets
@@ -89,7 +89,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: artifact-${{ github.run_id }}-${{ github.job }}-${{ steps.get-time.outputs.timestamp }}
           path: test-results/*
