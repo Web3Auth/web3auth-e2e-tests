@@ -87,13 +87,13 @@ jobs:
         id: get-time
         run: echo "::set-output name=timestamp::$(date +%Y%m%d%H%M%S)"
 
-      # - name: Upload test results
-      #   if: always()
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: artifact-${{ github.run_id }}-${{ github.job }}-${{ steps.get-time.outputs.timestamp }}
-      #     path: test-results/*
-      #     if-no-files-found: ignore
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifact-${{ github.run_id }}-${{ github.job }}-${{ steps.get-time.outputs.timestamp }}
+          path: test-results/*
+          if-no-files-found: ignore
       - name: Update Discord
         uses: sarisia/actions-status-discord@v1
         if: always()
