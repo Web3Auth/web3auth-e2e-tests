@@ -691,11 +691,9 @@ async function signInWithEmailWithTestEmailOnDemoApp(
     await page.waitForSelector("text=Verify your email");
     await delay(5000);
     let inbox;
-    console.log(1);
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
-    console.log(2);
     inbox = await res.data;
     const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
     const context2 = await browser.newContext();

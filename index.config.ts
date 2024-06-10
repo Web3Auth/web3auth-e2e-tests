@@ -29,7 +29,7 @@ const indexConfig: PlaywrightTestConfig = {
   // reporter: process.env.CI
   //   ? [["@reportportal/agent-js-playwright", RPconfig]]
   //   : [["html"]],
-  reporter: process.env.CI ? [["html"]] : [["html"]],
+  //reporter: process.env.CI ? [["html"]] : [["html"]],
   use: {
     // Emulate browsing in San Francisco, CA, USA
     locale: "en-GB",

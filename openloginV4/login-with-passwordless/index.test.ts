@@ -133,12 +133,9 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await page.waitForURL(`${demoAppUrl}`, {
       timeout: 3 * 60 * 1000,
     });
-    console.log("step 1");
     expect(page.url()).toBe(`${demoAppUrl}`);
-    console.log("step 1+");
     const accountsPage = new AccountsPage(page);
     const keys: string | null = await accountsPage.getOpenLoginState();
-    console.log("step 1++");
     if (keys !== null) {
       const jsonObject = JSON.parse(keys);
       privKey = jsonObject.privKey;
@@ -150,9 +147,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     expect(idToken).not.toBeUndefined();
     expect(privKey).not.toBeNull();
     expect(privKey).not.toBeUndefined();
-    console.log("step 2");
     if (platform == "mainnet") {
-      console.log("step 3");
       await page.goto(demoAppUrlV4);
       await signInWithEmailWithTestEmailOnDemoApp(
         page,
