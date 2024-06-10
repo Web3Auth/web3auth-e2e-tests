@@ -83,11 +83,15 @@ jobs:
         run: |
           echo "Platform: ${{ matrix.env.PLATFORM }}" && ipconfig getifaddr en0 && ls && npm install && npx playwright install && npm run authservice:config
 
+      - name: Get current timestamp
+        id: get-time
+        run: echo "::set-output name=timestamp::$(date +%Y%m%d%H%M%S)"
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: artifact-${{ github.run_id }}-${{ github.job }}
+          name: artifact-${{ github.run_id }}-${{ github.job }}-${{ steps.get-time.outputs.timestamp }}
           path: test-results/*
           if-no-files-found: ignore
       - name: Update Discord
