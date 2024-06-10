@@ -139,10 +139,10 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
       waitUntil: "load",
     });
     await accountsPage.verifyTransactionActivity(
-      "Sent ETH|to 0xfd6d37e18e27da66a35fdb2ad5e2581afe40cfa5|10:11:30 | 8 May 2024"
+      "Sent ETH|cfa5|10:11:30 | 8 May 2024"
     );
     await accountsPage.verifyTransactionActivity(
-      "Received ETH|to 0x0dba2ce4784849fa4e42936ca0c5d8bc1cd4e49f|20:22:18 | 1 May 2024"
+      "Received ETH|e49f|20:22:18 | 1 May 2024"
     );
   });
 

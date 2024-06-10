@@ -85,8 +85,8 @@ export class WalletServicesPage {
   }
 
   async verifyTransactionActivity(details: string) {
+    console.log(details);
     const parts = details.split("|");
-    console.log(parts);
     const block = await this.page.locator(`xpath=.//ul/li/ul/li/div/div`);
     for (const part of parts) {
       console.log(part.trim());
