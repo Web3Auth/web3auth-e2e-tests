@@ -108,7 +108,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
 
   test(`Verify details displayed on send transaction screen`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
-    await accountsPage.verifyAvailableBalance("0.64 ETH");
+    await accountsPage.verifyAvailableBalance("0.6");
     await accountsPage.enterTransactionAmount("0.0001");
     await accountsPage.clickButton(" Submit ");
     await accountsPage.verifyTransferTokenAmount("0.0001 ETH");

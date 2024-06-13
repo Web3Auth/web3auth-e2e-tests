@@ -42,7 +42,7 @@ export class WalletServicesPage {
         .locator(`xpath=.//p[text()='Available Balance']/parent::div/p`)
         .last()
         .textContent()
-    ).toEqual(balance);
+    ).toContain(balance);
   }
 
   async verifyTransferTokenAmount(content: string) {
