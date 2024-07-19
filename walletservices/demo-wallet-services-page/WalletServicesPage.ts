@@ -520,7 +520,7 @@ export class WalletServicesPage {
   async verifyWalletInDemoApp(address: string) {
     await this.page.locator(`xpath=.//button[text()='Show Wallet']`).click();
     await delay(5000);
-    const frame = this.page.frame("walletIframe");
+    const frame = this.page.frameLocator(`//iframe[contains(@id,"walletIframe")]`);
     expect(
       await frame
         ?.locator(`xpath=.//span[text()='${address}']`)
