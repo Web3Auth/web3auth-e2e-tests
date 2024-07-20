@@ -44,7 +44,7 @@ const randomPassword = generate({
 });
 
 test.describe.serial("Wallet Services Scenarios @demo", () => {
-    test.only(`Verify user is able to login using passwordless option`, async ({ page, browser }) => {
+    test(`Verify user is able to login using passwordless option`, async ({ page, browser }) => {
         test.setTimeout(3 * 60000); // adding more time to compensate high loading time
         const accountsPage = new WalletServicesPage(page);
         page.on("console", (msg) => {
