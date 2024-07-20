@@ -503,7 +503,7 @@ async function signInWithEmailWithTestEmailAppInDemoApp(page: Page, email: strin
         let inbox;
         // Setup our JSON API endpoint
         const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-        console.log("testEmailAppApiKey:" + testEmailAppApiKey);
+        console.log("testEmailAppApiKey:" + `test ${testEmailAppApiKey} test`);
         const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
         inbox = await res.data;
         let href = inbox.emails[0].subject.match(/\d+/)[0];

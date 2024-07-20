@@ -574,7 +574,7 @@ export class WalletServicesPage {
     await this.page
       .locator(`xpath=.//button[text()='Show Wallet Connect']`)
       .click();
-    const frame = await this.page.frame("walletIframe");
+      const frame = this.page.frameLocator(`//iframe[contains(@id,"walletIframe")]`);
     await delay(5000);
     expect(
       await frame
