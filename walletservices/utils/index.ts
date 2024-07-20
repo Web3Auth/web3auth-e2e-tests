@@ -117,7 +117,8 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
     const promise = new Promise<void>(async (resolve) => {
         while (!stopped) {
             try {
-                if (await page.getByLabel("Set up 2FA").isVisible()) await page.locator("xpath=.//button[text()='Skip for Now']").first().click();
+                if (await page.getByLabel("Set up 2FA").isVisible())
+                    await page.locator("xpath=.//button[text()='Skip for Now']").first().click();
             } catch {}
         }
         resolve();
@@ -143,8 +144,14 @@ async function catchErrorAndExit(page: Page): Promise<boolean | undefined> {
         }
     } catch {}
     try {
-        if (await page.isVisible("text=Unable to connect to Auth Network. The Network may be congested.")) {
-            console.log("Error: Test failed to connect to Auth Network. The Network may be congested.");
+        if (
+            await page.isVisible(
+                "text=Unable to connect to Auth Network. The Network may be congested."
+            )
+        ) {
+            console.log(
+                "Error: Test failed to connect to Auth Network. The Network may be congested."
+            );
             return true;
         }
     } catch {}
@@ -155,18 +162,26 @@ function catchError(page: Page): () => Promise<void> {
     const promise = new Promise<void>(async (resolve) => {
         while (!stopped) {
             try {
-                if (await page.isVisible("text=Too many requests")) console.log("Error: Test failed due to too many requests");
+                if (await page.isVisible("text=Too many requests"))
+                    console.log("Error: Test failed due to too many requests");
             } catch {
                 return true;
             }
             try {
-                if (await page.isVisible("text=Unable to detect login share from the Auth Network")) console.log("Error: Test failed to detect login share from the Auth Network");
+                if (await page.isVisible("text=Unable to detect login share from the Auth Network"))
+                    console.log("Error: Test failed to detect login share from the Auth Network");
             } catch {
                 return true;
             }
             try {
-                if (await page.isVisible("text=Unable to connect to Auth Network. The Network may be congested."))
-                    console.log("Error: Test failed to connect to Auth Network. The Network may be congested.");
+                if (
+                    await page.isVisible(
+                        "text=Unable to connect to Auth Network. The Network may be congested."
+                    )
+                )
+                    console.log(
+                        "Error: Test failed to connect to Auth Network. The Network may be congested."
+                    );
             } catch {
                 return true;
             }
@@ -352,8 +367,12 @@ async function signInWithFacebook({
     await page.fill('[placeholder="Password"]', FB.password);
     await page.click(`button:has-text("Login"), [name="login"]`);
     try {
-        await page.waitForSelector(`button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`);
-        await page.click(`button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`);
+        await page.waitForSelector(
+            `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
+        );
+        await page.click(
+            `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
+        );
     } catch {}
 }
 
@@ -465,7 +484,13 @@ function findLink(links: Link[], text: string) {
     return null;
 }
 
-async function signInWithEmailWithTestEmailApp(page: Page, email: string, browser: Browser, tag: string, timestamp: number): Promise<boolean> {
+async function signInWithEmailWithTestEmailApp(
+    page: Page,
+    email: string,
+    browser: Browser,
+    tag: string,
+    timestamp: number
+): Promise<boolean> {
     try {
         console.log("Email:" + email);
         await page.fill('[placeholder="name@domain.com"]', email);
@@ -477,12 +502,16 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
         let inbox;
         // Setup our JSON API endpoint
         const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-        console.log("testEmailAppApiKey:" + testEmailAppApiKey);
-        const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
+        const res = await axios.get(
+            `${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`
+        );
         inbox = await res.data;
         let href = inbox.emails[0].subject.match(/\d+/)[0];
         console.error(href);
-        await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(href);
+        await pages[1]
+            .locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`)
+            .first()
+            .type(href);
         useAutoCancel2FASetup(pages[1]);
         return true;
     } catch (err) {
@@ -490,9 +519,16 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
         return false;
     }
 }
-async function signInWithEmailWithTestEmailAppInDemoApp(page: Page, email: string, browser: Browser, tag: string, timestamp: number): Promise<boolean> {
+async function signInWithEmailWithTestEmailAppInDemoApp(
+    page: Page,
+    email: string,
+    browser: Browser,
+    tag: string,
+    timestamp: number
+): Promise<boolean> {
     try {
         console.log("Email:" + email);
+        await page.locator(`//iframe[contains(@id,"walletIframe")]`).waitFor({ state: "visible" });
         const frame = page.frameLocator(`//iframe[contains(@id,"walletIframe")]`);
         await frame?.locator('[placeholder="name@domain.com"]').fill(email);
         await frame?.locator('button:has-text("Login with Email")').click();
@@ -503,12 +539,16 @@ async function signInWithEmailWithTestEmailAppInDemoApp(page: Page, email: strin
         let inbox;
         // Setup our JSON API endpoint
         const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-        console.log("testEmailAppApiKey:" + `test ${testEmailAppApiKey} test`);
-        const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
+        const res = await axios.get(
+            `${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`
+        );
         inbox = await res.data;
         let href = inbox.emails[0].subject.match(/\d+/)[0];
         console.error(href);
-        await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(href);
+        await pages[1]
+            .locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`)
+            .first()
+            .type(href);
         useAutoCancel2FASetup(pages[1]);
         return true;
     } catch (err) {
@@ -538,13 +578,27 @@ async function signInWithMobileNumber({
     } catch {
         await page2.reload();
     }
-    let otp = (await page2.locator("xpath=.//div[contains(text(),'is your verification code on Web3Auth')]/span").first().textContent()) || "";
+    let otp =
+        (await page2
+            .locator("xpath=.//div[contains(text(),'is your verification code on Web3Auth')]/span")
+            .first()
+            .textContent()) || "";
     console.log("otp:" + otp);
     await page2.close();
-    await page.locator("xpath=.//input[@aria-label='Please enter verification code. Digit 1']").fill(otp);
+    await page
+        .locator("xpath=.//input[@aria-label='Please enter verification code. Digit 1']")
+        .fill(otp);
 }
 
-async function signInWithDapps({ page, browser, testEmail }: { page: Page; browser: Browser; testEmail: string }) {
+async function signInWithDapps({
+    page,
+    browser,
+    testEmail,
+}: {
+    page: Page;
+    browser: Browser;
+    testEmail: string;
+}) {
     const context2 = await browser.newContext();
     const context3 = await browser.newContext();
     await page.goto("https://demo-openlogin.web3auth.io/");
