@@ -4,20 +4,25 @@ import { generate } from "generate-password";
 import Mailosaur from "mailosaur";
 
 import { generateEmailWithTag } from "../../openloginV3/utils";
-import { signInWithGitHub, signInWithMobileNumber ,
+import {
   addPasswordShare,
   catchError,
   catchErrorAndExit,
   changePasswordShare,
+  DEFAULT_PLATFORM,
+  delay,
   deleteCurrentDeviceShare,
+  env_map,
   generateRandomEmail,
   signInWithEmailWithTestEmailApp,
+  signInWithGitHub,
+  signInWithMobileNumber,
   slowOperation,
   useAutoCancel2FASetup,
   useAutoCancelShareTransfer,
   waitForSessionStorage,
   waitForTkeyRehydration,
-, DEFAULT_PLATFORM, delay, env_map } from "../utils";
+} from "../utils";
 import { WalletServicesPage } from "./WalletServicesPage";
 
 const walletServiceLoginURL = "https://develop-wallet.web3auth.io";
