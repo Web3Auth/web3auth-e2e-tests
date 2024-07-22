@@ -54,7 +54,7 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     browser,
   }) => {
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time
-    const accountsPage = new WalletServicesPage(page);
+    const walletServicesPage = new WalletServicesPage(page);
     page.on("console", (msg) => {
       if (msg.type() === "error") {
         console.log(`Error text: "${msg.text()}"`);
@@ -62,10 +62,14 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
       }
     });
     await page.goto(walletServiceLoginURL);
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("load");
+
     const currentTimestamp = Math.floor(Date.now() / 1000);
-    await delay(5000);
-    await page.locator(`xpath=.//button[text()='Login']`).click();
-    await delay(5000);
+    await page
+      .locator(walletServicesPage.loginBtn)
+      .waitFor({ state: "visible" });
+    await page.locator(walletServicesPage.loginBtn).click();
     await signInWithEmailWithTestEmailAppInDemoApp(
       page,
       testEmail,
@@ -78,24 +82,25 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     await page.waitForURL(`${walletServiceLoginURL}`, {
       waitUntil: "load",
     });
-    await accountsPage.verifyUserInfoInDemoApp(
+    await walletServicesPage.verifyUserInfoInDemoApp(
       "kelg8.j5s90ldb0b35@inbox.testmail.app"
     );
-    await accountsPage.switchChain(browser);
-    await accountsPage.verifyAddressInDemoApp("0x0dB...d4e49F");
-    await accountsPage.verifyBalanceInDemoApp("0.635632785708915");
-    await accountsPage.verifyWalletInDemoApp("0x0dBa...4e49F");
-    await accountsPage.verifySignedMessages("Personal Sign", browser);
-    await accountsPage.verifySignedMessages("ETH Sign", browser);
-    await accountsPage.verifySignedMessages("Typed data v1", browser);
-    await accountsPage.verifySignedMessages("Typed data v3", browser);
-    await accountsPage.verifySignedMessages("Typed data v4", browser);
-    await accountsPage.verifyWalletConnect();
-    await accountsPage.verifyGetEncryptionKey(browser);
-    await accountsPage.verifyEncryptionAndDecryption(browser);
+    await walletServicesPage.switchChain(browser);
+    await walletServicesPage.verifyAddressInDemoApp("0x0dB...d4e49F");
+    await walletServicesPage.verifyBalanceInDemoApp("0.635632785708915");
+    await walletServicesPage.verifyWalletInDemoApp("0x0dBa...4e49F");
+    await walletServicesPage.verifySignedMessages("Personal Sign", browser);
+    await walletServicesPage.verifySignedMessages("ETH Sign", browser);
+    await walletServicesPage.verifySignedMessages("Typed data v1", browser);
+    await walletServicesPage.verifySignedMessages("Typed data v3", browser);
+    await walletServicesPage.verifySignedMessages("Typed data v4", browser);
+    await walletServicesPage.verifyWalletConnect();
+    await walletServicesPage.verifyGetEncryptionKey(browser);
+    await walletServicesPage.verifyEncryptionAndDecryption(browser);
     //await accountsPage.verifyShowCheckout();
     await page.goto(walletServiceLoginURL + "/logout");
   });
+
   test(`Verify user is able to login using session id`, async ({
     page,
     browser,

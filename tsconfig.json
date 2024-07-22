@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/node14",
+  "extends": "@tsconfig/node20",
   "exclude": ["node_modules"],
   "compilerOptions": {
     "esModuleInterop": true,

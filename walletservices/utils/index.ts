@@ -333,23 +333,26 @@ async function signInWithTwitter({
 
   // Login tests are slow tests, >1 min is consumed in the redirection loop from the social provider to finally reach wallet/home. Hence the max test timeout.
   // FLOW: social-redirections => [host]/auth(SLOW) => [host]/register(SLOW) => [host]/wallet/home
-  await slowOperation(async () => {
-    await page.click(`div[role="button"] span:has-text("Log in")`);
-    try {
-      // smaller timeout, we don't want to wait here for longer
-      await page.waitForSelector('text="Help us keep your account safe."', {
-        timeout: 1000,
-      });
-      await page.fill('input[autocomplete="email"]', twitter.email);
-      await page.click(`div[role="button"] span:has-text("Next")`);
-    } catch (err) {}
-    try {
-      await page.waitForSelector("input#allow", {
-        timeout: 1000,
-      });
-      await page.click("input#allow");
-    } catch {}
-  }, 3 * 60 * 1000);
+  await slowOperation(
+    async () => {
+      await page.click(`div[role="button"] span:has-text("Log in")`);
+      try {
+        // smaller timeout, we don't want to wait here for longer
+        await page.waitForSelector('text="Help us keep your account safe."', {
+          timeout: 1000,
+        });
+        await page.fill('input[autocomplete="email"]', twitter.email);
+        await page.click(`div[role="button"] span:has-text("Next")`);
+      } catch (err) {}
+      try {
+        await page.waitForSelector("input#allow", {
+          timeout: 1000,
+        });
+        await page.click("input#allow");
+      } catch {}
+    },
+    3 * 60 * 1000
+  );
 }
 
 async function signInWithTwitterWithoutLogin({
@@ -566,9 +569,12 @@ async function signInWithEmailWithTestEmailAppInDemoApp(
 ): Promise<boolean> {
   try {
     console.log("Email:" + email);
-    const frame = page.frame("walletIframe");
-    await frame?.fill('[placeholder="name@domain.com"]', email);
-    await frame?.click('button:has-text("Login with Email")');
+    await page
+      .locator(`//iframe[contains(@id,"walletIframe")]`)
+      .waitFor({ state: "visible" });
+    const frame = page.frameLocator(`//iframe[contains(@id,"walletIframe")]`);
+    await frame?.locator('[placeholder="name@domain.com"]').fill(email);
+    await frame?.locator('button:has-text("Login with Email")').click();
     await delay(20000);
     const pages = await browser.contexts()[0].pages();
     // pages[0] is the first page, and pages[1] is the new page

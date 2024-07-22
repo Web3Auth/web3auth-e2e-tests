@@ -20,3 +20,4 @@ node_modules
 playwright-report
 /playwright-report/
 rplaunch-*
+test-results
