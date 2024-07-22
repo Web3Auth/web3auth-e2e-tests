@@ -63,10 +63,8 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
         await page.waitForLoadState("load");
 
         const currentTimestamp = Math.floor(Date.now() / 1000);
-        // await delay(5000);
         await page.locator(walletServicesPage.loginBtn).waitFor({ state: "visible" });
         await page.locator(walletServicesPage.loginBtn).click();
-        // await delay(5000);
         await signInWithEmailWithTestEmailAppInDemoApp(
             page,
             testEmail,
