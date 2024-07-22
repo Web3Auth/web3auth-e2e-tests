@@ -1,25 +1,24 @@
 import { chromium, expect, firefox, Page } from "@playwright/test";
-import { test } from "./index.lib";
+import { generate } from "generate-password";
+import Mailosaur from "mailosaur";
+
 import {
-  useAutoCancel2FASetup,
-  signInWithEmail,
-  deleteCurrentDeviceShare,
-  waitForTkeyRehydration,
   addPasswordShare,
   catchError,
   catchErrorAndExit,
-  slowOperation,
-} from "../utils";
-import {
-  useAutoCancelShareTransfer,
+  deleteCurrentDeviceShare,
   generateRandomEmail,
-} from "../utils/index";
-import Mailosaur from "mailosaur";
-import { generate } from "generate-password";
+  signInWithEmail,
+  slowOperation,
+  useAutoCancel2FASetup,
+  useAutoCancelShareTransfer,
+  waitForTkeyRehydration,
+} from "../utils";
+import { test } from "./index.lib";
 
 const testEmail = generateRandomEmail();
 
-const backupEmail = "backup" + generateRandomEmail();
+const backupEmail = `backup${generateRandomEmail()}`;
 
 let emailBackupShare = "";
 
@@ -63,9 +62,7 @@ test.describe.serial("tkey Input scenarios", () => {
   //   await browser.close();
   // });
 
-  test(`setup 2FA for running further tkey_input tests`, async ({
-    openloginURL,
-  }) => {
+  test(`setup 2FA for running further tkey_input tests`, async ({ openloginURL }) => {
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time
     // adding more time to compensate high loading time
     await page.goto(`${openloginURL}/wallet/account`);
@@ -74,11 +71,7 @@ test.describe.serial("tkey Input scenarios", () => {
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/account`);
     await page.click('button:has-text("Enable 2FA")');
-    page
-      .locator(
-        "text=I understand that clearing browser history and cookies will delete this factor on my browser."
-      )
-      .click();
+    page.locator("text=I understand that clearing browser history and cookies will delete this factor on my browser.").click();
     await page.click('button:has-text("Save current device")');
 
     await page.fill('[placeholder="Email"]', backupEmail);
@@ -95,7 +88,7 @@ test.describe.serial("tkey Input scenarios", () => {
       }
     );
     await mailosaur.messages.del(seedEmail.id || ""); // Deleting emails in email server.
-    let seedArray =
+    const seedArray =
       seedEmail.html?.body
         ?.toString()
         .replace(/(\r\n|\n|\r)/gm, "")
@@ -104,7 +97,7 @@ test.describe.serial("tkey Input scenarios", () => {
         .split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
-      seedString += seedArray[i] + " ";
+      seedString += `${seedArray[i]} `;
     }
     seedString += seedArray[23];
 
@@ -133,22 +126,17 @@ test.describe.serial("tkey Input scenarios", () => {
       timeout: 3 * 60 * 1000,
     });
 
-    expect(
-      await page.isVisible(`text=Click Get Started to continue`)
-    ).toBeTruthy();
+    expect(await page.isVisible(`text=Click Get Started to continue`)).toBeTruthy();
   });
 
-  test(`login with social + device and delete device share`, async ({
-    openloginURL,
-    browser,
-  }) => {
+  test(`login with social + device and delete device share`, async ({ openloginURL, browser }) => {
     test.setTimeout(60000); // adding more time since test is depended on external websites.
 
     await signInWithEmail(page, testEmail, browser);
     // await catchError(page);
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
-    let tkey = waitForTkeyRehydration(page);
+    const tkey = waitForTkeyRehydration(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       timeout: 3 * 60 * 1000,
     });
@@ -174,15 +162,10 @@ test.describe.serial("tkey Input scenarios", () => {
     await page.waitForURL(`${openloginURL}`, {
       timeout: 3 * 60 * 1000,
     });
-    expect(
-      await page.isVisible(`text=Click Get Started to continue`)
-    ).toBeTruthy();
+    expect(await page.isVisible(`text=Click Get Started to continue`)).toBeTruthy();
   });
 
-  test(`login with social + email backup`, async ({
-    openloginURL,
-    browser,
-  }) => {
+  test(`login with social + email backup`, async ({ openloginURL, browser }) => {
     test.setTimeout(100000); // adding more time.
     await signInWithEmail(page, testEmail, browser);
     // await catchError(page);
@@ -196,7 +179,7 @@ test.describe.serial("tkey Input scenarios", () => {
     await page.fill('[placeholder="Enter backup phrase"]', emailBackupShare);
     await page.click('button:has-text("Confirm")');
 
-    let tkey = waitForTkeyRehydration(page);
+    const tkey = waitForTkeyRehydration(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       timeout: 3 * 60 * 1000,
     });
@@ -204,7 +187,7 @@ test.describe.serial("tkey Input scenarios", () => {
     await page.waitForTimeout(2000);
 
     // Delete device share to simulate tkey-input page
-    let tkey2 = waitForTkeyRehydration(page);
+    const tkey2 = waitForTkeyRehydration(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       timeout: 3 * 60 * 1000,
@@ -226,15 +209,10 @@ test.describe.serial("tkey Input scenarios", () => {
     await page.waitForURL(`${openloginURL}`, {
       timeout: 3 * 60 * 1000,
     });
-    expect(
-      await page.isVisible(`text=Click Get Started to continue`)
-    ).toBeTruthy();
+    expect(await page.isVisible(`text=Click Get Started to continue`)).toBeTruthy();
   });
 
-  test(`login with social account + password`, async ({
-    openloginURL,
-    browser,
-  }) => {
+  test(`login with social account + password`, async ({ openloginURL, browser }) => {
     test.setTimeout(60000); // adding more time.
     await signInWithEmail(page, testEmail, browser);
     // await catchError(page);

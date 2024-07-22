@@ -1,10 +1,9 @@
-import { test, expect, Page } from "@playwright/test";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
-import { signInWithFacebook } from "../utils";
-import { useAutoCancelShareTransfer } from "../utils/index";
-import { AccountsPage } from "../account-page/AccountsPage";
+import { expect, Page, test } from "@playwright/test";
 import { readFileSync } from "fs";
 import path from "path";
+
+import { AccountsPage } from "../account-page/AccountsPage";
+import { DEFAULT_PLATFORM, env_map, signInWithFacebook, useAutoCancelShareTransfer } from "../utils";
 
 const FB = {
   name: "Torus Solana",

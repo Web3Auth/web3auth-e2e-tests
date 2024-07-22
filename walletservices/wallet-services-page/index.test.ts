@@ -1,25 +1,24 @@
-import { test, expect, Page } from "@playwright/test";
-import { WalletServicesPage } from "./WalletServicesPage";
-import Mailosaur from "mailosaur";
-import { DEFAULT_PLATFORM, delay, env_map } from "../utils/index";
-import { generate } from "generate-password";
-import { signInWithGitHub, signInWithMobileNumber } from "../utils";
+import { expect, Page, test } from "@playwright/test";
 import { validateMnemonic } from "bip39";
-import {
-  useAutoCancel2FASetup,
-  signInWithEmailWithTestEmailApp,
-  deleteCurrentDeviceShare,
-  waitForTkeyRehydration,
-  addPasswordShare,
-  changePasswordShare,
-  useAutoCancelShareTransfer,
-  generateRandomEmail,
-  catchError,
-  waitForSessionStorage,
-  catchErrorAndExit,
-  slowOperation,
-} from "../utils";
+import { generate } from "generate-password";
+import Mailosaur from "mailosaur";
+
 import { generateEmailWithTag } from "../../openloginV3/utils";
+import { signInWithGitHub, signInWithMobileNumber ,
+  addPasswordShare,
+  catchError,
+  catchErrorAndExit,
+  changePasswordShare,
+  deleteCurrentDeviceShare,
+  generateRandomEmail,
+  signInWithEmailWithTestEmailApp,
+  slowOperation,
+  useAutoCancel2FASetup,
+  useAutoCancelShareTransfer,
+  waitForSessionStorage,
+  waitForTkeyRehydration,
+, DEFAULT_PLATFORM, delay, env_map } from "../utils";
+import { WalletServicesPage } from "./WalletServicesPage";
 
 const walletServiceLoginURL = "https://develop-wallet.web3auth.io";
 
@@ -30,7 +29,7 @@ const user = {
 
 const testEmail = "kelg8.j5s90ldb0b35@inbox.testmail.app";
 const backupEmail = generateRandomEmail() || "";
-var organizationName = "";
+const organizationName = "";
 const randomPassword = generate({
   length: 15,
   numbers: true,
@@ -47,13 +46,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     test.setTimeout(3000000);
     await page.goto(walletServiceLoginURL);
     const currentTimestamp = Math.floor(Date.now() / 1000);
-    await signInWithEmailWithTestEmailApp(
-      page,
-      testEmail,
-      browser,
-      testEmail.split("@")[0].split(".")[1],
-      currentTimestamp
-    );
+    await signInWithEmailWithTestEmailApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1], currentTimestamp);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
     await page.waitForURL(`${walletServiceLoginURL}/wallet/home`, {
@@ -83,17 +76,11 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
   test(`Verify validations on send transaction screen`, async ({}) => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickOption("Send");
-    await accountsPage.enterRecipientAddress(
-      "0x9904Bf11C69233454162B72d7289ccBb295ADE6"
-    );
+    await accountsPage.enterRecipientAddress("0x9904Bf11C69233454162B72d7289ccBb295ADE6");
     await accountsPage.verifyMessageIsDisplayed("Invalid ETH address");
-    await accountsPage.enterRecipientAddress(
-      "0x9904Bf11C69233454162B72d7289ccBb295ADE6A"
-    );
+    await accountsPage.enterRecipientAddress("0x9904Bf11C69233454162B72d7289ccBb295ADE6A");
     await accountsPage.enterTransactionAmount("10");
-    await accountsPage.verifyMessageIsDisplayed(
-      "Insufficient balance for transaction"
-    );
+    await accountsPage.verifyMessageIsDisplayed("Insufficient balance for transaction");
   });
 
   test(`Verify transaction fee is updated on selection of different speed levels`, async ({}) => {
@@ -120,10 +107,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     const accountsPage = new WalletServicesPage(page);
     await page.goto(`${walletServiceLoginURL}/wallet/home`);
     await accountsPage.navigateToSettingsWithOption("General");
-    await accountsPage.selectNetwork(
-      "Main Ethereum Network",
-      "Sepolia Test Network"
-    );
+    await accountsPage.selectNetwork("Main Ethereum Network", "Sepolia Test Network");
     await accountsPage.clickHome();
     await accountsPage.navigateToSettingsWithOption("General");
     await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Mumbai");
@@ -138,12 +122,8 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await page.waitForURL(`${walletServiceLoginURL}/wallet/activity`, {
       waitUntil: "load",
     });
-    await accountsPage.verifyTransactionActivity(
-      "Sent ETH|cfa5|10:11:30 | 8 May 2024"
-    );
-    await accountsPage.verifyTransactionActivity(
-      "Received ETH|e49f|20:22:18 | 1 May 2024"
-    );
+    await accountsPage.verifyTransactionActivity("Sent ETH|cfa5|10:11:30 | 8 May 2024");
+    await accountsPage.verifyTransactionActivity("Received ETH|e49f|20:22:18 | 1 May 2024");
   });
 
   test(`Verify user is able to switch currency`, async ({}) => {
@@ -160,14 +140,9 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.navigateToSettingsWithOption("Manage Wallets");
     await accountsPage.clickButton(" Import Account");
-    await accountsPage.inputPrivateKey(
-      "18a6aa7e43a8f7f57c4cfb8d322cc9c12cd4cc573ea137c9bcd6d2b5d060a90a"
-    );
+    await accountsPage.inputPrivateKey("18a6aa7e43a8f7f57c4cfb8d322cc9c12cd4cc573ea137c9bcd6d2b5d060a90a");
     await accountsPage.clickLink(" Home");
-    await accountsPage.verifyBalanceAndAddress(
-      "0x2b7f47e9bb...B99a8a33151c",
-      "0.00013"
-    );
+    await accountsPage.verifyBalanceAndAddress("0x2b7f47e9bb...B99a8a33151c", "0.00013");
   });
 
   test(`Verify user is able to connect via wallet connect`, async ({}) => {
@@ -175,12 +150,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await page.goto(`${walletServiceLoginURL}/wallet/home`);
     await accountsPage.clickButton(" Wallet connect");
     await page.waitForSelector('[aria-placeholder="Paste QR link here"]');
-    expect(
-      await page
-        .locator('[aria-placeholder="Paste QR link here"]')
-        .first()
-        .isVisible()
-    ).toBeTruthy();
+    expect(await page.locator('[aria-placeholder="Paste QR link here"]').first().isVisible()).toBeTruthy();
   });
 
   test(`Verify user is able to buy tokens`, async ({}) => {

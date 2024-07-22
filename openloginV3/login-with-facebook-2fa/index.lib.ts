@@ -1,8 +1,9 @@
 import * as playwright from "@playwright/test";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 import * as dotenv from "dotenv";
 import { readFileSync } from "fs";
 import path from "path";
+
+import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 dotenv.config();
 
 export interface TestArgs {

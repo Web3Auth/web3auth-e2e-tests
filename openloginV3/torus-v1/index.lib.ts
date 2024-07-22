@@ -1,6 +1,7 @@
 import * as playwright from "@playwright/test";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 import * as dotenv from "dotenv";
+
+import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 dotenv.config();
 
 export interface TestArgs {
@@ -8,5 +9,5 @@ export interface TestArgs {
 }
 
 export const test = playwright.test.extend<TestArgs>({
-  torusLoginURL: env_map["torusV1"],
+  torusLoginURL: env_map.torusV1,
 });

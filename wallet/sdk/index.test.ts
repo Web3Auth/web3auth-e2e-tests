@@ -1,14 +1,14 @@
-import { test } from "./index.lib";
-import http, { Server } from "http";
-import handler from "serve-handler";
-import path from "path";
-import { URL } from "url";
 import { expect, Frame } from "@playwright/test";
+import http, { Server } from "http";
+import path from "path";
+import handler from "serve-handler";
+
+import { test } from "./index.lib";
 
 export const HOST = "localhost";
 export const PORT = 5000;
 
-let server: Server
+let server: Server;
 
 test.beforeAll(async () => {
   server = http.createServer((request, response) => {
@@ -17,16 +17,13 @@ test.beforeAll(async () => {
     });
   });
   await new Promise<void>((resolve) => server.listen(PORT, HOST, resolve));
-})
+});
 
 test.afterAll(async () => {
-  server.close()
-})
+  server.close();
+});
 
-test.skip(`torus.login() should open "Sign in" modal`, async ({
-  page,
-  appURL,
-}) => {
+test.skip(`torus.login() should open "Sign in" modal`, async ({ page, appURL }) => {
   await page.goto(appURL);
   await page.click("text=Login");
   const iframe = page.frame({
@@ -52,17 +49,11 @@ const buttonsTest = test.extend<{ iframe: Frame }>({
 
 buttonsTest.describe("In Login modal,", () => {
   buttonsTest.skip(({ browserName }) => browserName === "firefox");
-  buttonsTest(
-    "click on 'Google' should do Google login",
-    async ({ page, iframe }) => {
-      const [popup] = await Promise.all([
-        page.waitForEvent("popup"),
-        iframe.click('button:has-text("Continue with Google")'),
-      ]);
-      await popup.waitForURL("https://accounts.google.com/**")
-      // await popup.waitForNavigation({ waitUntil: "networkidle" });
-      // const url = new URL(popup.url());
-      // expect(url.hostname).toBe("accounts.google.com");
-    }
-  );
+  buttonsTest("click on 'Google' should do Google login", async ({ page, iframe }) => {
+    const [popup] = await Promise.all([page.waitForEvent("popup"), iframe.click('button:has-text("Continue with Google")')]);
+    await popup.waitForURL("https://accounts.google.com/**");
+    // await popup.waitForNavigation({ waitUntil: "networkidle" });
+    // const url = new URL(popup.url());
+    // expect(url.hostname).toBe("accounts.google.com");
+  });
 });

@@ -1,11 +1,9 @@
-import path from "path";
-import {
-  PlaywrightTestConfig,
-  PlaywrightWorkerOptions,
-} from "@playwright/test";
-import { TestArgs } from "./index.lib";
-import indexConfig from "../../index.config";
+import { PlaywrightTestConfig, PlaywrightWorkerOptions } from "@playwright/test";
 import { readFileSync } from "fs";
+import path from "path";
+
+import indexConfig from "../../index.config";
+import { TestArgs } from "./index.lib";
 
 const user = {
   email: "hosdyduxvg_1640060261@tfbnw.net",
@@ -13,9 +11,7 @@ const user = {
   backupPhrase: "",
 };
 
-const projects: Array<
-  Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
-> = [
+const projects: Array<Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">> = [
   {
     browserName: "firefox",
     user,

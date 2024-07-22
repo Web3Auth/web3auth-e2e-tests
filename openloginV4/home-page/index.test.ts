@@ -1,20 +1,22 @@
-import { test, expect, Page } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 import Mailosaur from "mailosaur";
+
 import { AccountsPage } from "../account-page/AccountsPage";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 import {
-  useAutoCancel2FASetup,
-  signInWithEmail,
-  deleteCurrentDeviceShare,
-  waitForTkeyRehydration,
   addPasswordShare,
-  changePasswordShare,
-  useAutoCancelShareTransfer,
-  generateRandomEmail,
   catchError,
-  waitForSessionStorage,
   catchErrorAndExit,
+  changePasswordShare,
+  DEFAULT_PLATFORM,
+  deleteCurrentDeviceShare,
+  env_map,
+  generateRandomEmail,
+  signInWithEmail,
   slowOperation,
+  useAutoCancel2FASetup,
+  useAutoCancelShareTransfer,
+  waitForSessionStorage,
+  waitForTkeyRehydration,
 } from "../utils";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
@@ -46,9 +48,7 @@ test.describe.serial("Home page scenarios", () => {
     expect(await page.isVisible(`text=Welcome, ${testEmail}`)).toBeTruthy();
   });
 
-  test(`Clicking 'Support' button should redirect user to correct support page`, async ({
-    context,
-  }) => {
+  test(`Clicking 'Support' button should redirect user to correct support page`, async ({ context }) => {
     const accountsPage = new AccountsPage(page);
     const popupPromise = page.waitForEvent("popup");
     await accountsPage.clickSupport();
@@ -66,17 +66,13 @@ test.describe.serial("Home page scenarios", () => {
     const popup = await popupPromise;
     await popup.waitForLoadState();
     const URL = await popup.url();
-    expect(
-      URL === "https://docs.tor.us/open-login/what-is-openlogin"
-    ).toBeTruthy();
+    expect(URL === "https://docs.tor.us/open-login/what-is-openlogin").toBeTruthy();
     await popup.close();
   });
 
   test(`Clicking 'Logout' button should logout user`, async ({}) => {
     const accountsPage = new AccountsPage(page);
     await accountsPage.clickLogout();
-    expect(
-      await page.getByText("Select how you would like to continue").isVisible()
-    );
+    expect(await page.getByText("Select how you would like to continue").isVisible());
   });
 });

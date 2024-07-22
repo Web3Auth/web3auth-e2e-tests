@@ -1,9 +1,7 @@
-import {
-  PlaywrightTestConfig,
-} from "@playwright/test";
-import { TestArgs } from "./index.lib";
-import indexConfig from "../../index.config";
+import { PlaywrightTestConfig } from "@playwright/test";
 
+import indexConfig from "../../index.config";
+import { TestArgs } from "./index.lib";
 
 const config: PlaywrightTestConfig<TestArgs> = {
   ...indexConfig,

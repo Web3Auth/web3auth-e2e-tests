@@ -1,16 +1,17 @@
 import { expect, Page } from "@playwright/test";
-import { test } from "./index.lib";
+import Mailosaur from "mailosaur";
+
 import {
-  useAutoCancel2FASetup,
-  findLink,
-  signInWithEmail,
-  generateRandomEmail,
   catchError,
   catchErrorAndExit,
+  findLink,
+  generateRandomEmail,
+  signInWithEmail,
   slowOperation,
+  useAutoCancel2FASetup,
+  useAutoCancelShareTransfer,
 } from "../utils";
-import { useAutoCancelShareTransfer } from "../utils/index";
-import Mailosaur from "mailosaur";
+import { test } from "./index.lib";
 
 const testEmail = generateRandomEmail();
 
@@ -37,27 +38,18 @@ test.describe.serial("App authorization page scenarios", () => {
   // test.afterAll(async ({ browser }) => {
   //   await browser.close();
   // });
-  test(`should display "You are not connected to any applications yet." when no apps are connected.`, async ({
-    openloginURL,
-  }) => {
+  test(`should display "You are not connected to any applications yet." when no apps are connected.`, async ({ openloginURL }) => {
     await page.goto(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {
       timeout: 3 * 60 * 1000,
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
-    expect(
-      await page.isVisible(
-        "text=You are not connected to any applications yet."
-      )
-    ).toBeTruthy();
+    expect(await page.isVisible("text=You are not connected to any applications yet.")).toBeTruthy();
   });
 
   // Below test use testEmail to login to solana wallet prod and there by generates an app share
   // which gets listed in list of apps
-  test(`should connect DApp  wallet with passwordless login and list app`, async ({
-    openloginURL,
-    browser,
-  }) => {
+  test(`should connect DApp  wallet with passwordless login and list app`, async ({ openloginURL, browser }) => {
     test.setTimeout(120000); // adding more time since test is depended on external websites.
     const context2 = await browser.newContext();
     const context3 = await browser.newContext();
@@ -84,12 +76,9 @@ test.describe.serial("App authorization page scenarios", () => {
       const href = link?.href || "";
       const page3 = await context3.newPage();
       await page3.goto(href);
-      await page3.waitForSelector(
-        "text=Close this and return to your previous window",
-        {
-          timeout: 10000,
-        }
-      );
+      await page3.waitForSelector("text=Close this and return to your previous window", {
+        timeout: 10000,
+      });
       await page3.close();
       await page2.waitForURL(`https://solana.tor.us/wallet/home`, {
         timeout: 3 * 60 * 1000,
@@ -102,11 +91,7 @@ test.describe.serial("App authorization page scenarios", () => {
       expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
       await page.waitForSelector("text=solana-prod");
       expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
-      expect(
-        await page.isVisible(
-          "text=You are not connected to any applications yet."
-        )
-      ).toBeFalsy();
+      expect(await page.isVisible("text=You are not connected to any applications yet.")).toBeFalsy();
       expect(await page.isVisible("text=solana-prod")).toBeTruthy();
       await page2.close();
     }
@@ -132,12 +117,9 @@ test.describe.serial("App authorization page scenarios", () => {
       const href = link?.href || "";
       const page3 = await context3.newPage();
       await page3.goto(href);
-      await page3.waitForSelector(
-        "text=Close this and return to your previous window",
-        {
-          timeout: 10000,
-        }
-      );
+      await page3.waitForSelector("text=Close this and return to your previous window", {
+        timeout: 10000,
+      });
       await page3.close();
       await page2.waitForURL(`https://solana-testing.tor.us/wallet/home`, {
         timeout: 3 * 60 * 1000,
@@ -150,11 +132,7 @@ test.describe.serial("App authorization page scenarios", () => {
       expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
       await page.waitForSelector("text=solana-prod");
       expect(await page.isVisible("text=Authorized Apps")).toBeTruthy();
-      expect(
-        await page.isVisible(
-          "text=You are not connected to any applications yet."
-        )
-      ).toBeFalsy();
+      expect(await page.isVisible("text=You are not connected to any applications yet.")).toBeFalsy();
       expect(await page.isVisible("text=solana-prod")).toBeTruthy();
       await page2.close();
     }
@@ -185,12 +163,9 @@ test.describe.serial("App authorization page scenarios", () => {
       const href = link?.href || "";
       const page3 = await context3.newPage();
       await page3.goto(href);
-      await page3.waitForSelector(
-        "text=Close this and return to your previous window",
-        {
-          timeout: 20000,
-        }
-      );
+      await page3.waitForSelector("text=Close this and return to your previous window", {
+        timeout: 20000,
+      });
       await page3.close();
       await page2.waitForSelector("text=You are connected with your account", {
         timeout: 30000, // larger timeout for external webpage loading
@@ -206,9 +181,7 @@ test.describe.serial("App authorization page scenarios", () => {
     }
   });
 
-  test(`should be able to delete app share from UI`, async ({
-    openloginURL,
-  }) => {
+  test(`should be able to delete app share from UI`, async ({ openloginURL }) => {
     if (!["prod", "cyan", "beta"].includes(process.env.PLATFORM || "")) {
       return;
     }
@@ -218,10 +191,6 @@ test.describe.serial("App authorization page scenarios", () => {
       timeout: 3 * 60 * 1000,
     });
     expect(page.url()).toBe(`${openloginURL}/wallet/apps`);
-    expect(
-      await page.isVisible(
-        "text=You are not connected to any applications yet."
-      )
-    ).toBeTruthy();
+    expect(await page.isVisible("text=You are not connected to any applications yet.")).toBeTruthy();
   });
 });

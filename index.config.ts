@@ -1,4 +1,4 @@
-import { PlaywrightTestConfig, devices } from "@playwright/test";
+import { devices, PlaywrightTestConfig } from "@playwright/test";
 const RPClient = require("@reportportal/client-javascript");
 // const RPconfig = {
 //   token: '4311671d-eb96-4d46-aba8-16afc95cc015',

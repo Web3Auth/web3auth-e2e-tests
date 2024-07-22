@@ -1,5 +1,5 @@
-import path from "path";
 import http from "http";
+import path from "path";
 import handler from "serve-handler";
 
 export const HOST = "localhost";
@@ -13,8 +13,6 @@ export default async function globalSetup() {
   });
   await new Promise<void>((resolve) => server.listen(PORT, HOST, resolve));
   return async function () {
-    await new Promise<void>((resolve, reject) =>
-      server.close((err) => (err ? reject(err) : resolve()))
-    );
+    await new Promise<void>((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
   };
 }

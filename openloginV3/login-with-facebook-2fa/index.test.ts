@@ -1,10 +1,10 @@
 import { expect } from "@playwright/test";
+
+import { deleteCurrentDeviceShare, signInWithFacebook, useAutoCancelShareTransfer } from "../utils/index";
 import { test } from "./index.lib";
-import { deleteCurrentDeviceShare, signInWithFacebook } from "../utils/index";
-import { useAutoCancelShareTransfer } from "../utils/index";
 
 test("Login using Facebook with 2FA enabled", async ({ page, openloginURL, FB }) => {
-  test.skip()
+  test.skip();
   await signInWithFacebook({ page, FB, openloginURL });
 
   // Go to Account page

@@ -1,15 +1,16 @@
 import { expect, Page } from "@playwright/test";
-import { test } from "./index.lib";
-import {
-  useAutoCancel2FASetup,
-  signInWithEmail,
-  generateRandomEmail,
-  catchError,
-  slowOperation,
-  catchErrorAndExit,
-} from "../utils";
-import { useAutoCancelShareTransfer } from "../utils/index";
 import Mailosaur from "mailosaur";
+
+import {
+  catchError,
+  catchErrorAndExit,
+  generateRandomEmail,
+  signInWithEmail,
+  slowOperation,
+  useAutoCancel2FASetup,
+  useAutoCancelShareTransfer,
+} from "../utils";
+import { test } from "./index.lib";
 
 const testEmail = generateRandomEmail();
 
@@ -62,19 +63,13 @@ test.describe.serial("Home page scenarios", () => {
     const popup = await popupPromise;
     await popup.waitForLoadState();
     const URL = await popup.url();
-    expect(
-      URL === "https://docs.tor.us/open-login/what-is-openlogin"
-    ).toBeTruthy();
+    expect(URL === "https://docs.tor.us/open-login/what-is-openlogin").toBeTruthy();
     await popup.close();
   });
 
   test(`Clicking 'Logout' button should logout user`, async ({}) => {
     await page.click(`text=Logout`);
-    expect(
-      await page
-        .getByText("Manage all your web interactions in one place")
-        .isVisible()
-    );
+    expect(await page.getByText("Manage all your web interactions in one place").isVisible());
     expect(await page.getByText("Click Get Started to continue").isVisible());
   });
 });

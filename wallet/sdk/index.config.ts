@@ -1,7 +1,5 @@
-import {
-  PlaywrightTestConfig,
-  PlaywrightWorkerOptions,
-} from "@playwright/test";
+import { PlaywrightTestConfig, PlaywrightWorkerOptions } from "@playwright/test";
+
 import indexConfig from "../../index.config";
 
 const projects: Array<Pick<PlaywrightWorkerOptions, "browserName">> = [
