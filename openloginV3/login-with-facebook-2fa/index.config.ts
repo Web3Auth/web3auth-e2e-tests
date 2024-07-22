@@ -5,7 +5,6 @@ import {
 } from "@playwright/test";
 import { TestArgs } from "./index.lib";
 import indexConfig from "../../index.config";
-import { readFileSync } from "fs";
 
 const user = {
   email: "hosdyduxvg_1640060261@tfbnw.net",

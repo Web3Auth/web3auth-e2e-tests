@@ -2,7 +2,6 @@ import { test } from "./index.lib";
 import http, { Server } from "http";
 import handler from "serve-handler";
 import path from "path";
-import { URL } from "url";
 import { expect, Frame } from "@playwright/test";
 
 export const HOST = "localhost";

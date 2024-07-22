@@ -1,8 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { AccountsPage } from "./AccountsPage";
-import Mailosaur from "mailosaur";
 import {
-  DEFAULT_PLATFORM,
   env_map,
   generateEmailWithTag,
   signInWithEmailWithTestEmailApp,
@@ -11,18 +8,7 @@ import { generate } from "generate-password";
 import { signInWithGitHub, signInWithMobileNumber } from "../utils";
 import { validateMnemonic } from "bip39";
 import {
-  useAutoCancel2FASetup,
-  signInWithEmail,
-  deleteCurrentDeviceShare,
-  waitForTkeyRehydration,
-  addPasswordShare,
-  changePasswordShare,
-  useAutoCancelShareTransfer,
-  generateRandomEmail,
-  catchError,
-  waitForSessionStorage,
   catchErrorAndExit,
-  slowOperation,
 } from "../utils";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
@@ -67,7 +53,7 @@ test.describe.serial("Account page scenarios", () => {
     });
   });
 
-  test(`page title should be "Account" for account page`, async ({}) => {
+  test(`page title should be "Account" for account page`, async () => {
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -75,12 +61,12 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.isVisible("text=Account")).toBeTruthy();
   });
 
-  test(`should display 2FA enable window for single factor account`, async ({}) => {
+  test(`should display 2FA enable window for single factor account`, async () => {
     const accountsPage = new AccountsPage(page);
     expect(await accountsPage.verify2FARecommdation()).toBeTruthy();
   });
 
-  test(`should setup 2FA account from account page`, async ({}) => {
+  test(`should setup 2FA account from account page`, async () => {
     const accountsPage = new AccountsPage(page);
     test.setTimeout(60000);
     await accountsPage.enableandStartSettingUp2FA();
@@ -104,7 +90,7 @@ test.describe.serial("Account page scenarios", () => {
     await accountsPage.verifyFactorsSetUp("2/4");
   });
 
-  test(`should resend recovery email share`, async ({}) => {
+  test(`should resend recovery email share`, async () => {
     const accountsPage = new AccountsPage(page);
     await accountsPage.verifyRecoveryEmailDetails(backupEmail);
     await accountsPage.resendRecoveryEmail();
@@ -112,7 +98,7 @@ test.describe.serial("Account page scenarios", () => {
     expect(validateMnemonic(seedString)).toBeTruthy();
   });
 
-  test(`emailed backup phrase and phrase from UI should match`, async ({}) => {
+  test(`emailed backup phrase and phrase from UI should match`, async () => {
     const accountsPage = new AccountsPage(page);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -124,7 +110,7 @@ test.describe.serial("Account page scenarios", () => {
     await accountsPage.clickLastClose();
   });
 
-  test(`should setup account password`, async ({}) => {
+  test(`should setup account password`, async () => {
     const accountsPage = new AccountsPage(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
@@ -157,7 +143,7 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.getByText("2 / 5").isVisible());
   });
 
-  test(`should change/update account password`, async ({}) => {
+  test(`should change/update account password`, async () => {
     const accountsPage = new AccountsPage(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
@@ -172,7 +158,7 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.getByText("2 / 5").isVisible());
   });
 
-  test(`should be able to delete email share`, async ({}) => {
+  test(`should be able to delete email share`, async () => {
     const accountsPage = new AccountsPage(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await accountsPage.deleteRecoveryShare();
@@ -183,7 +169,7 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.getByText("2 / 4").isVisible());
   });
 
-  test(`should show a popup with copy option while clicking download device share`, async ({}) => {
+  test(`should show a popup with copy option while clicking download device share`, async () => {
     const accountsPage = new AccountsPage(page);
     await accountsPage.copyDeviceShare();
     await page
@@ -200,7 +186,7 @@ test.describe.serial("Account page scenarios", () => {
       await accountsPage.clickFirstClose();
   });
 
-  test(`should be able to setup email backup again`, async ({}) => {
+  test(`should be able to setup email backup again`, async () => {
     const accountsPage = new AccountsPage(page);
     expect(await page.getByText("2 / 4").isVisible());
     await accountsPage.enterRecoveryEmail(testEmail);
@@ -211,7 +197,7 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.getByText("2 / 5").isVisible());
   });
 
-  test(`should be able to delete device share`, async ({}) => {
+  test(`should be able to delete device share`, async () => {
     const accountsPage = new AccountsPage(page);
     await accountsPage.deleteDeviceShare();
     await page.reload();

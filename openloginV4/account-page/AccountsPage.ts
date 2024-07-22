@@ -1,7 +1,6 @@
 // playwright-dev-page.ts
-import { expect, Locator, Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import axios from "axios";
-import Mailosaur from "mailosaur";
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 export class AccountsPage {
   readonly page: Page;
@@ -84,7 +83,6 @@ export class AccountsPage {
   }
 
   async seedEmailWithTestMailApp(backupEmail: string) {
-    let seedEmail;
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(
@@ -92,8 +90,8 @@ export class AccountsPage {
         backupEmail.split("@")[0].split(".")[1]
       }&livequery=true`
     );
-    seedEmail = await res.data;
-    let seedArray =
+    const seedEmail = await res.data;
+    const seedArray =
       String(seedEmail.emails[0].html)
         .replace(/(\r\n|\n|\r)/gm, "")
         .slice(11084)

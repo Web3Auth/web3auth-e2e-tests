@@ -63,8 +63,8 @@ async function waitForTkeyRehydration(
       // 120 state will change if the openlogin default state changes.
       // need better way to rehydrate or find if the object is empty
       if (msg.text().includes("e2e:tests:tkeyjson")) {
-        let text = msg.text();
-        let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
+        const text = msg.text();
+        const length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
         if (length > size) resolve(true);
       }
     });
@@ -86,8 +86,8 @@ async function waitForAddPassword(page: Page): Promise<boolean> {
 
 async function waitForSessionStorage(page: Page, openloginURL: string) {
   const sessionStorage: any = await page.evaluate(() => sessionStorage);
-  let shares = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey.shares;
-  let noShare = Object.keys(shares).length;
+  const shares = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey.shares;
+  const noShare = Object.keys(shares).length;
   if (noShare < 2) {
     // console.log("not enough shares");
     await page.goto(`${openloginURL}/wallet/home`);
@@ -435,7 +435,7 @@ async function signInWithDiscord({
   }
 }
 async function ensureDeviceShareDeleted(page: Page) {
-  var isDeleted = false;
+  let isDeleted = false;
   try {
     await page.click('button:has-text("Remove share")');
     if (
@@ -465,12 +465,12 @@ async function ensureDeviceShareDeleted(page: Page) {
 // Delete all shares
 async function deleteCurrentDeviceShare(page: Page) {
   let x;
-  var deviceShares = page.locator('[aria-label="delete device share"]');
-  var countShares = await deviceShares.count();
+  let deviceShares = page.locator('[aria-label="delete device share"]');
+  let countShares = await deviceShares.count();
   while (countShares > 0) {
     x = waitForDeleteShare(page);
     await deviceShares.first().click();
-    let isDeleted = await ensureDeviceShareDeleted(page);
+    const isDeleted = await ensureDeviceShareDeleted(page);
     await x;
 
     if (isDeleted) {
@@ -489,7 +489,7 @@ async function addPasswordShare(page: Page, password: string) {
   await page.locator("input[name='openlogin-password']").fill(password);
   await page.locator("input[name='openlogin-confirm-password']").fill(password);
 
-  let y = waitForAddPassword(page);
+  const y = waitForAddPassword(page);
   await page.isEnabled('button:has-text("Confirm")');
   await page.click('button:has-text("Confirm")');
   await page.isVisible('button:has-text("Change password")');
@@ -507,7 +507,7 @@ async function changePasswordShare(page: Page, password: string) {
   await page.locator("input[name='openlogin-password']").fill(password);
   await page.locator("input[name='openlogin-confirm-password']").fill(password);
 
-  let y = waitForChangePassword(page);
+  const y = waitForChangePassword(page);
   await page.click('button:has-text("Confirm")');
   await page.isVisible('button:has-text("Change password")');
   await page.locator("text=Password successfully changed").isVisible();
@@ -544,7 +544,7 @@ async function signInWithEmailWithTestEmailApp(
       `${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`
     );
     inbox = await res.data;
-    let href = inbox.emails[0].subject.match(/\d+/)[0];
+    const href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
     await pages[1]
       .locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`)
@@ -580,7 +580,7 @@ async function signInWithEmailWithTestEmailAppInDemoApp(
       `${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`
     );
     inbox = await res.data;
-    let href = inbox.emails[0].subject.match(/\d+/)[0];
+    const href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
     await pages[1]
       .locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`)
@@ -619,7 +619,7 @@ async function signInWithMobileNumber({
   } catch {
     await page2.reload();
   }
-  let otp =
+  const otp =
     (await page2
       .locator(
         "xpath=.//div[contains(text(),'is your verification code on Web3Auth')]/span"

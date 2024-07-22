@@ -1,7 +1,6 @@
-import { test, expect , Page} from '@playwright/test';
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
-import { signInWithDiscord, useAutoCancel2FASetup } from "../utils";
-import { useAutoCancelShareTransfer } from "../utils/index";
+import { test, expect} from '@playwright/test';
+import { env_map } from "../utils/index";
+import { signInWithDiscord } from "../utils";
 import { AccountsPage } from '../account-page/AccountsPage';
 
 const discord = {

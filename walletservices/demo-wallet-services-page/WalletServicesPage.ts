@@ -1,8 +1,6 @@
 // playwright-dev-page.ts
-import { Browser, expect, Locator, Page } from "@playwright/test";
+import { Browser, expect, Page } from "@playwright/test";
 import { delay } from "../utils/index";
-import Mailosaur from "mailosaur";
-import { Console } from "console";
 export class WalletServicesPage {
   readonly page: Page;
 
@@ -18,7 +16,7 @@ export class WalletServicesPage {
         .first()
         .textContent()
     ).toContain(address);
-    let walletBalance = await this.page
+    const walletBalance = await this.page
       .locator(
         `xpath=.//p[contains(text(),'Total Wallet Balance')]/parent::div/div/p`
       )
@@ -77,7 +75,7 @@ export class WalletServicesPage {
   }
 
   async verifyTransferFee(transactionFee: string) {
-    let fee = await this.page
+    const fee = await this.page
       .locator(`xpath=.//p[text()='Transaction cost']/parent::div//div/p`)
       .last()
       .textContent();
@@ -289,6 +287,7 @@ export class WalletServicesPage {
     //   .locator(`xpath=.//div[text()="${environment}"]`)
     //   .first()
     //   .click();
+    console.log(environment)
     await this.page
       .locator('button:has-text(" Create Mainnet Project ")')
       .last()

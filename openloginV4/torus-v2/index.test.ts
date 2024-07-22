@@ -1,22 +1,14 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import {
-  DEFAULT_PLATFORM,
   env_map,
   generateRandomEmail,
-  signInWithMobileNumber,
 } from "../utils/index";
 import { useAutoCancel2FASetup } from "../utils";
 import {
-  useAutoCancelShareTransfer,
   signInWithEmailIntoTorusWallet,
 } from "../utils/index";
 import { AccountsPage } from "../account-page/AccountsPage";
-import Mailosaur from "mailosaur";
 const torusLoginURL = env_map["torusV2"];
-const user = {
-  mobileNumberForLogin: process.env.LOGIN_MOBILE_NUMBER || "",
-  mobileNumberForSMS: process.env.SMS_MOBILE_NUMBER || "",
-};
 const testEmail = generateRandomEmail();
 
 test("Login into torus wallet v2 using passwordless login", async ({

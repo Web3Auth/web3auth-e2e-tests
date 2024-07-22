@@ -38,7 +38,7 @@ const user = {
 const platform = process.env.PLATFORM || "";
 const testEmail = "kelg8.j5s90ldb0b35@inbox.testmail.app";
 const backupEmail = generateRandomEmail() || "";
-var organizationName = "";
+const organizationName = "";
 const randomPassword = generate({
   length: 15,
   numbers: true,

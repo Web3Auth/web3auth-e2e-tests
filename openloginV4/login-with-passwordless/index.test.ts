@@ -1,13 +1,11 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import {
-  DEFAULT_PLATFORM,
   catchErrorAndExit,
   env_map,
   generateEmailWithTag,
   getBackUpPhrase,
   signInWithEmailWithTestEmailApp,
-  signInWithEmailWithTestEmailOnDemoApp,
-  signInWithEmailWithTestEmailOnDemoAppV4,
+  signInWithEmailWithTestEmailOnDemoApp
 } from "../utils/index";
 import {
   signInWithMobileNumber,
@@ -16,8 +14,6 @@ import {
 } from "../utils";
 import { useAutoCancelShareTransfer } from "../utils/index";
 import { AccountsPage } from "../account-page/AccountsPage";
-import { readFileSync } from "fs";
-import path from "path";
 import { Client } from "@opensearch-project/opensearch";
 const demoAppUrl = env_map["demo"];
 const demoAppUrlV4 = env_map["demoV6"];
@@ -39,7 +35,6 @@ const user = {
 };
 const consoleLogs: string[] = [];
 const testEmail = generateEmailWithTag();
-const backupPhrase = process.env.BACKUP_PHRASE_PROD;
 let oAuthPrivateKey: string = "";
 let privKey: string = "";
 let tkey: string = "";
@@ -167,7 +162,6 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
       expect(page.url()).toBe(`${demoAppUrlV4}`);
       await page.waitForSelector(`text=Get openlogin state`);
-      const keysV4: string | null = await accountsPage.getOpenLoginState();
       if (keys !== null) {
         const jsonObject = JSON.parse(keys);
         tkeyV4 = jsonObject.tkey;

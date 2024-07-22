@@ -1,7 +1,6 @@
-import { test, expect , Page} from '@playwright/test';
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
+import { test, expect} from '@playwright/test';
+import { env_map } from "../utils/index";
 import { signInWithGitHub,authorizeWithGitHub, useAutoCancel2FASetup } from "../utils";
-import { useAutoCancelShareTransfer } from "../utils/index";
 import { AccountsPage } from '../account-page/AccountsPage';
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];

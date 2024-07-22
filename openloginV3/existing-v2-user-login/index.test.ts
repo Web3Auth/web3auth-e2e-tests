@@ -1,8 +1,7 @@
-const { expect } = require("@playwright/test");
 import { confirmEmail, signInWithGoogle } from "../utils";
 import { test } from "./index.lib";
 import { useAutoCancelShareTransfer } from "../utils/index";
-
+import { expect } from "@playwright/test";
 test.describe.serial("Existing user login scenarios", () => {
 test.skip("existing v2 user can log in correctly - skipped since it requires captcha solving", async ({
   context,
@@ -37,7 +36,7 @@ test.skip("existing v2 user can log in correctly - skipped since it requires cap
       timeout: 10000,
     });
     await page.click('button:has-text("Maybe next time")');
-  } catch { }
+  } catch { console.log("timed out")}
 
   useAutoCancelShareTransfer(page);
 

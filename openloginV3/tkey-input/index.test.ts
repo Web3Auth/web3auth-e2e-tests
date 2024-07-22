@@ -1,4 +1,4 @@
-import { chromium, expect, firefox, Page } from "@playwright/test";
+import {expect, firefox, Page } from "@playwright/test";
 import { test } from "./index.lib";
 import {
   useAutoCancel2FASetup,
@@ -6,15 +6,13 @@ import {
   deleteCurrentDeviceShare,
   waitForTkeyRehydration,
   addPasswordShare,
-  catchError,
   catchErrorAndExit,
-  slowOperation,
 } from "../utils";
 import {
   useAutoCancelShareTransfer,
   generateRandomEmail,
 } from "../utils/index";
-import Mailosaur from "mailosaur";
+
 import { generate } from "generate-password";
 
 const testEmail = generateRandomEmail();
@@ -95,7 +93,7 @@ test.describe.serial("tkey Input scenarios", () => {
       }
     );
     await mailosaur.messages.del(seedEmail.id || ""); // Deleting emails in email server.
-    let seedArray =
+    const seedArray =
       seedEmail.html?.body
         ?.toString()
         .replace(/(\r\n|\n|\r)/gm, "")
@@ -148,7 +146,7 @@ test.describe.serial("tkey Input scenarios", () => {
     // await catchError(page);
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
-    let tkey = waitForTkeyRehydration(page);
+    const tkey = waitForTkeyRehydration(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       timeout: 3 * 60 * 1000,
     });
@@ -196,7 +194,7 @@ test.describe.serial("tkey Input scenarios", () => {
     await page.fill('[placeholder="Enter backup phrase"]', emailBackupShare);
     await page.click('button:has-text("Confirm")');
 
-    let tkey = waitForTkeyRehydration(page);
+    const tkey = waitForTkeyRehydration(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       timeout: 3 * 60 * 1000,
     });
@@ -204,7 +202,7 @@ test.describe.serial("tkey Input scenarios", () => {
     await page.waitForTimeout(2000);
 
     // Delete device share to simulate tkey-input page
-    let tkey2 = waitForTkeyRehydration(page);
+    const tkey2 = waitForTkeyRehydration(page);
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       timeout: 3 * 60 * 1000,

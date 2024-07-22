@@ -1,5 +1,5 @@
 import * as playwright from "@playwright/test";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
+import {env_map } from "../utils/index";
 import * as dotenv from "dotenv";
 dotenv.config();
 

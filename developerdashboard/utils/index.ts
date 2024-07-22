@@ -12,6 +12,7 @@ import Mailosaur from "mailosaur";
 import { version } from "os";
 import { generate } from "generate-password";
 import axios from "axios";
+import { Console } from "console";
 const ChanceJS = require("chance");
 export const DEFAULT_PLATFORM = "prod";
 export var openloginversion = process.env.APP_VERSION || "v3";
@@ -62,8 +63,8 @@ async function waitForTkeyRehydration(
       // 120 state will change if the openlogin default state changes.
       // need better way to rehydrate or find if the object is empty
       if (msg.text().includes("e2e:tests:tkeyjson")) {
-        let text = msg.text();
-        let length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
+        const text = msg.text();
+        const length = parseInt(text.split("e2e:tests:tkeyjson:")[1]);
         if (length > size) resolve(true);
       }
     });
@@ -85,8 +86,8 @@ async function waitForAddPassword(page: Page): Promise<boolean> {
 
 async function waitForSessionStorage(page: Page, openloginURL: string) {
   const sessionStorage: any = await page.evaluate(() => sessionStorage);
-  let shares = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey.shares;
-  let noShare = Object.keys(shares).length;
+  const shares = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey.shares;
+  const noShare = Object.keys(shares).length;
   if (noShare < 2) {
     // console.log("not enough shares");
     await page.goto(`${openloginURL}/wallet/home`);
@@ -344,7 +345,8 @@ async function signInWithTwitter({
         timeout: 1000,
       });
       await page.click("input#allow");
-    } catch {}
+    } catch {console.log("timed out");
+    }
   }, 3 * 60 * 1000);
 }
 
@@ -405,7 +407,7 @@ async function signInWithFacebook({
     await page.click(
       `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
     );
-  } catch {}
+  } catch {console.log("timed out")}
 }
 
 async function signInWithDiscord({
@@ -431,7 +433,7 @@ async function signInWithDiscord({
   }
 }
 async function ensureDeviceShareDeleted(page: Page) {
-  var isDeleted = false;
+  let isDeleted = false;
   try {
     await page.click('button:has-text("Remove share")');
     if (
@@ -461,12 +463,12 @@ async function ensureDeviceShareDeleted(page: Page) {
 // Delete all shares
 async function deleteCurrentDeviceShare(page: Page) {
   let x;
-  var deviceShares = page.locator('[aria-label="delete device share"]');
-  var countShares = await deviceShares.count();
+  let deviceShares = page.locator('[aria-label="delete device share"]');
+  let countShares = await deviceShares.count();
   while (countShares > 0) {
     x = waitForDeleteShare(page);
     await deviceShares.first().click();
-    let isDeleted = await ensureDeviceShareDeleted(page);
+    const isDeleted = await ensureDeviceShareDeleted(page);
     await x;
 
     if (isDeleted) {
@@ -485,7 +487,7 @@ async function addPasswordShare(page: Page, password: string) {
   await page.locator("input[name='openlogin-password']").fill(password);
   await page.locator("input[name='openlogin-confirm-password']").fill(password);
 
-  let y = waitForAddPassword(page);
+  const y = waitForAddPassword(page);
   await page.isEnabled('button:has-text("Confirm")');
   await page.click('button:has-text("Confirm")');
   await page.isVisible('button:has-text("Change password")');
@@ -503,7 +505,7 @@ async function changePasswordShare(page: Page, password: string) {
   await page.locator("input[name='openlogin-password']").fill(password);
   await page.locator("input[name='openlogin-confirm-password']").fill(password);
 
-  let y = waitForChangePassword(page);
+  const y = waitForChangePassword(page);
   await page.click('button:has-text("Confirm")');
   await page.isVisible('button:has-text("Change password")');
   await page.locator("text=Password successfully changed").isVisible();
@@ -531,13 +533,12 @@ async function signInWithEmail(
     await delay(3000);
     let href;
     if (process.env.MAIL_APP == "testmail") {
-      let inbox;
       // Setup our JSON API endpoint
       const ENDPOINT = `https://api.testmail.app/api/json?apikey=${process.env.TESTMAIL_APP_APIKEY}&namespace=kelg8`;
       const res = await axios.get(
         `${ENDPOINT}&tag=${email.split("@")[0].split(".")[1]}&livequery=true`
       );
-      inbox = await res.data;
+      const inbox = await res.data;
       href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
     }
     const context2 = await browser.newContext();
@@ -582,7 +583,7 @@ async function signInWithMobileNumber({
   } catch {
     await page2.reload();
   }
-  let otp =
+  const otp =
     (await page2
       .locator(
         "xpath=.//div[contains(text(),'is your verification code on Web3Auth')]/span"
@@ -607,7 +608,6 @@ async function signInWithDapps({
   browser: Browser;
   testEmail: string;
 }) {
-  const context2 = await browser.newContext();
   const context3 = await browser.newContext();
   await page.goto("https://demo-openlogin.web3auth.io/");
   await page.locator("select.select").last().selectOption("email_passwordless");

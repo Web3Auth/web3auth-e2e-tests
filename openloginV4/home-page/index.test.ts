@@ -1,20 +1,10 @@
 import { test, expect, Page } from "@playwright/test";
-import Mailosaur from "mailosaur";
 import { AccountsPage } from "../account-page/AccountsPage";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
+import { env_map } from "../utils/index";
 import {
-  useAutoCancel2FASetup,
   signInWithEmail,
-  deleteCurrentDeviceShare,
-  waitForTkeyRehydration,
-  addPasswordShare,
-  changePasswordShare,
-  useAutoCancelShareTransfer,
   generateRandomEmail,
-  catchError,
-  waitForSessionStorage,
   catchErrorAndExit,
-  slowOperation,
 } from "../utils";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
@@ -35,20 +25,18 @@ test.describe.serial("Home page scenarios", () => {
     });
   });
 
-  test(`should display user email on top right`, async ({}) => {
+  test(`should display user email on top right`, async () => {
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       timeout: 3 * 60 * 1000,
     });
     expect(await page.isVisible(`text=${testEmail}`)).toBeTruthy();
   });
 
-  test(`should display welcome message`, async ({}) => {
+  test(`should display welcome message`, async () => {
     expect(await page.isVisible(`text=Welcome, ${testEmail}`)).toBeTruthy();
   });
 
-  test(`Clicking 'Support' button should redirect user to correct support page`, async ({
-    context,
-  }) => {
+  test(`Clicking 'Support' button should redirect user to correct support page`, async () => {
     const accountsPage = new AccountsPage(page);
     const popupPromise = page.waitForEvent("popup");
     await accountsPage.clickSupport();
@@ -59,7 +47,7 @@ test.describe.serial("Home page scenarios", () => {
     await popup.close();
   });
 
-  test(`Clicking 'Learn more' button should redirect user to correct docs page`, async ({}) => {
+  test(`Clicking 'Learn more' button should redirect user to correct docs page`, async () => {
     const accountsPage = new AccountsPage(page);
     const popupPromise = page.waitForEvent("popup");
     await accountsPage.clickLearnMore();
@@ -72,7 +60,7 @@ test.describe.serial("Home page scenarios", () => {
     await popup.close();
   });
 
-  test(`Clicking 'Logout' button should logout user`, async ({}) => {
+  test(`Clicking 'Logout' button should logout user`, async () => {
     const accountsPage = new AccountsPage(page);
     await accountsPage.clickLogout();
     expect(

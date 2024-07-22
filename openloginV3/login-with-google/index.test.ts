@@ -2,11 +2,9 @@ import { expect } from "@playwright/test";
 import { test } from "./index.lib";
 import { signInWithGoogle, useAutoCancel2FASetup } from "../utils";
 import { useAutoCancelShareTransfer } from "../utils/index";
-import { url } from "inspector";
 
 test("Login with Google - skipped since it requires captcha solving", async ({
   page,
-  browserName,
   openloginURL,
   google,
 }) => {

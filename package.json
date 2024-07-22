@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "lint": "npx eslint openloginV4/** --fix",
     "test:browser": "playwright test --headed",
     "test": "playwright test",
     "test:ci": "./bin/runTestsCI.sh",
@@ -34,13 +35,29 @@
     "testmail": "^1.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.4.0",
+    "@faker-js/faker": "^8.4.1",
+    "@playwright/test": "^1.44.1",
     "@reportportal/agent-js-playwright": "^5.0.11",
     "@tsconfig/node16": "^1.0.3",
-    "@types/node": "^16",
+    "@types/chance": "^1.1.6",
+    "@types/eslint__js": "^8.42.3",
+    "@types/node": "^20.14.2",
     "@types/serve-handler": "^6.1.1",
+    "eslint": "^8.57.0",
+    "husky": "^9.0.11",
     "lighthouse": "^9.6.3",
-    "prettier": "^2.7.1",
+    "lint-staged": "^15.2.5",
+    "prettier": "3.3.2",
     "ts-node": "^10.9.1",
-    "typescript": "^4.7.4"
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.12.0"
+  },
+  "lint-staged": {
+    "!(*.ts)": "prettier --write",
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

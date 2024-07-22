@@ -5,12 +5,9 @@ import {
   findLink,
   signInWithEmail,
   generateRandomEmail,
-  catchError,
   catchErrorAndExit,
-  slowOperation,
 } from "../utils";
 import { useAutoCancelShareTransfer } from "../utils/index";
-import Mailosaur from "mailosaur";
 
 const testEmail = generateRandomEmail();
 

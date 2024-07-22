@@ -1,25 +1,10 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { AccountsPage } from "../account-page/AccountsPage";
-import Mailosaur from "mailosaur";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
-import { generate } from "generate-password";
-import { signInWithGitHub, signInWithMobileNumber, delay } from "../utils";
-import { validateMnemonic } from "bip39";
-import { readFileSync } from "fs";
-import path from "path";
+import {env_map } from "../utils/index";
+import {signInWithMobileNumber } from "../utils";
 import {
-  useAutoCancel2FASetup,
   signInWithEmail,
-  deleteCurrentDeviceShare,
-  waitForTkeyRehydration,
-  addPasswordShare,
-  changePasswordShare,
-  useAutoCancelShareTransfer,
-  generateRandomEmail,
-  catchError,
-  waitForSessionStorage,
   catchErrorAndExit,
-  slowOperation,
 } from "../utils";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];

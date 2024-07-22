@@ -1,23 +1,13 @@
 import { test, expect, Page } from "@playwright/test";
 import { DeveloperDashboardPage } from "./DeveloperDashboardPage";
-import Mailosaur from "mailosaur";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 import { generate } from "generate-password";
-import { signInWithGitHub, signInWithMobileNumber } from "../utils";
-import { validateMnemonic } from "bip39";
 import {
-  useAutoCancel2FASetup,
   signInWithEmail,
-  deleteCurrentDeviceShare,
-  waitForTkeyRehydration,
-  addPasswordShare,
-  changePasswordShare,
-  useAutoCancelShareTransfer,
+
   generateRandomEmail,
-  catchError,
-  waitForSessionStorage,
+
   catchErrorAndExit,
-  slowOperation,
+
 } from "../utils";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
@@ -29,7 +19,7 @@ const user = {
 
 const testEmail = generateRandomEmail() || "";
 const backupEmail = generateRandomEmail() || "";
-var organizationName = "";
+let organizationName = "";
 const randomPassword = generate({
   length: 15,
   numbers: true,
