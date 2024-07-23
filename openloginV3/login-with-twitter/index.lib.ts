@@ -1,6 +1,7 @@
 import * as playwright from "@playwright/test";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 import * as dotenv from "dotenv";
+
+import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 dotenv.config();
 
 export interface TestArgs {
@@ -9,7 +10,7 @@ export interface TestArgs {
     account: string;
     email: string;
     password: string;
-  }
+  };
 }
 
 export const test = playwright.test.extend<TestArgs>({
@@ -18,5 +19,5 @@ export const test = playwright.test.extend<TestArgs>({
     account: process.env.TWITTER_ACCOUNT || "",
     email: process.env.TWITTER_EMAIL || "",
     password: process.env.TWITTER_PASSWORD || "",
-  }
+  },
 });

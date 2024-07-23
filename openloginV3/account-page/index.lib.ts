@@ -1,6 +1,7 @@
 import * as playwright from "@playwright/test";
-import { env_map } from "../utils/index";
 import * as dotenv from "dotenv";
+
+import { env_map } from "../utils/index";
 dotenv.config();
 
 export interface TestArgs {

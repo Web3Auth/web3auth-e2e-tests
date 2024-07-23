@@ -10,7 +10,7 @@ const generateFilterStr = (filter: Filter) => {
     if (filterVal === undefined) return filterStr;
 
     const prefix = currIdx === 0 ? "" : "+";
-    return filterStr + `${prefix}${filterName}:${filterVal}`;
+    return `${filterStr}${prefix}${filterName}:${filterVal}`;
   }, "");
 };
 
@@ -31,21 +31,19 @@ export async function confirmEmail({
   resend: () => Promise<void>;
 }) {
   const emailPage = await context.newPage();
-  console.log(timestamp)
+  console.log(timestamp);
   try {
     const mailFilterStr = generateFilterStr({
       from: "Web3Auth",
       subject: "(verify+your+email)",
       after: timestamp,
-      to: to,
+      to,
     });
-    console.log(timestamp)
-    await emailPage.goto(
-      `https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`
-    );
-    console.log(`https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`)
+    console.log(timestamp);
+    await emailPage.goto(`https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`);
+    console.log(`https://mail.google.com/mail/u/0/#advanced-search/is_unread=true&query=${mailFilterStr}&isrefinement=true`);
     await emailPage.waitForSelector("a[title='Gmail']", { state: "attached" });
-    console.log(timestamp)
+    console.log(timestamp);
     // Try click on the verify link
     const maxReloads = 2;
     let reloads = 0;
@@ -65,13 +63,9 @@ export async function confirmEmail({
     if (reloads >= maxReloads) return false;
     const [popup] = await Promise.all([
       emailPage.waitForEvent("popup"),
-      emailPage.click(
-        'table[role="content-container"] a:has-text("Approve login request")'
-      ),
+      emailPage.click('table[role="content-container"] a:has-text("Approve login request")'),
     ]);
-    await popup.waitForSelector(
-      "text=Close this and return to your previous window"
-    );
+    await popup.waitForSelector("text=Close this and return to your previous window");
     await popup.close();
     return true;
   } catch {

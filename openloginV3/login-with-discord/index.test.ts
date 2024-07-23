@@ -1,19 +1,12 @@
 import { expect } from "@playwright/test";
-import { test } from "./index.lib";
-import { signInWithDiscord, useAutoCancel2FASetup } from "../utils";
-import { useAutoCancelShareTransfer } from "../utils/index";
 
-test("Login with Discord - skipped since it requires captcha solving", async ({
-  page,
-  openloginURL,
-  discord,
-}) => {
+import { signInWithDiscord, useAutoCancel2FASetup, useAutoCancelShareTransfer } from "../utils";
+import { test } from "./index.lib";
+
+test("Login with Discord - skipped since it requires captcha solving", async ({ page, openloginURL, discord }) => {
   test.skip();
   // Verify environment variables
-  expect(
-    !!process.env.DISCORD_EMAIL &&
-    !!process.env.DISCORD_PASSWORD
-  ).toBe(true);
+  expect(!!process.env.DISCORD_EMAIL && !!process.env.DISCORD_PASSWORD).toBe(true);
 
   // Login with Discord
   await page.goto(openloginURL);
@@ -26,7 +19,7 @@ test("Login with Discord - skipped since it requires captcha solving", async ({
 
   // Should be signed in in <2 minutes
   await page.waitForURL(`${openloginURL}/wallet/home`, {
-    timeout: 3 * 60 * 1000
+    timeout: 3 * 60 * 1000,
   });
 
   expect(page.url()).toBe(`${openloginURL}/wallet/home`);

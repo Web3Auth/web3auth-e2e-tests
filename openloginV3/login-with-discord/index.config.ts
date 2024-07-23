@@ -1,16 +1,10 @@
+import { PlaywrightTestConfig, PlaywrightWorkerOptions } from "@playwright/test";
 import path from "path";
-import {
-  PlaywrightTestConfig,
-  PlaywrightWorkerOptions,
-} from "@playwright/test";
-import { TestArgs } from "./index.lib";
+
 import indexConfig from "../../index.config";
+import { TestArgs } from "./index.lib";
 
-const projects: Array<
-  Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">
-> = [
-
-];
+const projects: Array<Pick<PlaywrightWorkerOptions, "browserName"> & Omit<TestArgs, "openloginURL">> = [];
 
 const config: PlaywrightTestConfig<TestArgs> = {
   ...indexConfig,

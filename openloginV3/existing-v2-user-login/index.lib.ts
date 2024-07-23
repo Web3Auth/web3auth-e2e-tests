@@ -1,6 +1,7 @@
 import * as playwright from "@playwright/test";
-import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 import * as dotenv from "dotenv";
+
+import { DEFAULT_PLATFORM, env_map } from "../utils/index";
 dotenv.config();
 
 export interface TestArgs {
@@ -9,7 +10,7 @@ export interface TestArgs {
     email: string;
     password: string;
     name: string;
-  }
+  };
 }
 
 export const test = playwright.test.extend<TestArgs>({
@@ -17,6 +18,6 @@ export const test = playwright.test.extend<TestArgs>({
   google: {
     email: process.env.GITHUB_USER_EMAIL || "",
     password: process.env.GITHUB_USER_PASSWORD || "",
-    name: process.env.GOOGLE_NAME || ""
-  }
+    name: process.env.GOOGLE_NAME || "",
+  },
 });
