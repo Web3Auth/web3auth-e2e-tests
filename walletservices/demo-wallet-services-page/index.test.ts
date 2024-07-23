@@ -1,9 +1,9 @@
-import { test, expect } from "@playwright/test";
-import { WalletServicesPage } from "./WalletServicesPage";
-import { delay, signInWithEmailWithTestEmailAppInDemoApp } from "../utils/index";
-import { catchErrorAndExit } from "../utils";
-import { signInWithEmailWithTestEmailOnDemoApp } from "../../openloginV4/utils";
+import { expect, test } from "@playwright/test";
+
 import { AccountsPage } from "../../openloginV4/account-page/AccountsPage";
+import { signInWithEmailWithTestEmailOnDemoApp } from "../../openloginV4/utils";
+import { catchErrorAndExit, delay, signInWithEmailWithTestEmailAppInDemoApp } from "../utils";
+import { WalletServicesPage } from "./WalletServicesPage";
 const consoleLogs: string[] = [];
 let sessionId: string = "";
 const walletServiceLoginURL = "https://demo-wallet.web3auth.io";
@@ -44,7 +44,7 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     await accountsPage.verifyGetEncryptionKey(browser);
     await accountsPage.verifyEncryptionAndDecryption(browser);
     //await accountsPage.verifyShowCheckout();
-    await page.goto(walletServiceLoginURL + "/logout");
+    await page.goto(`${walletServiceLoginURL}/logout`);
   });
   test(`Verify user is able to login using session id`, async ({ page, browser }) => {
     test.setTimeout(3 * 60000);

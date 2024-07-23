@@ -1,11 +1,10 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+
 import { AccountsPage } from "../account-page/AccountsPage";
-import {env_map } from "../utils/index";
-import {signInWithMobileNumber } from "../utils";
-import {
-  signInWithEmail,
+import { signInWithMobileNumber ,
   catchErrorAndExit,
-} from "../utils";
+  signInWithEmail,
+,env_map } from "../utils";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const user = {
@@ -16,10 +15,7 @@ const user = {
 const testEmail = "demo" + `@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
 const backupPhrase = process.env.BACKUP_PHRASE_PROD;
 
-test("Login as an existing user with recovery phrase as 2FA", async ({
-  page,
-  browser,
-}) => {
+test("Login as an existing user with recovery phrase as 2FA", async ({ page, browser }) => {
   test.slow();
   const accountsPage = new AccountsPage(page);
   await page.goto(openloginURL);
@@ -38,10 +34,7 @@ test("Login as an existing user with recovery phrase as 2FA", async ({
   expect(page.url()).toContain(`${openloginURL}/`);
 });
 
-test("Login as an existing user with social factor as 2FA", async ({
-  page,
-  browser,
-}) => {
+test("Login as an existing user with social factor as 2FA", async ({ page, browser }) => {
   test.skip();
   test.slow();
   const accountsPage = new AccountsPage(page);
@@ -62,10 +55,7 @@ test("Login as an existing user with social factor as 2FA", async ({
   expect(page.url()).toContain(`${openloginURL}/`);
 });
 
-test("Login as an existing user with password as 2FA", async ({
-  page,
-  browser,
-}) => {
+test("Login as an existing user with password as 2FA", async ({ page, browser }) => {
   test.skip();
   test.slow();
   const accountsPage = new AccountsPage(page);

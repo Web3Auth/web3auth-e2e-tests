@@ -1,11 +1,11 @@
-import { test, expect} from '@playwright/test';
-import { env_map } from "../utils/index";
-import { signInWithDiscord } from "../utils";
-import { AccountsPage } from '../account-page/AccountsPage';
+import { expect, test } from "@playwright/test";
+
+import { AccountsPage } from "../account-page/AccountsPage";
+import { env_map, signInWithDiscord } from "../utils";
 
 const discord = {
-  email: process.env.DISCORD_EMAIL || '',
-  password: process.env.DISCORD_PASSWORD || ''
+  email: process.env.DISCORD_EMAIL || "",
+  password: process.env.DISCORD_PASSWORD || "",
 };
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 
@@ -15,7 +15,7 @@ test.skip("Login with Discord - skipped since it requires captcha solving", asyn
   await accountsPage.addSocialRecoveryFactor("discord");
   test.fixme(!(await signInWithDiscord({ page, discord })));
   await page.waitForURL(`${openloginURL}/wallet/home`, {
-    timeout: 3 * 60 * 1000
+    timeout: 3 * 60 * 1000,
   });
   expect(page.url()).toBe(`${openloginURL}/wallet/home`);
   await page.waitForSelector(`text=Welcome, ${discord.email}`);

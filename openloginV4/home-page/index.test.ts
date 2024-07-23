@@ -1,11 +1,7 @@
-import { test, expect, Page } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
+
 import { AccountsPage } from "../account-page/AccountsPage";
-import { env_map } from "../utils/index";
-import {
-  signInWithEmail,
-  generateRandomEmail,
-  catchErrorAndExit,
-} from "../utils";
+import { catchErrorAndExit, env_map, generateRandomEmail, signInWithEmail } from "../utils";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 
@@ -54,17 +50,13 @@ test.describe.serial("Home page scenarios", () => {
     const popup = await popupPromise;
     await popup.waitForLoadState();
     const URL = await popup.url();
-    expect(
-      URL === "https://docs.tor.us/open-login/what-is-openlogin"
-    ).toBeTruthy();
+    expect(URL === "https://docs.tor.us/open-login/what-is-openlogin").toBeTruthy();
     await popup.close();
   });
 
   test(`Clicking 'Logout' button should logout user`, async () => {
     const accountsPage = new AccountsPage(page);
     await accountsPage.clickLogout();
-    expect(
-      await page.getByText("Select how you would like to continue").isVisible()
-    );
+    expect(await page.getByText("Select how you would like to continue").isVisible());
   });
 });

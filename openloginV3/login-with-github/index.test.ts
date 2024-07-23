@@ -1,22 +1,20 @@
 import { expect } from "@playwright/test";
+
+import { signInWithGitHub, useAutoCancel2FASetup, useAutoCancelShareTransfer } from "../utils/index";
 import { test } from "./index.lib";
-import { signInWithGitHub, useAutoCancelShareTransfer, useAutoCancel2FASetup } from "../utils/index";
 
 test("Login with Github+Device skipped since it requires captcha solving", async ({ page, openloginURL, github }) => {
-   test.skip()
-    // Verify environment variables
-    expect(
-      !!process.env.GITHUB_USER_EMAIL &&
-      !!process.env.GITHUB_USER_PASSWORD
-    ).toBe(true);
+  test.skip();
+  // Verify environment variables
+  expect(!!process.env.GITHUB_USER_EMAIL && !!process.env.GITHUB_USER_PASSWORD).toBe(true);
   // Login with Github
-  await signInWithGitHub({ page, github })
+  await signInWithGitHub({ page, github });
   // await page.waitForURL('https://github.com/new', {
   //   timeout: 2 * 60 * 1000,
   // });
 
   await page.goto(openloginURL);
-  await page.waitForSelector('span:has-text("Get Started")')
+  await page.waitForSelector('span:has-text("Get Started")');
   await page.click('span:has-text("Get Started")');
   await page.click("text=View more options");
   await page.click('button[aria-label="login with GitHub"]');
@@ -25,8 +23,10 @@ test("Login with Github+Device skipped since it requires captcha solving", async
     await page.waitForSelector("text=Authorize TorusLabs", {
       timeout: 10 * 1000,
     });
-    await page.click('button:has-text("Authorize TorusLabs")',{timeout: 9000});
-  } catch {console.log("timed out") }
+    await page.click('button:has-text("Authorize TorusLabs")', { timeout: 9000 });
+  } catch {
+    console.log("timed out");
+  }
 
   await useAutoCancelShareTransfer(page);
   await useAutoCancel2FASetup(page);
@@ -46,7 +46,5 @@ test("Login with Github+Device skipped since it requires captcha solving", async
 
 // Save signed-in state to storage
 test.afterEach(async ({ page, browserName }) => {
-  await page
-    .context()
-    .storageState({ path: `${__dirname}/${browserName}.json` });
+  await page.context().storageState({ path: `${__dirname}/${browserName}.json` });
 });

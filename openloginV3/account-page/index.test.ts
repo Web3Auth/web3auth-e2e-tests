@@ -1,25 +1,21 @@
 import { expect, Page } from "@playwright/test";
-import { test } from "./index.lib";
 import axios from "axios";
+import { validateMnemonic } from "bip39";
+import { generate } from "generate-password";
+
 import {
-  useAutoCancel2FASetup,
-
-  deleteCurrentDeviceShare,
-  waitForTkeyRehydration,
   addPasswordShare,
-  changePasswordShare,
-  useAutoCancelShareTransfer,
-
-
-  waitForSessionStorage,
   catchErrorAndExit,
-
+  changePasswordShare,
+  deleteCurrentDeviceShare,
   generateEmailWithTag,
   signInWithEmailWithTestEmailApp,
+  useAutoCancel2FASetup,
+  useAutoCancelShareTransfer,
+  waitForSessionStorage,
+  waitForTkeyRehydration,
 } from "../utils";
-
-import { generate } from "generate-password";
-import { validateMnemonic } from "bip39";
+import { test } from "./index.lib";
 
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 const testEmail = generateEmailWithTag();
@@ -48,12 +44,7 @@ test.describe.serial("Account page scenarios", () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await page.goto(openloginURL);
-    await signInWithEmailWithTestEmailApp(
-      page,
-      testEmail,
-      browser,
-      testEmail.split("@")[0].split(".")[1]
-    );
+    await signInWithEmailWithTestEmailApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1]);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
     await useAutoCancelShareTransfer(page);
@@ -67,9 +58,7 @@ test.describe.serial("Account page scenarios", () => {
   //   await browser.close();
   // });
 
-  test(`page title should be "Account" for account page`, async ({
-    openloginURL,
-  }) => {
+  test(`page title should be "Account" for account page`, async ({ openloginURL }) => {
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
@@ -77,22 +66,12 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.isVisible("text=Account")).toBeTruthy();
   });
   test(`should display 2FA enable window for single factor account`, async () => {
-    expect(
-      await page.isVisible(
-        "text=We strongly recommend you to enable 2FA on your account"
-      )
-    ).toBeTruthy();
+    expect(await page.isVisible("text=We strongly recommend you to enable 2FA on your account")).toBeTruthy();
   });
-  test(`should setup 2FA account from account page`, async ({
-    openloginURL,
-  }) => {
+  test(`should setup 2FA account from account page`, async ({ openloginURL }) => {
     test.setTimeout(60000); // adding more time to compensate high loading time
     await page.click('button:has-text("Enable 2FA")');
-    page
-      .locator(
-        "text=I understand that clearing browser history and cookies will delete this factor on my browser."
-      )
-      .click();
+    page.locator("text=I understand that clearing browser history and cookies will delete this factor on my browser.").click();
     await page.click('button:has-text("Save current device")');
 
     await page.fill('[placeholder="Email"]', backupEmail);
@@ -117,7 +96,7 @@ test.describe.serial("Account page scenarios", () => {
           .split("<")[0]
           .split(" ") || [];
       for (let i = 0; i < 23; i++) {
-        seedString += seedArray[i] + " ";
+        seedString += `${seedArray[i]} `;
       }
       seedString += seedArray[23];
       await mailosaur.messages.del(seedEmail?.id || "");
@@ -125,11 +104,7 @@ test.describe.serial("Account page scenarios", () => {
     if (process.env.MAIL_APP == "testmail") {
       // Setup our JSON API endpoint
       const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-      const res = await axios.get(
-        `${ENDPOINT}&tag=${
-          backupEmail.split("@")[0].split(".")[1]
-        }&livequery=true`
-      );
+      const res = await axios.get(`${ENDPOINT}&tag=${backupEmail.split("@")[0].split(".")[1]}&livequery=true`);
       seedEmail = await res.data;
       seedArray =
         String(seedEmail.emails[0].html)
@@ -138,7 +113,7 @@ test.describe.serial("Account page scenarios", () => {
           .split("<")[0]
           .split(" ") || [];
       for (let i = 0; i < 23; i++) {
-        seedString += seedArray[i] + " ";
+        seedString += `${seedArray[i]} `;
       }
       seedString += seedArray[23];
     }
@@ -167,11 +142,7 @@ test.describe.serial("Account page scenarios", () => {
     await page.click('button:has-text("Resend")');
     await page.waitForTimeout(5000);
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-    const res = await axios.get(
-      `${ENDPOINT}&tag=${
-        backupEmail.split("@")[0].split(".")[1]
-      }&livequery=true`
-    );
+    const res = await axios.get(`${ENDPOINT}&tag=${backupEmail.split("@")[0].split(".")[1]}&livequery=true`);
     const seedEmail = await res.data;
     const seedArray =
       String(seedEmail.emails[0].html)
@@ -180,16 +151,14 @@ test.describe.serial("Account page scenarios", () => {
         .split("<")[0]
         .split(" ") || [];
     for (let i = 0; i < 23; i++) {
-      seedString += seedArray[i] + " ";
+      seedString += `${seedArray[i]} `;
     }
     seedString += seedArray[23];
 
     expect(validateMnemonic(seedString)).toBeTruthy();
   });
 
-  test.skip(`emailed backup phrase and phrase from UI should match`, async ({
-    openloginURL,
-  }) => {
+  test.skip(`emailed backup phrase and phrase from UI should match`, async ({ openloginURL }) => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
@@ -200,11 +169,7 @@ test.describe.serial("Account page scenarios", () => {
     await page.click('button:has-text("Resend")');
     await page.waitForTimeout(5000);
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-    const res = await axios.get(
-      `${ENDPOINT}&tag=${
-        backupEmail.split("@")[0].split(".")[1]
-      }&livequery=true`
-    );
+    const res = await axios.get(`${ENDPOINT}&tag=${backupEmail.split("@")[0].split(".")[1]}&livequery=true`);
     const seedEmail = await res.data;
     const seedArray =
       String(seedEmail.emails[0].html)
@@ -213,13 +178,11 @@ test.describe.serial("Account page scenarios", () => {
         .split("<")[0]
         .split(" ") || [];
     for (let i = 0; i < 23; i++) {
-      seedString += seedArray[i] + " ";
+      seedString += `${seedArray[i]} `;
     }
     seedString += seedArray[23];
     expect(validateMnemonic(seedString)).toBeTruthy();
-    expect(
-      await page.isVisible("text=Save a copy of your backup phrase")
-    ).toBeTruthy();
+    expect(await page.isVisible("text=Save a copy of your backup phrase")).toBeTruthy();
     expect(await page.isVisible(`text=${seedString}`)).toBeTruthy(); // check if the backup phrase on email matches the one on UI.
     await page.click('button:has-text("Close")');
   });
@@ -271,11 +234,7 @@ test.describe.serial("Account page scenarios", () => {
     // because state changes locally aren't guaranteed
     // checkout how await for delete share works in utils
     await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/metadata.tor.us/bulk_set_stream") &&
-          resp.status() === 200
-      ),
+      page.waitForResponse((resp) => resp.url().includes("/metadata.tor.us/bulk_set_stream") && resp.status() === 200),
       page.click('button[aria-label="delete email share"]'),
     ]);
     await page.reload();
@@ -284,37 +243,26 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.getByText("2 / 3").isVisible());
   });
 
-  test(`should show a popup with copy option while clicking download device share`, async ({
-    openloginURL,
-  }) => {
+  test(`should show a popup with copy option while clicking download device share`, async ({ openloginURL }) => {
     await page.goto(`${openloginURL}/wallet/account`);
     await page.waitForSelector('button[aria-label="export device share"]'),
       await page.locator('button[aria-label="export device share"]').click(),
       await page.waitForSelector("text=Save a copy of your backup phrase"),
-      expect(
-        await page.isVisible("text=Save a copy of your backup phrase")
-      ).toBeTruthy(),
+      expect(await page.isVisible("text=Save a copy of your backup phrase")).toBeTruthy(),
       await page.click('button:has-text("Close")');
   });
 
   // should test setting up email backup again after deleting email share.
-  test(`should be able to setup email backup again`, async ({
-    openloginURL,
-  }) => {
+  test(`should be able to setup email backup again`, async ({ openloginURL }) => {
     await waitForSessionStorage(page, openloginURL);
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
     await page.fill('[placeholder="Enter recovery email"]', testEmail);
     await Promise.all([
-      page.waitForResponse(
-        (resp) =>
-          resp.url().includes("/metadata.tor.us/get") && resp.status() === 200
-      ),
+      page.waitForResponse((resp) => resp.url().includes("/metadata.tor.us/get") && resp.status() === 200),
       page.click('button:has-text("Confirm")'),
     ]);
     //await page.reload(); Recovery share deleted successfully
-    await expect(
-      page.getByText("Backup Phrase successfully sent", { exact: false })
-    ).toBeVisible();
+    await expect(page.getByText("Backup Phrase successfully sent", { exact: false })).toBeVisible();
     expect(await page.getByText("2 / 4").isVisible());
   });
 

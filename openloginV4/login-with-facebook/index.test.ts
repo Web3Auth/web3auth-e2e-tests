@@ -1,7 +1,7 @@
-import { test, expect } from "@playwright/test";
-import {env_map } from "../utils/index";
-import { signInWithFacebook } from "../utils";
+import { expect, test } from "@playwright/test";
+
 import { AccountsPage } from "../account-page/AccountsPage";
+import { env_map, signInWithFacebook } from "../utils";
 
 const FB = {
   name: "Torus Solana",

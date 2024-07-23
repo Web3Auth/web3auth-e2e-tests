@@ -1,20 +1,15 @@
-import { test, expect } from "@playwright/test";
-import {
+import { expect, test } from "@playwright/test";
+
+import { AccountsPage } from "../account-page/AccountsPage";
+import { useAutoCancel2FASetup ,
   env_map,
   generateRandomEmail,
-} from "../utils/index";
-import { useAutoCancel2FASetup } from "../utils";
-import {
-  signInWithEmailIntoTorusWallet,
-} from "../utils/index";
-import { AccountsPage } from "../account-page/AccountsPage";
-const torusLoginURL = env_map["torusV2"];
+,
+  signInWithEmailIntoTorusWallet} from "../utils";
+const torusLoginURL = env_map.torusV2;
 const testEmail = generateRandomEmail();
 
-test("Login into torus wallet v2 using passwordless login", async ({
-  page,
-  browser,
-}) => {
+test("Login into torus wallet v2 using passwordless login", async ({ page, browser }) => {
   test.slow();
   const accountsPage = new AccountsPage(page);
   // Listen for all console events and handle errors

@@ -1,29 +1,15 @@
-import { expect} from "@playwright/test";
-import { test } from "./index.lib";
-import {
-  useAutoCancel2FASetup,
-  generateRandomEmail,
-  catchErrorAndExit,
-  signInWithEmailIntoTorusWallet,
-} from "../utils";
+import { expect } from "@playwright/test";
 
-import { useAutoCancelShareTransfer } from "../utils/index";
+import { catchErrorAndExit, generateRandomEmail, signInWithEmailIntoTorusWallet, useAutoCancel2FASetup, useAutoCancelShareTransfer } from "../utils";
+import { test } from "./index.lib";
 
 const testEmail = generateRandomEmail();
 
 test.describe.serial("Torus Wallet Login scenarios", () => {
-  test("torus wallet passwordless login", async ({
-    browser,
-    torusLoginURL,
-    page,
-  }) => {
+  test("torus wallet passwordless login", async ({ browser, torusLoginURL, page }) => {
     // Verify environment variables
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time
-    expect(
-      !!process.env.MAILOSAUR_SERVER_ID &&
-        !!process.env.MAILOSAUR_API_KEY &&
-        !!process.env.MAILOSAUR_SERVER_DOMAIN
-    ).toBe(true);
+    expect(!!process.env.MAILOSAUR_SERVER_ID && !!process.env.MAILOSAUR_API_KEY && !!process.env.MAILOSAUR_SERVER_DOMAIN).toBe(true);
     // Listen for all console events and handle errors
     page.on("console", (msg) => {
       if (msg.type() === "error") console.log(`Error text: "${msg.text()}"`);
