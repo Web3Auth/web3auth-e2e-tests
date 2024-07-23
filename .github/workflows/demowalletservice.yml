@@ -3,7 +3,7 @@ name: DemoWalletService - E2ETests
 on:
   push:
     branches:
-      - new_ui_openlogin
+      - master
   schedule:
     - cron: "0 */2 * * *"
   workflow_dispatch:
