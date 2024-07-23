@@ -1,20 +1,12 @@
 // playwright-dev-page.ts
-import { Browser, expect, Locator, Page } from "@playwright/test";
-import { Console } from "console";
-import Mailosaur from "mailosaur";
+import { Browser, expect, Page } from "@playwright/test";
 
 import { delay } from "../utils/index";
 export class WalletServicesPage {
   readonly page: Page;
 
-  readonly loginBtn: string;
-
-  readonly walletIframe: string;
-
   constructor(page: Page) {
     this.page = page;
-    this.loginBtn = "xpath=.//button[text()='Login']";
-    this.walletIframe = `//iframe[contains(@id,"walletIframe")]`;
   }
 
   async verifyBalanceAndAddress(address: string, balance: string) {
@@ -173,6 +165,7 @@ export class WalletServicesPage {
     //   .locator(`xpath=.//div[text()="${environment}"]`)
     //   .first()
     //   .click();
+    console.log(environment);
     await this.page.locator('button:has-text(" Create Mainnet Project ")').last().click();
   }
 
@@ -305,7 +298,7 @@ export class WalletServicesPage {
   async verifyWalletInDemoApp(address: string) {
     await this.page.locator(`xpath=.//button[text()='Show Wallet']`).click();
     await delay(5000);
-    const frame = this.page.frameLocator(this.walletIframe);
+    const frame = this.page.frame("walletIframe");
     expect(await frame?.locator(`xpath=.//span[text()='${address}']`).first().textContent()).toContain(address);
     expect(await frame?.locator(`xpath=.//p[contains(@class,'wallet:ml-2')][contains(text(),'Send')]`).last().isVisible()).toBeTruthy();
     expect(await frame?.locator(`xpath=.//p[contains(@class,'wallet:ml-2')][contains(text(),'Receive')]`).last().isVisible()).toBeTruthy();
@@ -324,7 +317,7 @@ export class WalletServicesPage {
 
   async verifyWalletConnect() {
     await this.page.locator(`xpath=.//button[text()='Show Wallet Connect']`).click();
-    const frame = this.page.frameLocator(this.walletIframe);
+    const frame = await this.page.frame("walletIframe");
     await delay(5000);
     expect(await frame?.locator(`xpath=.//input[@aria-placeholder='Paste QR link here']`).last().isVisible()).toBeTruthy();
     await frame?.locator(`xpath=.//button[contains(@class,'absolute top-6')]`).last().click();

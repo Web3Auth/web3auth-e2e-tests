@@ -1,23 +1,4 @@
 import { devices, PlaywrightTestConfig } from "@playwright/test";
-const RPClient = require("@reportportal/client-javascript");
-// const RPconfig = {
-//   token: '4311671d-eb96-4d46-aba8-16afc95cc015',
-//   endpoint: 'http://54.179.212.129:8080/api/v1',
-//   project: 'web3auth_e2e_tests',
-//   launch: 'Web3auth E2E Tests',
-//   attributes: [
-//     {
-//       key: 'Environment',
-//       value: process.env.PLATFORM,
-//     },
-//     {
-//       key: 'Version',
-//       value: process.env.APP_VERSION,
-//     }
-//   ],
-//   description: 'Web3auth e2e test run',
-//   isLaunchMergeRequired: true
-// };
 
 const indexConfig: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,

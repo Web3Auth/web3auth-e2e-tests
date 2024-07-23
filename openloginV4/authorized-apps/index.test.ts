@@ -1,35 +1,13 @@
 import { expect, Page, test } from "@playwright/test";
-import { validateMnemonic } from "bip39";
-import { generate } from "generate-password";
-import Mailosaur from "mailosaur";
 
-import { AccountsPage } from "../account-page/AccountsPage";
 import { signInWithDapps ,
-  addPasswordShare,
-  catchError,
   catchErrorAndExit,
-  changePasswordShare,
-  deleteCurrentDeviceShare,
   generateRandomEmail,
   signInWithEmail,
-  slowOperation,
-  useAutoCancel2FASetup,
-  useAutoCancelShareTransfer,
-  waitForSessionStorage,
-  waitForTkeyRehydration,
-, DEFAULT_PLATFORM, env_map } from "../utils";
+, env_map } from "../utils";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const testEmail = generateRandomEmail();
-
-const randomPassword = generate({
-  length: 15,
-  numbers: true,
-  uppercase: true,
-  lowercase: true,
-  strict: true,
-  symbols: "@",
-});
 
 test.describe.serial("Authorized Apps page scenarios", () => {
   let page: Page;
@@ -45,7 +23,7 @@ test.describe.serial("Authorized Apps page scenarios", () => {
     });
   });
 
-  test(`should display "You are not connected to any applications yet." when no apps are connected.`, async ({}) => {
+  test(`should display "You are not connected to any applications yet." when no apps are connected.`, async () => {
     await page.goto(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {
       timeout: 3 * 60 * 1000,
@@ -67,7 +45,7 @@ test.describe.serial("Authorized Apps page scenarios", () => {
     expect(await page.isVisible("text=You are not connected to any applications yet.")).toBeFalsy();
   });
 
-  test(`should be able to delete app share from UI`, async ({}) => {
+  test(`should be able to delete app share from UI`, async () => {
     await page.click('button[aria-label="delete device share"]');
     await page.goto(`${openloginURL}/wallet/apps`);
     await page.waitForURL(`${openloginURL}/wallet/apps`, {

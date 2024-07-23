@@ -1,7 +1,5 @@
 // playwright-dev-page.ts
-import { expect, Locator, Page } from "@playwright/test";
-import { Console } from "console";
-import Mailosaur from "mailosaur";
+import { expect, Page } from "@playwright/test";
 
 import { delay } from "../utils/index";
 export class WalletServicesPage {
@@ -167,6 +165,7 @@ export class WalletServicesPage {
     //   .locator(`xpath=.//div[text()="${environment}"]`)
     //   .first()
     //   .click();
+    console.log(environment);
     await this.page.locator('button:has-text(" Create Mainnet Project ")').last().click();
   }
 

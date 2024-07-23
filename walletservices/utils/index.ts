@@ -1,15 +1,13 @@
-import { Browser, expect, Page, PlaywrightWorkerOptions, test } from "@playwright/test";
+import { Browser, expect, Page, test } from "@playwright/test";
 import axios from "axios";
+import Chance from "chance";
 import { generate } from "generate-password";
-import Mailosaur from "mailosaur";
 import { Link } from "mailosaur/lib/models";
-import { version } from "os";
 
 import config from "../../index.config";
 import confirmEmail from "./confirmEmail";
-const ChanceJS = require("chance");
 export const DEFAULT_PLATFORM = "prod";
-export var openloginversion = process.env.APP_VERSION || "v3";
+export const openloginversion = process.env.APP_VERSION || "v3";
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 console.log(`Environment:${process.env.PLATFORM}`);
 console.log(`App Version:${openloginversion}`);
@@ -30,15 +28,21 @@ const randomEmail = generate({
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
-  const promise = new Promise<void>(async (resolve) => {
-    while (!stopped) {
-      try {
-        if (await page.isVisible("text=New login detected")) {
-          await page.click('button:has-text("Cancel")', { force: true });
+  const promise = new Promise<void>((resolve) => {
+    const checkLogin = async () => {
+      while (!stopped) {
+        try {
+          if (await page.isVisible("text=New login detected")) {
+            await page.click('button:has-text("Cancel")', { force: true });
+          }
+        } catch {
+          // Handle error
         }
-      } catch {}
-    }
-    resolve();
+      }
+      resolve();
+    };
+
+    checkLogin();
   });
 
   return async () => {
@@ -74,7 +78,7 @@ async function waitForAddPassword(page: Page): Promise<boolean> {
 }
 
 async function waitForSessionStorage(page: Page, openloginURL: string) {
-  const sessionStorage: any = await page.evaluate(() => sessionStorage);
+  const sessionStorage: { tKeyModule: string } = await page.evaluate(() => sessionStorage);
   const { shares } = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey;
   const noShare = Object.keys(shares).length;
   if (noShare < 2) {
@@ -114,13 +118,21 @@ async function waitForDeleteShare(page: Page): Promise<boolean> {
 
 function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   let stopped = false;
-  const promise = new Promise<void>(async (resolve) => {
-    while (!stopped) {
-      try {
-        if (await page.getByLabel("Set up 2FA").isVisible()) await page.locator("xpath=.//button[text()='Skip for Now']").first().click();
-      } catch {}
-    }
-    resolve();
+  const promise = new Promise<void>((resolve) => {
+    const check2FA = async () => {
+      while (!stopped) {
+        try {
+          if (await page.getByLabel("Set up 2FA").isVisible()) {
+            await page.locator("xpath=.//button[text()='Skip for Now']").first().click();
+          }
+        } catch {
+          // Handle error
+        }
+      }
+      resolve();
+    };
+
+    check2FA();
   });
 
   return async () => {
@@ -135,44 +147,58 @@ async function catchErrorAndExit(page: Page): Promise<boolean | undefined> {
       console.log("Error: Test failed due to too many requests");
       return true;
     }
-  } catch {}
+  } catch {
+    // Handle error
+  }
   try {
     if (await page.isVisible("text=Unable to detect login share from the Auth Network")) {
       console.log("Error: Test failed to detect login share from the Auth Network");
       return true;
     }
-  } catch {}
+  } catch {
+    // Handle error
+  }
   try {
     if (await page.isVisible("text=Unable to connect to Auth Network. The Network may be congested.")) {
       console.log("Error: Test failed to connect to Auth Network. The Network may be congested.");
       return true;
     }
-  } catch {}
+  } catch {
+    // Handle error
+  }
 }
 
 function catchError(page: Page): () => Promise<void> {
   let stopped = false;
-  const promise = new Promise<void>(async (resolve) => {
-    while (!stopped) {
-      try {
-        if (await page.isVisible("text=Too many requests")) console.log("Error: Test failed due to too many requests");
-      } catch {
-        return true;
+  const promise = new Promise<void>((resolve) => {
+    const checkConditions = async () => {
+      while (!stopped) {
+        try {
+          if (await page.isVisible("text=Too many requests")) {
+            console.log("Error: Test failed due to too many requests");
+          }
+        } catch {
+          return true;
+        }
+        try {
+          if (await page.isVisible("text=Unable to detect login share from the Auth Network")) {
+            console.log("Error: Test failed to detect login share from the Auth Network");
+          }
+        } catch {
+          return true;
+        }
+        try {
+          if (await page.isVisible("text=Unable to connect to Auth Network. The Network may be congested.")) {
+            console.log("Error: Test failed to connect to Auth Network. The Network may be congested.");
+          }
+        } catch {
+          return true;
+        }
       }
-      try {
-        if (await page.isVisible("text=Unable to detect login share from the Auth Network"))
-          console.log("Error: Test failed to detect login share from the Auth Network");
-      } catch {
-        return true;
-      }
-      try {
-        if (await page.isVisible("text=Unable to connect to Auth Network. The Network may be congested."))
-          console.log("Error: Test failed to connect to Auth Network. The Network may be congested.");
-      } catch {
-        return true;
-      }
-    }
-    resolve();
+      resolve();
+    };
+
+    checkConditions();
   });
 
   return async () => {
@@ -244,7 +270,9 @@ async function authorizeWithGitHub({ page }: { page: Page }) {
     await page.click('button:has-text("Authorize TorusLabs")', {
       timeout: 9000,
     });
-  } catch {}
+  } catch {
+    // Handle error
+  }
 }
 
 async function signInWithTwitter({
@@ -270,11 +298,10 @@ async function signInWithTwitter({
   // Only for the first time users, they have to click on authorize web3Auth app
   try {
     // smaller timeout, we don't want to wait here for longer
-    const ele = await page.waitForSelector(`input:has-text("Authorize app")`, {
-      timeout: 1000,
-    });
     await page.click(`input:has-text("Authorize app")`);
-  } catch {}
+  } catch {
+    // Handle error
+  }
 
   await page.waitForSelector('text="Sign in to Twitter"');
   await page.fill('input[autocomplete="username"]', twitter.account);
@@ -293,13 +320,17 @@ async function signInWithTwitter({
         });
         await page.fill('input[autocomplete="email"]', twitter.email);
         await page.click(`div[role="button"] span:has-text("Next")`);
-      } catch (err) {}
+      } catch (err) {
+        // Handle error
+      }
       try {
         await page.waitForSelector("input#allow", {
           timeout: 1000,
         });
         await page.click("input#allow");
-      } catch {}
+      } catch {
+        // Handle error
+      }
     },
     3 * 60 * 1000
   );
@@ -308,7 +339,6 @@ async function signInWithTwitter({
 async function signInWithTwitterWithoutLogin({
   page,
   twitter,
-  openloginURL,
 }: {
   page: Page;
   twitter: {
@@ -324,7 +354,7 @@ async function signInWithTwitterWithoutLogin({
   await page.click("xpath=.//input[@value='Sign In']");
 }
 
-export async function slowOperation(op: () => Promise<any>, timeout?: number) {
+export async function slowOperation(op: () => Promise<void>, timeout?: number) {
   // Set slow timeout
   test.setTimeout(timeout || 2 * 60 * 1000); // => 2 mins timeout
   await op();
@@ -335,7 +365,6 @@ export async function slowOperation(op: () => Promise<any>, timeout?: number) {
 async function signInWithFacebook({
   page,
   FB,
-  openloginURL,
 }: {
   page: Page;
   FB: {
@@ -358,7 +387,9 @@ async function signInWithFacebook({
   try {
     await page.waitForSelector(`button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`);
     await page.click(`button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`);
-  } catch {}
+  } catch {
+    // Handle error
+  }
 }
 
 async function signInWithDiscord({
@@ -478,11 +509,10 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
     const pages = await browser.contexts()[0].pages();
     // pages[0] is the first page, and pages[1] is the new page
     await pages[1].bringToFront(); // Bring the new page to the front
-    let inbox;
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
-    inbox = await res.data;
+    const inbox = await res.data;
     const href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
     await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(href);
@@ -502,19 +532,17 @@ async function signInWithEmailWithTestEmailAppInDemoApp(
 ): Promise<boolean> {
   try {
     console.log(`Email:${email}`);
-    await page.locator(`//iframe[contains(@id,"walletIframe")]`).waitFor({ state: "visible" });
-    const frame = page.frameLocator(`//iframe[contains(@id,"walletIframe")]`);
-    await frame?.locator('[placeholder="name@domain.com"]').fill(email);
-    await frame?.locator('button:has-text("Login with Email")').click();
+    const frame = page.frame("walletIframe");
+    await frame?.fill('[placeholder="name@domain.com"]', email);
+    await frame?.click('button:has-text("Login with Email")');
     await delay(20000);
     const pages = await browser.contexts()[0].pages();
     // pages[0] is the first page, and pages[1] is the new page
     await pages[1].bringToFront(); // Bring the new page to the front
-    let inbox;
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
-    inbox = await res.data;
+    const inbox = await res.data;
     const href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
     await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(href);
@@ -554,7 +582,6 @@ async function signInWithMobileNumber({
 }
 
 async function signInWithDapps({ page, browser, testEmail }: { page: Page; browser: Browser; testEmail: string }) {
-  const context2 = await browser.newContext();
   const context3 = await browser.newContext();
   await page.goto("https://demo-openlogin.web3auth.io/");
   await page.locator("select.select").last().selectOption("email_passwordless");
@@ -598,7 +625,7 @@ function generateRandomEmail() {
 
 function generateEmailWithTag() {
   // Randomly generating the tag...
-  const chance = new ChanceJS();
+  const chance = new Chance();
   const tag = chance.string({
     length: 12,
     pool: "abcdefghijklmnopqrstuvwxyz0123456789",

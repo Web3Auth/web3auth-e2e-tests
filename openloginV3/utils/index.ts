@@ -1,15 +1,12 @@
-import { Browser, expect, Page, PlaywrightWorkerOptions, test } from "@playwright/test";
-import Mailosaur from "mailosaur";
+import { Browser, expect, Page, test } from "@playwright/test";
 import { Link } from "mailosaur/lib/models";
-import { version } from "os";
-import { resolve } from "path";
 
 import config from "../../index.config";
 import confirmEmail from "./confirmEmail";
 
 export const DEFAULT_PLATFORM = "cyan";
 import axios from "axios";
-const ChanceJS = require("chance");
+import ChanceJS from "chance";
 process.env.APP_VERSION = "v3";
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 console.log(`Api Key:${process.env.TESTMAIL_APP_APIKEY}`);
@@ -35,7 +32,9 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
         if (await page.isVisible("text=New login detected")) {
           await page.click('button:has-text("Cancel")', { force: true });
         }
-      } catch {}
+      } catch (err) {
+        console.log(err);
+      }
     }
     resolve();
   });
@@ -128,7 +127,9 @@ function useAutoCancel2FASetup(page: Page): () => Promise<void> {
     while (!stopped) {
       try {
         if (await page.isVisible("text=secure your account")) await page.click('button:has-text("Maybe next time")');
-      } catch {}
+      } catch (err) {
+        console.log(err);
+      }
     }
     resolve();
   });
@@ -145,19 +146,25 @@ async function catchErrorAndExit(page: Page): Promise<boolean | undefined> {
       console.log("Error: Test failed due to too many requests");
       return true;
     }
-  } catch {}
+  } catch (err) {
+    console.log(err);
+  }
   try {
     if (await page.isVisible("text=Unable to detect login share from the Auth Network")) {
       console.log("Error: Test failed to detect login share from the Auth Network");
       return true;
     }
-  } catch {}
+  } catch (err) {
+    console.log(err);
+  }
   try {
     if (await page.isVisible("text=Unable to connect to Auth Network. The Network may be congested.")) {
       console.log("Error: Test failed to connect to Auth Network. The Network may be congested.");
       return true;
     }
-  } catch {}
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 function catchError(page: Page): () => Promise<void> {
@@ -269,11 +276,13 @@ async function signInWithTwitter({
   // Only for the first time users, they have to click on authorize web3Auth app
   try {
     // smaller timeout, we don't want to wait here for longer
-    const ele = await page.waitForSelector(`input:has-text("Authorize app")`, {
+    await page.waitForSelector(`input:has-text("Authorize app")`, {
       timeout: 1000,
     });
     await page.click(`input:has-text("Authorize app")`);
-  } catch {}
+  } catch (err) {
+    console.log(err);
+  }
 
   await page.waitForSelector('text="Sign in to Twitter"');
   await page.fill('input[autocomplete="username"]', twitter.account);
@@ -292,13 +301,17 @@ async function signInWithTwitter({
         });
         await page.fill('input[autocomplete="email"]', twitter.email);
         await page.click(`div[role="button"] span:has-text("Next")`);
-      } catch (err) {}
+      } catch (err) {
+        console.log(err);
+      }
       try {
         await page.waitForSelector("input#allow", {
           timeout: 1000,
         });
         await page.click("input#allow");
-      } catch {}
+      } catch (err) {
+        console.log(err);
+      }
       await useAutoCancelShareTransfer(page);
       await useAutoCancel2FASetup(page);
       await page.waitForURL(`${openloginURL}/wallet/home`);
@@ -351,7 +364,9 @@ async function signInWithFacebook({
         });
         await page.fill('[placeholder="Enter backup phrase"]', FB.backupPhrase);
         await page.click('button:has-text("Confirm")');
-      } catch (err) {}
+      } catch (err) {
+        console.log(err);
+      }
       await useAutoCancelShareTransfer(page);
       await useAutoCancel2FASetup(page);
       await page.waitForURL(`${openloginURL}/wallet/home`);
@@ -508,11 +523,10 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
     await page.click('button:has-text("Continue with Email")');
     await page.waitForSelector("text=Verify your email");
     await delay(3000);
-    let inbox;
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
-    inbox = await res.data;
+    const inbox = await res.data;
     const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();
@@ -538,11 +552,10 @@ async function signInWithEmailWithTestEmailOnDemoApp(page: Page, email: string, 
     await page.click('button:has-text("Login with email passwordless")');
     await page.waitForSelector("text=Verify your email");
     await delay(3000);
-    let inbox;
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
-    inbox = await res.data;
+    const inbox = await res.data;
     const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
     const context2 = await browser.newContext();
     const page2 = await context2.newPage();

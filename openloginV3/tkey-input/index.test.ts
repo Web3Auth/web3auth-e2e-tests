@@ -1,15 +1,12 @@
-import { chromium, expect, firefox, Page } from "@playwright/test";
+import { expect, firefox, Page } from "@playwright/test";
 import { generate } from "generate-password";
-import Mailosaur from "mailosaur";
 
 import {
   addPasswordShare,
-  catchError,
   catchErrorAndExit,
   deleteCurrentDeviceShare,
   generateRandomEmail,
   signInWithEmail,
-  slowOperation,
   useAutoCancel2FASetup,
   useAutoCancelShareTransfer,
   waitForTkeyRehydration,

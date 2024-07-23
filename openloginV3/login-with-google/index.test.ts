@@ -1,10 +1,9 @@
 import { expect } from "@playwright/test";
-import { url } from "inspector";
 
 import { signInWithGoogle, useAutoCancel2FASetup, useAutoCancelShareTransfer } from "../utils";
 import { test } from "./index.lib";
 
-test("Login with Google - skipped since it requires captcha solving", async ({ page, browserName, openloginURL, google }) => {
+test("Login with Google - skipped since it requires captcha solving", async ({ page, openloginURL, google }) => {
   test.skip();
   page.setDefaultTimeout(8 * 60 * 1000);
   page.setDefaultNavigationTimeout(8 * 60 * 1000);

@@ -1,7 +1,7 @@
-import { expect, Page, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 import { AccountsPage } from "../account-page/AccountsPage";
-import { DEFAULT_PLATFORM, env_map, signInWithDiscord, useAutoCancel2FASetup, useAutoCancelShareTransfer } from "../utils";
+import { env_map, signInWithDiscord } from "../utils";
 
 const discord = {
   email: process.env.DISCORD_EMAIL || "",

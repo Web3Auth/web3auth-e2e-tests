@@ -1,16 +1,6 @@
 import { expect, Page } from "@playwright/test";
-import Mailosaur from "mailosaur";
 
-import {
-  catchError,
-  catchErrorAndExit,
-  findLink,
-  generateRandomEmail,
-  signInWithEmail,
-  slowOperation,
-  useAutoCancel2FASetup,
-  useAutoCancelShareTransfer,
-} from "../utils";
+import { catchErrorAndExit, findLink, generateRandomEmail, signInWithEmail, useAutoCancel2FASetup, useAutoCancelShareTransfer } from "../utils";
 import { test } from "./index.lib";
 
 const testEmail = generateRandomEmail();

@@ -24,7 +24,9 @@ test("Login with Github+Device skipped since it requires captcha solving", async
       timeout: 10 * 1000,
     });
     await page.click('button:has-text("Authorize TorusLabs")', { timeout: 9000 });
-  } catch {}
+  } catch {
+    console.log("timed out");
+  }
 
   await useAutoCancelShareTransfer(page);
   await useAutoCancel2FASetup(page);

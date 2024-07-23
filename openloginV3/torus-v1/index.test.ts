@@ -1,16 +1,6 @@
-import { chromium, expect, firefox, Page } from "@playwright/test";
-import Mailosaur from "mailosaur";
+import { expect } from "@playwright/test";
 
-import {
-  catchError,
-  catchErrorAndExit,
-  generateRandomEmail,
-  signInWithEmail,
-  signInWithEmailIntoTorusWallet,
-  slowOperation,
-  useAutoCancel2FASetup,
-  useAutoCancelShareTransfer,
-} from "../utils";
+import { catchErrorAndExit, generateRandomEmail, signInWithEmailIntoTorusWallet, useAutoCancel2FASetup, useAutoCancelShareTransfer } from "../utils";
 import { test } from "./index.lib";
 
 const testEmail = generateRandomEmail();
@@ -35,6 +25,6 @@ test.describe.serial("Torus Wallet Login scenarios", () => {
     });
 
     expect(page.url()).toBe(`**/wallet/home`);
-    const welcome = await page.waitForSelector(`text=Account Balance`);
+    await page.waitForSelector(`text=Account Balance`);
   });
 });

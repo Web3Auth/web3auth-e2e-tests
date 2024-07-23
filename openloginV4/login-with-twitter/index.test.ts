@@ -1,15 +1,7 @@
-import { expect, Page, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 import { AccountsPage } from "../account-page/AccountsPage";
-import {
-  authorizeWithGitHub,
-  DEFAULT_PLATFORM,
-  env_map,
-  signInWithTwitter,
-  signInWithTwitterWithoutLogin,
-  useAutoCancel2FASetup,
-  useAutoCancelShareTransfer,
-} from "../utils";
+import { env_map, signInWithTwitterWithoutLogin, useAutoCancel2FASetup } from "../utils/index";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const twitter = {

@@ -1,42 +1,13 @@
 import { expect, Page, test } from "@playwright/test";
-import { validateMnemonic } from "bip39";
-import { generate } from "generate-password";
-import Mailosaur from "mailosaur";
 
-import { signInWithGitHub, signInWithMobileNumber ,
-  addPasswordShare,
-  catchError,
-  catchErrorAndExit,
-  changePasswordShare,
-  deleteCurrentDeviceShare,
-  generateRandomEmail,
-  signInWithEmail,
-  slowOperation,
-  useAutoCancel2FASetup,
-  useAutoCancelShareTransfer,
-  waitForSessionStorage,
-  waitForTkeyRehydration,
-, DEFAULT_PLATFORM, env_map } from "../utils";
+import { catchErrorAndExit, env_map, generateRandomEmail, signInWithEmail } from "../utils";
 import { DeveloperDashboardPage } from "./DeveloperDashboardPage";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 
-const user = {
-  mobileNumberForLogin: process.env.LOGIN_MOBILE_NUMBER || "",
-  mobileNumberForSMS: process.env.SMS_MOBILE_NUMBER || "",
-};
-
 const testEmail = generateRandomEmail() || "";
 const backupEmail = generateRandomEmail() || "";
 let organizationName = "";
-const randomPassword = generate({
-  length: 15,
-  numbers: true,
-  uppercase: true,
-  lowercase: true,
-  strict: true,
-  symbols: "@",
-});
 
 test.describe.serial("Account page scenarios", () => {
   let page: Page;
@@ -52,7 +23,7 @@ test.describe.serial("Account page scenarios", () => {
     });
   });
 
-  test(`Verify user is able to register`, async ({}) => {
+  test(`Verify user is able to register`, async () => {
     const accountsPage = new DeveloperDashboardPage(page);
     organizationName = testEmail.split("@")[0].split(".")[1];
     await accountsPage.registerUser(organizationName);
@@ -63,36 +34,36 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.locator('span:has-text("Create a Project")').first().isVisible()).toBeTruthy();
   });
 
-  test(`Verify user is able to create a new project`, async ({}) => {
+  test(`Verify user is able to create a new project`, async () => {
     const accountsPage = new DeveloperDashboardPage(page);
     await accountsPage.clickCreateAProject();
-    await accountsPage.createProject(`${testEmail  }_project`, "Core Kit", "Sapphire Devnet (MPC Only)", "Android");
+    await accountsPage.createProject(`${testEmail}_project`, "Core Kit", "Sapphire Devnet (MPC Only)", "Android");
     await accountsPage.navigateTo("Project");
     await page.waitForURL(`${openloginURL}/organization/${organizationName}/projects`, {
       waitUntil: "load",
     });
-    await accountsPage.searchAndSelectProject(`${testEmail  }_project`, "Sapphire Devnet (MPC Only)");
-    await accountsPage.verifyProject(`${testEmail  }_project`, "Sapphire Devnet (MPC Only)", "Android");
+    await accountsPage.searchAndSelectProject(`${testEmail}_project`, "Sapphire Devnet (MPC Only)");
+    await accountsPage.verifyProject(`${testEmail}_project`, "Sapphire Devnet (MPC Only)", "Android");
   });
 
-  test(`Verify user is able to able to update project details`, async ({}) => {
+  test(`Verify user is able to able to update project details`, async () => {
     const accountsPage = new DeveloperDashboardPage(page);
     await accountsPage.updateProject("Solana");
     await accountsPage.verifyMessageIsDisplayed("Project updated successfully");
   });
 
-  test(`Verify user is able to convert project to mainnet`, async ({}) => {
+  test(`Verify user is able to convert project to mainnet`, async () => {
     const accountsPage = new DeveloperDashboardPage(page);
     await accountsPage.clickCreateMainnet();
-    await accountsPage.createMainnetProject(`${testEmail  }_project`, "Sapphire Mainnet (MPC Only)");
+    await accountsPage.createMainnetProject(`${testEmail}_project`, "Sapphire Mainnet (MPC Only)");
     await accountsPage.navigateTo("Project");
     await page.waitForURL(`${openloginURL}/organization/${organizationName}/projects`, {
       waitUntil: "load",
     });
-    await accountsPage.searchAndSelectProject(`${testEmail  }_project`, "Sapphire Mainnet (MPC Only)");
+    await accountsPage.searchAndSelectProject(`${testEmail}_project`, "Sapphire Mainnet (MPC Only)");
   });
 
-  test(`Verify user is able to add custom verifiers to the project`, async ({}) => {
+  test(`Verify user is able to add custom verifiers to the project`, async () => {
     const accountsPage = new DeveloperDashboardPage(page);
     await accountsPage.navigateToTab(" Custom Authentication ");
     await accountsPage.clickCreateAVerifier();
@@ -100,7 +71,7 @@ test.describe.serial("Account page scenarios", () => {
     await accountsPage.verifyMessageIsDisplayed("Verifier Created Successfully");
   });
 
-  test(`Verify users role`, async ({}) => {
+  test(`Verify users role`, async () => {
     const accountsPage = new DeveloperDashboardPage(page);
     await accountsPage.navigateTo("Settings");
     await page.goto(`${openloginURL}/organization/${organizationName}/settings`);
@@ -111,7 +82,7 @@ test.describe.serial("Account page scenarios", () => {
     await accountsPage.verifyUserRole(testEmail, "Owner");
   });
 
-  test(`Verify user is able to upgrade to new plan`, async ({}) => {
+  test(`Verify user is able to upgrade to new plan`, async () => {
     const accountsPage = new DeveloperDashboardPage(page);
     await accountsPage.navigateToTab(" Member");
     expect(await page.isVisible("text=You do not have enough seats to invite another member")).toBeTruthy();
@@ -121,7 +92,7 @@ test.describe.serial("Account page scenarios", () => {
     await accountsPage.verifyInvoiceAndCardAddedIsDisplayed("Visa ending with 4242");
   });
 
-  test(`Verify user is able to add invite new team member`, async ({}) => {
+  test(`Verify user is able to add invite new team member`, async () => {
     const accountsPage = new DeveloperDashboardPage(page);
     await accountsPage.navigateToTab(" Member");
     await accountsPage.inviteNewTeamMember(backupEmail);

@@ -2,19 +2,14 @@ import { expect, Page } from "@playwright/test";
 import axios from "axios";
 import { validateMnemonic } from "bip39";
 import { generate } from "generate-password";
-import Mailosaur from "mailosaur";
 
 import {
   addPasswordShare,
-  catchError,
   catchErrorAndExit,
   changePasswordShare,
   deleteCurrentDeviceShare,
   generateEmailWithTag,
-  generateRandomEmail,
-  signInWithEmail,
   signInWithEmailWithTestEmailApp,
-  slowOperation,
   useAutoCancel2FASetup,
   useAutoCancelShareTransfer,
   waitForSessionStorage,
@@ -70,7 +65,7 @@ test.describe.serial("Account page scenarios", () => {
     });
     expect(await page.isVisible("text=Account")).toBeTruthy();
   });
-  test(`should display 2FA enable window for single factor account`, async ({}) => {
+  test(`should display 2FA enable window for single factor account`, async () => {
     expect(await page.isVisible("text=We strongly recommend you to enable 2FA on your account")).toBeTruthy();
   });
   test(`should setup 2FA account from account page`, async ({ openloginURL }) => {
@@ -141,18 +136,15 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.isVisible("text=Device(s)")).toBeTruthy();
     expect(await page.isVisible("text=2 / 3")).toBeTruthy();
   });
-
   test(`should resend recovery email share`, async ({ openloginURL }) => {
-    let seedArray: string[];
-    let seedEmail;
     let seedString = "";
     await waitForSessionStorage(page, openloginURL);
     await page.click('button:has-text("Resend")');
     await page.waitForTimeout(5000);
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(`${ENDPOINT}&tag=${backupEmail.split("@")[0].split(".")[1]}&livequery=true`);
-    seedEmail = await res.data;
-    seedArray =
+    const seedEmail = await res.data;
+    const seedArray =
       String(seedEmail.emails[0].html)
         .replace(/(\r\n|\n|\r)/gm, "")
         .slice(11084)
@@ -172,16 +164,14 @@ test.describe.serial("Account page scenarios", () => {
     });
     await waitForSessionStorage(page, openloginURL);
     await page.click('button[aria-label="export email share"]');
-    let seedArray: string[];
-    let seedEmail;
     let seedString = "";
     await waitForSessionStorage(page, openloginURL);
     await page.click('button:has-text("Resend")');
     await page.waitForTimeout(5000);
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(`${ENDPOINT}&tag=${backupEmail.split("@")[0].split(".")[1]}&livequery=true`);
-    seedEmail = await res.data;
-    seedArray =
+    const seedEmail = await res.data;
+    const seedArray =
       String(seedEmail.emails[0].html)
         .replace(/(\r\n|\n|\r)/gm, "")
         .slice(11084)

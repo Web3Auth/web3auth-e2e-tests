@@ -1,9 +1,7 @@
-import { expect, Page, test } from "@playwright/test";
-import { readFileSync } from "fs";
-import path from "path";
+import { expect, test } from "@playwright/test";
 
 import { AccountsPage } from "../account-page/AccountsPage";
-import { DEFAULT_PLATFORM, env_map, signInWithFacebook, useAutoCancelShareTransfer } from "../utils";
+import { env_map, signInWithFacebook } from "../utils";
 
 const FB = {
   name: "Torus Solana",

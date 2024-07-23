@@ -1,20 +1,14 @@
 import { Client } from "@opensearch-project/opensearch";
-import { chromium, expect, firefox, Page } from "@playwright/test";
-import { readFileSync } from "fs";
-import Mailosaur from "mailosaur";
-import path from "path";
+import { expect } from "@playwright/test";
 
 import {
-  catchError,
   catchErrorAndExit,
   env_map,
   generateEmailWithTag,
-  generateRandomEmail,
   getBackUpPhrase,
   signInWithEmail,
   signInWithEmailWithTestEmailApp,
   signInWithEmailWithTestEmailOnDemoApp,
-  slowOperation,
   useAutoCancel2FASetup,
   useAutoCancelShareTransfer,
 } from "../utils";
@@ -33,7 +27,6 @@ const ci_mode = process.env.CI_MODE;
 const demoAppUrl = env_map.demo;
 
 const testEmail = generateEmailWithTag();
-const backupPhrase = process.env.BACKUP_PHRASE_PROD;
 const consoleLogs: string[] = [];
 const platform = process.env.PLATFORM || "";
 const existingTestEmail = `demo@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
@@ -60,10 +53,10 @@ test.describe.serial("Passwordless Login scenarios", () => {
     });
 
     expect(page.url()).toBe(`${openloginURL}/wallet/home`);
-    const welcome = await page.waitForSelector(`text=Welcome`);
+    await page.waitForSelector(`text=Welcome`);
   });
 
-  test("Login with email using passwordless login @demoApp", async ({ browser, openloginURL, page }) => {
+  test("Login with email using passwordless login @demoApp", async ({ browser, page }) => {
     // Verify environment variables
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time
     // Listen for all console events and handle errors
@@ -84,7 +77,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     });
 
     expect(page.url()).toBe(`${demoAppUrl}`);
-    const welcome = await page.waitForSelector(`text=Get openlogin state`);
+    await page.waitForSelector(`text=Get openlogin state`);
   });
 
   test("Login as an existing user with recovery phrase as 2FA", async ({ browser, openloginURL, page }) => {
@@ -103,7 +96,9 @@ test.describe.serial("Passwordless Login scenarios", () => {
       });
       await page.fill('[placeholder="Enter backup phrase"]', getBackUpPhrase(process.env.PLATFORM)!);
       await page.click('button:has-text("Confirm")');
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
     await useAutoCancelShareTransfer(page);
     await useAutoCancel2FASetup(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
@@ -111,7 +106,6 @@ test.describe.serial("Passwordless Login scenarios", () => {
     });
 
     expect(page.url()).toBe(`${openloginURL}/wallet/home`);
-    const welcome = await page.waitForSelector(`text=Welcome`);
   });
   // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {

@@ -1,5 +1,4 @@
 import { PlaywrightTestConfig, PlaywrightWorkerOptions } from "@playwright/test";
-import { readFileSync } from "fs";
 import path from "path";
 
 import indexConfig from "../../index.config";
