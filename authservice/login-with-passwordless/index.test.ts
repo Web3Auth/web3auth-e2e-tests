@@ -5,7 +5,7 @@ import {
   generateEmailWithTag,
   getBackUpPhrase,
   signInWithEmailWithTestEmailApp,
-  signInWithEmailWithTestEmailOnDemoApp
+  signInWithEmailWithTestEmailOnDemoApp,
 } from "../utils/index";
 import {
   signInWithMobileNumber,
@@ -13,7 +13,7 @@ import {
   signInWithEmail,
 } from "../utils";
 import { useAutoCancelShareTransfer } from "../utils/index";
-import { AccountsPage } from "../account-page/AccountsPage";
+import { AccountsPage } from "../openlogin-account-page/AccountsPage";
 import { Client } from "@opensearch-project/opensearch";
 const demoAppUrl = env_map["demo"];
 const demoAppUrlV4 = env_map["demoV6"];
@@ -89,7 +89,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
       page,
       testEmail,
       browser,
-      testEmail.split("@")[0].split(".")[1]
+      testEmail.split("@")[0].split(".")[1],
     );
     await useAutoCancel2FASetup(page);
     await page.waitForURL(`${openloginURL}/wallet/home`, {
@@ -119,7 +119,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
       browser,
       testEmail.split("@")[0].split(".")[1],
       "production",
-      platform
+      platform,
     );
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
@@ -150,7 +150,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
         browser,
         testEmail.split("@")[0].split(".")[1],
         "production",
-        platform
+        platform,
       );
       const shouldExit = await catchErrorAndExit(page);
       expect(shouldExit).toBeFalsy();
@@ -191,7 +191,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await accountsPage.clickVerifyWithOtherFactors();
     await accountsPage.verifyWithFactor("Recovery password");
     await accountsPage.verifyRecoveryPhrase(
-      getBackUpPhrase(process.env.PLATFORM)!
+      getBackUpPhrase(process.env.PLATFORM)!,
     );
     await page.waitForURL(`${openloginURL}/wallet/home`, {
       waitUntil: "load",
@@ -233,12 +233,12 @@ test.describe.serial("Passwordless Login scenarios", () => {
         });
         console.log(
           `Pushed test information to Elasticsearch: ${JSON.stringify(
-            document
-          )}`
+            document,
+          )}`,
         );
       } catch (er) {
         console.error(
-          `Failed to push failed test information to Elasticsearch: ${er}`
+          `Failed to push failed test information to Elasticsearch: ${er}`,
         );
       }
     }

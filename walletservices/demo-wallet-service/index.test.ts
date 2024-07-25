@@ -1,16 +1,22 @@
 import { test, expect } from "@playwright/test";
 import { WalletServicesPage } from "./WalletServicesPage";
-import { delay, signInWithEmailWithTestEmailAppInDemoApp } from "../utils/index";
+import {
+  delay,
+  signInWithEmailWithTestEmailAppInDemoApp,
+} from "../utils/index";
 import { catchErrorAndExit } from "../utils";
-import { signInWithEmailWithTestEmailOnDemoApp } from "../../openloginV4/utils";
-import { AccountsPage } from "../../openloginV4/account-page/AccountsPage";
+import { signInWithEmailWithTestEmailOnDemoApp } from "../../authservice/utils";
+import { AccountsPage } from "../../authservice/openlogin-account-page/AccountsPage";
 const consoleLogs: string[] = [];
 let sessionId: string = "";
 const walletServiceLoginURL = "https://demo-wallet.web3auth.io";
 const testEmail = "kelg8.j5s90ldb0b35@inbox.testmail.app";
 
 test.describe.serial("Wallet Services Scenarios @demo", () => {
-  test(`Verify user is able to login using passwordless option`, async ({ page, browser }) => {
+  test(`Verify user is able to login using passwordless option`, async ({
+    page,
+    browser,
+  }) => {
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time
     const accountsPage = new WalletServicesPage(page);
     page.on("console", (msg) => {
@@ -24,13 +30,21 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     await delay(5000);
     await page.locator(`xpath=.//button[text()='Login']`).click();
     await delay(5000);
-    await signInWithEmailWithTestEmailAppInDemoApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1], currentTimestamp);
+    await signInWithEmailWithTestEmailAppInDemoApp(
+      page,
+      testEmail,
+      browser,
+      testEmail.split("@")[0].split(".")[1],
+      currentTimestamp,
+    );
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
     await page.waitForURL(`${walletServiceLoginURL}`, {
       waitUntil: "load",
     });
-    await accountsPage.verifyUserInfoInDemoApp("kelg8.j5s90ldb0b35@inbox.testmail.app");
+    await accountsPage.verifyUserInfoInDemoApp(
+      "kelg8.j5s90ldb0b35@inbox.testmail.app",
+    );
     await accountsPage.switchChain(browser);
     await accountsPage.verifyAddressInDemoApp("0x0dB...d4e49F");
     await accountsPage.verifyBalanceInDemoApp("0.635632785708915");
@@ -46,10 +60,20 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     //await accountsPage.verifyShowCheckout();
     await page.goto(walletServiceLoginURL + "/logout");
   });
-  test(`Verify user is able to login using session id`, async ({ page, browser }) => {
+  test(`Verify user is able to login using session id`, async ({
+    page,
+    browser,
+  }) => {
     test.setTimeout(3 * 60000);
     await page.goto("https://demo-openlogin.web3auth.io/");
-    await signInWithEmailWithTestEmailOnDemoApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1], "production", "mainnet");
+    await signInWithEmailWithTestEmailOnDemoApp(
+      page,
+      testEmail,
+      browser,
+      testEmail.split("@")[0].split(".")[1],
+      "production",
+      "mainnet",
+    );
     const accountsPage = new AccountsPage(page);
     const keys: string | null = await accountsPage.getOpenLoginState();
     if (keys !== null) {
@@ -58,12 +82,18 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     }
     const walletServicesPage = new WalletServicesPage(page);
     await page.goto(walletServiceLoginURL);
-    await page.locator(`xpath=.//input[@aria-placeholder='Enter Session Id...']`).fill(sessionId);
-    await page.locator(`xpath=.//button[text()='Login with Session Id']`).click();
+    await page
+      .locator(`xpath=.//input[@aria-placeholder='Enter Session Id...']`)
+      .fill(sessionId);
+    await page
+      .locator(`xpath=.//button[text()='Login with Session Id']`)
+      .click();
     await page.waitForURL(`${walletServiceLoginURL}`, {
       waitUntil: "load",
     });
-    await walletServicesPage.verifyUserInfoInDemoApp("kelg8.j5s90ldb0b35@inbox.testmail.app");
+    await walletServicesPage.verifyUserInfoInDemoApp(
+      "kelg8.j5s90ldb0b35@inbox.testmail.app",
+    );
   });
   //switching chain
 });

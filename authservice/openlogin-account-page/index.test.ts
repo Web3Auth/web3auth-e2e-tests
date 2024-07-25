@@ -7,9 +7,7 @@ import {
 import { generate } from "generate-password";
 import { signInWithGitHub, signInWithMobileNumber } from "../utils";
 import { validateMnemonic } from "bip39";
-import {
-  catchErrorAndExit,
-} from "../utils";
+import { catchErrorAndExit } from "../utils";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const github = {
@@ -44,7 +42,7 @@ test.describe.serial("Account page scenarios", () => {
       page,
       testEmail,
       browser,
-      testEmail.split("@")[0].split(".")[1]
+      testEmail.split("@")[0].split(".")[1],
     );
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
@@ -181,7 +179,7 @@ test.describe.serial("Account page scenarios", () => {
       await page
         .locator("text=Save a copy of your recovery phrase")
         .first()
-        .isVisible()
+        .isVisible(),
     ).toBeTruthy(),
       await accountsPage.clickFirstClose();
   });
@@ -192,7 +190,7 @@ test.describe.serial("Account page scenarios", () => {
     await accountsPage.enterRecoveryEmail(testEmail);
     await accountsPage.clickConfirm();
     await expect(
-      page.getByText("Backup Phrase successfully sent", { exact: false })
+      page.getByText("Backup Phrase successfully sent", { exact: false }),
     ).toBeVisible();
     expect(await page.getByText("2 / 5").isVisible());
   });
