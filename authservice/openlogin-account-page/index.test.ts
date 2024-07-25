@@ -8,6 +8,7 @@ import { generate } from "generate-password";
 import { signInWithGitHub, signInWithMobileNumber } from "../utils";
 import { validateMnemonic } from "bip39";
 import { catchErrorAndExit } from "../utils";
+import { AccountsPage } from "./AccountsPage";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const github = {

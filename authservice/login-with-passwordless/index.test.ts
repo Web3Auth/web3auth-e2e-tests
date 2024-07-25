@@ -1,22 +1,21 @@
-import { test, expect } from "@playwright/test";
+import { Client } from "@opensearch-project/opensearch";
+import { expect, test } from "@playwright/test";
+
+import { AccountsPage } from "../openlogin-account-page/AccountsPage";
 import {
+  signInWithEmail,
+  signInWithMobileNumber,
+  useAutoCancel2FASetup,
   catchErrorAndExit,
   env_map,
   generateEmailWithTag,
   getBackUpPhrase,
   signInWithEmailWithTestEmailApp,
   signInWithEmailWithTestEmailOnDemoApp,
-} from "../utils/index";
-import {
-  signInWithMobileNumber,
-  useAutoCancel2FASetup,
-  signInWithEmail,
+  useAutoCancelShareTransfer,
 } from "../utils";
-import { useAutoCancelShareTransfer } from "../utils/index";
-import { AccountsPage } from "../openlogin-account-page/AccountsPage";
-import { Client } from "@opensearch-project/opensearch";
-const demoAppUrl = env_map["demo"];
-const demoAppUrlV4 = env_map["demoV6"];
+const demoAppUrl = env_map.demo;
+const demoAppUrlV4 = env_map.demoV6;
 const eventPostURL =
   process.env.ES_ENDPOINT === undefined
     ? "search-sapphire-latency-stats-7n6qd4g6m3au5fpre3gwvwo6vm.eu-west-1.es.amazonaws.com"
@@ -199,48 +198,5 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await page.waitForSelector(`text=Welcome, ${testEmail}`);
     await accountsPage.clickLogout();
     expect(page.url()).toContain(`${openloginURL}/`);
-  });
-
-  test.afterEach(async ({}, testInfo) => {
-    if (ci_mode == "AWS") {
-      const client = new Client({
-        node: `https://${username}:${password}@${eventPostURL}`,
-      });
-      console.log(testInfo.stderr);
-      const { title, status, errors } = testInfo;
-      let errorMessage = "";
-      errors.forEach((element) => {
-        errorMessage += `${element.message}\n`;
-      });
-      const timestamp = new Date().toISOString();
-
-      const document = {
-        title,
-        status,
-        errorMessage,
-        region,
-        timestamp,
-        version,
-        ci_mode,
-        consoleLogs,
-        platform,
-      };
-
-      try {
-        await client.index({
-          index: `${version}-${platform}`,
-          body: document,
-        });
-        console.log(
-          `Pushed test information to Elasticsearch: ${JSON.stringify(
-            document,
-          )}`,
-        );
-      } catch (er) {
-        console.error(
-          `Failed to push failed test information to Elasticsearch: ${er}`,
-        );
-      }
-    }
   });
 });

@@ -1,5 +1,5 @@
 // playwright-dev-page.ts
-import { expect,Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { delay } from "../utils/index";
 export class WalletServicesPage {
   readonly page: Page;
@@ -14,11 +14,11 @@ export class WalletServicesPage {
       await this.page
         .locator(`xpath=.//div/button/span[contains(@class,'!text-xs')]`)
         .first()
-        .textContent()
+        .textContent(),
     ).toContain(address);
     const walletBalance = await this.page
       .locator(
-        `xpath=.//p[contains(text(),'Total Wallet Balance')]/parent::div/div/p`
+        `xpath=.//p[contains(text(),'Total Wallet Balance')]/parent::div/div/p`,
       )
       .first()
       .textContent();
@@ -30,7 +30,7 @@ export class WalletServicesPage {
       await this.page
         .locator(`xpath=.//div[contains(@class,'!hidden @lg/wallet')]//button`)
         .first()
-        .textContent()
+        .textContent(),
     ).toContain(name);
   }
 
@@ -39,7 +39,7 @@ export class WalletServicesPage {
       await this.page
         .locator(`xpath=.//p[text()='Available Balance']/parent::div/p`)
         .last()
-        .textContent()
+        .textContent(),
     ).toContain(balance);
   }
 
@@ -48,7 +48,7 @@ export class WalletServicesPage {
       await this.page
         .locator(`xpath=.//div[text()='Amount']/following-sibling::div`)
         .first()
-        .textContent()
+        .textContent(),
     ).toContain(content);
   }
 
@@ -56,10 +56,10 @@ export class WalletServicesPage {
     expect(
       await this.page
         .locator(
-          `xpath=.//p[text()='Sepolia Test Network']/parent::div/following-sibling::div//p`
+          `xpath=.//p[text()='Sepolia Test Network']/parent::div/following-sibling::div//p`,
         )
         .first()
-        .textContent()
+        .textContent(),
     ).toContain(content);
   }
 
@@ -67,10 +67,10 @@ export class WalletServicesPage {
     expect(
       await this.page
         .locator(
-          `xpath=.//p[text()='Sepolia Test Network']/parent::div/following-sibling::div//p`
+          `xpath=.//p[text()='Sepolia Test Network']/parent::div/following-sibling::div//p`,
         )
         .last()
-        .textContent()
+        .textContent(),
     ).toContain(content);
   }
 
@@ -92,7 +92,7 @@ export class WalletServicesPage {
         await block
           .locator(`xpath=.//p[contains(text(),"${part.trim()}")]`)
           .last()
-          .isVisible()
+          .isVisible(),
       ).toBeTruthy();
     }
   }
@@ -125,12 +125,12 @@ export class WalletServicesPage {
   async selectNetwork(currentNetwork: string, newNetwork: string) {
     await this.page
       .locator(
-        `xpath=.//p[text()='Select Default Network']/parent::div//button`
+        `xpath=.//p[text()='Select Default Network']/parent::div//button`,
       )
       .first()
       .click();
     await this.page.waitForSelector(
-      `xpath=.//li/div/p[text()='${newNetwork}']`
+      `xpath=.//li/div/p[text()='${newNetwork}']`,
     );
     await this.page
       .locator(`xpath=.//li/div/p[text()='${newNetwork}']`)
@@ -145,14 +145,14 @@ export class WalletServicesPage {
         .frameLocator("iframe")
         .first()
         .locator(`xpath=.//input[@data-testid='buy-crypto-fiat-amount-input']`)
-        .isVisible()
+        .isVisible(),
     ).toBeTruthy();
   }
 
   async selectCurrency(currency: string) {
     await this.page
       .locator(
-        `xpath=.//p[text()='Select Default Currency']/parent::div//button`
+        `xpath=.//p[text()='Select Default Currency']/parent::div//button`,
       )
       .first()
       .click();
@@ -225,7 +225,7 @@ export class WalletServicesPage {
     name: string,
     product: string,
     environment: string,
-    platform: string
+    platform: string,
   ) {
     await this.page.locator("#projectName").first().waitFor();
     await this.page.locator("#projectName").first().fill(name);
@@ -269,7 +269,7 @@ export class WalletServicesPage {
     expect(
       await this.page
         .locator("xpath=.//p[text()='Client ID is invalid']")
-        .isVisible()
+        .isVisible(),
     );
     await this.page
       .locator(`xpath=.//input[@placeholder='e.g. 123456789012345678']`)
@@ -287,7 +287,7 @@ export class WalletServicesPage {
     //   .locator(`xpath=.//div[text()="${environment}"]`)
     //   .first()
     //   .click();
-    console.log(environment)
+    console.log(environment);
     await this.page
       .locator('button:has-text(" Create Mainnet Project ")')
       .last()
@@ -306,10 +306,10 @@ export class WalletServicesPage {
     expect(
       await this.page
         .locator(
-          `xpath=.//p[text()="${email}"]/ancestor::td/following-sibling::td/div`
+          `xpath=.//p[text()="${email}"]/ancestor::td/following-sibling::td/div`,
         )
         .first()
-        .textContent()
+        .textContent(),
     ).toContain(role);
   }
 
@@ -320,7 +320,7 @@ export class WalletServicesPage {
       .fill(name);
     await this.page
       .locator(
-        `xpath=.//h6[text()="${name}"]/parent::td/following-sibling::td[text()="${environment}"]`
+        `xpath=.//h6[text()="${name}"]/parent::td/following-sibling::td[text()="${environment}"]`,
       )
       .first()
       .click();
@@ -329,19 +329,19 @@ export class WalletServicesPage {
   async verifyProject(name: string, environment: string, platform: string) {
     await this.page.waitForSelector(`h1:has-text("${name}")`);
     console.log(
-      "text" + (await this.page.locator("#ProjectName").first().inputValue())
+      "text" + (await this.page.locator("#ProjectName").first().inputValue()),
     );
     expect(
-      await this.page.locator("#ProjectName").first().inputValue()
+      await this.page.locator("#ProjectName").first().inputValue(),
     ).toContain(name);
     expect(
-      await this.page.locator("#EnvironmentNetwork").first().inputValue()
+      await this.page.locator("#EnvironmentNetwork").first().inputValue(),
     ).toContain(environment);
     expect(
       await this.page
         .locator("xpath=.//input[@aria-placeholder='1 platforms selected']")
         .first()
-        .inputValue()
+        .inputValue(),
     ).toContain(platform);
   }
 
@@ -349,13 +349,13 @@ export class WalletServicesPage {
     expect(
       await this.page
         .locator('xpath=.//p[text()="Team Workspace"]/preceding-sibling::h6')
-        .textContent()
+        .textContent(),
     ).toEqual(name);
   }
 
   async verifyMessageIsDisplayed(message: string) {
     expect(
-      await this.page.locator(`xpath=.//p[text()="${message}"]`).isVisible()
+      await this.page.locator(`xpath=.//p[text()="${message}"]`).isVisible(),
     );
   }
 
@@ -377,10 +377,12 @@ export class WalletServicesPage {
     const d = new Date();
     const billName = "Plan: " + monthNames[d.getMonth()] + d.getFullYear();
     expect(
-      await this.page.locator(`xpath=.//h2[text()="${message}"]`).isVisible()
+      await this.page.locator(`xpath=.//h2[text()="${message}"]`).isVisible(),
     );
     expect(
-      await this.page.locator(`xpath=.//td/a[text()="${billName}"]`).isVisible()
+      await this.page
+        .locator(`xpath=.//td/a[text()="${billName}"]`)
+        .isVisible(),
     );
   }
 
@@ -390,7 +392,7 @@ export class WalletServicesPage {
     await this.page.click(`span:has-text("${chain}")`);
     await this.page
       .locator(
-        `xpath=.//textarea[@placeholder='Explain a bit about your project (optional)']`
+        `xpath=.//textarea[@placeholder='Explain a bit about your project (optional)']`,
       )
       .first()
       .fill("description");
@@ -408,7 +410,7 @@ export class WalletServicesPage {
     await this.page.waitForSelector(`xpath=.//button/div[text()='NFT']`);
     await this.page.locator(`xpath=.//button/div[text()='NFT']`).last().click();
     expect(
-      await this.page.locator(`xpath=.//div/p[text()='${name}']`).isVisible()
+      await this.page.locator(`xpath=.//div/p[text()='${name}']`).isVisible(),
     ).toBeTruthy();
   }
 
@@ -422,7 +424,7 @@ export class WalletServicesPage {
       .locator(`xpath=.//input[contains(@aria-label, 'Please type')]`)
       .fill(name);
     await this.page.click(
-      'button:has-text(" I understand, archive this project ")'
+      'button:has-text(" I understand, archive this project ")',
     );
   }
 
@@ -434,7 +436,7 @@ export class WalletServicesPage {
     await this.page.click('p:has-text("Personal Workspace")');
     await this.page.click('button:has-text("+ Add a new team")');
     await this.page.waitForSelector(
-      "xpath=.//input[contains(@aria-label, 'Enter a team name')]"
+      "xpath=.//input[contains(@aria-label, 'Enter a team name')]",
     );
     await this.page
       .locator(`xpath=.//input[contains(@aria-label, 'Enter a team name')]`)

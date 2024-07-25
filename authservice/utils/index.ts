@@ -1,11 +1,5 @@
-import {
-  test,
-  Page,
-  Browser,
-  expect,
-} from "@playwright/test";
+import { Page, Browser, expect } from "@playwright/test";
 import confirmEmail from "./confirmEmail";
-import config from "../../index.config";
 import { Link } from "mailosaur/lib/models";
 import Mailosaur from "mailosaur";
 import { generate } from "generate-password";
@@ -38,15 +32,23 @@ const randomEmail = generate({
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
-  const promise = new Promise<void>(async (resolve) => {
-    while (!stopped) {
-      try {
-        if (await page.isVisible("text=New login detected")) {
-          await page.click('button:has-text("Cancel")', { force: true });
+
+  const promise = new Promise<void>((resolve, reject) => {
+    async function checkShareTransfer() {
+      while (!stopped) {
+        try {
+          if (await page.isVisible("text=New login detected")) {
+            await page.click('button:has-text("Cancel")', { force: true });
+          }
+        } catch (err) {
+          console.log(err);
+          return reject(err);
         }
-      } catch(err) {console.log(err)}
+      }
+      resolve();
     }
-    resolve();
+
+    checkShareTransfer().catch((error) => reject(error));
   });
 
   return async () => {
@@ -57,7 +59,7 @@ function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
 
 async function waitForTkeyRehydration(
   page: Page,
-  size = 100
+  size = 100,
 ): Promise<boolean> {
   return new Promise(function (resolve) {
     page.on("console", (msg) => {
@@ -86,27 +88,6 @@ async function waitForAddPassword(page: Page): Promise<boolean> {
     });
   });
 }
-
-async function waitForSessionStorage(page: Page, openloginURL: string) {
-  const sessionStorage: any = await page.evaluate(() => sessionStorage);
-  const shares = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey.shares;
-  const noShare = Object.keys(shares).length;
-  if (noShare < 2) {
-    // console.log("not enough shares");
-    await page.goto(`${openloginURL}/wallet/home`);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
-    await page.waitForTimeout(3000);
-    await waitForTkeyRehydration(page);
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-  }
-  return;
-}
-
 async function waitForChangePassword(page: Page): Promise<boolean> {
   return new Promise(function (resolve) {
     page.on("console", (msg) => {
@@ -132,20 +113,28 @@ async function waitForDeleteShare(page: Page): Promise<boolean> {
     });
   });
 }
-
 function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   let stopped = false;
-  const promise = new Promise<void>(async (resolve) => {
-    while (!stopped) {
-      try {
-        if (await page.getByLabel("Set up 2FA").isVisible())
-          await page
-            .locator("xpath=.//button[text()='Skip for Now']")
-            .first()
-            .click();
-      } catch(err) {console.log(err)}
+
+  const promise = new Promise<void>((resolve, reject) => {
+    async function check2FA() {
+      while (!stopped) {
+        try {
+          if (await page.getByLabel("Set up 2FA").isVisible()) {
+            await page
+              .locator("xpath=.//button[text()='Skip for Now']")
+              .first()
+              .click();
+          }
+        } catch (err) {
+          console.log(err);
+          return reject(err);
+        }
+      }
+      resolve();
     }
-    resolve();
+
+    check2FA().catch((error) => reject(error));
   });
 
   return async () => {
@@ -160,69 +149,82 @@ async function catchErrorAndExit(page: Page): Promise<boolean | undefined> {
       console.log("Error: Test failed due to too many requests");
       return true;
     }
-  } catch(err) {console.log(err)}
+  } catch (err) {
+    console.log(err);
+  }
   try {
     if (
       await page.isVisible(
-        "text=Unable to detect login share from the Auth Network"
+        "text=Unable to detect login share from the Auth Network",
       )
     ) {
       console.log(
-        "Error: Test failed to detect login share from the Auth Network"
+        "Error: Test failed to detect login share from the Auth Network",
       );
       return true;
     }
-  } catch(err) {console.log(err)}
+  } catch (err) {
+    console.log(err);
+  }
   try {
     if (
       await page.isVisible(
-        "text=Unable to connect to Auth Network. The Network may be congested."
+        "text=Unable to connect to Auth Network. The Network may be congested.",
       )
     ) {
       console.log(
-        "Error: Test failed to connect to Auth Network. The Network may be congested."
+        "Error: Test failed to connect to Auth Network. The Network may be congested.",
       );
       return true;
     }
-  }catch(err) {console.log(err)}
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 function catchError(page: Page): () => Promise<void> {
   let stopped = false;
-  const promise = new Promise<void>(async (resolve) => {
-    while (!stopped) {
-      try {
-        if (await page.isVisible("text=Too many requests"))
-          console.log("Error: Test failed due to too many requests");
-      } catch {
-        return true;
+  const promise = new Promise<void>((resolve, reject) => {
+    async function checkPage() {
+      while (!stopped) {
+        try {
+          if (await page.isVisible("text=Too many requests")) {
+            console.log("Error: Test failed due to too many requests");
+          }
+        } catch (error) {
+          return reject(true);
+        }
+        try {
+          if (
+            await page.isVisible(
+              "text=Unable to detect login share from the Auth Network",
+            )
+          ) {
+            console.log(
+              "Error: Test failed to detect login share from the Auth Network",
+            );
+          }
+        } catch (error) {
+          return reject(true);
+        }
+        try {
+          if (
+            await page.isVisible(
+              "text=Unable to connect to Auth Network. The Network may be congested.",
+            )
+          ) {
+            console.log(
+              "Error: Test failed to connect to Auth Network. The Network may be congested.",
+            );
+          }
+        } catch (error) {
+          return reject(true);
+        }
       }
-      try {
-        if (
-          await page.isVisible(
-            "text=Unable to detect login share from the Auth Network"
-          )
-        )
-          console.log(
-            "Error: Test failed to detect login share from the Auth Network"
-          );
-      } catch {
-        return true;
-      }
-      try {
-        if (
-          await page.isVisible(
-            "text=Unable to connect to Auth Network. The Network may be congested."
-          )
-        )
-          console.log(
-            "Error: Test failed to connect to Auth Network. The Network may be congested."
-          );
-      } catch {
-        return true;
-      }
+      resolve();
     }
-    resolve();
+
+    checkPage().catch((error) => reject(error));
   });
 
   return async () => {
@@ -260,7 +262,7 @@ async function signInWithGoogle({
 async function signInWithEmailIntoTorusWallet(
   page: Page,
   email: string,
-  browser: Browser
+  browser: Browser,
 ): Promise<boolean> {
   try {
     await page.fill('[placeholder="Enter your email"]', email);
@@ -273,7 +275,7 @@ async function signInWithEmailIntoTorusWallet(
       process.env.MAILOSAUR_SERVER_ID || "",
       {
         sentTo: email,
-      }
+      },
     );
     let link = findLink(mailBox.html?.links || [], "Approve login request");
     if (!link) {
@@ -289,7 +291,7 @@ async function signInWithEmailIntoTorusWallet(
       "text=Close this and return to your previous window",
       {
         timeout: 10000,
-      }
+      },
     );
     await page2.close();
     return true;
@@ -336,7 +338,9 @@ async function authorizeWithGitHub({ page }: { page: Page }) {
     await page.click('button:has-text("Authorize TorusLabs")', {
       timeout: 9000,
     });
-  } catch(err) {console.log(err)}
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 async function signInWithTwitter({
@@ -359,7 +363,7 @@ async function signInWithTwitter({
   const appName =
     process.env.PLATFORM === "testing" ? "torus-test-auth0" : "Web3Auth";
   await page.waitForSelector(
-    `h2:text("Authorize ${appName} to access your account?")`
+    `h2:text("Authorize ${appName} to access your account?")`,
   );
   await page.click(`input:has-text("Sign in")`);
   // Only for the first time users, they have to click on authorize web3Auth app
@@ -369,7 +373,9 @@ async function signInWithTwitter({
       timeout: 1000,
     });
     await page.click(`input:has-text("Authorize app")`);
-  } catch(err) {console.log(err)}
+  } catch (err) {
+    console.log(err);
+  }
 
   await page.waitForSelector('text="Sign in to Twitter"');
   await page.fill('input[autocomplete="username"]', twitter.account);
@@ -378,29 +384,35 @@ async function signInWithTwitter({
 
   // Login tests are slow tests, >1 min is consumed in the redirection loop from the social provider to finally reach wallet/home. Hence the max test timeout.
   // FLOW: social-redirections => [host]/auth(SLOW) => [host]/register(SLOW) => [host]/wallet/home
-  await slowOperation(async () => {
-    await page.click(`div[role="button"] span:has-text("Log in")`);
-    try {
-      // smaller timeout, we don't want to wait here for longer
-      await page.waitForSelector('text="Help us keep your account safe."', {
-        timeout: 1000,
-      });
-      await page.fill('input[autocomplete="email"]', twitter.email);
-      await page.click(`div[role="button"] span:has-text("Next")`);
-    } catch(err) {console.log(err)}
-    try {
-      await page.waitForSelector("input#allow", {
-        timeout: 1000,
-      });
-      await page.click("input#allow");
-    } catch(err) {console.log(err)}
-  }, 3 * 60 * 1000);
+  await slowOperation(
+    async () => {
+      await page.click(`div[role="button"] span:has-text("Log in")`);
+      try {
+        // smaller timeout, we don't want to wait here for longer
+        await page.waitForSelector('text="Help us keep your account safe."', {
+          timeout: 1000,
+        });
+        await page.fill('input[autocomplete="email"]', twitter.email);
+        await page.click(`div[role="button"] span:has-text("Next")`);
+      } catch (err) {
+        console.log(err);
+      }
+      try {
+        await page.waitForSelector("input#allow", {
+          timeout: 1000,
+        });
+        await page.click("input#allow");
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    3 * 60 * 1000,
+  );
 }
 
 async function signInWithTwitterWithoutLogin({
   page,
   twitter,
-  openloginURL,
 }: {
   page: Page;
   twitter: {
@@ -416,18 +428,34 @@ async function signInWithTwitterWithoutLogin({
   await page.click("xpath=.//input[@value='Sign In']");
 }
 
-export async function slowOperation(op: () => Promise<any>, timeout?: number) {
-  // Set slow timeout
-  test.setTimeout(timeout || 2 * 60 * 1000); // => 2 mins timeout
-  await op();
-  // Reset timeout
-  test.setTimeout(config.timeout || 0);
+export async function slowOperation<T>(
+  op: () => Promise<T>,
+  timeout?: number,
+): Promise<T> {
+  if (timeout) {
+    return new Promise<T>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error("Operation timed out"));
+      }, timeout);
+
+      op()
+        .then((result) => {
+          clearTimeout(timer);
+          resolve(result);
+        })
+        .catch((error) => {
+          clearTimeout(timer);
+          reject(error);
+        });
+    });
+  } else {
+    return op();
+  }
 }
 
 async function signInWithFacebook({
   page,
   FB,
-  openloginURL,
 }: {
   page: Page;
   FB: {
@@ -449,12 +477,14 @@ async function signInWithFacebook({
   await page.click(`button:has-text("Login"), [name="login"]`);
   try {
     await page.waitForSelector(
-      `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
+      `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`,
     );
     await page.click(
-      `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`
+      `button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`,
     );
-  } catch(err) {console.log(err)}
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 async function signInWithDiscord({
@@ -570,7 +600,7 @@ function findLink(links: Link[], text: string) {
 async function signInWithEmail(
   page: Page,
   email: string,
-  browser: Browser
+  browser: Browser,
 ): Promise<boolean> {
   try {
     console.log("Email:" + email);
@@ -585,7 +615,7 @@ async function signInWithEmail(
         process.env.MAILOSAUR_SERVER_ID || "",
         {
           sentTo: email,
-        }
+        },
       );
       let link = findLink(mailBox.html?.links || [], "Approve login request");
       if (!link) {
@@ -598,7 +628,7 @@ async function signInWithEmail(
       // Setup our JSON API endpoint
       const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
       const res = await axios.get(
-        `${ENDPOINT}&tag=${email.split("@")[0].split(".")[1]}&livequery=true`
+        `${ENDPOINT}&tag=${email.split("@")[0].split(".")[1]}&livequery=true`,
       );
       const inbox = await res.data;
       href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
@@ -610,7 +640,7 @@ async function signInWithEmail(
       "text=Close this and return to your previous window",
       {
         timeout: 10000,
-      }
+      },
     );
     await page2.close();
     return true;
@@ -624,7 +654,7 @@ async function signInWithEmailWithTestEmailApp(
   page: Page,
   email: string,
   browser: Browser,
-  tag: string
+  tag: string,
 ): Promise<boolean> {
   try {
     console.log("Email:" + email);
@@ -644,7 +674,7 @@ async function signInWithEmailWithTestEmailApp(
       "text=Close this and return to your previous window",
       {
         timeout: 10000,
-      }
+      },
     );
     await page2.close();
     return true;
@@ -660,7 +690,7 @@ async function signInWithEmailWithTestEmailOnDemoApp(
   browser: Browser,
   tag: string,
   option: string,
-  platform: string
+  platform: string,
 ): Promise<boolean> {
   try {
     await page.waitForSelector('xpath=.//select[@class="select"]');
@@ -698,7 +728,7 @@ async function signInWithEmailWithTestEmailOnDemoApp(
       "text=Close this and return to your previous window",
       {
         timeout: 10000,
-      }
+      },
     );
     await page2.close();
     await context2.close();
@@ -714,7 +744,7 @@ async function signInWithEmailWithTestEmailOnDemoAppV4(
   email: string,
   browser: Browser,
   tag: string,
-  option: string
+  option: string,
 ): Promise<boolean> {
   try {
     await page.waitForSelector('xpath=.//select[@class="select"]');
@@ -747,7 +777,7 @@ async function signInWithEmailWithTestEmailOnDemoAppV4(
       "text=Close this and return to your previous window",
       {
         timeout: 10000,
-      }
+      },
     );
     await page2.close();
     return true;
@@ -762,7 +792,7 @@ async function signInWithEmailWithTestEmailOnW3ADemoApp(
   email: string,
   browser: Browser,
   tag: string,
-  timestamp: number
+  timestamp: number,
 ): Promise<boolean> {
   try {
     console.log("Email:" + email);
@@ -776,14 +806,14 @@ async function signInWithEmailWithTestEmailOnW3ADemoApp(
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(
-      `${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`
+      `${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`,
     );
     const inbox = await res.data;
     const href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
     await pages[1]
       .locator(
-        `xpath=.//input[@aria-label='Please enter verification code. Digit 1']`
+        `xpath=.//input[@aria-label='Please enter verification code. Digit 1']`,
       )
       .fill(href);
     useAutoCancel2FASetup(pages[1]);
@@ -810,11 +840,11 @@ async function signInWithMobileNumber({
   const context2 = await browser.newContext();
   const page2 = await context2.newPage();
   await page2.goto(
-    "https://receive-sms.cc/Finland-Phone-Number/" + user.mobileNumberForSMS
+    "https://receive-sms.cc/Finland-Phone-Number/" + user.mobileNumberForSMS,
   );
   try {
     await page2.waitForSelector(
-      'div:has-text("is your verification code on Web3Auth")'
+      'div:has-text("is your verification code on Web3Auth")',
     );
   } catch {
     await page2.reload();
@@ -822,7 +852,7 @@ async function signInWithMobileNumber({
   const otp =
     (await page2
       .locator(
-        "xpath=.//div[contains(text(),'is your verification code on Web3Auth')]/span"
+        "xpath=.//div[contains(text(),'is your verification code on Web3Auth')]/span",
       )
       .first()
       .textContent()) || "";
@@ -830,7 +860,7 @@ async function signInWithMobileNumber({
   await page2.close();
   await page
     .locator(
-      "xpath=.//input[@aria-label='Please enter verification code. Digit 1']"
+      "xpath=.//input[@aria-label='Please enter verification code. Digit 1']",
     )
     .fill(otp);
 }
@@ -856,7 +886,7 @@ async function signInWithDapps({
     },
     {
       timeout: 20 * 1000,
-    }
+    },
   );
   expect(newEmail.subject).toContain("Verify your email");
   let link = findLink(newEmail.html?.links || [], "Approve login request");
@@ -871,7 +901,7 @@ async function signInWithDapps({
     "text=Close this and return to your previous window",
     {
       timeout: 10000,
-    }
+    },
   );
   await page3.close();
   await delay(3000);
@@ -933,7 +963,6 @@ export {
   changePasswordShare,
   catchError,
   catchErrorAndExit,
-  waitForSessionStorage,
   signInWithGitHub,
   signInWithTwitterWithoutLogin,
   authorizeWithGitHub,
