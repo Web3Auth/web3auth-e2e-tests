@@ -531,11 +531,12 @@ async function signInWithEmailWithTestEmailAppInDemoApp(
   timestamp: number
 ): Promise<boolean> {
   try {
-    console.log("Email:" + email);
-    const frame = page.frame("walletIframe");
-    await frame?.fill('[placeholder="name@domain.com"]', email);
-    await frame?.click('button:has-text("Login with Email")');
-    await delay(20000);
+    console.log(`Email:${email}`);
+    await page.locator(`//iframe[contains(@id,"walletIframe")]`).waitFor({ state: "visible" });
+    const frame = page.frameLocator(`//iframe[contains(@id,"walletIframe")]`);
+    await frame?.locator('[placeholder="name@domain.com"]').fill(email);
+    await frame?.locator('button:has-text("Login with Email")').click();
+    await delay(10000);
     const pages = await browser.contexts()[0].pages();
     // pages[0] is the first page, and pages[1] is the new page
     await pages[1].bringToFront(); // Bring the new page to the front
