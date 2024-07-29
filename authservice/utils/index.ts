@@ -1,25 +1,30 @@
-import { Browser, expect, Page, test } from "@playwright/test";
-import axios from "axios";
-import Chance from "chance";
+import { Browser, expect, Page } from "@playwright/test";
 import { generate } from "generate-password";
+import Mailosaur from "mailosaur";
 import { Link } from "mailosaur/lib/models";
 
-import config from "../../index.config";
 import confirmEmail from "./confirmEmail";
+process.env.APP_VERSION = "v4";
 export const DEFAULT_PLATFORM = "prod";
-export const openloginversion = process.env.APP_VERSION || "v3";
+const openloginversion = process.env.APP_VERSION;
+import axios from "axios";
+import ChanceJS from "chance";
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 console.log(`Environment:${process.env.PLATFORM}`);
 console.log(`App Version:${openloginversion}`);
 const env_map: { [key: string]: string } = {
-  prod: `https://test-dashboard.web3auth.io`,
+  prod: `https://app.openlogin.com/${openloginversion}`,
   beta: `https://beta.openlogin.com/${openloginversion}`,
   cyan: `https://cyan.openlogin.com/${openloginversion}`,
-  staging: `https://dev-dashboard.web3auth.io`,
+  staging: `https://staging.openlogin.com/${openloginversion}`,
   testing: `https://testing.openlogin.com/${openloginversion}`,
   celeste: `https://celeste.openlogin.com/${openloginversion}`,
   aqua: `https://aqua.openlogin.com/${openloginversion}`,
   local: "http://localhost:3000",
+  torusV2: "https://app.tor.us",
+  demo: "https://demo-openlogin.web3auth.io/",
+  demoV4: "https://demo-openlogin-v4.web3auth.io/",
+  demoV6: "https://demo-openlogin-v6.web3auth.io/",
 };
 const randomEmail = generate({
   length: 20,
@@ -28,21 +33,23 @@ const randomEmail = generate({
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
-  const promise = new Promise<void>((resolve) => {
-    const checkLogin = async () => {
+
+  const promise = new Promise<void>((resolve, reject) => {
+    async function checkShareTransfer() {
       while (!stopped) {
         try {
           if (await page.isVisible("text=New login detected")) {
             await page.click('button:has-text("Cancel")', { force: true });
           }
-        } catch {
-          // Handle error
+        } catch (err) {
+          console.log(err);
+          return reject(err);
         }
       }
       resolve();
-    };
+    }
 
-    checkLogin();
+    checkShareTransfer().catch((error) => reject(error));
   });
 
   return async () => {
@@ -76,26 +83,6 @@ async function waitForAddPassword(page: Page): Promise<boolean> {
     });
   });
 }
-
-async function waitForSessionStorage(page: Page, openloginURL: string) {
-  const sessionStorage: { tKeyModule: string } = await page.evaluate(() => sessionStorage);
-  const { shares } = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey;
-  const noShare = Object.keys(shares).length;
-  if (noShare < 2) {
-    // console.log("not enough shares");
-    await page.goto(`${openloginURL}/wallet/home`);
-    await page.waitForURL(`${openloginURL}/wallet/home`, {
-      waitUntil: "load",
-    });
-    await page.waitForTimeout(3000);
-    await waitForTkeyRehydration(page);
-    await page.goto(`${openloginURL}/wallet/account`);
-    await page.waitForURL(`${openloginURL}/wallet/account`, {
-      waitUntil: "load",
-    });
-  }
-}
-
 async function waitForChangePassword(page: Page): Promise<boolean> {
   return new Promise(function (resolve) {
     page.on("console", (msg) => {
@@ -115,24 +102,25 @@ async function waitForDeleteShare(page: Page): Promise<boolean> {
     });
   });
 }
-
 function useAutoCancel2FASetup(page: Page): () => Promise<void> {
   let stopped = false;
-  const promise = new Promise<void>((resolve) => {
-    const check2FA = async () => {
+
+  const promise = new Promise<void>((resolve, reject) => {
+    async function check2FA() {
       while (!stopped) {
         try {
           if (await page.getByLabel("Set up 2FA").isVisible()) {
             await page.locator("xpath=.//button[text()='Skip for Now']").first().click();
           }
-        } catch {
-          // Handle error
+        } catch (err) {
+          console.log(err);
+          return reject(err);
         }
       }
       resolve();
-    };
+    }
 
-    check2FA();
+    check2FA().catch((error) => reject(error));
   });
 
   return async () => {
@@ -147,58 +135,58 @@ async function catchErrorAndExit(page: Page): Promise<boolean | undefined> {
       console.log("Error: Test failed due to too many requests");
       return true;
     }
-  } catch {
-    // Handle error
+  } catch (err) {
+    console.log(err);
   }
   try {
     if (await page.isVisible("text=Unable to detect login share from the Auth Network")) {
       console.log("Error: Test failed to detect login share from the Auth Network");
       return true;
     }
-  } catch {
-    // Handle error
+  } catch (err) {
+    console.log(err);
   }
   try {
     if (await page.isVisible("text=Unable to connect to Auth Network. The Network may be congested.")) {
       console.log("Error: Test failed to connect to Auth Network. The Network may be congested.");
       return true;
     }
-  } catch {
-    // Handle error
+  } catch (err) {
+    console.log(err);
   }
 }
 
 function catchError(page: Page): () => Promise<void> {
   let stopped = false;
-  const promise = new Promise<void>((resolve) => {
-    const checkConditions = async () => {
+  const promise = new Promise<void>((resolve, reject) => {
+    async function checkPage() {
       while (!stopped) {
         try {
           if (await page.isVisible("text=Too many requests")) {
             console.log("Error: Test failed due to too many requests");
           }
-        } catch {
-          return true;
+        } catch (error) {
+          return reject(true);
         }
         try {
           if (await page.isVisible("text=Unable to detect login share from the Auth Network")) {
             console.log("Error: Test failed to detect login share from the Auth Network");
           }
-        } catch {
-          return true;
+        } catch (error) {
+          return reject(true);
         }
         try {
           if (await page.isVisible("text=Unable to connect to Auth Network. The Network may be congested.")) {
             console.log("Error: Test failed to connect to Auth Network. The Network may be congested.");
           }
-        } catch {
-          return true;
+        } catch (error) {
+          return reject(true);
         }
       }
       resolve();
-    };
+    }
 
-    checkConditions();
+    checkPage().catch((error) => reject(error));
   });
 
   return async () => {
@@ -220,15 +208,47 @@ async function signInWithGoogle({
   try {
     await page.waitForURL("https://accounts.google.com/**");
     await page.waitForSelector('input[type="Email"]');
-    expect(await page.isVisible('input[type="Email"]'));
+    expect(await page.isVisible('input[type="Email"]')).toBe(true);
     await page.fill('input[type="Email"]', google.email);
-    expect(await page.isVisible('button:has-text("Next")'));
+    expect(await page.isVisible('button:has-text("Next")')).toBe(true);
     await page.click(`button:has-text("Next")`);
     await page.fill('input[type="password"]', google.password);
     await page.click(`button:has-text("Next")`);
     await page.waitForURL("https://myaccount.google.com/**");
     return true;
   } catch {
+    return false;
+  }
+}
+
+async function signInWithEmailIntoTorusWallet(page: Page, email: string, browser: Browser): Promise<boolean> {
+  try {
+    await page.fill('[placeholder="Enter your email"]', email);
+    await delay(5000);
+    await page.click('div:has-text("Continue with Email")');
+    //await page.waitForSelector("text=Verify your email");
+    await delay(3000);
+    const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+    const mailBox = await mailosaur.messages.get(process.env.MAILOSAUR_SERVER_ID || "", {
+      sentTo: email,
+    });
+    let link = findLink(mailBox.html?.links || [], "Approve login request");
+    if (!link) {
+      link = findLink(mailBox.html?.links || [], "Verify my email");
+    }
+    await mailosaur.messages.del(mailBox?.id || "");
+    const href = link?.href || "";
+
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector("text=Close this and return to your previous window", {
+      timeout: 10000,
+    });
+    await page2.close();
+    return true;
+  } catch (err) {
+    console.error(err);
     return false;
   }
 }
@@ -255,7 +275,7 @@ async function signInWithGitHub({
     await page.click('input[value="Sign in"]');
 
     await page.waitForSelector("text=Create repository");
-    expect(page.isVisible("text=Create repository"));
+    expect(page.isVisible("text=Create repository")).toBe(true);
     return true;
   } catch {
     return false;
@@ -270,8 +290,8 @@ async function authorizeWithGitHub({ page }: { page: Page }) {
     await page.click('button:has-text("Authorize TorusLabs")', {
       timeout: 9000,
     });
-  } catch {
-    // Handle error
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -298,9 +318,12 @@ async function signInWithTwitter({
   // Only for the first time users, they have to click on authorize web3Auth app
   try {
     // smaller timeout, we don't want to wait here for longer
+    await page.waitForSelector(`input:has-text("Authorize app")`, {
+      timeout: 1000,
+    });
     await page.click(`input:has-text("Authorize app")`);
-  } catch {
-    // Handle error
+  } catch (err) {
+    console.log(err);
   }
 
   await page.waitForSelector('text="Sign in to Twitter"');
@@ -321,15 +344,15 @@ async function signInWithTwitter({
         await page.fill('input[autocomplete="email"]', twitter.email);
         await page.click(`div[role="button"] span:has-text("Next")`);
       } catch (err) {
-        // Handle error
+        console.log(err);
       }
       try {
         await page.waitForSelector("input#allow", {
           timeout: 1000,
         });
         await page.click("input#allow");
-      } catch {
-        // Handle error
+      } catch (err) {
+        console.log(err);
       }
     },
     3 * 60 * 1000
@@ -354,12 +377,25 @@ async function signInWithTwitterWithoutLogin({
   await page.click("xpath=.//input[@value='Sign In']");
 }
 
-export async function slowOperation(op: () => Promise<void>, timeout?: number) {
-  // Set slow timeout
-  test.setTimeout(timeout || 2 * 60 * 1000); // => 2 mins timeout
-  await op();
-  // Reset timeout
-  test.setTimeout(config.timeout || 0);
+export async function slowOperation<T>(op: () => Promise<T>, timeout?: number): Promise<T> {
+  if (timeout) {
+    return new Promise<T>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error("Operation timed out"));
+      }, timeout);
+
+      op()
+        .then((result) => {
+          clearTimeout(timer);
+          resolve(result);
+        })
+        .catch((error) => {
+          clearTimeout(timer);
+          reject(error);
+        });
+    });
+  }
+  return op();
 }
 
 async function signInWithFacebook({
@@ -387,8 +423,8 @@ async function signInWithFacebook({
   try {
     await page.waitForSelector(`button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`);
     await page.click(`button:has-text("Continue"), [aria-label="Continue"], [aria-label="Continue as ${FB.firstName}"]`);
-  } catch {
-    // Handle error
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -500,30 +536,145 @@ function findLink(links: Link[], text: string) {
   return null;
 }
 
-async function signInWithEmailWithTestEmailApp(page: Page, email: string, browser: Browser, tag: string, timestamp: number): Promise<boolean> {
+async function signInWithEmail(page: Page, email: string, browser: Browser): Promise<boolean> {
   try {
     console.log(`Email:${email}`);
-    await page.fill('[placeholder="name@domain.com"]', email);
-    await page.click('button:has-text("Login with Email")');
-    await delay(20000);
-    const pages = await browser.contexts()[0].pages();
-    // pages[0] is the first page, and pages[1] is the new page
-    await pages[1].bringToFront(); // Bring the new page to the front
-    // Setup our JSON API endpoint
-    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
-    const inbox = await res.data;
-    const href = inbox.emails[0].subject.match(/\d+/)[0];
-    console.error(href);
-    await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(href);
-    useAutoCancel2FASetup(pages[1]);
+    await page.fill("#passwordless-email", email);
+    await page.getByLabel("Connect with Phone or Email").click();
+    await page.waitForSelector("text=Verify your email");
+    await delay(3000);
+    let href;
+    if (process.env.MAIL_APP === "mailosaur") {
+      const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
+      const mailBox = await mailosaur.messages.get(process.env.MAILOSAUR_SERVER_ID || "", {
+        sentTo: email,
+      });
+      let link = findLink(mailBox.html?.links || [], "Approve login request");
+      if (!link) {
+        link = findLink(mailBox.html?.links || [], "Verify my email");
+      }
+      await mailosaur.messages.del(mailBox?.id || "");
+      href = link?.href || "";
+    }
+    if (process.env.MAIL_APP === "testmail") {
+      // Setup our JSON API endpoint
+      const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+      const res = await axios.get(`${ENDPOINT}&tag=${email.split("@")[0].split(".")[1]}&livequery=true`);
+      const inbox = await res.data;
+      href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    }
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector("text=Close this and return to your previous window", {
+      timeout: 10000,
+    });
+    await page2.close();
     return true;
   } catch (err) {
     console.error(err);
     return false;
   }
 }
-async function signInWithEmailWithTestEmailAppInDemoApp(
+
+async function signInWithEmailWithTestEmailApp(page: Page, email: string, browser: Browser, tag: string): Promise<boolean> {
+  try {
+    console.log(`Email:${email}`);
+    await page.fill("#passwordless-email", email);
+    await page.getByLabel("Connect with Phone or Email").click();
+    await page.waitForSelector("text=Verify your email");
+    await delay(3000);
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
+    const inbox = await res.data;
+    const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector("text=Close this and return to your previous window", {
+      timeout: 10000,
+    });
+    await page2.close();
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
+async function signInWithEmailWithTestEmailOnDemoApp(
+  page: Page,
+  email: string,
+  browser: Browser,
+  tag: string,
+  option: string,
+  platform: string
+): Promise<boolean> {
+  try {
+    await page.waitForSelector(`[data-testid="loginProvider"]`);
+    await page.click(`[data-testid="loginProvider"]`);
+    await page.click(`//*[@data-testid="loginProvider"]//span[text()="email passwordless"]`);
+
+    console.log(`Email:${email}`);
+    await page.fill('input[data-testid="loginHint"]', email);
+    await page.click('button:has-text("Login with email passwordless")');
+    await page.waitForSelector("text=Verify your email");
+    await delay(5000);
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
+    const inbox = await res.data;
+    const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector("text=Close this and return to your previous window", {
+      timeout: 10000,
+    });
+    await page2.close();
+    await context2.close();
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
+async function signInWithEmailWithTestEmailOnDemoAppV4(page: Page, email: string, browser: Browser, tag: string, option: string): Promise<boolean> {
+  try {
+    await page.waitForSelector('xpath=.//select[@class="select"]');
+    await page.locator(`xpath=.//option[text()="${option}"]/parent::select`).first().selectOption(option);
+    await page.locator(`xpath=.//option[text()="email_passwordless"]/parent::select`).first().selectOption("email_passwordless");
+    console.log(`Email:${email}`);
+    await page.fill('[placeholder="Enter an email"]', email);
+    // await page
+    //   .locator(`xpath=.//option[text()="code"]/parent::select`)
+    //   .first()
+    //   .selectOption("link");
+    await page.click('button:has-text("Login with email passwordless")');
+    await page.waitForSelector("text=Verify your email");
+    await delay(3000);
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
+    const inbox = await res.data;
+    const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector("text=Close this and return to your previous window", {
+      timeout: 10000,
+    });
+    await page2.close();
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
+async function signInWithEmailWithTestEmailOnW3ADemoApp(
   page: Page,
   email: string,
   browser: Browser,
@@ -532,21 +683,20 @@ async function signInWithEmailWithTestEmailAppInDemoApp(
 ): Promise<boolean> {
   try {
     console.log(`Email:${email}`);
-    await page.locator(`//iframe[contains(@id,"walletIframe")]`).waitFor({ state: "visible" });
-    const frame = page.frameLocator(`//iframe[contains(@id,"walletIframe")]`);
-    await frame?.locator('[placeholder="name@domain.com"]').fill(email);
-    await frame?.locator('button:has-text("Login with Email")').click();
-    await delay(10000);
+    await page.fill('[placeholder="name@example.com"]', email);
+    await page.click('button:has-text("Continue With Email")');
+    await delay(15000);
     const pages = await browser.contexts()[0].pages();
     // pages[0] is the first page, and pages[1] is the new page
     await pages[1].bringToFront(); // Bring the new page to the front
+
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
     const inbox = await res.data;
     const href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
-    await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(href);
+    await pages[1].locator(`xpath=.//input[@aria-label='Please enter verification code. Digit 1']`).fill(href);
     useAutoCancel2FASetup(pages[1]);
     return true;
   } catch (err) {
@@ -610,34 +760,46 @@ async function signInWithDapps({ page, browser, testEmail }: { page: Page; brows
     timeout: 10000,
   });
   await page3.close();
+  await delay(3000);
   await page.getByLabel("Set up 2FA").waitFor();
-  await page.locator("xpath=.//button").first().click();
+  await page.locator("xpath=.//button[text()='Skip for Now']").first().click();
   await delay(5000);
 }
 
 function generateRandomEmail() {
-  if (process.env.MAIL_APP == "mailosaur") {
+  if (process.env.MAIL_APP === "mailosaur") {
     return `${randomEmail}${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
   }
-  if (process.env.MAIL_APP == "testmail") {
+  if (process.env.MAIL_APP === "testmail") {
     return generateEmailWithTag();
   }
-}
-
-function generateEmailWithTag() {
-  // Randomly generating the tag...
-  const chance = new Chance();
-  const tag = chance.string({
-    length: 12,
-    pool: "abcdefghijklmnopqrstuvwxyz0123456789",
-  });
-  return `kelg8.${tag}@inbox.testmail.app`;
 }
 
 function delay(time: number | undefined) {
   return new Promise(function (resolve) {
     setTimeout(resolve, time);
   });
+}
+
+function getBackUpPhrase(environment: string | undefined) {
+  if (environment === "prod") {
+    return process.env.BACKUP_PHRASE_PROD;
+  }
+  if (environment === "cyan") {
+    return process.env.BACKUP_PHRASE_CYAN;
+  }
+  if (environment === "aqua") {
+    return process.env.BACKUP_PHRASE_AQUA;
+  }
+}
+function generateEmailWithTag() {
+  // Randomly generating the tag...
+  const chance = new ChanceJS();
+  const tag = chance.string({
+    length: 12,
+    pool: "abcdefghijklmnopqrstuvwxyz0123456789",
+  });
+  return `kelg8.${tag}@inbox.testmail.app`;
 }
 
 export {
@@ -651,11 +813,17 @@ export {
   deleteCurrentDeviceShare,
   env_map,
   findLink,
+  generateEmailWithTag,
   generateRandomEmail,
+  getBackUpPhrase,
   signInWithDapps,
   signInWithDiscord,
+  signInWithEmail,
+  signInWithEmailIntoTorusWallet,
   signInWithEmailWithTestEmailApp,
-  signInWithEmailWithTestEmailAppInDemoApp,
+  signInWithEmailWithTestEmailOnDemoApp,
+  signInWithEmailWithTestEmailOnDemoAppV4,
+  signInWithEmailWithTestEmailOnW3ADemoApp,
   signInWithFacebook,
   signInWithGitHub,
   signInWithGoogle,
@@ -664,6 +832,5 @@ export {
   signInWithTwitterWithoutLogin,
   useAutoCancel2FASetup,
   useAutoCancelShareTransfer,
-  waitForSessionStorage,
   waitForTkeyRehydration,
 };
