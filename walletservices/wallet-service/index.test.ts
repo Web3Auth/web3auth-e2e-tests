@@ -1,7 +1,7 @@
-import { test, expect, Page } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
+
+import { catchErrorAndExit, delay, signInWithEmailWithTestEmailApp } from "../utils";
 import { WalletServicesPage } from "./WalletServicesPage";
-import { delay } from "../utils/index";
-import { signInWithEmailWithTestEmailApp, catchErrorAndExit } from "../utils";
 
 const walletServiceLoginURL = "https://develop-wallet.web3auth.io";
 

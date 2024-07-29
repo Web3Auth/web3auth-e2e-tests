@@ -15,21 +15,16 @@ export class AccountsPage {
   }
 
   async verify2FARecommdation() {
-    return await this.page.isVisible(
-      "text=We strongly recommend you to enable 2FA on your account"
-    );
+    return this.page.isVisible("text=We strongly recommend you to enable 2FA on your account");
   }
+
   async enableDeviceShare() {
-    await this.page
-      .locator(
-        "text=I understand that clearing browser history and cookies will delete this factor on my browser."
-      )
-      .click();
+    await this.page.locator("text=I understand that clearing browser history and cookies will delete this factor on my browser.").click();
     await this.page.click('button:has-text("Save this device")');
   }
 
   async enableBackUpEmail(backupEmail: string) {
-    console.log("Backup Email:" + backupEmail);
+    console.log(`Backup Email:${backupEmail}`);
     await this.page.fill('[placeholder="Email"]', backupEmail);
     await this.page.click('button:has-text("Send me my recovery factor")');
   }
@@ -38,7 +33,7 @@ export class AccountsPage {
     let seedArray: string[];
     let seedEmail;
     let seedString = "";
-    if (process.env.MAIL_APP == "mailosaur") {
+    if (process.env.MAIL_APP === "mailosaur") {
       const seedEmail = await mailosaur.messages.get(
         process.env.MAILOSAUR_SERVER_ID || "",
         {
@@ -54,19 +49,15 @@ export class AccountsPage {
           .split("<")[0]
           .split(" ") || [];
       for (let i = 0; i < 23; i++) {
-        seedString += seedArray[i] + " ";
+        seedString += `${seedArray[i]} `;
       }
       seedString += seedArray[23];
       await mailosaur.messages.del(seedEmail?.id || "");
     }
-    if (process.env.MAIL_APP == "testmail") {
+    if (process.env.MAIL_APP === "testmail") {
       // Setup our JSON API endpoint
       const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-      const res = await axios.get(
-        `${ENDPOINT}&tag=${
-          backupEmail.split("@")[0].split(".")[1]
-        }&livequery=true`
-      );
+      const res = await axios.get(`${ENDPOINT}&tag=${backupEmail.split("@")[0].split(".")[1]}&livequery=true`);
       seedEmail = await res.data;
       seedArray =
         String(seedEmail.emails[0].html)
@@ -75,7 +66,7 @@ export class AccountsPage {
           .split("<")[0]
           .split(" ") || [];
       for (let i = 0; i < 23; i++) {
-        seedString += seedArray[i] + " ";
+        seedString += `${seedArray[i]} `;
       }
       seedString += seedArray[23];
     }
@@ -85,11 +76,7 @@ export class AccountsPage {
   async seedEmailWithTestMailApp(backupEmail: string) {
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-    const res = await axios.get(
-      `${ENDPOINT}&tag=${
-        backupEmail.split("@")[0].split(".")[1]
-      }&livequery=true`
-    );
+    const res = await axios.get(`${ENDPOINT}&tag=${backupEmail.split("@")[0].split(".")[1]}&livequery=true`);
     const seedEmail = await res.data;
     const seedArray =
       String(seedEmail.emails[0].html)
@@ -99,20 +86,15 @@ export class AccountsPage {
         .split(" ") || [];
     let seedString = "";
     for (let i = 0; i < 23; i++) {
-      seedString += seedArray[i] + " ";
+      seedString += `${seedArray[i]} `;
     }
     seedString += seedArray[23];
     return seedString;
   }
 
   async verifyRecoveryPhrase(seedString: string) {
-    await this.page
-      .locator('[placeholder="Paste your Recovery Factor"]')
-      .clear();
-    await this.page.fill(
-      '[placeholder="Paste your Recovery Factor"]',
-      seedString
-    );
+    await this.page.locator('[placeholder="Paste your Recovery Factor"]').clear();
+    await this.page.fill('[placeholder="Paste your Recovery Factor"]', seedString);
     await this.page.click('button:has-text("Verify")');
   }
 
@@ -135,9 +117,7 @@ export class AccountsPage {
 
   async addSocialRecoveryFactor(factor: string) {
     await this.page.locator("xpath=.//button[@aria-label='View more']").click();
-    await this.page
-      .locator(`xpath=.//img[@alt='${factor} Icon']/parent::button`)
-      .click();
+    await this.page.locator(`xpath=.//img[@alt='${factor} Icon']/parent::button`).click();
   }
 
   async skip2FASetUp() {
@@ -174,12 +154,7 @@ export class AccountsPage {
   }
 
   async verifyWithFactor(factorName: string) {
-    await this.page
-      .locator(
-        `xpath=.//p[text()='${factorName}']/parent::div/following-sibling::button`
-      )
-      .first()
-      .click();
+    await this.page.locator(`xpath=.//p[text()='${factorName}']/parent::div/following-sibling::button`).first().click();
   }
 
   async clickVerifyWithOtherFactors() {
@@ -199,23 +174,15 @@ export class AccountsPage {
   }
 
   async verifyErrorMessage(message: string) {
-    expect(
-      await this.page.isVisible(`xpath=.//*[text()='${message}']`)
-    ).toBeTruthy();
+    expect(await this.page.isVisible(`xpath=.//*[text()='${message}']`)).toBeTruthy();
   }
 
   async verifyFactorsSetUp(factorcount: string) {
-    expect(
-      await this.page.isVisible("text=Factor 1: Social Login")
-    ).toBeTruthy();
+    expect(await this.page.isVisible("text=Factor 1: Social Login")).toBeTruthy();
     expect(await this.page.isVisible("text=Factor 2: Device (s)")).toBeTruthy();
-    expect(
-      await this.page.isVisible("text=Factor 3: Social Recovery")
-    ).toBeTruthy();
+    expect(await this.page.isVisible("text=Factor 3: Social Recovery")).toBeTruthy();
     expect(await this.page.isVisible("text=Recovery email")).toBeTruthy();
-    expect(
-      await this.page.isVisible("text=Other Factors : Password")
-    ).toBeTruthy();
+    expect(await this.page.isVisible("text=Other Factors : Password")).toBeTruthy();
     expect(await this.page.isVisible(`text=${factorcount}`)).toBeTruthy();
   }
 
@@ -225,11 +192,7 @@ export class AccountsPage {
   }
 
   async verifyRecoveryEmailDetails(email: string) {
-    expect(
-      await this.page
-        .locator(`xpath=.//input[@aria-placeholder='TextField Placeholder']`)
-        .inputValue()
-    ).toContain(email);
+    expect(await this.page.locator(`xpath=.//input[@aria-placeholder='TextField Placeholder']`).inputValue()).toContain(email);
   }
 
   async verifySocialFactorDetails(details: string) {
@@ -245,9 +208,7 @@ export class AccountsPage {
     await this.page.locator("#openlogin-password").fill(password);
     await this.page.locator("#openlogin-confirm-password").clear();
     await this.page.locator("#openlogin-confirm-password").fill(password);
-    expect(
-      await this.page.locator('button:has-text("Confirm")').isDisabled()
-    ).toBeTruthy();
+    expect(await this.page.locator('button:has-text("Confirm")').isDisabled()).toBeTruthy();
   }
 
   async addPasswordShare(password: string) {
@@ -269,14 +230,9 @@ export class AccountsPage {
   }
 
   async deleteRecoveryShare() {
-    await this.page
-      .locator('button[aria-label="delete device share"]')
-      .first()
-      .click();
+    await this.page.locator('button[aria-label="delete device share"]').first().click();
     await this.page.waitForSelector("text=Recovery share deleted successfully");
-    await this.page
-      .locator("text=Recovery share deleted successfully")
-      .isVisible();
+    await this.page.locator("text=Recovery share deleted successfully").isVisible();
   }
 
   async copyDeviceShare() {
@@ -290,10 +246,7 @@ export class AccountsPage {
   async getOpenLoginState() {
     await this.page.waitForSelector('button:has-text("Get openlogin state")');
     await this.page.locator('button:has-text("Get openlogin state")').click();
-    const keys = await this.page
-      .locator("xpath=.//div[@id='console']//pre")
-      .first()
-      .textContent();
+    const keys = await this.page.locator("xpath=.//div[@id='console']//pre").first().textContent();
     return keys;
   }
 }

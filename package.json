@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "lint": "npx eslint **/*.ts --fix",
+    "lint": "eslint **/*.ts --fix",
     "test:browser": "playwright test --headed",
     "test": "playwright test",
     "developerdashboard:config": "playwright test opendeveloperdashboard --grep=@smoke --workers=1 --headed --config=index.config.ts",
@@ -16,43 +16,44 @@
     "docker:run": "docker run -it test-image /bin/bash"
   },
   "dependencies": {
-    "@opensearch-project/opensearch": "^2.2.1",
-    "@playwright/test": "^1.41.2",
-    "axios": "^1.4.0",
-    "bip39": "^3.0.4",
-    "chance": "^1.1.11",
-    "dotenv": "^16.0.3",
-    "generate-password": "^1.7.0",
-    "mailosaur": "^8.5.0",
-    "playwright": "^1.41.2",
+    "@opensearch-project/opensearch": "^2.11.0",
+    "@playwright/test": "^1.45.3",
+    "axios": "^1.7.2",
+    "bip39": "^3.1.0",
+    "chance": "^1.1.12",
+    "dotenv": "^16.4.5",
+    "generate-password": "^1.7.1",
+    "mailosaur": "^8.6.1",
+    "playwright": "^1.45.3",
     "reportportal-client": "https://github.com/wiibaker/client-javascript.git#master",
-    "serve-handler": "^6.1.3",
+    "serve-handler": "^6.1.5",
     "testmail": "^1.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.4.0",
-    "@faker-js/faker": "^8.4.1",
     "@playwright/test": "^1.44.1",
-    "@reportportal/agent-js-playwright": "^5.0.11",
-    "@tsconfig/node16": "^1.0.3",
+    "@reportportal/agent-js-playwright": "^5.1.9",
+    "@toruslabs/config": "^2.1.0",
+    "@toruslabs/eslint-config-node": "^3.3.1",
     "@types/chance": "^1.1.6",
-    "@types/eslint__js": "^8.42.3",
     "@types/node": "^20.14.2",
-    "@types/serve-handler": "^6.1.1",
+    "@types/serve-handler": "^6.1.4",
     "eslint": "^8.57.0",
-    "husky": "^9.0.11",
-    "lighthouse": "^9.6.3",
-    "lint-staged": "^15.2.5",
-    "prettier": "3.3.2",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^7.12.0"
+    "husky": "^9.1.3",
+    "lighthouse": "^12.1.0",
+    "lint-staged": "^15.2.7",
+    "prettier": "3.3.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
   },
   "lint-staged": {
     "!(*.ts)": "prettier --write",
     "*.ts": [
-      "eslint --fix",
+      "eslint --cache --fix",
       "prettier --write"
     ]
+  },
+  "engines": {
+    "node": ">=18.x",
+    "npm": ">=9.x"
   }
 }

@@ -1,13 +1,15 @@
-import { test, expect, Page } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
+import { validateMnemonic } from "bip39";
+import { generate } from "generate-password";
+
 import {
+  catchErrorAndExit,
   env_map,
   generateEmailWithTag,
   signInWithEmailWithTestEmailApp,
-} from "../utils/index";
-import { generate } from "generate-password";
-import { signInWithGitHub, signInWithMobileNumber } from "../utils";
-import { validateMnemonic } from "bip39";
-import { catchErrorAndExit } from "../utils";
+  signInWithGitHub,
+  signInWithMobileNumber,
+} from "../utils";
 import { AccountsPage } from "./AccountsPage";
 
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
@@ -39,12 +41,7 @@ test.describe.serial("Account page scenarios", () => {
     test.setTimeout(3000000);
     await signInWithGitHub({ page, github });
     await page.goto(openloginURL);
-    await signInWithEmailWithTestEmailApp(
-      page,
-      testEmail,
-      browser,
-      testEmail.split("@")[0].split(".")[1],
-    );
+    await signInWithEmailWithTestEmailApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1]);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
     await page.waitForURL(`${openloginURL}/wallet/home`, {
@@ -73,7 +70,7 @@ test.describe.serial("Account page scenarios", () => {
     await accountsPage.addSocialRecoveryFactor("GitHub");
     await accountsPage.enableBackUpEmail(backupEmail);
     const seedString = await accountsPage.seedEmail(backupEmail);
-    await accountsPage.verifyRecoveryPhrase(seedString + "additional text");
+    await accountsPage.verifyRecoveryPhrase(`${seedString}additional text`);
     await accountsPage.verifyErrorMessage("Incorrect recovery factor");
     await accountsPage.verifyRecoveryPhrase(seedString);
     //await accountsPage.skip2FASetUp();
@@ -171,18 +168,9 @@ test.describe.serial("Account page scenarios", () => {
   test(`should show a popup with copy option while clicking download device share`, async () => {
     const accountsPage = new AccountsPage(page);
     await accountsPage.copyDeviceShare();
-    await page
-      .locator("text=Save a copy of your recovery phrase")
-      .first()
-      .waitFor();
+    await page.locator("text=Save a copy of your recovery phrase").first().waitFor();
     await page;
-    expect(
-      await page
-        .locator("text=Save a copy of your recovery phrase")
-        .first()
-        .isVisible(),
-    ).toBeTruthy(),
-      await accountsPage.clickFirstClose();
+    expect(await page.locator("text=Save a copy of your recovery phrase").first().isVisible()).toBeTruthy(), await accountsPage.clickFirstClose();
   });
 
   test(`should be able to setup email backup again`, async () => {
@@ -190,9 +178,7 @@ test.describe.serial("Account page scenarios", () => {
     expect(await page.getByText("2 / 4").isVisible());
     await accountsPage.enterRecoveryEmail(testEmail);
     await accountsPage.clickConfirm();
-    await expect(
-      page.getByText("Backup Phrase successfully sent", { exact: false }),
-    ).toBeVisible();
+    await expect(page.getByText("Backup Phrase successfully sent", { exact: false })).toBeVisible();
     expect(await page.getByText("2 / 5").isVisible());
   });
 

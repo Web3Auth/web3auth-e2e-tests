@@ -1,8 +1,8 @@
-import { test, expect } from "@playwright/test";
-import { delay, signInWithEmailWithTestEmailAppInDemoApp } from "../utils/index";
-import { catchErrorAndExit } from "../utils";
-import { signInWithEmailWithTestEmailOnDemoApp } from "../../authservice/utils";
+import { expect, test } from "@playwright/test";
+
 import { AccountsPage } from "../../authservice/openlogin-account-page/AccountsPage";
+import { signInWithEmailWithTestEmailOnDemoApp } from "../../authservice/utils";
+import { catchErrorAndExit, delay, signInWithEmailWithTestEmailAppInDemoApp } from "../utils";
 import { WalletServicesPage } from "./WalletServicesPage";
 const consoleLogs: string[] = [];
 let sessionId: string = "";
@@ -48,7 +48,7 @@ test.describe.serial("Wallet Services Scenarios @demo", () => {
     await walletServicesPage.verifyGetEncryptionKey(browser);
     await walletServicesPage.verifyEncryptionAndDecryption(browser);
     //await accountsPage.verifyShowCheckout();
-    await page.goto(walletServiceLoginURL + "/logout");
+    await page.goto(`${walletServiceLoginURL}/logout`);
   });
   test(`Verify user is able to login using session id`, async ({ page, browser }) => {
     test.setTimeout(3 * 60000);

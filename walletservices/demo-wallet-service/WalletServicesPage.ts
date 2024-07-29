@@ -4,7 +4,9 @@ import { Browser, expect, Page } from "@playwright/test";
 import { delay } from "../utils/index";
 export class WalletServicesPage {
   readonly page: Page;
+
   readonly loginBtn: string;
+
   readonly walletIframe: string;
 
   constructor(page: Page) {
