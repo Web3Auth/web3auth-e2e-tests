@@ -30,7 +30,7 @@
     "testmail": "^1.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.44.1",
+    "@playwright/test": "^1.45.3",
     "@reportportal/agent-js-playwright": "^5.1.9",
     "@toruslabs/config": "^2.1.0",
     "@toruslabs/eslint-config-node": "^3.3.1",
