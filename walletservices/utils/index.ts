@@ -1,3 +1,4 @@
+/* eslint-disable no-unmodified-loop-condition */
 import { Browser, expect, Page, test } from "@playwright/test";
 import axios from "axios";
 import Chance from "chance";
@@ -25,6 +26,20 @@ const randomEmail = generate({
   length: 20,
   lowercase: true,
 });
+
+function delay(time: number | undefined) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, time);
+  });
+}
+
+export async function slowOperation(op: () => Promise<void>, timeout?: number) {
+  // Set slow timeout
+  test.setTimeout(timeout || 2 * 60 * 1000); // => 2 mins timeout
+  await op();
+  // Reset timeout
+  test.setTimeout(config.timeout || 0);
+}
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
@@ -220,9 +235,9 @@ async function signInWithGoogle({
   try {
     await page.waitForURL("https://accounts.google.com/**");
     await page.waitForSelector('input[type="Email"]');
-    expect(await page.isVisible('input[type="Email"]'));
+    expect(await page.isVisible('input[type="Email"]')).toBe(true);
     await page.fill('input[type="Email"]', google.email);
-    expect(await page.isVisible('button:has-text("Next")'));
+    expect(await page.isVisible('button:has-text("Next")')).toBe(true);
     await page.click(`button:has-text("Next")`);
     await page.fill('input[type="password"]', google.password);
     await page.click(`button:has-text("Next")`);
@@ -255,7 +270,7 @@ async function signInWithGitHub({
     await page.click('input[value="Sign in"]');
 
     await page.waitForSelector("text=Create repository");
-    expect(page.isVisible("text=Create repository"));
+    expect(page.isVisible("text=Create repository")).toBe(true);
     return true;
   } catch {
     return false;
@@ -352,14 +367,6 @@ async function signInWithTwitterWithoutLogin({
   await page.fill("#username_or_email", twitter.account);
   await page.fill('input[type="password"]', twitter.password);
   await page.click("xpath=.//input[@value='Sign In']");
-}
-
-export async function slowOperation(op: () => Promise<void>, timeout?: number) {
-  // Set slow timeout
-  test.setTimeout(timeout || 2 * 60 * 1000); // => 2 mins timeout
-  await op();
-  // Reset timeout
-  test.setTimeout(config.timeout || 0);
 }
 
 async function signInWithFacebook({
@@ -506,7 +513,7 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
     await page.fill('[placeholder="name@domain.com"]', email);
     await page.click('button:has-text("Login with Email")');
     await delay(20000);
-    const pages = await browser.contexts()[0].pages();
+    const pages = browser.contexts()[0].pages();
     // pages[0] is the first page, and pages[1] is the new page
     await pages[1].bringToFront(); // Bring the new page to the front
     // Setup our JSON API endpoint
@@ -615,15 +622,6 @@ async function signInWithDapps({ page, browser, testEmail }: { page: Page; brows
   await delay(5000);
 }
 
-function generateRandomEmail() {
-  if (process.env.MAIL_APP == "mailosaur") {
-    return `${randomEmail}${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
-  }
-  if (process.env.MAIL_APP == "testmail") {
-    return generateEmailWithTag();
-  }
-}
-
 function generateEmailWithTag() {
   // Randomly generating the tag...
   const chance = new Chance();
@@ -634,10 +632,13 @@ function generateEmailWithTag() {
   return `kelg8.${tag}@inbox.testmail.app`;
 }
 
-function delay(time: number | undefined) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, time);
-  });
+function generateRandomEmail() {
+  if (process.env.MAIL_APP === "mailosaur") {
+    return `${randomEmail}${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
+  }
+  if (process.env.MAIL_APP === "testmail") {
+    return generateEmailWithTag();
+  }
 }
 
 export {

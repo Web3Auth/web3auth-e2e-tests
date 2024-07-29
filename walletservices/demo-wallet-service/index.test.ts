@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { AccountsPage } from "../../authservice/openlogin-account-page/AccountsPage";
 import { signInWithEmailWithTestEmailOnDemoApp } from "../../authservice/utils";
-import { catchErrorAndExit, delay, signInWithEmailWithTestEmailAppInDemoApp } from "../utils";
+import { catchErrorAndExit, signInWithEmailWithTestEmailAppInDemoApp } from "../utils";
 import { WalletServicesPage } from "./WalletServicesPage";
 const consoleLogs: string[] = [];
 let sessionId: string = "";

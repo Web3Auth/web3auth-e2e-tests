@@ -46,7 +46,7 @@ export class DeveloperDashboardPage {
     await this.page.locator(`xpath=.//input[@placeholder='Select Login Provider*']`).first().click();
     await this.page.locator(`span:has-text("${provider}")`).first().click();
     await this.page.locator(`xpath=.//input[@placeholder='e.g. 123456789012345678']`).first().fill("1234567890");
-    expect(await this.page.locator("xpath=.//p[text()='Client ID is invalid']").isVisible());
+    expect(await this.page.locator("xpath=.//p[text()='Client ID is invalid']").isVisible()).toBe(true);
     await this.page.locator(`xpath=.//input[@placeholder='e.g. 123456789012345678']`).first().fill("1234111111111111111");
     await this.page.click('button:has-text(" Create Verifier ")');
   }
@@ -94,15 +94,15 @@ export class DeveloperDashboardPage {
   }
 
   async verifyMessageIsDisplayed(message: string) {
-    expect(await this.page.locator(`xpath=.//p[text()="${message}"]`).isVisible());
+    expect(await this.page.locator(`xpath=.//p[text()="${message}"]`).isVisible()).toBe(true);
   }
 
   async verifyInvoiceAndCardAddedIsDisplayed(message: string) {
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const d = new Date();
     const billName = `Plan: ${monthNames[d.getMonth()]}${d.getFullYear()}`;
-    expect(await this.page.locator(`xpath=.//h2[text()="${message}"]`).isVisible());
-    expect(await this.page.locator(`xpath=.//td/a[text()="${billName}"]`).isVisible());
+    expect(await this.page.locator(`xpath=.//h2[text()="${message}"]`).isVisible()).toBe(true);
+    expect(await this.page.locator(`xpath=.//td/a[text()="${billName}"]`).isVisible()).toBe(true);
   }
 
   async updateProject(chain: string) {

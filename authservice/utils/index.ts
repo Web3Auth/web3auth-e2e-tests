@@ -1,3 +1,4 @@
+/* eslint-disable no-unmodified-loop-condition */
 import { Browser, expect, Page } from "@playwright/test";
 import { generate } from "generate-password";
 import Mailosaur from "mailosaur";
@@ -30,6 +31,41 @@ const randomEmail = generate({
   length: 20,
   lowercase: true,
 });
+
+function delay(time: number | undefined) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, time);
+  });
+}
+
+function findLink(links: Link[], text: string) {
+  for (const link of links) {
+    if (link.text === text) return link;
+  }
+
+  return null;
+}
+
+export async function slowOperation<T>(op: () => Promise<T>, timeout?: number): Promise<T> {
+  if (timeout) {
+    return new Promise<T>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error("Operation timed out"));
+      }, timeout);
+
+      op()
+        .then((result) => {
+          clearTimeout(timer);
+          return resolve(result);
+        })
+        .catch((error) => {
+          clearTimeout(timer);
+          reject(error);
+        });
+    });
+  }
+  return op();
+}
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
@@ -377,27 +413,6 @@ async function signInWithTwitterWithoutLogin({
   await page.click("xpath=.//input[@value='Sign In']");
 }
 
-export async function slowOperation<T>(op: () => Promise<T>, timeout?: number): Promise<T> {
-  if (timeout) {
-    return new Promise<T>((resolve, reject) => {
-      const timer = setTimeout(() => {
-        reject(new Error("Operation timed out"));
-      }, timeout);
-
-      op()
-        .then((result) => {
-          clearTimeout(timer);
-          resolve(result);
-        })
-        .catch((error) => {
-          clearTimeout(timer);
-          reject(error);
-        });
-    });
-  }
-  return op();
-}
-
 async function signInWithFacebook({
   page,
   FB,
@@ -528,14 +543,6 @@ async function changePasswordShare(page: Page, password: string) {
   await y;
 }
 
-function findLink(links: Link[], text: string) {
-  for (const link of links) {
-    if (link.text === text) return link;
-  }
-
-  return null;
-}
-
 async function signInWithEmail(page: Page, email: string, browser: Browser): Promise<boolean> {
   try {
     console.log(`Email:${email}`);
@@ -608,7 +615,9 @@ async function signInWithEmailWithTestEmailOnDemoApp(
   email: string,
   browser: Browser,
   tag: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   option: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   platform: string
 ): Promise<boolean> {
   try {
@@ -766,6 +775,16 @@ async function signInWithDapps({ page, browser, testEmail }: { page: Page; brows
   await delay(5000);
 }
 
+function generateEmailWithTag() {
+  // Randomly generating the tag...
+  const chance = new ChanceJS();
+  const tag = chance.string({
+    length: 12,
+    pool: "abcdefghijklmnopqrstuvwxyz0123456789",
+  });
+  return `kelg8.${tag}@inbox.testmail.app`;
+}
+
 function generateRandomEmail() {
   if (process.env.MAIL_APP === "mailosaur") {
     return `${randomEmail}${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
@@ -773,12 +792,6 @@ function generateRandomEmail() {
   if (process.env.MAIL_APP === "testmail") {
     return generateEmailWithTag();
   }
-}
-
-function delay(time: number | undefined) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, time);
-  });
 }
 
 function getBackUpPhrase(environment: string | undefined) {
@@ -791,15 +804,6 @@ function getBackUpPhrase(environment: string | undefined) {
   if (environment === "aqua") {
     return process.env.BACKUP_PHRASE_AQUA;
   }
-}
-function generateEmailWithTag() {
-  // Randomly generating the tag...
-  const chance = new ChanceJS();
-  const tag = chance.string({
-    length: 12,
-    pool: "abcdefghijklmnopqrstuvwxyz0123456789",
-  });
-  return `kelg8.${tag}@inbox.testmail.app`;
 }
 
 export {

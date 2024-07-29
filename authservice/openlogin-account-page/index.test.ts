@@ -117,7 +117,7 @@ test.describe.serial("Account page scenarios", () => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-    expect(await page.getByText("2 / 5").isVisible());
+    expect(await page.getByText("2 / 5").isVisible()).toBe(true);
   });
 
   test(`should be able to change social factor`, async ({ browser }) => {
@@ -136,7 +136,7 @@ test.describe.serial("Account page scenarios", () => {
       waitUntil: "load",
     });
     await accountsPage.verifySocialFactorDetails(user.mobileNumberForLogin);
-    expect(await page.getByText("2 / 5").isVisible());
+    expect(await page.getByText("2 / 5").isVisible()).toBe(true);
   });
 
   test(`should change/update account password`, async () => {
@@ -151,7 +151,7 @@ test.describe.serial("Account page scenarios", () => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-    expect(await page.getByText("2 / 5").isVisible());
+    expect(await page.getByText("2 / 5").isVisible()).toBe(true);
   });
 
   test(`should be able to delete email share`, async () => {
@@ -162,24 +162,25 @@ test.describe.serial("Account page scenarios", () => {
     await page.waitForURL(`${openloginURL}/wallet/account`, {
       waitUntil: "load",
     });
-    expect(await page.getByText("2 / 4").isVisible());
+    expect(await page.getByText("2 / 4").isVisible()).toBe(true);
   });
 
   test(`should show a popup with copy option while clicking download device share`, async () => {
     const accountsPage = new AccountsPage(page);
     await accountsPage.copyDeviceShare();
     await page.locator("text=Save a copy of your recovery phrase").first().waitFor();
-    await page;
-    expect(await page.locator("text=Save a copy of your recovery phrase").first().isVisible()).toBeTruthy(), await accountsPage.clickFirstClose();
+
+    expect(await page.locator("text=Save a copy of your recovery phrase").first().isVisible()).toBeTruthy();
+    await accountsPage.clickFirstClose();
   });
 
   test(`should be able to setup email backup again`, async () => {
     const accountsPage = new AccountsPage(page);
-    expect(await page.getByText("2 / 4").isVisible());
+    expect(await page.getByText("2 / 4").isVisible()).toBe(true);
     await accountsPage.enterRecoveryEmail(testEmail);
     await accountsPage.clickConfirm();
     await expect(page.getByText("Backup Phrase successfully sent", { exact: false })).toBeVisible();
-    expect(await page.getByText("2 / 5").isVisible());
+    expect(await page.getByText("2 / 5").isVisible()).toBe(true);
   });
 
   test(`should be able to delete device share`, async () => {
@@ -188,6 +189,6 @@ test.describe.serial("Account page scenarios", () => {
     await page.reload();
     await page.goto(`${openloginURL}/wallet/home`);
     await page.goto(`${openloginURL}/wallet/account`);
-    expect(await page.getByText("2 / 4").isVisible());
+    expect(await page.getByText("2 / 4").isVisible()).toBe(true);
   });
 });

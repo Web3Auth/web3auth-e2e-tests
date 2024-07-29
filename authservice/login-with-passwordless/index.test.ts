@@ -122,8 +122,8 @@ test.describe.serial("Passwordless Login scenarios", () => {
     if (platform === "mainnet") {
       await page.goto(demoAppUrlV4);
       await signInWithEmailWithTestEmailOnDemoApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1], "production", platform);
-      const shouldExit = await catchErrorAndExit(page);
-      expect(shouldExit).toBeFalsy();
+      const shouldExit2 = await catchErrorAndExit(page);
+      expect(shouldExit2).toBeFalsy();
       await useAutoCancelShareTransfer(page);
       await useAutoCancel2FASetup(page);
       await page.waitForURL(`${demoAppUrlV4}`, {
