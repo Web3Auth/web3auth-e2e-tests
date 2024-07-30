@@ -1,4 +1,3 @@
-import { Client } from "@opensearch-project/opensearch";
 import { expect, test } from "@playwright/test";
 
 import { AccountsPage } from "../openlogin-account-page/AccountsPage";
@@ -16,16 +15,7 @@ import {
 } from "../utils";
 const demoAppUrl = env_map.demo;
 const demoAppUrlV4 = env_map.demoV6;
-const eventPostURL =
-  process.env.ES_ENDPOINT === undefined
-    ? "search-sapphire-latency-stats-7n6qd4g6m3au5fpre3gwvwo6vm.eu-west-1.es.amazonaws.com"
-    : process.env.ES_ENDPOINT;
-const region = process.env.REGION === undefined ? "singapore" : process.env.REGION;
-const username = "devops";
 const platform = process.env.PLATFORM || "";
-const password = process.env.PASSWORD;
-const version = process.env.APP_VERSION;
-const ci_mode = process.env.CI_MODE;
 const openloginURL = env_map[process.env.PLATFORM || "prod"];
 const user = {
   mobileNumberForLogin: process.env.LOGIN_MOBILE_NUMBER || "",

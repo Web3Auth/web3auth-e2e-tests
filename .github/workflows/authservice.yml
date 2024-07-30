@@ -66,9 +66,6 @@ jobs:
           TWITTER_EMAIL: ${{ secrets.TWITTER_EMAIL }}
           CI: true
           CI_MODE: ${{ secrets.CI_MODE }}
-          MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
-          MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
-          MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_SERVER_DOMAIN }}
           PLATFORM: ${{ matrix.env.PLATFORM }}
           APP_VERSION: "v3"
           GITHUB_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}

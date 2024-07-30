@@ -33,27 +33,6 @@ export class AccountsPage {
     let seedArray: string[];
     let seedEmail;
     let seedString = "";
-    if (process.env.MAIL_APP === "mailosaur") {
-      const seedEmail = await mailosaur.messages.get(
-        process.env.MAILOSAUR_SERVER_ID || "",
-        {
-          sentTo: backupEmail,
-        },
-        { timeout: 30 * 1000 }
-      );
-      seedArray =
-        seedEmail.html?.body
-          ?.toString()
-          .replace(/(\r\n|\n|\r)/gm, "")
-          .slice(11084)
-          .split("<")[0]
-          .split(" ") || [];
-      for (let i = 0; i < 23; i++) {
-        seedString += `${seedArray[i]} `;
-      }
-      seedString += seedArray[23];
-      await mailosaur.messages.del(seedEmail?.id || "");
-    }
     if (process.env.MAIL_APP === "testmail") {
       // Setup our JSON API endpoint
       const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;

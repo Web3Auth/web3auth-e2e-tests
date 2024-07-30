@@ -1,8 +1,5 @@
 /* eslint-disable no-unmodified-loop-condition */
 import { Browser, expect, Page } from "@playwright/test";
-import { generate } from "generate-password";
-import Mailosaur from "mailosaur";
-import { Link } from "mailosaur/lib/models";
 
 import confirmEmail from "./confirmEmail";
 process.env.APP_VERSION = "v4";
@@ -27,23 +24,11 @@ const env_map: { [key: string]: string } = {
   demoV4: "https://demo-openlogin-v4.web3auth.io/",
   demoV6: "https://demo-openlogin-v6.web3auth.io/",
 };
-const randomEmail = generate({
-  length: 20,
-  lowercase: true,
-});
 
 function delay(time: number | undefined) {
   return new Promise(function (resolve) {
     setTimeout(resolve, time);
   });
-}
-
-function findLink(links: Link[], text: string) {
-  for (const link of links) {
-    if (link.text === text) return link;
-  }
-
-  return null;
 }
 
 export async function slowOperation<T>(op: () => Promise<T>, timeout?: number): Promise<T> {
@@ -253,38 +238,6 @@ async function signInWithGoogle({
     await page.waitForURL("https://myaccount.google.com/**");
     return true;
   } catch {
-    return false;
-  }
-}
-
-async function signInWithEmailIntoTorusWallet(page: Page, email: string, browser: Browser): Promise<boolean> {
-  try {
-    await page.fill('[placeholder="Enter your email"]', email);
-    await delay(5000);
-    await page.click('div:has-text("Continue with Email")');
-    //await page.waitForSelector("text=Verify your email");
-    await delay(3000);
-    const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
-    const mailBox = await mailosaur.messages.get(process.env.MAILOSAUR_SERVER_ID || "", {
-      sentTo: email,
-    });
-    let link = findLink(mailBox.html?.links || [], "Approve login request");
-    if (!link) {
-      link = findLink(mailBox.html?.links || [], "Verify my email");
-    }
-    await mailosaur.messages.del(mailBox?.id || "");
-    const href = link?.href || "";
-
-    const context2 = await browser.newContext();
-    const page2 = await context2.newPage();
-    await page2.goto(href);
-    await page2.waitForSelector("text=Close this and return to your previous window", {
-      timeout: 10000,
-    });
-    await page2.close();
-    return true;
-  } catch (err) {
-    console.error(err);
     return false;
   }
 }
@@ -551,18 +504,6 @@ async function signInWithEmail(page: Page, email: string, browser: Browser): Pro
     await page.waitForSelector("text=Verify your email");
     await delay(3000);
     let href;
-    if (process.env.MAIL_APP === "mailosaur") {
-      const mailosaur = new Mailosaur(process.env.MAILOSAUR_API_KEY || "");
-      const mailBox = await mailosaur.messages.get(process.env.MAILOSAUR_SERVER_ID || "", {
-        sentTo: email,
-      });
-      let link = findLink(mailBox.html?.links || [], "Approve login request");
-      if (!link) {
-        link = findLink(mailBox.html?.links || [], "Verify my email");
-      }
-      await mailosaur.messages.del(mailBox?.id || "");
-      href = link?.href || "";
-    }
     if (process.env.MAIL_APP === "testmail") {
       // Setup our JSON API endpoint
       const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
@@ -741,40 +682,6 @@ async function signInWithMobileNumber({
   await page.locator("xpath=.//input[@aria-label='Please enter verification code. Digit 1']").fill(otp);
 }
 
-async function signInWithDapps({ page, browser, testEmail }: { page: Page; browser: Browser; testEmail: string }) {
-  const context3 = await browser.newContext();
-  await page.goto("https://demo-openlogin.web3auth.io/");
-  await page.locator("select.select").last().selectOption("email_passwordless");
-  await page.fill('[placeholder="Enter an email"]', testEmail);
-  await page.click('button:has-text("Login with email passwordless")');
-  const newEmail = await mailosaur.messages.get(
-    process.env.MAILOSAUR_SERVER_ID || "",
-    {
-      sentTo: testEmail,
-    },
-    {
-      timeout: 20 * 1000,
-    }
-  );
-  expect(newEmail.subject).toContain("Verify your email");
-  let link = findLink(newEmail.html?.links || [], "Approve login request");
-  if (!link) {
-    link = findLink(newEmail.html?.links || [], "Verify my email");
-  }
-  expect(link?.text).toContain("Approve login request");
-  const href = link?.href || "";
-  const page3 = await context3.newPage();
-  await page3.goto(href);
-  await page3.waitForSelector("text=Close this and return to your previous window", {
-    timeout: 10000,
-  });
-  await page3.close();
-  await delay(3000);
-  await page.getByLabel("Set up 2FA").waitFor();
-  await page.locator("xpath=.//button[text()='Skip for Now']").first().click();
-  await delay(5000);
-}
-
 function generateEmailWithTag() {
   // Randomly generating the tag...
   const chance = new ChanceJS();
@@ -786,9 +693,6 @@ function generateEmailWithTag() {
 }
 
 function generateRandomEmail() {
-  if (process.env.MAIL_APP === "mailosaur") {
-    return `${randomEmail}${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
-  }
   if (process.env.MAIL_APP === "testmail") {
     return generateEmailWithTag();
   }
@@ -816,14 +720,12 @@ export {
   delay,
   deleteCurrentDeviceShare,
   env_map,
-  findLink,
   generateEmailWithTag,
   generateRandomEmail,
   getBackUpPhrase,
-  signInWithDapps,
+  // signInWithDapps,
   signInWithDiscord,
   signInWithEmail,
-  signInWithEmailIntoTorusWallet,
   signInWithEmailWithTestEmailApp,
   signInWithEmailWithTestEmailOnDemoApp,
   signInWithEmailWithTestEmailOnDemoAppV4,
