@@ -5,13 +5,7 @@ on:
     branches:
       - master
   schedule:
-    - cron: "0 * * * *"
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: "prod|beta|cyan|staging|testing|local"
-        required: true
-        default: "testing"
+    - cron: "30 * * * *"
 
 env:
   NODE_VERSION: 20
@@ -29,13 +23,7 @@ jobs:
           - env:
               PLATFORM: sapphire_mainnet
           - env:
-              PLATFORM: testnet
-          - env:
               PLATFORM: mainnet
-          - env:
-              PLATFORM: cyan
-          - env:
-              PLATFORM: aqua
     runs-on: macos-latest
     # env:
     #   PLATFORM: ${{ matrix.env }}
