@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "prod|beta|cyan|staging|testing|celeste|local"
+        description: "prod|beta|cyan|staging|testing|local"
         required: true
         default: "testing"
 
@@ -44,12 +44,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-        with:
-          ref: new_ui_openlogin
-      - name: Unlock secrets
-        uses: korti11/git-crypt-unlock@v1.0
-        with:
-          GIT_CRYPT_KEY: ${{secrets.GIT_CRYPT_KEY}}
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL: ${{ secrets.FB_TEST_USER_EMAIL }}

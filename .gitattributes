@@ -1,4 +1,0 @@
-/openloginV3/*/backup-phrase.txt filter=git-crypt diff=git-crypt
-/openloginV3/*/backup-phrase*.txt filter=git-crypt diff=git-crypt
-/openloginV4/*/backup-phrase*.txt filter=git-crypt diff=git-crypt
-*.txt filter=git-crypt diff=git-crypt
