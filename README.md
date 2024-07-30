@@ -1,5 +1,8 @@
 # web3auth-e2e-tests
 
+[![AuthService - E2ETests](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/authservice.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/authservice.yml)
+[![DemoWalletService - E2ETests](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/demowalletservice.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/demowalletservice.yml)
+[![WalletService - E2ETests](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/walletservice.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/walletservice.yml)
 End-to-end testing for Torus products.
 [Torus]
 [Web3Auth]
