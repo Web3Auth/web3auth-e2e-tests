@@ -1,5 +1,8 @@
 # web3auth-e2e-tests
 
+[![AuthService - E2ETests](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/authservice.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/authservice.yml)
+[![DemoWalletService - E2ETests](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/demowalletservice.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/demowalletservice.yml)
+[![WalletService - E2ETests](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/walletservice.yml/badge.svg)](https://github.com/Web3Auth/web3auth-e2e-tests/actions/workflows/walletservice.yml)
 End-to-end testing for Torus products.
 [Torus]
 [Web3Auth]
@@ -117,3 +120,45 @@ See [full list of selectors](https://playwright.dev/docs/selectors/#quick-guide)
 [torus]: https://tor.us
 [Web3Auth]: https://app.openlogin.com/
 [Framework Design]: https://lucid.app/lucidchart/0a243786-3d3c-4dcb-b31d-f5c2a224ea42/edit?viewport_loc=-81%2C41%2C2150%2C965%2C0_0&invitationId=inv_8cb3a0f7-3930-427f-b82e-259d5b27fa99
+
+Auth Service
+buildEnv: production, testing, staging
+mfaFactorsEnabled: all selected
+mfaFactorsMandatory: device, password, authenticator mandatory
+mfaLevel: none, mandatory
+network: sapphire devnet, sapphire mainnet, mainnet
+uxMode: popup, redirect
+logins: passwordless only
+
+For the below combinations, we want to test if the login is successful or not.
+All random accounts in each combo case.
+
+### combo 1 - happy path (no mfa) - 30 mins
+
+buildEnv: production
+mfaFactorsEnabled: all selected
+mfaFactorsMandatory: device, password, authenticator mandatory
+mfaLevel: none
+network: sapphire mainnet
+uxMode: redirect
+logins: passwordless only
+
+### combo 2 (start with mfaLevel: none, then change to mandatory - run twice, compare keys) - 2 hrs
+
+buildEnv: testing
+mfaFactorsEnabled: all selected
+mfaFactorsMandatory: device, password, authenticator mandatory
+mfaLevel: mandatory
+network: sapphire devnet
+uxMode: popup
+logins: passwordless only
+
+## combo 3 (start with mfaLevel: mandatory, then recovery of mfa - run twice, compare keys) - 2 hrs
+
+buildEnv: staging
+mfaFactorsEnabled: all selected
+mfaFactorsMandatory: device, password, authenticator mandatory
+mfaLevel: mandatory
+network: mainnet
+uxMode: redirect
+logins: passwordless only

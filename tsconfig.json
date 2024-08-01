@@ -1,9 +1,4 @@
 {
-  "extends": "@tsconfig/node20",
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
-    // ... rest
-  }
+  "extends": "@toruslabs/config/tsconfig.default.json",
+  "compilerOptions": {}
 }

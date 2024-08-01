@@ -1,17 +1,12 @@
 name: AuthService - E2ETests
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
   schedule:
-    - cron: "0 * * * *"
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: "prod|beta|cyan|staging|testing|celeste|local"
-        required: true
-        default: "testing"
+    - cron: "30 * * * *"
 
 env:
   NODE_VERSION: 20
@@ -29,13 +24,7 @@ jobs:
           - env:
               PLATFORM: sapphire_mainnet
           - env:
-              PLATFORM: testnet
-          - env:
               PLATFORM: mainnet
-          - env:
-              PLATFORM: cyan
-          - env:
-              PLATFORM: aqua
     runs-on: macos-latest
     # env:
     #   PLATFORM: ${{ matrix.env }}
@@ -44,12 +33,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-        with:
-          ref: new_ui_openlogin
-      - name: Unlock secrets
-        uses: korti11/git-crypt-unlock@v1.0
-        with:
-          GIT_CRYPT_KEY: ${{secrets.GIT_CRYPT_KEY}}
       - name: Trigger tests
         env:
           FB_TEST_USER_EMAIL: ${{ secrets.FB_TEST_USER_EMAIL }}
@@ -66,9 +49,6 @@ jobs:
           TWITTER_EMAIL: ${{ secrets.TWITTER_EMAIL }}
           CI: true
           CI_MODE: ${{ secrets.CI_MODE }}
-          MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
-          MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
-          MAILOSAUR_SERVER_DOMAIN: ${{ secrets.MAILOSAUR_SERVER_DOMAIN }}
           PLATFORM: ${{ matrix.env.PLATFORM }}
           APP_VERSION: "v3"
           GITHUB_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}

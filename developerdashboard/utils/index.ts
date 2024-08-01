@@ -1,15 +1,15 @@
-import { test, Page, Browser, expect } from "@playwright/test";
-import confirmEmail from "./confirmEmail";
-import config from "../../index.config";
-import { Link } from "mailosaur/lib/models";
-import { generate } from "generate-password";
+/* eslint-disable no-unmodified-loop-condition */
+import { Browser, expect, Page, test } from "@playwright/test";
 import axios from "axios";
 import Chance from "chance";
 
+import config from "../../index.config";
+import confirmEmail from "./confirmEmail";
+
 export const DEFAULT_PLATFORM = "prod";
 export const openloginversion = process.env.APP_VERSION || "v3";
-console.log("Environment:" + process.env.PLATFORM);
-console.log("App Version:" + openloginversion);
+console.log(`Environment:${process.env.PLATFORM}`);
+console.log(`App Version:${openloginversion}`);
 const env_map: { [key: string]: string } = {
   prod: `https://test-dashboard.web3auth.io`,
   beta: `https://beta.openlogin.com/${openloginversion}`,
@@ -20,10 +20,30 @@ const env_map: { [key: string]: string } = {
   aqua: `https://aqua.openlogin.com/${openloginversion}`,
   local: "http://localhost:3000",
 };
-const randomEmail = generate({
-  length: 20,
-  lowercase: true,
-});
+
+function generateEmailWithTag() {
+  // Randomly generating the tag...
+  const chance = new Chance();
+  const tag = chance.string({
+    length: 12,
+    pool: "abcdefghijklmnopqrstuvwxyz0123456789",
+  });
+  return `kelg8.${tag}@inbox.testmail.app`;
+}
+
+function delay(time: number | undefined) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, time);
+  });
+}
+
+export async function slowOperation(op: () => Promise<void>, timeout?: number) {
+  // Set slow timeout
+  test.setTimeout(timeout || 2 * 60 * 1000); // => 2 mins timeout
+  await op();
+  // Reset timeout
+  test.setTimeout(config.timeout || 0);
+}
 
 function useAutoCancelShareTransfer(page: Page): () => Promise<void> {
   let stopped = false;
@@ -78,7 +98,7 @@ async function waitForAddPassword(page: Page): Promise<boolean> {
 
 async function waitForSessionStorage(page: Page, openloginURL: string) {
   const sessionStorage: { tKeyModule: string } = await page.evaluate(() => sessionStorage);
-  const shares = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey.shares;
+  const { shares } = JSON.parse(sessionStorage.tKeyModule).tKeyModule.tKey;
   const noShare = Object.keys(shares).length;
   if (noShare < 2) {
     // console.log("not enough shares");
@@ -93,7 +113,6 @@ async function waitForSessionStorage(page: Page, openloginURL: string) {
       waitUntil: "load",
     });
   }
-  return;
 }
 
 async function waitForChangePassword(page: Page): Promise<boolean> {
@@ -220,9 +239,9 @@ async function signInWithGoogle({
   try {
     await page.waitForURL("https://accounts.google.com/**");
     await page.waitForSelector('input[type="Email"]');
-    expect(await page.isVisible('input[type="Email"]'));
+    expect(await page.isVisible('input[type="Email"]')).toBe(true);
     await page.fill('input[type="Email"]', google.email);
-    expect(await page.isVisible('button:has-text("Next")'));
+    expect(await page.isVisible('button:has-text("Next")')).toBe(true);
     await page.click(`button:has-text("Next")`);
     await page.fill('input[type="password"]', google.password);
     await page.click(`button:has-text("Next")`);
@@ -255,7 +274,7 @@ async function signInWithGitHub({
     await page.click('input[value="Sign in"]');
 
     await page.waitForSelector("text=Create repository");
-    expect(page.isVisible("text=Create repository"));
+    expect(page.isVisible("text=Create repository")).toBe(true);
     return true;
   } catch {
     return false;
@@ -354,14 +373,6 @@ async function signInWithTwitterWithoutLogin({
   await page.click("xpath=.//input[@value='Sign In']");
 }
 
-export async function slowOperation(op: () => Promise<void>, timeout?: number) {
-  // Set slow timeout
-  test.setTimeout(timeout || 2 * 60 * 1000); // => 2 mins timeout
-  await op();
-  // Reset timeout
-  test.setTimeout(config.timeout || 0);
-}
-
 async function signInWithFacebook({
   page,
   FB,
@@ -379,7 +390,7 @@ async function signInWithFacebook({
   await page.waitForURL("https://www.facebook.com/**");
   await page.isVisible("text=Log in");
   await page.waitForSelector("#email");
-  console.log("Email:" + FB.email);
+  console.log(`Email:${FB.email}`);
   await page.fill("#email", FB.email);
   await page.waitForSelector('[placeholder="Password"]');
   await page.fill('[placeholder="Password"]', FB.password);
@@ -492,23 +503,15 @@ async function changePasswordShare(page: Page, password: string) {
   await y;
 }
 
-function findLink(links: Link[], text: string) {
-  for (const link of links) {
-    if (link.text === text) return link;
-  }
-
-  return null;
-}
-
 async function signInWithEmail(page: Page, email: string, browser: Browser): Promise<boolean> {
   try {
-    console.log("Email:" + email);
+    console.log(`Email:${email}`);
     await page.fill("xpath=.//input[@type='email']", email);
     await page.getByLabel("Continue with Email").click();
     //await page.waitForSelector("text=Verify your email");
     await delay(3000);
     let href;
-    if (process.env.MAIL_APP == "testmail") {
+    if (process.env.MAIL_APP === "testmail") {
       // Setup our JSON API endpoint
       const ENDPOINT = `https://api.testmail.app/api/json?apikey=${process.env.TESTMAIL_APP_APIKEY}&namespace=kelg8`;
       const res = await axios.get(`${ENDPOINT}&tag=${email.split("@")[0].split(".")[1]}&livequery=true`);
@@ -544,99 +547,46 @@ async function signInWithMobileNumber({
   await delay(15000);
   const context2 = await browser.newContext();
   const page2 = await context2.newPage();
-  await page2.goto("https://receive-sms.cc/Finland-Phone-Number/" + user.mobileNumberForSMS);
+  await page2.goto(`https://receive-sms.cc/Finland-Phone-Number/${user.mobileNumberForSMS}`);
   try {
     await page2.waitForSelector('div:has-text("is your verification code on Web3Auth")');
   } catch {
     await page2.reload();
   }
   const otp = (await page2.locator("xpath=.//div[contains(text(),'is your verification code on Web3Auth')]/span").first().textContent()) || "";
-  console.log("otp:" + otp);
+  console.log(`otp:${otp}`);
   await page2.close();
   await page.locator("xpath=.//input[@aria-label='Please enter verification code. Digit 1']").fill(otp);
 }
 
-async function signInWithDapps({ page, browser, testEmail }: { page: Page; browser: Browser; testEmail: string }) {
-  const context3 = await browser.newContext();
-  await page.goto("https://demo-openlogin.web3auth.io/");
-  await page.locator("select.select").last().selectOption("email_passwordless");
-  await page.fill('[placeholder="Enter an email"]', testEmail);
-  await page.click('button:has-text("Login with email passwordless")');
-  const newEmail = await mailosaur.messages.get(
-    process.env.MAILOSAUR_SERVER_ID || "",
-    {
-      sentTo: testEmail,
-    },
-    {
-      timeout: 20 * 1000,
-    }
-  );
-  expect(newEmail.subject).toContain("Verify your email");
-  let link = findLink(newEmail.html?.links || [], "Approve login request");
-  if (!link) {
-    link = findLink(newEmail.html?.links || [], "Verify my email");
-  }
-  expect(link?.text).toContain("Approve login request");
-  const href = link?.href || "";
-  const page3 = await context3.newPage();
-  await page3.goto(href);
-  await page3.waitForSelector("text=Close this and return to your previous window", {
-    timeout: 10000,
-  });
-  await page3.close();
-  await page.getByLabel("Set up 2FA").waitFor();
-  await page.locator("xpath=.//button").first().click();
-  await delay(5000);
-}
-
 function generateRandomEmail() {
-  if (process.env.MAIL_APP == "mailosaur") {
-    return randomEmail + `${Date.now()}@${process.env.MAILOSAUR_SERVER_DOMAIN}`;
-  }
-  if (process.env.MAIL_APP == "testmail") {
+  if (process.env.MAIL_APP === "testmail") {
     return generateEmailWithTag();
   }
 }
 
-function generateEmailWithTag() {
-  // Randomly generating the tag...
-  const chance = new Chance();
-  const tag = chance.string({
-    length: 12,
-    pool: "abcdefghijklmnopqrstuvwxyz0123456789",
-  });
-  return `kelg8.${tag}@inbox.testmail.app`;
-}
-
-function delay(time: number | undefined) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, time);
-  });
-}
-
 export {
-  useAutoCancelShareTransfer,
-  useAutoCancel2FASetup,
-  signInWithGoogle,
-  signInWithTwitter,
-  signInWithFacebook,
-  signInWithDiscord,
-  confirmEmail,
-  findLink,
-  signInWithEmail,
-  generateRandomEmail,
-  deleteCurrentDeviceShare,
-  waitForTkeyRehydration,
   addPasswordShare,
-  changePasswordShare,
+  authorizeWithGitHub,
   catchError,
   catchErrorAndExit,
-  waitForSessionStorage,
-  signInWithGitHub,
-  signInWithTwitterWithoutLogin,
-  authorizeWithGitHub,
-  signInWithMobileNumber,
-  env_map,
-  signInWithDapps,
+  changePasswordShare,
+  confirmEmail,
   delay,
+  deleteCurrentDeviceShare,
+  env_map,
+  generateRandomEmail,
+  // signInWithDapps,
+  signInWithDiscord,
+  signInWithEmail,
+  signInWithFacebook,
+  signInWithGitHub,
+  signInWithGoogle,
+  signInWithMobileNumber,
+  signInWithTwitter,
+  signInWithTwitterWithoutLogin,
+  useAutoCancel2FASetup,
+  useAutoCancelShareTransfer,
+  waitForSessionStorage,
+  waitForTkeyRehydration,
 };
