@@ -1,6 +1,7 @@
 name: AuthService - E2ETests
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
