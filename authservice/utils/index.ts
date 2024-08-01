@@ -8,8 +8,6 @@ const openloginversion = process.env.APP_VERSION;
 import axios from "axios";
 import ChanceJS from "chance";
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
-console.log(`Environment:${process.env.PLATFORM}`);
-console.log(`App Version:${openloginversion}`);
 const env_map: { [key: string]: string } = {
   prod: `https://app.openlogin.com/${openloginversion}`,
   beta: `https://beta.openlogin.com/${openloginversion}`,
@@ -551,6 +549,47 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
   }
 }
 
+/**
+ * Verify the email by retrieve the code in the email and input to the OTP box.
+ *
+ * @param {number} email - Email to use to receive the verification code, email from the mail service
+ * @param {number} previousCode - If use this email to receive the code many times, use this one to wait until get the new email, if empty, ignore to wait
+ */
+
+async function verifyEmailPasswordlessWithVerificationCode(
+  page: Page,
+  browser: Browser,
+  config: { email: string; tag: string; timestamp: number; redirectMode: boolean; previousCode: string }
+) {
+  console.log(`Email:${config.email}`);
+
+  if (config.redirectMode) await page.locator("text=Email Verification").waitFor({ state: "visible" });
+
+  let count = 0;
+  let verificationCode: string;
+
+  while (count < 5) {
+    await delay(2000);
+
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${config.tag}&livequery=true&timestamp_from=${config.timestamp}`);
+    const inbox = await res.data;
+    verificationCode = inbox.emails[0].subject.match(/\d+/)[0] as string;
+
+    if (!config.previousCode || verificationCode !== config.previousCode) {
+      break;
+    }
+  }
+
+  if (!config.redirectMode) {
+    const pages = browser.contexts()[0].pages();
+    await pages[1].bringToFront();
+    await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(verificationCode);
+  } else await page.locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(verificationCode);
+
+  return verificationCode;
+}
+
 async function signInWithEmailWithTestEmailOnDemoApp(
   page: Page,
   email: string,
@@ -739,4 +778,5 @@ export {
   useAutoCancel2FASetup,
   useAutoCancelShareTransfer,
   waitForTkeyRehydration,
+  verifyEmailPasswordlessWithVerificationCode,
 };
