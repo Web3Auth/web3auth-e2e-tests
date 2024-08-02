@@ -2,7 +2,7 @@
 import { Browser, expect, Page } from "@playwright/test";
 
 import { delay } from "../utils/index";
-export class WalletServicesPage {
+export class DemoWalletServicesPage {
   readonly page: Page;
 
   readonly loginBtn: string;
