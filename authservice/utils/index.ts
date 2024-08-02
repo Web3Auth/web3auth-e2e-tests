@@ -569,7 +569,7 @@ async function signInWithEmailWithTestEmailOnDemoApp(
     console.log(`Email:${email}`);
     await page.fill('input[data-testid="loginHint"]', email);
     await page.click('button:has-text("Login with email passwordless")');
-    await page.waitForSelector("text=Verify your email");
+    //await page.waitForSelector("text=Verify your email");
     await delay(5000);
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;

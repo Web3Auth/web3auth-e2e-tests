@@ -495,27 +495,71 @@ async function changePasswordShare(page: Page, password: string) {
 
 async function signInWithEmailWithTestEmailApp(page: Page, email: string, browser: Browser, tag: string, timestamp: number): Promise<boolean> {
   try {
+    await page.waitForSelector(`[data-testid="loginProvider"]`);
+    await page.click(`[data-testid="loginProvider"]`);
+    await page.click(`//*[@data-testid="loginProvider"]//span[text()="email passwordless"]`);
     console.log(`Email:${email}`);
-    await page.fill('[placeholder="name@domain.com"]', email);
-    await page.click('button:has-text("Login with Email")');
+    await page.fill('input[data-testid="loginHint"]', email);
+    await page.click('button:has-text("Login with email passwordless")');
     await delay(20000);
     const pages = browser.contexts()[0].pages();
     // pages[0] is the first page, and pages[1] is the new page
-    await pages[1].bringToFront(); // Bring the new page to the front
+    await pages[0].bringToFront(); // Bring the new page to the front
     // Setup our JSON API endpoint
     const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
     const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
     const inbox = await res.data;
-    const href = inbox.emails[0].subject.match(/\d+/)[0];
-    console.error(href);
-    await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(href);
-    useAutoCancel2FASetup(pages[1]);
+    const otp = inbox.emails[0].subject.match(/\d+/)[0];
+    console.info(otp);
+    await pages[0].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(otp);
+    useAutoCancel2FASetup(pages[0]);
     return true;
   } catch (err) {
     console.error(err);
     return false;
   }
 }
+
+async function signInWithEmailWithTestEmailOnDemoApp(
+  page: Page,
+  email: string,
+  browser: Browser,
+  tag: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  option: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  platform: string
+): Promise<boolean> {
+  try {
+    await page.waitForSelector(`[data-testid="loginProvider"]`);
+    await page.click(`[data-testid="loginProvider"]`);
+    await page.click(`//*[@data-testid="loginProvider"]//span[text()="email passwordless"]`);
+
+    console.log(`Email:${email}`);
+    await page.fill('input[data-testid="loginHint"]', email);
+    await page.click('button:has-text("Login with email passwordless")');
+    await page.waitForSelector("text=Verify your email");
+    await delay(5000);
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
+    const inbox = await res.data;
+    const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
+    const context2 = await browser.newContext();
+    const page2 = await context2.newPage();
+    await page2.goto(href);
+    await page2.waitForSelector("text=Close this and return to your previous window", {
+      timeout: 10000,
+    });
+    await page2.close();
+    await context2.close();
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
 async function signInWithEmailWithTestEmailAppInDemoApp(
   page: Page,
   email: string,
