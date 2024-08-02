@@ -1,8 +1,7 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 
 import { AccountsPage } from "../../authservice/openlogin-account-page/AccountsPage";
-import { signInWithEmailWithTestEmailOnDemoApp } from "../../authservice/utils";
-import { catchErrorAndExit, signInWithEmailWithTestEmailApp, signInWithEmailWithTestEmailAppInDemoApp } from "../utils";
+import { signInWithEmailWithTestEmailApp, signInWithEmailWithTestEmailAppInDemoApp } from "../utils";
 import { DemoWalletServicesPage } from "./DemoWalletServicesPage";
 let sessionId: string = "";
 const demoWalletServiceLoginURL = "https://demo-wallet.web3auth.io";
