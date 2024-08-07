@@ -1,6 +1,31 @@
 // playwright-dev-page.ts
 import { Page } from "@playwright/test";
 
+async function selectSingleChoiceDropdown(page: Page, dataTestId: string, option: string) {
+  await page.locator(`[data-testid="${dataTestId}"]`).waitFor({ state: "visible" });
+  await page.click(`[data-testid="${dataTestId}"] button`);
+
+  await page.click(`//*[@data-testid="${dataTestId}"]//span[text()="${option}"]`);
+  await page.locator(`//*[@data-testid="${dataTestId}"]//button[text()="${option}"]`).waitFor({ state: "visible" });
+}
+
+async function selectMultipleChoicesDropdown(page: Page, dataTestId: string, options: string[]) {
+  await page.locator(`[data-testid="${dataTestId}"]`).waitFor({ state: "visible" });
+  await page.click(`[data-testid="${dataTestId}"] button`);
+
+  // Deselect default options
+  const allOptions = await page.$$(`//*[@data-testid="${dataTestId}"]//input`);
+  for (const option of allOptions) {
+    if ((await option.getAttribute("aria-checked")) === "true") await option.click();
+  }
+
+  for (const option of options) {
+    await page.click(`//*[@data-testid="${dataTestId}"]//span[text()="${option}"]`);
+  }
+
+  await page.click(`[data-testid="${dataTestId}"] button`);
+}
+
 export class LoginPage {
   readonly page: Page;
 
@@ -60,29 +85,4 @@ export class LoginPage {
   async inputEmailPasswordless(email: string) {
     await this.page.fill(`input[data-testid="loginHint"]`, email);
   }
-}
-
-async function selectSingleChoiceDropdown(page: Page, dataTestId: string, option: string) {
-  await page.locator(`[data-testid="${dataTestId}"]`).waitFor({ state: "visible" });
-  await page.click(`[data-testid="${dataTestId}"] button`);
-
-  await page.click(`//*[@data-testid="${dataTestId}"]//span[text()="${option}"]`);
-  await page.locator(`//*[@data-testid="${dataTestId}"]//button[text()="${option}"]`).waitFor({ state: "visible" });
-}
-
-async function selectMultipleChoicesDropdown(page: Page, dataTestId: string, options: string[]) {
-  await page.locator(`[data-testid="${dataTestId}"]`).waitFor({ state: "visible" });
-  await page.click(`[data-testid="${dataTestId}"] button`);
-
-  // Deselect default options
-  const allOptions = await page.$$(`//*[@data-testid="${dataTestId}"]//input`);
-  for (const option of allOptions) {
-    if ((await option.getAttribute("aria-checked")) === "true") await option.click();
-  }
-
-  for (const option of options) {
-    await page.click(`//*[@data-testid="${dataTestId}"]//span[text()="${option}"]`);
-  }
-
-  await page.click(`[data-testid="${dataTestId}"] button`);
 }

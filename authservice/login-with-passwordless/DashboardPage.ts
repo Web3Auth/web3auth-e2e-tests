@@ -1,5 +1,6 @@
 // playwright-dev-page.ts
 import { Page } from "@playwright/test";
+import otpauth from "otpauth";
 
 export class DashboardPage {
   readonly page: Page;
@@ -8,7 +9,7 @@ export class DashboardPage {
     this.page = page;
   }
 
-  async clickEnableMFA(email: string) {
+  async clickEnableMFA() {
     await this.page.click(`button[data-testid="btnEnableMFA"]`);
   }
 
@@ -46,13 +47,12 @@ export class DashboardPage {
   async setupAuthenticator() {
     await this.page.locator('text="Enter code manually"').click();
 
-    let secret = await this.page.locator(`div>span`).textContent();
+    const secret = await this.page.locator(`div>span`).textContent();
     await this.page.click(`button[aria-label="Next"]`);
 
     // Generate TOTP token
-    const OTPAuth = require("otpauth");
-    const totp = new OTPAuth.TOTP({
-      secret: OTPAuth.Secret.fromBase32(secret),
+    const totp = new otpauth.TOTP({
+      secret: otpauth.Secret.fromBase32(secret),
       algorithm: "SHA-1",
       digits: 6,
       period: 30,

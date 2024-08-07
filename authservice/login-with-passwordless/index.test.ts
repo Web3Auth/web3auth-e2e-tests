@@ -1,8 +1,8 @@
-import { Browser, expect, Page, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 import { delay, generateEmailWithTag, verifyEmailPasswordlessWithVerificationCode } from "../utils";
-import { LoginPage } from "./LoginPage";
 import { DashboardPage } from "./DashboardPage";
+import { LoginPage } from "./LoginPage";
 
 const openloginURL = "https://demo-openlogin.web3auth.io/";
 
@@ -34,9 +34,9 @@ test.describe.serial("Passwordless Login scenarios", () => {
     const currentTimestamp = Math.floor(Date.now() / 1000);
     const tag = testEmail.split("@")[0].split(".")[1];
 
-    let code = await verifyEmailPasswordlessWithVerificationCode(page, browser, {
+    const code = await verifyEmailPasswordlessWithVerificationCode(page, browser, {
       email: testEmail,
-      tag: tag,
+      tag,
       timestamp: currentTimestamp,
       redirectMode: false,
       previousCode: "",
@@ -44,7 +44,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     // GET PRIV KEY
 
-    let dashboardPage = new DashboardPage(page);
+    const dashboardPage = new DashboardPage(page);
     const privateKey = await dashboardPage.getOpenLoginPrivateKey();
 
     // LOGOUT & CHANGE TO MANDATORY
@@ -56,7 +56,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await loginPage.clickLoginButton();
     await verifyEmailPasswordlessWithVerificationCode(page, browser, {
       email: testEmail,
-      tag: tag,
+      tag,
       timestamp: currentTimestamp,
       redirectMode: false,
       previousCode: code,
@@ -65,7 +65,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await delay(2000);
     const pages = browser.contexts()[0].pages();
 
-    let dashboardPage2 = new DashboardPage(pages[1]);
+    const dashboardPage2 = new DashboardPage(pages[1]);
     await pages[1].bringToFront();
 
     await dashboardPage2.clickSetup2FA();
@@ -124,7 +124,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     let code = await verifyEmailPasswordlessWithVerificationCode(page, browser, {
       email: testEmail,
-      tag: tag,
+      tag,
       timestamp: Math.floor(Date.now() / 1000),
       redirectMode: true,
       previousCode: "",
@@ -132,14 +132,14 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     // ENABLE MFA
 
-    let dashboardPage = new DashboardPage(page);
+    const dashboardPage = new DashboardPage(page);
     const privateKey = await dashboardPage.getOpenLoginPrivateKey();
 
-    await dashboardPage.clickEnableMFA(testEmail);
+    await dashboardPage.clickEnableMFA();
     await page.locator(`text="Continue with ${testEmail}"`).click();
     code = await verifyEmailPasswordlessWithVerificationCode(page, browser, {
       email: testEmail,
-      tag: tag,
+      tag,
       timestamp: Math.floor(Date.now() / 1000),
       redirectMode: true,
       previousCode: code,
@@ -180,7 +180,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await loginPage.clickLoginButton();
     await verifyEmailPasswordlessWithVerificationCode(page, browser, {
       email: testEmail,
-      tag: tag,
+      tag,
       timestamp: Math.floor(Date.now() / 1000),
       redirectMode: true,
       previousCode: code,
@@ -214,9 +214,9 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     const tag = testEmail.split("@")[0].split(".")[1];
 
-    let code = await verifyEmailPasswordlessWithVerificationCode(page, browser, {
+    const code = await verifyEmailPasswordlessWithVerificationCode(page, browser, {
       email: testEmail,
-      tag: tag,
+      tag,
       timestamp: Math.floor(Date.now() / 1000),
       redirectMode: true,
       previousCode: "",
@@ -224,7 +224,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     // ENABLE MFA
 
-    let dashboardPage = new DashboardPage(page);
+    const dashboardPage = new DashboardPage(page);
 
     await dashboardPage.clickSetup2FA();
 
@@ -263,7 +263,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     await verifyEmailPasswordlessWithVerificationCode(page, browser, {
       email: testEmail,
-      tag: tag,
+      tag,
       timestamp: Math.floor(Date.now() / 1000),
       redirectMode: true,
       previousCode: code,

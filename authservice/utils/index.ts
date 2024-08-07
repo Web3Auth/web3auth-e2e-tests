@@ -579,6 +579,8 @@ async function verifyEmailPasswordlessWithVerificationCode(
     if (!config.previousCode || verificationCode !== config.previousCode) {
       break;
     }
+
+    count++;
   }
 
   if (!config.redirectMode) {
@@ -777,6 +779,6 @@ export {
   signInWithTwitterWithoutLogin,
   useAutoCancel2FASetup,
   useAutoCancelShareTransfer,
-  waitForTkeyRehydration,
   verifyEmailPasswordlessWithVerificationCode,
+  waitForTkeyRehydration,
 };
