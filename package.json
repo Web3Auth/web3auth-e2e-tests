@@ -5,9 +5,10 @@
   "scripts": {
     "lint": "eslint **/*.ts --fix",
     "test:browser": "playwright test --headed",
-    "test": "playwright test",
+    "test": "playwright test authservice --grep=@passwordless --workers=1 --headed --config=index.config.ts",
+    "test:ci": "playwright test authservice --grep=@passwordless --workers=1 --config=index.config.ts",
     "developerdashboard:config": "playwright test opendeveloperdashboard --grep=@smoke --workers=1 --headed --config=index.config.ts",
-    "authservice:config": "playwright test authservice --grep=@passwordless --workers=1 --config=index.config.ts",
+    "test:authservice": "playwright test authservice --headed --workers=1 --config=index.config.ts",
     "walletservice:config": "playwright test walletservices/wallet-service --grep=@smoke --workers=1 --headed --config=index.config.ts",
     "demowalletservice:config": "playwright test walletservices/demo-wallet-service --grep=@demo --workers=1 --headed --config=index.config.ts",
     "trace:show": "playwright show-trace",

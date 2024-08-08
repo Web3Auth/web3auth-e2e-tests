@@ -1,4 +1,4 @@
-name: AuthService - E2ETests
+name: AuthService - E2ETests - No MFA case
 
 on:
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
           TESTMAIL_APP_APIKEY: ${{ secrets.TESTMAIL_APP_APIKEY }}
           MAIL_APP: ${{ secrets.MAIL_APP }}
         run: |
-          npm install && npx playwright install && npm run authservice:config
+          npm install && npx playwright install && npm run test:authservice --grep=@nomfa
 
       - name: Get current timestamp
         id: get-time
