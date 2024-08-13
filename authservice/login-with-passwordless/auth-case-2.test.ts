@@ -40,10 +40,15 @@ test.describe.serial("Passwordless Login scenarios", () => {
       previousCode: "",
     });
 
-    // GET PRIV KEY
+    // GET INFO KEY BEFORE 2FA SETUP
 
     const dashboardPage = new DashboardPage(page);
     const privateKey = await dashboardPage.getOpenLoginPrivateKey();
+    const openloginStateObject = await dashboardPage.getOpenloginStateObject();
+    const tKey = openloginStateObject.tKey as string;
+    const keyMode = openloginStateObject.keyMode as string;
+    const ed25519PrivKey = openloginStateObject.ed25519PrivKey as string;
+    expect(keyMode).toBe("1/1");
 
     // LOGOUT & CHANGE TO MANDATORY
     await dashboardPage.logout();
@@ -93,9 +98,17 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await dashboardPage2.skipTheFactorSetup();
     await dashboardPage2.confirmDone2FASetup();
 
-    // pages[1].close();
+    // GET INFO KEY AFTER 2FA SETUP AND VERIFY
 
     const privateKeyAfterSetupMFA = await dashboardPage2.getOpenLoginPrivateKey();
     expect(privateKeyAfterSetupMFA).toBe(privateKey);
+
+    const openloginStateObjectAfterSetupMFA = await dashboardPage2.getOpenloginStateObject();
+    const tKeyAfterSetupMFA = openloginStateObjectAfterSetupMFA.tKey as string;
+    const keyModeAfterSetupMFA = openloginStateObjectAfterSetupMFA.keyMode as string;
+    const ed25519PrivKeyAfterSetupMFA = openloginStateObjectAfterSetupMFA.ed25519PrivKey as string;
+    expect(ed25519PrivKeyAfterSetupMFA).toBe(ed25519PrivKey);
+    expect(tKeyAfterSetupMFA).toBe(tKey);
+    expect(keyModeAfterSetupMFA).toBe("2/n");
   });
 });

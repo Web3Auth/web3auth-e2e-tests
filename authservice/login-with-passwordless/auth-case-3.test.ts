@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { authServiceURL, delay, generateEmailWithTag, verifyEmailPasswordlessWithVerificationCode } from "../utils";
+import { authServiceURL, generateEmailWithTag, verifyEmailPasswordlessWithVerificationCode } from "../utils";
 import { DashboardPage } from "./DashboardPage";
 import { LoginPage } from "./LoginPage";
 
@@ -19,14 +19,12 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await loginPage.selectBuildEnv("staging");
     await loginPage.selectAllMFAFactor();
     await loginPage.selectMFALevel("mandatory");
-    await loginPage.selectMFAMandantory(["DEVICE", "PASSWORD", "AUTHENTICATOR"]);
+    await loginPage.selectMFAMandantory(["PASSWORD", "AUTHENTICATOR"]);
     await loginPage.selectOpenloginNetwork("mainnet");
     await loginPage.selectUXMode("redirect");
     await loginPage.selectLoginProvider("email passwordless");
     await loginPage.inputEmailPasswordless(testEmail);
 
-    // To avoid the 429 Too many requests error
-    await delay(5000);
     await loginPage.clickLoginButton();
 
     const tag = testEmail.split("@")[0].split(".")[1];
@@ -45,9 +43,9 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     await dashboardPage.clickSetup2FA();
 
-    // SETUP DEVICE FACTOR
+    // SKIP DEVICE FACTOR
 
-    await dashboardPage.saveTheDevice();
+    await dashboardPage.skipTheFactorSetup();
 
     // SKIP SOCIAL FACTOR
 
@@ -55,7 +53,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     // SETUP AUTHENTICATOR FACTOR
 
-    await dashboardPage.setupAuthenticator();
+    const secret = await dashboardPage.setupAuthenticator();
 
     // SKIP RECOVERY FACTOR
 
@@ -71,12 +69,23 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await dashboardPage.confirmDone2FASetup();
 
     const privateKey = await dashboardPage.getOpenLoginPrivateKey();
+    // Check the privatekey, tKey is not empty
+    const userInfoObject = await dashboardPage.getUserInfoObject();
+    const idToken = userInfoObject.idToken as string;
+    expect(idToken).not.toBe("");
+
+    // The idtoken should not be empty
+    const openloginStateObject = await dashboardPage.getOpenloginStateObject();
+    const tKey = openloginStateObject.tKey as string;
+    const keyMode = openloginStateObject.keyMode as string;
+    const ed25519PrivKey = openloginStateObject.ed25519PrivKey as string;
+    expect(privateKey).not.toBe("");
+    expect(tKey).not.toBe("");
+    expect(keyMode).toBe("2/n");
 
     // LOGOUT
     await dashboardPage.logout();
     await loginPage.clickLoginButton();
-    // To avoid the 429 Too many requests error
-    await delay(5000);
 
     await verifyEmailPasswordlessWithVerificationCode(page, browser, {
       email: testEmail,
@@ -86,7 +95,21 @@ test.describe.serial("Passwordless Login scenarios", () => {
       previousCode: code,
     });
 
+    // Handle for factor authenticator
+    await dashboardPage.verifyAuthenticatorFactor(secret);
+
+    // Select Do not save the device
+    await dashboardPage.donotSaveDevice();
+
     const privateKeyAfterReLogin = await dashboardPage.getOpenLoginPrivateKey();
     expect(privateKeyAfterReLogin).toBe(privateKey);
+
+    const openloginStateObjectAfterLogin = await dashboardPage.getOpenloginStateObject();
+    const tKeyAfterLogin = openloginStateObjectAfterLogin.tKey as string;
+    const keyModeAfterLogin = openloginStateObjectAfterLogin.keyMode as string;
+    const ed25519PrivKeyAfterLogin = openloginStateObjectAfterLogin.ed25519PrivKey as string;
+    expect(ed25519PrivKeyAfterLogin).toBe(ed25519PrivKey);
+    expect(tKeyAfterLogin).toBe(tKey);
+    expect(keyModeAfterLogin).toBe("2/n");
   });
 });

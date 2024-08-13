@@ -25,6 +25,18 @@ export class DashboardPage {
     return (await this.page.locator("text=Openlogin Private key").textContent()).split(" : ")[1];
   }
 
+  async getUserInfoObject() {
+    await this.page.locator('text=" Get user info "').click();
+    const content = await this.page.locator(".card-container pre").textContent();
+    return JSON.parse(content);
+  }
+
+  async getOpenloginStateObject() {
+    await this.page.locator('text=" Get openlogin state "').click();
+    const content = await this.page.locator(".card-container pre").textContent();
+    return JSON.parse(content);
+  }
+
   async saveTheDevice() {
     await this.page.click(`input[type="checkbox"]`);
     await this.page.click(`button[aria-label="Save this device"]`);
@@ -44,6 +56,24 @@ export class DashboardPage {
     await this.page.click(`button[aria-label="Done"]`);
   }
 
+  async donotSaveDevice() {
+    await this.page.click('text="Do not save"');
+  }
+
+  async verifyAuthenticatorFactor(secret: string) {
+    await this.page.click(`[data-testid="authenticator"]`);
+
+    // Generate TOTP token
+    const totp = new otpauth.TOTP({
+      secret: otpauth.Secret.fromBase32(secret),
+      algorithm: "SHA-1",
+      digits: 6,
+      period: 30,
+    });
+    const token = totp.generate();
+    await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(token);
+  }
+
   async setupAuthenticator() {
     await this.page.locator('text="Enter code manually"').click();
 
@@ -59,5 +89,7 @@ export class DashboardPage {
     });
     const token = totp.generate();
     await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(token);
+
+    return secret;
   }
 }

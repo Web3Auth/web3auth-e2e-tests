@@ -4,8 +4,6 @@ import { authServiceURL, generateEmailWithTag, verifyEmailPasswordlessWithVerifi
 import { DashboardPage } from "./DashboardPage";
 import { LoginPage } from "./LoginPage";
 
-const passwordTestingFactor = "Testing@123";
-
 test.describe.serial("Passwordless Login scenarios", () => {
   test.setTimeout(150000);
 
@@ -28,7 +26,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     const tag = testEmail.split("@")[0].split(".")[1];
 
-    let code = await verifyEmailPasswordlessWithVerificationCode(page, browser, {
+    await verifyEmailPasswordlessWithVerificationCode(page, browser, {
       email: testEmail,
       tag,
       timestamp: Math.floor(Date.now() / 1000),
@@ -36,63 +34,19 @@ test.describe.serial("Passwordless Login scenarios", () => {
       previousCode: "",
     });
 
-    // ENABLE MFA
-
+    // Check the privatekey, tKey is not empty
     const dashboardPage = new DashboardPage(page);
-    const privateKey = await dashboardPage.getOpenLoginPrivateKey();
+    const userInfoObject = await dashboardPage.getUserInfoObject();
+    const idToken = userInfoObject.idToken as string;
+    expect(idToken).not.toBe("");
 
-    await dashboardPage.clickEnableMFA();
-    await page.locator(`text="Continue with ${testEmail}"`).click();
-    code = await verifyEmailPasswordlessWithVerificationCode(page, browser, {
-      email: testEmail,
-      tag,
-      timestamp: Math.floor(Date.now() / 1000),
-      redirectMode: true,
-      previousCode: code,
-    });
-
-    await dashboardPage.clickSetup2FA();
-
-    // SETUP DEVICE FACTOR
-
-    await dashboardPage.saveTheDevice();
-
-    // SKIP SOCIAL FACTOR
-
-    await dashboardPage.skipTheFactorSetup();
-
-    // SETUP AUTHENTICATOR FACTOR
-
-    await dashboardPage.setupAuthenticator();
-
-    // SKIP RECOVERY FACTOR
-
-    await dashboardPage.skipTheFactorSetup();
-
-    // SETUP PASSWORD
-
-    await dashboardPage.inputPasswordFactor(passwordTestingFactor);
-
-    // SKIP PASSKEY
-
-    await dashboardPage.skipTheFactorSetup();
-    await dashboardPage.confirmDone2FASetup();
-
-    const privateKeyAfterSetupMFA = await dashboardPage.getOpenLoginPrivateKey();
-    expect(privateKeyAfterSetupMFA).toBe(privateKey);
-
-    // LOGOUT
-    await dashboardPage.logout();
-    await loginPage.clickLoginButton();
-    await verifyEmailPasswordlessWithVerificationCode(page, browser, {
-      email: testEmail,
-      tag,
-      timestamp: Math.floor(Date.now() / 1000),
-      redirectMode: true,
-      previousCode: code,
-    });
-
-    const privateKeyAfterReLogin = await dashboardPage.getOpenLoginPrivateKey();
-    expect(privateKeyAfterReLogin).toBe(privateKey);
+    // The idtoken should not be empty
+    const openloginStateObject = await dashboardPage.getOpenloginStateObject();
+    const privateKey = openloginStateObject.privKey as string;
+    const tKey = openloginStateObject.tKey as string;
+    const keyMode = openloginStateObject.keyMode as string;
+    expect(privateKey).not.toBe("");
+    expect(tKey).not.toBe("");
+    expect(keyMode).toBe("1/1");
   });
 });
