@@ -5,7 +5,7 @@ import { DashboardPage } from "./DashboardPage";
 import { LoginPage } from "./LoginPage";
 
 test.describe.serial("Passwordless Login scenarios", () => {
-  test.setTimeout(150000);
+  test.setTimeout(90000);
 
   test("Login email passwordless case 1, none MFA then setup 2FA @nomfa", async ({ page, browser }) => {
     const testEmail = generateEmailWithTag();

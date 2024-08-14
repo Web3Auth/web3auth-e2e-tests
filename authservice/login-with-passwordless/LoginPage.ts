@@ -85,4 +85,8 @@ export class LoginPage {
   async inputEmailPasswordless(email: string) {
     await this.page.fill(`input[data-testid="loginHint"]`, email);
   }
+
+  async logout() {
+    await this.page.click(`button.dashboard-action-logout`);
+  }
 }

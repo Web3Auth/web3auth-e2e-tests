@@ -1,13 +1,14 @@
 import { expect, test } from "@playwright/test";
 
 import { authServiceURL, delay, generateEmailWithTag, verifyEmailPasswordlessWithVerificationCode } from "../utils";
+import { AuthServicePage } from "./AuthServicePage";
 import { DashboardPage } from "./DashboardPage";
 import { LoginPage } from "./LoginPage";
 
 const passwordTestingFactor = "Testing@123";
 
 test.describe.serial("Passwordless Login scenarios", () => {
-  test.setTimeout(150000);
+  test.setTimeout(90000);
 
   test("Login email passwordless case 2, 1st none MFA then mandatory MFA then setup 2FA @nonemandatorymfa", async ({ page, browser }) => {
     const testEmail = generateEmailWithTag();
@@ -51,7 +52,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     expect(keyMode).toBe("1/1");
 
     // LOGOUT & CHANGE TO MANDATORY
-    await dashboardPage.logout();
+    await loginPage.logout();
     await loginPage.selectMFALevel("mandatory");
     // To avoid the 429 Too many requests error
     await delay(5000);
@@ -68,38 +69,39 @@ test.describe.serial("Passwordless Login scenarios", () => {
     await delay(2000);
     const pages = browser.contexts()[0].pages();
 
-    const dashboardPage2 = new DashboardPage(pages[1]);
+    const authServicePage = new AuthServicePage(pages[1]);
     await pages[1].bringToFront();
 
-    await dashboardPage2.clickSetup2FA();
+    await authServicePage.clickSetup2FA();
 
     // SETUP DEVICE FACTOR
 
-    await dashboardPage2.saveTheDevice();
+    await authServicePage.saveTheDevice();
 
     // SKIP SOCIAL FACTOR
 
-    await dashboardPage2.skipTheFactorSetup();
+    await authServicePage.skipTheFactorSetup();
 
     // SETUP AUTHENTICATOR FACTOR
 
-    await dashboardPage2.setupAuthenticator();
+    await authServicePage.setupAuthenticator();
 
     // SKIP RECOVERY FACTOR
 
-    await dashboardPage2.skipTheFactorSetup();
+    await authServicePage.skipTheFactorSetup();
 
     // SETUP PASSWORD
 
-    await dashboardPage2.inputPasswordFactor(passwordTestingFactor);
+    await authServicePage.inputPasswordFactor(passwordTestingFactor);
 
     // SKIP PASSKEY
 
-    await dashboardPage2.skipTheFactorSetup();
-    await dashboardPage2.confirmDone2FASetup();
+    await authServicePage.skipPasskeySetup();
+    await authServicePage.confirmDone2FASetup();
 
     // GET INFO KEY AFTER 2FA SETUP AND VERIFY
 
+    const dashboardPage2 = new DashboardPage(pages[1]);
     const privateKeyAfterSetupMFA = await dashboardPage2.getOpenLoginPrivateKey();
     expect(privateKeyAfterSetupMFA).toBe(privateKey);
 

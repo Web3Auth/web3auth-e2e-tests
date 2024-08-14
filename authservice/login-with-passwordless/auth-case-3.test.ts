@@ -1,13 +1,14 @@
 import { expect, test } from "@playwright/test";
 
 import { authServiceURL, generateEmailWithTag, verifyEmailPasswordlessWithVerificationCode } from "../utils";
+import { AuthServicePage } from "./AuthServicePage";
 import { DashboardPage } from "./DashboardPage";
 import { LoginPage } from "./LoginPage";
 
 const passwordTestingFactor = "Testing@123";
 
 test.describe.serial("Passwordless Login scenarios", () => {
-  test.setTimeout(150000);
+  test.setTimeout(90000);
 
   test("Login email passwordless case 3, mandatory MFA then setup 2FA @mandatorymfa", async ({ page, browser }) => {
     const testEmail = generateEmailWithTag();
@@ -39,34 +40,35 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     // ENABLE MFA
 
+    const authServicePage = new AuthServicePage(page);
     const dashboardPage = new DashboardPage(page);
 
-    await dashboardPage.clickSetup2FA();
+    await authServicePage.clickSetup2FA();
 
     // SKIP DEVICE FACTOR
 
-    await dashboardPage.skipTheFactorSetup();
+    await authServicePage.skipTheFactorSetup();
 
     // SKIP SOCIAL FACTOR
 
-    await dashboardPage.skipTheFactorSetup();
+    await authServicePage.skipTheFactorSetup();
 
     // SETUP AUTHENTICATOR FACTOR
 
-    const { secret, token } = await dashboardPage.setupAuthenticator();
+    const secret = await authServicePage.setupAuthenticator();
 
     // SKIP RECOVERY FACTOR
 
-    await dashboardPage.skipTheFactorSetup();
+    await authServicePage.skipTheFactorSetup();
 
     // SETUP PASSWORD
 
-    await dashboardPage.inputPasswordFactor(passwordTestingFactor);
+    await authServicePage.inputPasswordFactor(passwordTestingFactor);
 
     // SKIP PASSKEY
 
-    await dashboardPage.skipTheFactorSetup();
-    await dashboardPage.confirmDone2FASetup();
+    await authServicePage.skipPasskeySetup();
+    await authServicePage.confirmDone2FASetup();
 
     const privateKey = await dashboardPage.getOpenLoginPrivateKey();
     // Check the privatekey, tKey is not empty
@@ -84,7 +86,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     expect(keyMode).toBe("2/n");
 
     // LOGOUT
-    await dashboardPage.logout();
+    await loginPage.logout();
     await loginPage.clickLoginButton();
 
     await verifyEmailPasswordlessWithVerificationCode(page, browser, {
@@ -96,10 +98,10 @@ test.describe.serial("Passwordless Login scenarios", () => {
     });
 
     // Handle for factor authenticator
-    await dashboardPage.verifyAuthenticatorFactor(secret, token);
+    await authServicePage.verifyAuthenticatorFactor(secret);
 
     // Select Do not save the device
-    await dashboardPage.donotSaveDevice();
+    await authServicePage.donotSaveDevice();
 
     const privateKeyAfterReLogin = await dashboardPage.getOpenLoginPrivateKey();
     expect(privateKeyAfterReLogin).toBe(privateKey);
