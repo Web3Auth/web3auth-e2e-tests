@@ -53,7 +53,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     // SETUP AUTHENTICATOR FACTOR
 
-    const secret = await dashboardPage.setupAuthenticator();
+    const { secret, token } = await dashboardPage.setupAuthenticator();
 
     // SKIP RECOVERY FACTOR
 
@@ -96,7 +96,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     });
 
     // Handle for factor authenticator
-    await dashboardPage.verifyAuthenticatorFactor(secret);
+    await dashboardPage.verifyAuthenticatorFactor(secret, token);
 
     // Select Do not save the device
     await dashboardPage.donotSaveDevice();

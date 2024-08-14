@@ -2,6 +2,8 @@
 import { Page } from "@playwright/test";
 import otpauth from "otpauth";
 
+import { delay } from "../utils";
+
 export class DashboardPage {
   readonly page: Page;
 
@@ -60,7 +62,7 @@ export class DashboardPage {
     await this.page.click('text="Do not save"');
   }
 
-  async verifyAuthenticatorFactor(secret: string) {
+  async verifyAuthenticatorFactor(secret: string, previousToken: string) {
     await this.page.click(`[data-testid="authenticator"]`);
 
     // Generate TOTP token
@@ -70,8 +72,23 @@ export class DashboardPage {
       digits: 6,
       period: 30,
     });
-    const token = totp.generate();
+
+    let count = 0;
+
+    let token = totp.generate();
+    while (count < 5) {
+      // eslint-disable-next-line security/detect-possible-timing-attacks
+      if (token !== previousToken) break;
+      await delay(5000);
+      token = totp.generate();
+      count++;
+    }
     await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(token);
+
+    if (await this.page.locator(`[class*=text-app-red]`).isVisible()) {
+      token = totp.generate();
+      await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(token);
+    }
   }
 
   async setupAuthenticator() {
@@ -89,7 +106,6 @@ export class DashboardPage {
     });
     const token = totp.generate();
     await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(token);
-
-    return secret;
+    return { secret, token };
   }
 }
