@@ -1,6 +1,6 @@
 // playwright-dev-page.ts
 import { Page } from "@playwright/test";
-import otpauth from "otpauth";
+import * as speakeasy from "speakeasy";
 
 import { delay } from "../utils";
 
@@ -62,33 +62,17 @@ export class DashboardPage {
     await this.page.click('text="Do not save"');
   }
 
-  async verifyAuthenticatorFactor(secret: string, previousToken: string) {
+  async verifyAuthenticatorFactor(secret: string) {
     await this.page.click(`[data-testid="authenticator"]`);
+    await delay(30000);
 
-    // Generate TOTP token
-    const totp = new otpauth.TOTP({
-      secret: otpauth.Secret.fromBase32(secret),
-      algorithm: "SHA-1",
-      digits: 6,
-      period: 30,
+    const token = speakeasy.totp({
+      secret,
+      encoding: "base32",
+      step: 30,
     });
 
-    let count = 0;
-
-    let token = totp.generate();
-    while (count < 5) {
-      // eslint-disable-next-line security/detect-possible-timing-attacks
-      if (token !== previousToken) break;
-      await delay(5000);
-      token = totp.generate();
-      count++;
-    }
     await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(token);
-
-    if (await this.page.locator(`[class*=text-app-red]`).isVisible()) {
-      token = totp.generate();
-      await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(token);
-    }
   }
 
   async setupAuthenticator() {
@@ -98,13 +82,10 @@ export class DashboardPage {
     await this.page.click(`button[aria-label="Next"]`);
 
     // Generate TOTP token
-    const totp = new otpauth.TOTP({
-      secret: otpauth.Secret.fromBase32(secret),
-      algorithm: "SHA-1",
-      digits: 6,
-      period: 30,
+    const token = speakeasy.totp({
+      secret,
+      encoding: "base32",
     });
-    const token = totp.generate();
     await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(token);
     return { secret, token };
   }

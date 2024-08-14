@@ -24,10 +24,10 @@
     "chance": "^1.1.12",
     "dotenv": "^16.4.5",
     "generate-password": "^1.7.1",
-    "otpauth": "^9.3.1",
     "playwright": "^1.45.3",
     "reportportal-client": "https://github.com/wiibaker/client-javascript.git#master",
     "serve-handler": "^6.1.5",
+    "speakeasy": "^2.0.0",
     "testmail": "^1.0.0"
   },
   "devDependencies": {
@@ -38,6 +38,7 @@
     "@types/chance": "^1.1.6",
     "@types/node": "^20.14.2",
     "@types/serve-handler": "^6.1.4",
+    "@types/speakeasy": "^2.0.10",
     "eslint": "^8.57.0",
     "husky": "^9.1.3",
     "lighthouse": "^12.1.0",
