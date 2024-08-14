@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint **/*.ts --fix",
     "test:browser": "playwright test --headed",
-    "test": "playwright test authservice --grep=@passwordless --workers=1 --headed --config=index.config.ts",
+    "test": "playwright test",
     "developerdashboard:config": "playwright test opendeveloperdashboard --grep=@smoke --workers=1 --headed --config=index.config.ts",
     "test:authservice:case1": "playwright test authservice --grep=@nomfa --config=index.config.ts",
     "test:authservice:case2": "playwright test authservice --grep=@nonemandatorymfa --config=index.config.ts",
