@@ -8,8 +8,6 @@ import confirmEmail from "./confirmEmail";
 export const DEFAULT_PLATFORM = "prod";
 export const openloginversion = process.env.APP_VERSION || "v3";
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
-console.log(`Environment:${process.env.PLATFORM}`);
-console.log(`App Version:${openloginversion}`);
 const env_map: { [key: string]: string } = {
   prod: `https://test-dashboard.web3auth.io`,
   beta: `https://beta.openlogin.com/${openloginversion}`,
@@ -520,46 +518,6 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
   }
 }
 
-async function signInWithEmailWithTestEmailOnDemoApp(
-  page: Page,
-  email: string,
-  browser: Browser,
-  tag: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  option: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  platform: string
-): Promise<boolean> {
-  try {
-    await page.waitForSelector(`[data-testid="loginProvider"]`);
-    await page.click(`[data-testid="loginProvider"]`);
-    await page.click(`//*[@data-testid="loginProvider"]//span[text()="email passwordless"]`);
-
-    console.log(`Email:${email}`);
-    await page.fill('input[data-testid="loginHint"]', email);
-    await page.click('button:has-text("Login with email passwordless")');
-    await page.waitForSelector("text=Verify your email");
-    await delay(5000);
-    // Setup our JSON API endpoint
-    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true`);
-    const inbox = await res.data;
-    const href = inbox.emails[0].html.match(/href="([^"]*)/)[1];
-    const context2 = await browser.newContext();
-    const page2 = await context2.newPage();
-    await page2.goto(href);
-    await page2.waitForSelector("text=Close this and return to your previous window", {
-      timeout: 10000,
-    });
-    await page2.close();
-    await context2.close();
-    return true;
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-}
-
 async function signInWithEmailWithTestEmailAppInDemoApp(
   page: Page,
   email: string,
@@ -591,7 +549,36 @@ async function signInWithEmailWithTestEmailAppInDemoApp(
     return false;
   }
 }
-
+async function signInWithEmailWithTestEmailAppInCoreWalletServicesApp(
+  page: Page,
+  email: string,
+  browser: Browser,
+  tag: string,
+  timestamp: number
+): Promise<boolean> {
+  try {
+    console.log(`Email:${email}`);
+    await page.locator(`[placeholder="name@domain.com"]`).waitFor({ state: "visible" });
+    await page.locator('[placeholder="name@domain.com"]').fill(email);
+    await page.locator('button:has-text("Login with Email")').click();
+    await delay(10000);
+    const pages = await browser.contexts()[0].pages();
+    // pages[0] is the first page, and pages[1] is the new page
+    await pages[1].bringToFront(); // Bring the new page to the front
+    // Setup our JSON API endpoint
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
+    const inbox = await res.data;
+    const href = inbox.emails[0].subject.match(/\d+/)[0];
+    console.error(href);
+    await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(href);
+    useAutoCancel2FASetup(pages[1]);
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
 async function signInWithMobileNumber({
   page,
   user,
@@ -649,6 +636,7 @@ export {
   // signInWithDapps,
   signInWithDiscord,
   signInWithEmailWithTestEmailApp,
+  signInWithEmailWithTestEmailAppInCoreWalletServicesApp,
   signInWithEmailWithTestEmailAppInDemoApp,
   signInWithFacebook,
   signInWithGitHub,

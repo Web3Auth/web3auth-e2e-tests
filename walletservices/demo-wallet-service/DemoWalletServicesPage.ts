@@ -292,6 +292,11 @@ export class DemoWalletServicesPage {
     expect(await this.page.locator(`xpath=.//h1[text()='Balance']/parent::div//pre`).first().textContent()).toContain(balance);
   }
 
+  async verifyCurrentNetwork(network: string) {
+    await this.page.locator(`xpath=.//button[text()='Get Current Network']`).click();
+    expect(await this.page.locator(`xpath=.//h1[text()='Current Network']/parent::div//pre`).first().textContent()).toContain(network);
+  }
+
   async switchChain(browser: Browser) {
     await this.page.locator(`xpath=.//button[text()='Switch Chain 0xaa36a7']`).click();
     await delay(5000);
@@ -329,13 +334,20 @@ export class DemoWalletServicesPage {
     await frame?.locator(`xpath=.//button[contains(@class,'absolute top-6')]`).last().click();
   }
 
-  async verifySignedMessages(signType: string, browser: Browser) {
+  async verifySignedMessages(signType: string, browser: Browser, walletAddress: string) {
+    let address: string = "";
     await this.page.locator(`xpath=.//button[text()='${signType}']`).click();
     await delay(5000);
     const pages = await browser.contexts()[0].pages();
     await pages[1].bringToFront();
     await pages[1].locator(`xpath=.//button[text()='Confirm']`).click();
     expect(await this.page.locator(`xpath=.//h1[text()='Success']/parent::div//pre`).first().textContent()).toContain("signedMessage");
+    const keys = await this.page.locator(`xpath=.//h1[text()='Success']/parent::div//pre`).first().textContent();
+    if (keys !== null) {
+      const jsonObject = JSON.parse(keys);
+      address = jsonObject.verify;
+    }
+    expect(address).toEqual(walletAddress);
   }
 
   async verifyEncryptionAndDecryption(browser: Browser) {
@@ -357,5 +369,9 @@ export class DemoWalletServicesPage {
     await pages[1].bringToFront();
     await pages[1].locator(`xpath=.//button[text()='Allow']`).click();
     expect(await this.page.locator(`xpath=.//h1[text()='Success']/parent::div//pre`).first().textContent()).toContain("encryptionPublicKey");
+  }
+
+  async clickLogOut() {
+    await this.page.locator(`xpath=.//button/p[text()='Logout']`).click();
   }
 }
