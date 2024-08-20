@@ -57,10 +57,15 @@ export class WalletServicesPage {
 
   async navigateToSettingsWithOption(option: string) {
     await delay(5000);
-    await this.page.locator(`xpath=.//div[contains(@class,'avatar-container')]`).last().click();
-    await this.page.locator(`xpath=.//p[text()='Settings']`).click();
+    await this.page.locator(`xpath=.//div[contains(@class,'avatar-container')]`).first().click();
+    await this.page.locator(`xpath=.//p[text()='Settings']`).first().click();
     await this.page.waitForSelector(`xpath=.//div[text()="${option}"]`);
     await this.page.locator(`xpath=.//div[text()="${option}"]`).click();
+  }
+
+  async enableTestNetwork() {
+    await delay(5000);
+    await this.page.locator(`xpath=.//div/p[text()='Test networks']/parent::div/parent::div/div`).first().click();
   }
 
   async inputPrivateKey(key: string) {
@@ -68,14 +73,14 @@ export class WalletServicesPage {
     await this.page.locator(`xpath=.//button/p[text()='Import']`).click();
   }
 
-  async enableTestNet() {
+  async enableTestNetworks() {
     await this.page.locator(`xpath=.//*[contains(@class,'switch round')]`).first().click();
   }
 
   async selectNetwork(currentNetwork: string, newNetwork: string) {
     await this.page.locator(`xpath=.//p[text()='Select Default Network']/parent::div//button`).first().click();
-    await this.page.waitForSelector(`xpath=.//li/div/p[text()='${newNetwork}']`);
-    await this.page.locator(`xpath=.//li/div/p[text()='${newNetwork}']`).first().click();
+    await this.page.waitForSelector(`xpath=.//li/div/div/p[text()='${newNetwork}']`);
+    await this.page.locator(`xpath=.//li/div/div/p[text()='${newNetwork}']`).first().click();
     await delay(5000);
   }
 

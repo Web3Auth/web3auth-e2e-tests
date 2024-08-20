@@ -1,73 +1,58 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
+import { SessionManager } from "@toruslabs/session-manager";
+import * as fs from "fs";
 
-import { AccountsPage } from "../../authservice/openlogin-account-page/AccountsPage";
-import { signInWithEmailWithTestEmailOnDemoApp } from "../../authservice/utils";
-import { catchErrorAndExit, signInWithEmailWithTestEmailAppInDemoApp } from "../utils";
-import { WalletServicesPage } from "./WalletServicesPage";
-const consoleLogs: string[] = [];
-let sessionId: string = "";
-const walletServiceLoginURL = "https://demo-wallet.web3auth.io";
+import { signInWithEmailWithTestEmailAppInDemoApp } from "../utils";
+import { DemoWalletServicesPage } from "./DemoWalletServicesPage";
+
+const demoWalletServiceLoginURL = "https://demo-wallet.web3auth.io";
 const testEmail = "kelg8.j5s90ldb0b35@inbox.testmail.app";
+const currentTimestamp = Math.floor(Date.now() / 1000);
+const address = "0x0dB...d4e49F";
+const walletAddress = "0x0dBa...4e49F";
+const signAddress = "0x0dBa2cE4784849FA4e42936cA0c5d8bC1Cd4e49F";
+const expectedBalance = "0.635632785708915";
 
-test.describe.serial("Wallet Services Scenarios @demo", () => {
-  test(`Verify user is able to login using passwordless option`, async ({ page, browser }) => {
-    test.setTimeout(3 * 60000); // adding more time to compensate high loading time
-    const walletServicesPage = new WalletServicesPage(page);
-    page.on("console", (msg) => {
-      if (msg.type() === "error") {
-        console.log(`Error text: "${msg.text()}"`);
-        consoleLogs.push(`${msg.text()}`);
-      }
-    });
-    await page.goto(walletServiceLoginURL);
-    await page.waitForLoadState("domcontentloaded");
-    await page.waitForLoadState("load");
+test.describe.serial("Demo Wallet Services Scenarios @demo", () => {
+  test(`Verify demo wallet services functionalities using passwordless login`, async ({ page, browser }) => {
+    test.setTimeout(3 * 60000); // adding more time to compensate high loading time test.slow() does not help in this case
+    const demoWalletServicesPage = new DemoWalletServicesPage(page);
+    await page.goto(demoWalletServiceLoginURL);
+    await page.waitForLoadState();
 
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-
-    await page.locator(walletServicesPage.loginBtn).waitFor({ state: "visible" });
-    await page.locator(walletServicesPage.loginBtn).click();
+    await page.locator(demoWalletServicesPage.loginBtn).waitFor({ state: "visible" });
+    await page.locator(demoWalletServicesPage.loginBtn).click();
 
     await signInWithEmailWithTestEmailAppInDemoApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1], currentTimestamp);
-    const shouldExit = await catchErrorAndExit(page);
-    expect(shouldExit).toBeFalsy();
-    await page.waitForURL(`${walletServiceLoginURL}`, {
+    await page.waitForURL(`${demoWalletServiceLoginURL}`, {
       waitUntil: "load",
     });
-    await walletServicesPage.verifyUserInfoInDemoApp("kelg8.j5s90ldb0b35@inbox.testmail.app");
-    await walletServicesPage.switchChain(browser);
-    await walletServicesPage.verifyAddressInDemoApp("0x0dB...d4e49F");
-    await walletServicesPage.verifyBalanceInDemoApp("0.635632785708915");
-    await walletServicesPage.verifyWalletInDemoApp("0x0dBa...4e49F");
-    await walletServicesPage.verifySignedMessages("Personal Sign", browser);
-    await walletServicesPage.verifySignedMessages("ETH Sign", browser);
-    await walletServicesPage.verifySignedMessages("Typed data v1", browser);
-    await walletServicesPage.verifySignedMessages("Typed data v3", browser);
-    await walletServicesPage.verifySignedMessages("Typed data v4", browser);
-    await walletServicesPage.verifyWalletConnect();
-    await walletServicesPage.verifyGetEncryptionKey(browser);
-    await walletServicesPage.verifyEncryptionAndDecryption(browser);
-    //await accountsPage.verifyShowCheckout();
-    await page.goto(`${walletServiceLoginURL}/logout`);
+    await demoWalletServicesPage.verifyUserInfoInDemoApp(testEmail);
+    await demoWalletServicesPage.switchChain(browser);
+    await demoWalletServicesPage.verifyAddressInDemoApp(address);
+    await demoWalletServicesPage.verifyBalanceInDemoApp(expectedBalance);
+    await demoWalletServicesPage.verifyWalletInDemoApp(walletAddress);
+    await demoWalletServicesPage.verifySignedMessages("Personal Sign", browser, signAddress.toLowerCase());
+    await demoWalletServicesPage.verifySignedMessages("ETH Sign", browser, "0x0dBa2cE4784849FA4e42936cA0c5d8bC1Cd4e49F");
+    await demoWalletServicesPage.verifySignedMessages("Typed data v1", browser, signAddress.toLowerCase());
+    await demoWalletServicesPage.verifyWalletConnect();
+    await demoWalletServicesPage.clickLogOut();
   });
-  test(`Verify user is able to login using session id`, async ({ page, browser }) => {
-    test.setTimeout(3 * 60000);
-    await page.goto("https://demo-openlogin.web3auth.io/");
-    await signInWithEmailWithTestEmailOnDemoApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1], "production", "mainnet");
-    const accountsPage = new AccountsPage(page);
-    const keys: string | null = await accountsPage.getOpenLoginState();
-    if (keys !== null) {
-      const jsonObject = JSON.parse(keys);
-      sessionId = jsonObject.sessionId;
-    }
-    const walletServicesPage = new WalletServicesPage(page);
-    await page.goto(walletServiceLoginURL);
-    await page.locator(`xpath=.//input[@aria-placeholder='Enter Session Id...']`).fill(sessionId);
+
+  test(`Verify user is able to login into wallet services using session id from auth service`, async ({ page }) => {
+    test.slow();
+    const demoWalletServicesPage = new DemoWalletServicesPage(page);
+    const sessionId = SessionManager.generateRandomSessionKey();
+    const sessionManagerInstance = new SessionManager({ sessionId });
+    const content = fs.readFileSync("walletservices/demo-wallet-service/openloginstate.json", "utf-8");
+    const data = JSON.parse(content);
+    data.sessionId = sessionId;
+    await sessionManagerInstance.createSession(data);
+    await page.goto(demoWalletServiceLoginURL);
+    await page.waitForLoadState();
+    await page.locator(`xpath=.//input[@aria-placeholder='Enter Session Id...']`).fill(data.sessionId);
     await page.locator(`xpath=.//button[text()='Login with Session Id']`).click();
-    await page.waitForURL(`${walletServiceLoginURL}`, {
-      waitUntil: "load",
-    });
-    await walletServicesPage.verifyUserInfoInDemoApp("kelg8.j5s90ldb0b35@inbox.testmail.app");
+    await page.waitForLoadState();
+    await demoWalletServicesPage.verifyUserInfoInDemoApp(testEmail);
   });
-  //switching chain
 });

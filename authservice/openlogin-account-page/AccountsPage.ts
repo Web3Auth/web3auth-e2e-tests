@@ -223,8 +223,8 @@ export class AccountsPage {
   }
 
   async getOpenLoginState() {
-    await this.page.waitForSelector('button:has-text("Get openlogin state")');
-    await this.page.locator('button:has-text("Get openlogin state")').click();
+    await this.page.waitForSelector(`xpath=.//p[text()='User info']`);
+    await this.page.locator("button").filter({ hasText: "Get openlogin state" }).click();
     const keys = await this.page.locator("xpath=.//div[@id='console']//pre").first().textContent();
     return keys;
   }

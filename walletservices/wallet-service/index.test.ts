@@ -1,20 +1,20 @@
 import { expect, Page, test } from "@playwright/test";
 
-import { catchErrorAndExit, delay, signInWithEmailWithTestEmailApp } from "../utils";
+import { catchErrorAndExit, delay, signInWithEmailWithTestEmailAppInCoreWalletServicesApp } from "../utils";
 import { WalletServicesPage } from "./WalletServicesPage";
 
 const walletServiceLoginURL = "https://develop-wallet.web3auth.io";
 
 const testEmail = "kelg8.j5s90ldb0b35@inbox.testmail.app";
 
-test.describe.serial("Wallet Services Scenarios @smoke", () => {
+test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
   let page: Page;
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
     test.setTimeout(3000000);
     await page.goto(walletServiceLoginURL);
     const currentTimestamp = Math.floor(Date.now() / 1000);
-    await signInWithEmailWithTestEmailApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1], currentTimestamp);
+    await signInWithEmailWithTestEmailAppInCoreWalletServicesApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1], currentTimestamp);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
     await page.waitForURL(`${walletServiceLoginURL}/wallet/home`, {
@@ -25,6 +25,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
   test(`Verify token address and balance is displayed as expected`, async () => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.navigateToSettingsWithOption("General");
+    await accountsPage.enableTestNetworks();
     await accountsPage.selectNetwork("Ethereum", "Ethereum");
     await accountsPage.clickHome();
     await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "0");
@@ -38,7 +39,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectCurrency("USD");
     await accountsPage.clickHome();
     await accountsPage.verifyNetworkName("Sepolia Test Network");
-    await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "0.15");
+    await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "1650");
   });
 
   test(`Verify validations on send transaction screen`, async () => {
@@ -65,7 +66,7 @@ test.describe.serial("Wallet Services Scenarios @smoke", () => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.verifyAvailableBalance("0.6");
     await accountsPage.enterTransactionAmount("0.0001");
-    await accountsPage.clickButton(" Submit ");
+    await accountsPage.clickButton("Submit");
     await accountsPage.verifyTransferTokenAmount("0.0001 ETH");
     await accountsPage.verifyTransferFromAddress("0x0dBa...4e49F");
     await accountsPage.verifyTransferToAddress("0x9904...ADE6A");
