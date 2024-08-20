@@ -294,7 +294,7 @@ export class DemoWalletServicesPage {
 
   async getCurrentNetwork() {
     await this.page.locator(`xpath=.//button[text()='Get Current Network']`).click();
-    return await this.page.locator(`xpath=.//h1[text()='Current Network']/parent::div//pre`).first().textContent();
+    return this.page.locator(`xpath=.//h1[text()='Current Network']/parent::div//pre`).first().textContent();
   }
 
   async switchChain(browser: Browser) {
