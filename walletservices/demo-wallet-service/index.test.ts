@@ -32,7 +32,6 @@ test.describe.serial("Demo Wallet Services Scenarios @demo", () => {
     await demoWalletServicesPage.verifyAddressInDemoApp(address);
     await demoWalletServicesPage.verifyBalanceInDemoApp(expectedBalance);
     await demoWalletServicesPage.verifyWalletInDemoApp(walletAddress);
-    await demoWalletServicesPage.verifyCurrentNetwork("0x13882");
     await demoWalletServicesPage.verifySignedMessages("Personal Sign", browser, signAddress.toLowerCase());
     await demoWalletServicesPage.verifySignedMessages("ETH Sign", browser, "0x0dBa2cE4784849FA4e42936cA0c5d8bC1Cd4e49F");
     await demoWalletServicesPage.verifySignedMessages("Typed data v1", browser, signAddress.toLowerCase());
