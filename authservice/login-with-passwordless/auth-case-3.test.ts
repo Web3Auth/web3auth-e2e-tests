@@ -8,7 +8,7 @@ import { LoginPage } from "./LoginPage";
 const passwordTestingFactor = "Testing@123";
 
 test.describe.serial("Passwordless Login scenarios", () => {
-  test.setTimeout(90000);
+  test.setTimeout(120000);
 
   test("Login email passwordless case 3, mandatory MFA then setup 2FA @mandatorymfa", async ({ page, browser }) => {
     const testEmail = generateEmailWithTag();

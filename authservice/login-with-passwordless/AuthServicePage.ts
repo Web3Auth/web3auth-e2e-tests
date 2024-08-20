@@ -54,6 +54,23 @@ export class AuthServicePage {
     });
 
     await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(token);
+
+    await delay(2000);
+    if (await this.page.locator('text="Invalid OTP, please try again"').isVisible()) {
+      await this.page.locator(`xpath=.//input[@data-test='single-input']`).last().click();
+
+      for (let index = 0; index < 6; index++) {
+        await this.page.keyboard.press("Delete");
+      }
+
+      const newToken = speakeasy.totp({
+        secret,
+        encoding: "base32",
+        step: 30,
+      });
+
+      await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(newToken);
+    }
   }
 
   async setupAuthenticator() {
