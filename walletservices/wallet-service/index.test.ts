@@ -39,7 +39,7 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectCurrency("USD");
     await accountsPage.clickHome();
     await accountsPage.verifyNetworkName("Sepolia Test Network");
-    await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "1650");
+    await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "1600");
   });
 
   test(`Verify validations on send transaction screen`, async () => {

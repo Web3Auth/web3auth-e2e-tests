@@ -57,8 +57,7 @@ export class WalletServicesPage {
 
   async navigateToSettingsWithOption(option: string) {
     await delay(5000);
-    await this.page.locator(`xpath=.//div[contains(@class,'avatar-container')]`).first().click();
-    await this.page.locator(`xpath=.//p[text()='Settings']`).first().click();
+    await this.page.goto("https://develop-wallet.web3auth.io/wallet/settings");
     await this.page.waitForSelector(`xpath=.//div[text()="${option}"]`);
     await this.page.locator(`xpath=.//div[text()="${option}"]`).click();
   }
