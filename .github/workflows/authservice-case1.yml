@@ -1,0 +1,53 @@
+name: AuthService - E2ETests - No MFA case
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "*/30 * * * *"
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  build:
+    name: AuthService - E2ETests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Trigger tests
+        env:
+          CI: true
+          CI_MODE: ${{ secrets.CI_MODE }}
+          SMS_MOBILE_NUMBER: ${{ secrets.SMS_MOBILE_NUMBER }}
+          LOGIN_MOBILE_NUMBER: ${{ secrets.LOGIN_MOBILE_NUMBER }}
+          BACKUP_PHRASE_PROD: ${{ secrets.BACKUP_PHRASE_PROD }}
+          BACKUP_PHRASE_CYAN: ${{ secrets.BACKUP_PHRASE_CYAN }}
+          BACKUP_PHRASE_AQUA: ${{ secrets.BACKUP_PHRASE_AQUA }}
+          TESTMAIL_APP_APIKEY: ${{ secrets.TESTMAIL_APP_APIKEY }}
+          MAIL_APP: ${{ secrets.MAIL_APP }}
+        run: |
+          npm install && npx playwright install && npm run test:authservice:case1
+
+      - name: Get current timestamp
+        id: get-time
+        run: echo "::set-output name=timestamp::$(date +%Y%m%d%H%M%S)"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ github.run_id }}-${{ github.job }}-${{ steps.get-time.outputs.timestamp }}
+          path: test-results/*
+          if-no-files-found: ignore
+      - name: Update Discord
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: ${{ github.workflow}} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          status: ${{ job.status }}
+          nocontext: true
