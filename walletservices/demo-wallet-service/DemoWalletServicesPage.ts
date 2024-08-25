@@ -316,7 +316,7 @@ export class DemoWalletServicesPage {
     expect(await frame?.locator(`xpath=.//span[text()='${address}']`).first().textContent()).toContain(address);
     expect(await frame?.locator(`xpath=.//p[contains(@class,'wallet:ml-2')][contains(text(),'Send')]`).last().isVisible()).toBeTruthy();
     expect(await frame?.locator(`xpath=.//p[contains(@class,'wallet:ml-2')][contains(text(),'Receive')]`).last().isVisible()).toBeTruthy();
-    expect(await frame?.locator(`xpath=.//img[contains(@src,'eth')]`).first().isVisible()).toBeTruthy();
+    expect(await frame?.locator(`xpath=.//button/img[contains(@src,'eth')]`).last().isVisible()).toBeTruthy();
     await frame?.locator(`xpath=.//button[contains(@class,'absolute right-1')]`).first().click();
   }
 
