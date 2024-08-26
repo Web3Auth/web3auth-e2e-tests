@@ -38,7 +38,7 @@
     "@toruslabs/config": "^2.1.0",
     "@toruslabs/eslint-config-node": "^3.3.1",
     "@types/chance": "^1.1.6",
-    "@types/node": "^20.14.2",
+    "@types/node": "^22.5.0",
     "@types/serve-handler": "^6.1.4",
     "@types/speakeasy": "^2.0.10",
     "eslint": "^8.57.0",
