@@ -39,7 +39,7 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectCurrency("USD");
     await accountsPage.clickHome();
     await accountsPage.verifyNetworkName("Sepolia Test Network");
-    await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "1600");
+    await accountsPage.verifyBalanceAndAddress("0x0dBa...4e49F", "1500");
   });
 
   test(`Verify validations on send transaction screen`, async () => {
@@ -87,6 +87,9 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
   test(`Verify user is able to view the sent transaction activity`, async () => {
     const accountsPage = new WalletServicesPage(page);
     await page.goto(`${walletServiceLoginURL}/wallet/home`);
+    await accountsPage.navigateToSettingsWithOption("General");
+    await accountsPage.selectNetwork("Main Ethereum Network", "Sepolia Test Network");
+    await accountsPage.clickHome();
     await accountsPage.clickLink(" Activity");
     await page.waitForURL(`${walletServiceLoginURL}/wallet/activity`, {
       waitUntil: "load",

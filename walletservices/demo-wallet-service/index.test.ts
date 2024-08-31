@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
-import { SessionManager } from "@toruslabs/session-manager";
-import * as fs from "fs";
 
+import { AccountsPage } from "../../authservice/openlogin-account-page/AccountsPage";
+import { signInWithEmailWithTestEmailOnDemoApp } from "../../authservice/utils";
 import { signInWithEmailWithTestEmailAppInDemoApp } from "../utils";
 import { DemoWalletServicesPage } from "./DemoWalletServicesPage";
 
@@ -39,18 +39,22 @@ test.describe.serial("Demo Wallet Services Scenarios @demo", () => {
     await demoWalletServicesPage.clickLogOut();
   });
 
-  test(`Verify user is able to login into wallet services using session id from auth service`, async ({ page }) => {
+  test(`Verify user is able to login into wallet services using session id from auth service`, async ({ page, browser }) => {
     test.slow();
+    let sessionId;
+    test.setTimeout(3 * 60000);
+    await page.goto("https://demo-openlogin.web3auth.io/");
+    await signInWithEmailWithTestEmailOnDemoApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1], "production", "mainnet");
+    const accountsPage = new AccountsPage(page);
+    const keys: string | null = await accountsPage.getOpenLoginState();
+    if (keys !== null) {
+      const jsonObject = JSON.parse(keys);
+      sessionId = jsonObject.sessionId;
+    }
     const demoWalletServicesPage = new DemoWalletServicesPage(page);
-    const sessionId = SessionManager.generateRandomSessionKey();
-    const sessionManagerInstance = new SessionManager({ sessionId });
-    const content = fs.readFileSync("walletservices/demo-wallet-service/openloginstate.json", "utf-8");
-    const data = JSON.parse(content);
-    data.sessionId = sessionId;
-    await sessionManagerInstance.createSession(data);
     await page.goto(demoWalletServiceLoginURL);
     await page.waitForLoadState();
-    await page.locator(`xpath=.//input[@aria-placeholder='Enter Session Id...']`).fill(data.sessionId);
+    await page.locator(`xpath=.//input[@aria-placeholder='Enter Session Id...']`).fill(sessionId);
     await page.locator(`xpath=.//button[text()='Login with Session Id']`).click();
     await page.waitForLoadState();
     await demoWalletServicesPage.verifyUserInfoInDemoApp(testEmail);

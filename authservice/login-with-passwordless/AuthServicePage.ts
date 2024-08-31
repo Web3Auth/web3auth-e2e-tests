@@ -1,6 +1,5 @@
 // playwright-dev-page.ts
 import { Page } from "@playwright/test";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import * as speakeasy from "speakeasy";
 
 import { delay } from "../utils";
