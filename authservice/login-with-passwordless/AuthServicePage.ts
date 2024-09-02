@@ -69,6 +69,7 @@ export class AuthServicePage {
         step: 30,
       });
 
+      await delay(15000);
       await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(newToken);
     }
   }
