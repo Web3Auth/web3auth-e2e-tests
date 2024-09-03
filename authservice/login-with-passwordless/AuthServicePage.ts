@@ -63,13 +63,13 @@ export class AuthServicePage {
         await this.page.keyboard.press("Delete");
       }
 
+      await delay(15000);
       const newToken = speakeasy.totp({
         secret,
         encoding: "base32",
         step: 30,
       });
 
-      await delay(15000);
       await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(newToken);
     }
   }
