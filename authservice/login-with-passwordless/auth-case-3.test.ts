@@ -45,29 +45,18 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     await authServicePage.clickSetup2FA();
 
-    // SKIP DEVICE FACTOR
-
-    await authServicePage.skipTheFactorSetup();
-
-    // SKIP SOCIAL FACTOR
-
-    await authServicePage.skipTheFactorSetup();
-
     // SETUP AUTHENTICATOR FACTOR
 
-    const secret = await authServicePage.setupAuthenticator();
-
-    // SKIP RECOVERY FACTOR
-
-    await authServicePage.skipTheFactorSetup();
+    const secret = await authServicePage.setupAuthenticatorNewMFAFlow();
 
     // SETUP PASSWORD
 
-    await authServicePage.inputPasswordFactor(passwordTestingFactor);
+    await authServicePage.inputPasswordFactorNewMFAFlow(passwordTestingFactor);
 
     // SKIP PASSKEY
 
-    await authServicePage.skipPasskeySetup();
+    await authServicePage.finishSetupNewMFAList();
+    await authServicePage.setupPasskeyLater();
     await authServicePage.confirmDone2FASetup();
 
     const privateKey = await dashboardPage.getOpenLoginPrivateKey();

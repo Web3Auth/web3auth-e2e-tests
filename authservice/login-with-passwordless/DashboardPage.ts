@@ -13,7 +13,7 @@ export class DashboardPage {
   }
 
   async getOpenLoginPrivateKey() {
-    return (await this.page.locator("text=Openlogin Private key").textContent()).split(" : ")[1];
+    return (await this.page.locator("text=Web3Auth Private key").textContent()).split(" : ")[1];
   }
 
   async getUserInfoObject() {
