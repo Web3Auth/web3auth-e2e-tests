@@ -18,7 +18,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     await loginPage.gotoLoginPage(authServiceURL);
     await loginPage.selectBuildEnv("testing");
-    await loginPage.selectMFAFactor(["DEVICE", "PASSWORD", "AUTHENTICATOR"]);
+    await loginPage.selectAllMFAFactor();
     await loginPage.selectMFALevel("none");
     await loginPage.selectMFAMandantory(["DEVICE", "PASSWORD", "AUTHENTICATOR"]);
     await loginPage.selectOpenloginNetwork("sapphire_devnet");
@@ -85,6 +85,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     // SKIP PASSKEY
 
     await authServicePage.finishSetupNewMFAList();
+    await authServicePage.setupPasskeyLater();
     await authServicePage.confirmDone2FASetup();
 
     // GET INFO KEY AFTER 2FA SETUP AND VERIFY
