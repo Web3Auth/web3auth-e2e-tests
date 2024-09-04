@@ -47,6 +47,10 @@ export class AuthServicePage {
     await this.page.click(`[data-testid="finish-setup"]`);
   }
 
+  async setupPasskeyLater() {
+    await this.page.click(`[data-testid="setupLater"]`);
+  }
+
   async confirmDone2FASetup() {
     await this.page.click(`[data-testid="done"]`);
   }

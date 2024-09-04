@@ -18,7 +18,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     await loginPage.gotoLoginPage(authServiceURL);
     await loginPage.selectBuildEnv("staging");
-    await loginPage.selectMFAFactor(["PASSWORD", "AUTHENTICATOR"]);
+    await loginPage.selectAllMFAFactor();
     await loginPage.selectMFALevel("mandatory");
     await loginPage.selectMFAMandantory(["PASSWORD", "AUTHENTICATOR"]);
     await loginPage.selectOpenloginNetwork("mainnet");
@@ -56,6 +56,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
     // SKIP PASSKEY
 
     await authServicePage.finishSetupNewMFAList();
+    await authServicePage.setupPasskeyLater();
     await authServicePage.confirmDone2FASetup();
 
     const privateKey = await dashboardPage.getOpenLoginPrivateKey();
