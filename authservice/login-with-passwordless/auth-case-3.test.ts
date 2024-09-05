@@ -18,7 +18,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     await loginPage.gotoLoginPage(authServiceURL);
     await loginPage.selectBuildEnv("staging");
-    await loginPage.selectAllMFAFactor();
+    await loginPage.selectMFAFactor(["PASSWORD", "AUTHENTICATOR", "BACKUP_SHARE", "PASSKEYS", "SOCIAL_BACKUP"]);
     await loginPage.selectMFALevel("mandatory");
     await loginPage.selectMFAMandantory(["PASSWORD", "AUTHENTICATOR"]);
     await loginPage.selectOpenloginNetwork("mainnet");
