@@ -85,7 +85,6 @@ test.describe.serial("Passwordless Login scenarios", () => {
     // SKIP PASSKEY
 
     await authServicePage.finishSetupNewMFAList();
-    await authServicePage.setupPasskeyLater();
     await authServicePage.confirmDone2FASetup();
 
     // GET INFO KEY AFTER 2FA SETUP AND VERIFY

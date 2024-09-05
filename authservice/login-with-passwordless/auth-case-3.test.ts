@@ -56,7 +56,6 @@ test.describe.serial("Passwordless Login scenarios", () => {
     // SKIP PASSKEY
 
     await authServicePage.finishSetupNewMFAList();
-    await authServicePage.setupPasskeyLater();
     await authServicePage.confirmDone2FASetup();
 
     const privateKey = await dashboardPage.getOpenLoginPrivateKey();
