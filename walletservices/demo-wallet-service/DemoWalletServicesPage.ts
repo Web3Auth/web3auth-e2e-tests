@@ -297,9 +297,9 @@ export class DemoWalletServicesPage {
     return this.page.locator(`xpath=.//h1[text()='Current Network']/parent::div//pre`).first().textContent();
   }
 
-  async switchChain(browser: Browser) {
+  async switchChain(browser: Browser, chain: string) {
     const currentNetworkBeforeSwitch = await this.getCurrentNetwork();
-    await this.page.locator(`xpath=.//button[text()='Switch Chain 0xaa36a7']`).click();
+    await this.page.locator(`xpath=.//button[text()='${chain}']`).click();
     await delay(5000);
     const pages = await browser.contexts()[0].pages();
     await pages[1].bringToFront();

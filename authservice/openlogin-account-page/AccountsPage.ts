@@ -1,6 +1,7 @@
 // playwright-dev-page.ts
 import { expect, Page } from "@playwright/test";
 import axios from "axios";
+
 const testEmailAppApiKey = process.env.TESTMAIL_APP_APIKEY;
 export class AccountsPage {
   readonly page: Page;
@@ -224,7 +225,7 @@ export class AccountsPage {
 
   async getOpenLoginState() {
     await this.page.waitForSelector(`xpath=.//p[text()='User info']`);
-    await this.page.locator("button").filter({ hasText: "Get openlogin state" }).click();
+    await this.page.locator("button").filter({ hasText: " Get web3auth state " }).click();
     const keys = await this.page.locator("xpath=.//div[@id='console']//pre").first().textContent();
     return keys;
   }
