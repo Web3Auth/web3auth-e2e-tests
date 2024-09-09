@@ -34,6 +34,22 @@ export class AuthServicePage {
     await this.page.click(`[data-testid="confirmPassword"]`);
   }
 
+  async inputPasswordFactorNewMFAFlow(password: string) {
+    await this.page.click(`[data-testid="passwordFactor"]`);
+
+    await this.page.fill(`input[data-testid="auth-password"]`, password);
+    await this.page.fill(`input[data-testid="auth-confirm-password"]`, password);
+    await this.page.click(`[data-testid="confirmPassword"]`);
+  }
+
+  async finishSetupNewMFAList() {
+    await this.page.click(`[data-testid="finish-setup"]`);
+  }
+
+  async setupPasskeyLater() {
+    await this.page.click(`[data-testid="setupLater"]`);
+  }
+
   async confirmDone2FASetup() {
     await this.page.click(`[data-testid="done"]`);
   }
@@ -62,6 +78,7 @@ export class AuthServicePage {
         await this.page.keyboard.press("Delete");
       }
 
+      await delay(15000);
       const newToken = speakeasy.totp({
         secret,
         encoding: "base32",
@@ -73,6 +90,22 @@ export class AuthServicePage {
   }
 
   async setupAuthenticator() {
+    await this.page.locator('text="Enter code manually"').click();
+
+    const secret = await this.page.locator(`div>span`).textContent();
+    await this.page.click(`button[aria-label="Next"]`);
+
+    // Generate TOTP token
+    const token = speakeasy.totp({
+      secret,
+      encoding: "base32",
+    });
+    await this.page.locator(`xpath=.//input[@data-test='single-input']`).first().type(token);
+    return secret;
+  }
+
+  async setupAuthenticatorNewMFAFlow() {
+    await this.page.locator('[data-testid="authenticatorFactor"]').click();
     await this.page.locator('text="Enter code manually"').click();
 
     const secret = await this.page.locator(`div>span`).textContent();

@@ -30,7 +30,7 @@ jobs:
           TESTMAIL_APP_APIKEY: ${{ secrets.TESTMAIL_APP_APIKEY }}
           MAIL_APP: ${{ secrets.MAIL_APP }}
         run: |
-          npm install && npx playwright install && npm run test:authservice:case3
+          ifconfig && npm install && npx playwright install && npm run test:authservice:case3
 
       - name: Get current timestamp
         id: get-time
