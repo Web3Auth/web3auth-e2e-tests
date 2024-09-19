@@ -29,13 +29,13 @@ export class WalletServicesPage {
   }
 
   async verifyTransferFromAddress(content: string) {
-    expect(
-      await this.page.locator(`xpath=.//p[text()='Sepolia Test Network']/parent::div/following-sibling::div//p`).first().textContent()
-    ).toContain(content);
+    expect(await this.page.locator(`xpath=.//p[text()='Polygon Amoy']/parent::div/following-sibling::div//p`).first().textContent()).toContain(
+      content
+    );
   }
 
   async verifyTransferToAddress(content: string) {
-    expect(await this.page.locator(`xpath=.//p[text()='Sepolia Test Network']/parent::div/following-sibling::div//p`).last().textContent()).toContain(
+    expect(await this.page.locator(`xpath=.//p[text()='Polygon Amoy']/parent::div/following-sibling::div//p`).last().textContent()).toContain(
       content
     );
   }
