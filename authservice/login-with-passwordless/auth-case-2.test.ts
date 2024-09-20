@@ -89,11 +89,10 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     // GET INFO KEY AFTER 2FA SETUP AND VERIFY
 
-    const dashboardPage2 = new DashboardPage(pages[1]);
-    const privateKeyAfterSetupMFA = await dashboardPage2.getOpenLoginPrivateKey();
+    const privateKeyAfterSetupMFA = await dashboardPage.getOpenLoginPrivateKey();
     expect(privateKeyAfterSetupMFA).toBe(privateKey);
 
-    const openloginStateObjectAfterSetupMFA = await dashboardPage2.getOpenloginStateObject();
+    const openloginStateObjectAfterSetupMFA = await dashboardPage.getOpenloginStateObject();
     const tKeyAfterSetupMFA = openloginStateObjectAfterSetupMFA.tKey as string;
     const keyModeAfterSetupMFA = openloginStateObjectAfterSetupMFA.keyMode as string;
     const ed25519PrivKeyAfterSetupMFA = openloginStateObjectAfterSetupMFA.ed25519PrivKey as string;
