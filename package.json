@@ -36,7 +36,7 @@
     "@reportportal/agent-js-playwright": "^5.1.9",
     "@rushstack/eslint-patch": "^1.0.0",
     "@toruslabs/config": "^2.1.0",
-    "@toruslabs/eslint-config-node": "^3.3.1",
+    "@toruslabs/eslint-config-node": "^3.3.4",
     "@types/chance": "^1.1.6",
     "@types/node": "^20.14.2",
     "@types/serve-handler": "^6.1.4",
