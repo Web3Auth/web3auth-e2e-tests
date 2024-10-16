@@ -28,7 +28,7 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     await accountsPage.enableTestNetworks();
     await accountsPage.selectNetwork("Ethereum", "Ethereum");
     await accountsPage.clickHome();
-    await accountsPage.verifyBalanceAndAddress("0xed21...4C0a7", "0");
+    await accountsPage.verifyBalanceAndAddress("0xed21...f4C0a7", "0");
   });
 
   test(`Verify network switch and balance on wallet services`, async () => {
@@ -39,7 +39,7 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectCurrency("USD");
     await accountsPage.clickHome();
     await accountsPage.verifyNetworkName("Polygon Amoy");
-    await accountsPage.verifyBalanceAndAddress("0xed21...4C0a7", "0.08");
+    await accountsPage.verifyBalanceAndAddress("0xed21...f4C0a7", "0.08");
   });
 
   test(`Verify validations on send transaction screen`, async () => {
@@ -68,8 +68,8 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     await accountsPage.enterTransactionAmount("0.0001");
     await accountsPage.clickButton("Submit");
     await accountsPage.verifyTransferTokenAmount("0.0001 POL");
-    await accountsPage.verifyTransferFromAddress("0xed21...4C0a7");
-    await accountsPage.verifyTransferToAddress("0x9904...ADE6A");
+    await accountsPage.verifyTransferFromAddress("0xed2...4C0a7");
+    await accountsPage.verifyTransferToAddress("0x990...ADE6A");
   });
 
   test.skip(`Verify existing assets are displayed`, async () => {
@@ -101,7 +101,7 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Amoy");
     await accountsPage.selectCurrency("SGD");
     await accountsPage.clickHome();
-    await accountsPage.verifyBalanceAndAddress("0xed21...4C0a7", "0.08");
+    await accountsPage.verifyBalanceAndAddress("0xed21...f4C0a7", "0.08");
   });
 
   test(`Verify user is able to connect via wallet connect`, async () => {
