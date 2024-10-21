@@ -1,15 +1,17 @@
 // playwright-dev-page.ts
 import { Page } from "@playwright/test";
 
-async function selectSingleChoiceDropdown(page: Page, dataTestId: string, option: string) {
+export async function selectSingleChoiceDropdown(page: Page, dataTestId: string, option: string, clickDropdown = false) {
   await page.locator(`[data-testid="${dataTestId}"]`).waitFor({ state: "visible" });
   await page.click(`[data-testid="${dataTestId}"] button`);
 
   await page.click(`//*[@data-testid="${dataTestId}"]//span[text()="${option}"]`);
   await page.locator(`//*[@data-testid="${dataTestId}"]//button[text()="${option}"]`).waitFor({ state: "visible" });
+
+  if (clickDropdown) await page.click(`[data-testid="${dataTestId}"] button`);
 }
 
-async function selectMultipleChoicesDropdown(page: Page, dataTestId: string, options: string[]) {
+export async function selectMultipleChoicesDropdown(page: Page, dataTestId: string, options: string[]) {
   await page.locator(`[data-testid="${dataTestId}"]`).waitFor({ state: "visible" });
   await page.click(`[data-testid="${dataTestId}"] button`);
 
