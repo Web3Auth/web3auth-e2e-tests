@@ -509,7 +509,7 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
     const inbox = await res.data;
     const otp = inbox.emails[0].subject.match(/\d+/)[0];
     console.info(otp);
-    await pages[0].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(otp);
+    await pages[0].locator(`xpath=.//input[@type='text']`).first().type(otp);
     useAutoCancel2FASetup(pages[0]);
     return true;
   } catch (err) {
@@ -541,7 +541,7 @@ async function signInWithEmailWithTestEmailAppInDemoApp(
     const inbox = await res.data;
     const href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
-    await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(href);
+    await pages[1].locator(`xpath=.//input[@type='text']`).first().type(href);
     useAutoCancel2FASetup(pages[1]);
     return true;
   } catch (err) {
@@ -571,7 +571,7 @@ async function signInWithEmailWithTestEmailAppInCoreWalletServicesApp(
     const inbox = await res.data;
     const href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
-    await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(href);
+    await pages[1].locator(`xpath=.//input[@type='text']`).first().type(href);
     useAutoCancel2FASetup(pages[1]);
     return true;
   } catch (err) {

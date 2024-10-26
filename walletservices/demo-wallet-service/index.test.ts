@@ -8,12 +8,12 @@ const demoWalletServiceLoginURL = "https://demo-wallet.web3auth.io";
 const testEmail = "kelg8.j5s90ldb0b35@inbox.testmail.app";
 const currentTimestamp = Math.floor(Date.now() / 1000);
 const address = "0x0dB...d4e49F";
-const walletAddress = "0x0dBa...4e49F";
+const walletAddress = "0x0dBa...d4e49F";
 const signAddress = "0x0dBa2cE4784849FA4e42936cA0c5d8bC1Cd4e49F";
 const expectedBalance = "0.635632785708915";
 let sessionId: string = "";
 test.describe.serial("Demo Wallet Services Scenarios @demo", () => {
-  test.skip(`Verify demo wallet services functionalities using passwordless login`, async ({ page, browser }) => {
+  test(`Verify demo wallet services functionalities using passwordless login`, async ({ page, browser }) => {
     test.setTimeout(3 * 60000); // adding more time to compensate high loading time test.slow() does not help in this case
     const demoWalletServicesPage = new DemoWalletServicesPage(page);
     await page.goto(demoWalletServiceLoginURL);
