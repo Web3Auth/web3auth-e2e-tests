@@ -587,8 +587,8 @@ async function verifyEmailPasswordlessWithVerificationCode(
   if (!config.redirectMode) {
     const pages = browser.contexts()[0].pages();
     await pages[1].bringToFront();
-    await pages[1].locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(verificationCode);
-  } else await page.locator(`xpath=.//input[@data-test='single-input'][@class='otp-input']`).first().type(verificationCode);
+    await pages[1].locator(`xpath=.//input[@autocomplete="one-time-code"]`).first().type(verificationCode);
+  } else await page.locator(`xpath=.//input[@autocomplete="one-time-code"]`).first().type(verificationCode);
 
   return verificationCode;
 }
