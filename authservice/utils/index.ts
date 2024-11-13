@@ -1,5 +1,7 @@
 /* eslint-disable no-unmodified-loop-condition */
 import { Browser, expect, Page } from "@playwright/test";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as cheerio from "cheerio";
 
 import confirmEmail from "./confirmEmail";
 process.env.APP_VERSION = "v4";
@@ -550,6 +552,39 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
   }
 }
 
+async function getRecoveryPhase(config: { email: string; tag: string; timestamp: number }) {
+  try {
+    // Fetch the list of emails
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${config.tag}&livequery=true&timestamp_from=${config.timestamp}`);
+    const inbox = await res.data;
+    let preTagText = "";
+    let count = 0;
+
+    while (count < 5) {
+      await delay(2000);
+      if (inbox.emails && inbox.emails.length > 0) {
+        const emailBody = inbox.emails[0].html; // Get the first email's ID
+
+        // Parse the HTML using Cheerio
+        const $ = cheerio.load(emailBody);
+        preTagText = $("pre").first().text();
+
+        console.log("Text inside <pre> tag:", preTagText);
+        break;
+      } else {
+        console.log("No emails found.");
+      }
+
+      count++;
+    }
+
+    return preTagText;
+  } catch (error) {
+    console.error("Error fetching emails:", error);
+  }
+}
+
 /**
  * Verify the email by retrieve the code in the email and input to the OTP box.
  *
@@ -765,6 +800,7 @@ export {
   generateEmailWithTag,
   generateRandomEmail,
   getBackUpPhrase,
+  getRecoveryPhase,
   // signInWithDapps,
   signInWithDiscord,
   signInWithEmail,
