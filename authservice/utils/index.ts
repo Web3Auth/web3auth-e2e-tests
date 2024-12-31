@@ -628,6 +628,49 @@ async function verifyEmailPasswordlessWithVerificationCode(
   return verificationCode;
 }
 
+/**
+ * Verify the sms by retrieve the code in the sms and input to the OTP box.
+ *
+ * @param {number} phone - Email to use to receive the verification code, email from the mail service
+ */
+async function signInByPhoneWithSMSOtp(phoneNumber: string, browser: Browser) {
+  await delay(5000);
+  const context2 = await browser.newContext({
+    bypassCSP: true, // Bypasses Content Security Policy
+  });
+  const page2 = await context2.newPage();
+  await page2.goto(`https://receive-sms.cc/Finland-Phone-Number/${phoneNumber}`);
+
+  let otp = "";
+  let tryTime = 0;
+
+  while (tryTime < 5) {
+    const count = (await page2.$$('div:has-text("is your verification code on Web3Auth")')).length;
+
+    if (count > 0) {
+      const time = await page2.locator(`//div[@class="item" and div[text()='From WEB3AUTH']]/span[@class='time']`).first().textContent();
+      if (time.includes("second")) {
+        const otpString = (await page2.locator("xpath=.//div[contains(text(),'is your verification code on Web3Auth')]").first().textContent()) || "";
+
+        otp = otpString.match(/\d+/)[0];
+        console.log(`otp:${otp}`);
+        break;
+      }
+    }
+
+    await delay(5000);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    tryTime++;
+    await page2.reload();
+  }
+
+  await page2.close();
+
+  const pages = browser.contexts()[0].pages();
+  await pages[1].bringToFront();
+  await pages[1].locator("input[autocomplete='one-time-code']").first().fill(otp);
+}
+
 async function signInWithEmailWithTestEmailOnDemoApp(
   page: Page,
   email: string,
@@ -801,6 +844,7 @@ export {
   generateRandomEmail,
   getBackUpPhrase,
   getRecoveryPhase,
+  signInByPhoneWithSMSOtp,
   // signInWithDapps,
   signInWithDiscord,
   signInWithEmail,

@@ -20,6 +20,10 @@ export class LoginAuthDashboardPage {
     await this.page.fill(`input[aria-labelledby="Phone or Email"]`, email);
   }
 
+  async verifyLogout() {
+    await this.page.locator(`input[aria-labelledby="Phone or Email"]`).waitFor({ state: "visible", timeout: 5000 });
+  }
+
   async logout() {
     await this.page.click(`button[aria-label="Logout"]`);
     await this.page.locator(`input[aria-labelledby="Phone or Email"]`).waitFor({ state: "visible" });

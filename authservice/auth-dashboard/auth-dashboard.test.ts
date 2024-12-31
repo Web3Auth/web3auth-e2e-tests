@@ -61,6 +61,19 @@ test.describe("Passwordless Login scenarios", () => {
     await authDashboardPage.verifyRecoverPhraseSetup(phrase, testBackupEmail);
     await authDashboardPage.deleteRecoveryPhrase();
 
+    await authDashboardPage.addSMSSocialFactor(browser);
+    await authDashboardPage.verifySMSSocialFactorSetup();
+    await authDashboardPage.deleteSocialFactor();
+
+    await authDashboardPage.verifyMultipleLanguages();
+
+    await authDashboardPage.changeDarkLightMode();
+    await authDashboardPage.verifyDarkMode();
+    await authDashboardPage.changeDarkLightMode();
+    await authDashboardPage.verifyLightMode();
+
+    await authDashboardPage.changeLanguage("English");
     await loginPage.logout();
+    await loginPage.verifyLogout();
   });
 });

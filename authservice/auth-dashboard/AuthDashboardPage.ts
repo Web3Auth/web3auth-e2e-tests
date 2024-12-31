@@ -1,7 +1,11 @@
 // playwright-dev-page.ts
-import { Page } from "@playwright/test";
+import { Browser, expect, Page } from "@playwright/test";
 
-import { getRecoveryPhase } from "../utils";
+import { delay, getRecoveryPhase, signInByPhoneWithSMSOtp } from "../utils";
+import { Locale } from "./locale";
+
+const phoneNumberFormatInput = "+358-4573992100";
+const phoneNumberFormatUrlParam = "3584573992100";
 
 function validateDate(dateTime: string) {
   const regex = /^([0-2]\d|3[01])\/(0\d|1[0-2])\/\d{2} ([0-1]\d|2[0-3]):[0-5]\d$/;
@@ -30,7 +34,38 @@ export class AuthDashboardPage {
   }
 
   async verifyEmailPasswordlessSetup(email: string) {
-    return this.page.locator(`//div[text()='email account']/following-sibling::div[text()='${email}']`).first().isVisible();
+    return this.page.locator(`//div[text()='Email account']/following-sibling::div[text()='${email}']`).first().isVisible();
+  }
+
+  async verifyDarkMode() {
+    expect(await this.page.locator(`html.dark`).first().isVisible()).toBeTruthy();
+  }
+
+  async verifyLightMode() {
+    expect(await this.page.locator(`html.dark`).first().isVisible()).toBeFalsy();
+  }
+
+  async verifyMultipleLanguages() {
+    for (const key of Object.keys(Locale)) {
+      await this.changeLanguage(Locale[key]["langName"]);
+      await delay(1000);
+      await this.verifySingleLanguage(key);
+    }
+  }
+
+  async verifySingleLanguage(lang: string) {
+    const objLang = Locale[lang];
+    for (const key of Object.keys(objLang)) {
+      console.log(`Verify language ${lang} key ${key} with value ${objLang[key]}`);
+      await expect(this.page.locator(`text="${objLang[key]}"`).first()).toBeVisible();
+    }
+  }
+
+  async verifySMSSocialFactorSetup() {
+    return this.page
+      .locator(`//div[div[text()='Social Recovery']]/following-sibling::div//div[text()='${phoneNumberFormatInput}']`)
+      .first()
+      .isVisible();
   }
 
   async verifyDeviceSetup(browserType: string) {
@@ -43,11 +78,24 @@ export class AuthDashboardPage {
     return browserRecord && currentTag && timeFortmat;
   }
 
+  async changeDarkLightMode() {
+    await this.page.locator(`button.icon[icon]`).first().click();
+    await delay(1000);
+  }
+
   async addPasswordFactor() {
     await this.page.click(`text=" Setup Password"`);
     await this.page.fill(`input[aria-placeholder="Set your password"]`, "Testing@123");
     await this.page.fill(`input[aria-placeholder="Re-enter your password"]`, "Testing@123");
     await this.page.click(`button[aria-label="Confirm"][type="submit"]`);
+  }
+
+  async addSMSSocialFactor(browser: Browser) {
+    await this.page.click(`text=" Setup Social Recovery"`);
+    await this.page.fill(`input#passwordless-email`, phoneNumberFormatInput);
+    await this.page.click(`button[aria-label="Connect with Phone"][type="submit"]`);
+
+    await signInByPhoneWithSMSOtp(phoneNumberFormatUrlParam, browser);
   }
 
   async addRecoverPhrase(emailRecovery: string, tag: string) {
@@ -75,6 +123,11 @@ export class AuthDashboardPage {
 
   async verifyPasswordNotSetupYet() {
     return this.page.locator(`text=" Setup Password"`).isVisible();
+  }
+
+  async changeLanguage(lang: string) {
+    await this.page.click("[data-dropdown-toggle='dropdown']");
+    await this.page.click(`text="${lang}"`);
   }
 
   async changePasswordSetup() {
@@ -114,6 +167,22 @@ export class AuthDashboardPage {
     }
 
     await this.page.locator(`text=" Generate recovery phrase"`).waitFor({ state: "visible" });
+  }
+
+  async deleteSocialFactor() {
+    await this.page.click(`button[aria-label="Delete Social Share"]`);
+
+    await this.page.locator(`text="Deleting Social Recovery Factor"`).first().waitFor({ state: "visible" });
+
+    const lisEle = await this.page.$$(`button[aria-label="Confirm"]`);
+    for (const element of lisEle) {
+      if (await element.isVisible()) {
+        await element.click();
+        break;
+      }
+    }
+
+    await this.page.locator(`text=" Setup Social Recovery"`).waitFor({ state: "visible" });
   }
 
   async verifyRecoverPhraseSetup(phrase: string, bkEmail: string) {
