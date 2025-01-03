@@ -24,6 +24,10 @@ export class AuthServicePage {
     await this.page.click(`[data-testid="skip"]`);
   }
 
+  async skipMFASetup() {
+    await this.page.click(`[data-testid="skip"]`);
+  }
+
   async skipPasskeySetup() {
     await this.page.click(`[data-testid="skipPasskey"]`);
   }
@@ -47,7 +51,7 @@ export class AuthServicePage {
   }
 
   async setupPasskeyLater() {
-    await this.page.click(`[data-testid="setupLater"]`);
+    if (process.env.CI !== "true") await this.page.click(`[data-testid="setupLater"]`);
   }
 
   async confirmDone2FASetup() {

@@ -1,5 +1,7 @@
 /* eslint-disable no-unmodified-loop-condition */
 import { Browser, expect, Page } from "@playwright/test";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as cheerio from "cheerio";
 
 import confirmEmail from "./confirmEmail";
 process.env.APP_VERSION = "v4";
@@ -550,6 +552,39 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
   }
 }
 
+async function getRecoveryPhase(config: { email: string; tag: string; timestamp: number }) {
+  try {
+    // Fetch the list of emails
+    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+    const res = await axios.get(`${ENDPOINT}&tag=${config.tag}&livequery=true&timestamp_from=${config.timestamp}`);
+    const inbox = await res.data;
+    let preTagText = "";
+    let count = 0;
+
+    while (count < 5) {
+      await delay(2000);
+      if (inbox.emails && inbox.emails.length > 0) {
+        const emailBody = inbox.emails[0].html; // Get the first email's ID
+
+        // Parse the HTML using Cheerio
+        const $ = cheerio.load(emailBody);
+        preTagText = $("pre").first().text();
+
+        console.log("Text inside <pre> tag:", preTagText);
+        break;
+      } else {
+        console.log("No emails found.");
+      }
+
+      count++;
+    }
+
+    return preTagText;
+  } catch (error) {
+    console.error("Error fetching emails:", error);
+  }
+}
+
 /**
  * Verify the email by retrieve the code in the email and input to the OTP box.
  *
@@ -591,6 +626,49 @@ async function verifyEmailPasswordlessWithVerificationCode(
   } else await page.locator(`xpath=.//input[@autocomplete="one-time-code"]`).first().type(verificationCode);
 
   return verificationCode;
+}
+
+/**
+ * Verify the sms by retrieve the code in the sms and input to the OTP box.
+ *
+ * @param {number} phone - Email to use to receive the verification code, email from the mail service
+ */
+async function signInByPhoneWithSMSOtp(phoneNumber: string, browser: Browser) {
+  await delay(5000);
+  const context2 = await browser.newContext({
+    bypassCSP: true, // Bypasses Content Security Policy
+  });
+  const page2 = await context2.newPage();
+  await page2.goto(`https://receive-sms.cc/Finland-Phone-Number/${phoneNumber}`);
+
+  let otp = "";
+  let tryTime = 0;
+
+  while (tryTime < 5) {
+    const count = (await page2.$$('div:has-text("is your verification code on Web3Auth")')).length;
+
+    if (count > 0) {
+      const time = await page2.locator(`//div[@class="item" and div[text()='From WEB3AUTH']]/span[@class='time']`).first().textContent();
+      if (time.includes("second")) {
+        const otpString = (await page2.locator("xpath=.//div[contains(text(),'is your verification code on Web3Auth')]").first().textContent()) || "";
+
+        otp = otpString.match(/\d+/)[0];
+        console.log(`otp:${otp}`);
+        break;
+      }
+    }
+
+    await delay(5000);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    tryTime++;
+    await page2.reload();
+  }
+
+  await page2.close();
+
+  const pages = browser.contexts()[0].pages();
+  await pages[1].bringToFront();
+  await pages[1].locator("input[autocomplete='one-time-code']").first().fill(otp);
 }
 
 async function signInWithEmailWithTestEmailOnDemoApp(
@@ -765,6 +843,8 @@ export {
   generateEmailWithTag,
   generateRandomEmail,
   getBackUpPhrase,
+  getRecoveryPhase,
+  signInByPhoneWithSMSOtp,
   // signInWithDapps,
   signInWithDiscord,
   signInWithEmail,
