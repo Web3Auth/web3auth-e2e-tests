@@ -33,6 +33,10 @@ export class AuthDashboardPage {
     return this.page.locator(`//div[*/div[text()='Authenticator App']]//div[text()='Web3Auth-${email}']`).isVisible();
   }
 
+  async verifyAuthenticatorCannotBeDeleted() {
+    return this.page.locator(`//div[*/div[text()='Authenticator App']]//button[type="button"]`).isVisible({ timeout: 2000 });
+  }
+
   async verifyEmailPasswordlessSetup(email: string) {
     return this.page.locator(`//div[text()='Email account']/following-sibling::div[text()='${email}']`).first().isVisible();
   }

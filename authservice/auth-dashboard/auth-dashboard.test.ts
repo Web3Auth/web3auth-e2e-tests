@@ -46,6 +46,7 @@ test.describe("Passwordless Login scenarios", () => {
     await delay(5000);
     expect(await authDashboardPage.verifyEmailPasswordlessSetup(testEmail)).toBeTruthy();
     expect(await authDashboardPage.verifyAuthenticatorSetup(testEmail)).toBeTruthy();
+    expect(await authDashboardPage.verifyAuthenticatorCannotBeDeleted()).toBeFalsy();
     expect(await authDashboardPage.verifyDeviceSetup("Chrome")).toBeTruthy();
 
     await authDashboardPage.addPasswordFactor();
