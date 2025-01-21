@@ -73,11 +73,11 @@ export class AuthDashboardPage {
   }
 
   async verifyDeviceSetup(browserType: string) {
-    const browserRecord = await this.page.locator(`//div[*/div[text()='Device(s)']]//div[contains(text(),'${browserType}')]`).isVisible();
-    const currentTag = await this.page.locator(`//div[*/div[text()='Device(s)']]//div[contains(text(),'Current')]`).isVisible();
+    const browserRecord = await this.page.locator(`//div[*/div[text()='Devices']]//div[contains(text(),'${browserType}')]`).isVisible();
+    const currentTag = await this.page.locator(`//div[*/div[text()='Devices']]//div[contains(text(),'Current')]`).isVisible();
 
     const timeFortmat = validateDate(
-      (await this.page.locator(`//div[*/div[text()='Device(s)']]//span[contains(text(),'Created: ')]`).textContent()).replace("Created: ", "")
+      (await this.page.locator(`//div[*/div[text()='Devices']]//span[contains(text(),'Created: ')]`).textContent()).replace("Created: ", "")
     );
     return browserRecord && currentTag && timeFortmat;
   }

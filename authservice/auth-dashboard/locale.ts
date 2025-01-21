@@ -12,7 +12,7 @@ export const Locale = {
     passwordBtn: " Setup Password",
     passwordDesc: "Set a password as a recovery factor.",
     authenticatorApp: "Authenticator App",
-    devices: "Device(s)",
+    devices: "Devices",
     devicesCurrentTag: "Current",
     passkeyBtn: " Add Passkey",
     passkeyDesc:
@@ -31,7 +31,7 @@ export const Locale = {
     passwordBtn: " Setup-Passwort",
     passwordDesc: "Legen Sie ein Passwort als Wiederherstellungsfaktor fest.",
     authenticatorApp: "Authentifizierungs-App",
-    devices: "Geräte)",
+    devices: "Geräte",
     devicesCurrentTag: "Strom",
     passkeyBtn: " Passkey hinzufügen",
     passkeyDesc:
@@ -106,7 +106,7 @@ export const Locale = {
     passwordBtn: " Contraseña de configuración",
     passwordDesc: "Establezca una contraseña como factor de recuperación.",
     authenticatorApp: "Aplicación de autenticación",
-    devices: "Dispositivos)",
+    devices: "Dispositivos",
     devicesCurrentTag: "Actual",
     passkeyBtn: " Agregar Passkey",
     passkeyDesc:
@@ -125,7 +125,7 @@ export const Locale = {
     passwordBtn: " Mot de passe de configuration",
     passwordDesc: "Définissez un mot de passe comme facteur de récupération.",
     authenticatorApp: "Application d'authentification",
-    devices: "Appareil(s)",
+    devices: "Appareils",
     devicesCurrentTag: "Actuel",
     passkeyBtn: " Ajouter Passkey",
     passkeyDesc:
@@ -144,7 +144,7 @@ export const Locale = {
     passwordBtn: " Senha de configuração",
     passwordDesc: "Defina uma senha como fator de recuperação.",
     authenticatorApp: "Aplicativo autenticador",
-    devices: "Dispositivos)",
+    devices: "Dispositivos",
     devicesCurrentTag: "Atual",
     passkeyBtn: " Adicionar Passkey",
     passkeyDesc:
@@ -163,7 +163,7 @@ export const Locale = {
     passwordBtn: " Wachtwoord instellen",
     passwordDesc: "Stel een wachtwoord in als herstelfactor.",
     authenticatorApp: "Authenticator-app",
-    devices: "Apparaat(en)",
+    devices: "Apparaten",
     devicesCurrentTag: "Huidig",
     passkeyBtn: " Passkey toevoegen",
     passkeyDesc:
