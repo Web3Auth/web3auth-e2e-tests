@@ -2,11 +2,11 @@ name: Auth Dashboard - E2ETests
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - master
-  # schedule:
-  #   - cron: "*/30 * * * *"
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "0 * * * *"
 
 env:
   NODE_VERSION: 20
