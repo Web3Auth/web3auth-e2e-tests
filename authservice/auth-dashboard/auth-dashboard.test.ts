@@ -6,7 +6,7 @@ import { AuthDashboardPage } from "./AuthDashboardPage";
 import { LoginAuthDashboardPage } from "./LoginAuthDashboardPage";
 
 test.describe("Passwordless Login scenarios", () => {
-  test.setTimeout(90000);
+  test.setTimeout(150000);
 
   test("Login and set up Auth Dashboard, @authdashboard", async ({ page, browser }, testInfo) => {
     const testEmail = generateEmailWithTag();

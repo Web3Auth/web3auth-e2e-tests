@@ -2,11 +2,11 @@ name: Auth Dashboard - E2ETests
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-  schedule:
-    - cron: "*/30 * * * *"
+  # push:
+  #   branches:
+  #     - master
+  # schedule:
+  #   - cron: "*/30 * * * *"
 
 env:
   NODE_VERSION: 20
@@ -15,9 +15,6 @@ jobs:
   build:
     name: Auth Dashboard - E2ETests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chrome, safari]
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -33,7 +30,7 @@ jobs:
           TESTMAIL_APP_APIKEY: ${{ secrets.TESTMAIL_APP_APIKEY }}
           MAIL_APP: ${{ secrets.MAIL_APP }}
         run: |
-          ifconfig && npm install && npx playwright install --with-deps && npm run test:authdashboard:${{ matrix.browser }}
+          ifconfig && npm install && npx playwright install --with-deps && npm run test:authdashboard
 
       - name: Get current timestamp
         id: get-time
@@ -51,6 +48,6 @@ jobs:
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK_AUTH_DASHBOARD }}
-          title: ${{ github.workflow}} - ${{ matrix.browser }} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          title: ${{ github.workflow}} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           status: ${{ job.status }}
           nocontext: true

@@ -39,6 +39,7 @@ const indexConfig: PlaywrightTestConfig = {
       use: { ...devices["Desktop Safari"] },
     },
   ],
+  fullyParallel: false,
 };
 
 export default indexConfig;
