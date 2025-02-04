@@ -33,7 +33,7 @@ jobs:
           TESTMAIL_APP_APIKEY: ${{ secrets.TESTMAIL_APP_APIKEY }}
           MAIL_APP: ${{ secrets.MAIL_APP }}
         run: |
-          ifconfig && npm install && npx playwright install && npm run test:authdashboard:${{ matrix.browser }}
+          ifconfig && npm install && npx playwright install --with-deps && npm run test:authdashboard:${{ matrix.browser }}
 
       - name: Get current timestamp
         id: get-time
@@ -51,6 +51,6 @@ jobs:
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK_AUTH_DASHBOARD }}
-          title: ${{ github.workflow}} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          title: ${{ github.workflow}} - ${{ matrix.browser }} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           status: ${{ job.status }}
           nocontext: true
