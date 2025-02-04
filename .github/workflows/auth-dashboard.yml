@@ -50,7 +50,7 @@ jobs:
         uses: sarisia/actions-status-discord@v1
         if: always()
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK_AUTH_DASHBOARD }}
           title: ${{ github.workflow}} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           status: ${{ job.status }}
           nocontext: true
