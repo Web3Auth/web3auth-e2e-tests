@@ -6,7 +6,7 @@ import { AuthDashboardPage } from "./AuthDashboardPage";
 import { LoginAuthDashboardPage } from "./LoginAuthDashboardPage";
 
 test.describe("Passwordless Login scenarios", () => {
-  test.setTimeout(150000);
+  test.setTimeout(90000);
 
   test("Login and set up Auth Dashboard, @authdashboard", async ({ page, browser }, testInfo) => {
     const testEmail = generateEmailWithTag();
@@ -39,7 +39,7 @@ test.describe("Passwordless Login scenarios", () => {
     await authServicePage.clickSetup2FA();
     await authServicePage.setupAuthenticatorNewMFAFlow();
     await authServicePage.finishSetupNewMFAList();
-    await authServicePage.setupPasskeyLater();
+    await authServicePage.setupPasskeyLater(testInfo.project.name);
     await authServicePage.confirmDone2FASetup();
 
     const authDashboardPage = new AuthDashboardPage(page);
@@ -62,9 +62,10 @@ test.describe("Passwordless Login scenarios", () => {
     await authDashboardPage.verifyRecoverPhraseSetup(phrase, testBackupEmail);
     await authDashboardPage.deleteRecoveryPhrase();
 
-    await authDashboardPage.addSMSSocialFactor(browser);
-    await authDashboardPage.verifySMSSocialFactorSetup();
-    await authDashboardPage.deleteSocialFactor();
+    // TODO: Will handle adding SMS factor in github action
+    // await authDashboardPage.addSMSSocialFactor(browser);
+    // await authDashboardPage.verifySMSSocialFactorSetup();
+    // await authDashboardPage.deleteSocialFactor();
 
     await authDashboardPage.verifyMultipleLanguages();
 

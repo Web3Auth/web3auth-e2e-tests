@@ -50,8 +50,8 @@ export class AuthServicePage {
     await this.page.click(`[data-testid="finish-setup"]`);
   }
 
-  async setupPasskeyLater() {
-    if (process.env.CI !== "true") await this.page.click(`[data-testid="setupLater"]`);
+  async setupPasskeyLater(browserName?: string) {
+    if (process.env.CI !== "true" || browserName === "Safari") await this.page.click(`[data-testid="setupLater"]`);
   }
 
   async confirmDone2FASetup() {
