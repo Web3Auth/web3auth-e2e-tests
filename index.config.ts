@@ -23,7 +23,7 @@ const indexConfig: PlaywrightTestConfig = {
   },
   projects: [
     {
-      name: "chromium",
+      name: "Chrome",
 
       use: {
         ...devices["Desktop Chromium"],
@@ -33,6 +33,10 @@ const indexConfig: PlaywrightTestConfig = {
           args: ["--start-maximized"],
         },
       },
+    },
+    {
+      name: "Safari",
+      use: { ...devices["Desktop Safari"] },
     },
   ],
 };
