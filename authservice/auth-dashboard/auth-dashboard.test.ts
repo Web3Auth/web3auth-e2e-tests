@@ -8,7 +8,7 @@ import { LoginAuthDashboardPage } from "./LoginAuthDashboardPage";
 test.describe("Passwordless Login scenarios", () => {
   test.setTimeout(90000);
 
-  test("Login and set up Auth Dashboard, @authdashboard", async ({ page, browser }) => {
+  test("Login and set up Auth Dashboard, @authdashboard", async ({ page, browser }, testInfo) => {
     const testEmail = generateEmailWithTag();
     const testBackupEmail = generateEmailWithTag();
     const loginPage = new LoginAuthDashboardPage(page);
@@ -47,7 +47,7 @@ test.describe("Passwordless Login scenarios", () => {
     expect(await authDashboardPage.verifyEmailPasswordlessSetup(testEmail)).toBeTruthy();
     expect(await authDashboardPage.verifyAuthenticatorSetup(testEmail)).toBeTruthy();
     expect(await authDashboardPage.verifyAuthenticatorCannotBeDeleted()).toBeFalsy();
-    expect(await authDashboardPage.verifyDeviceSetup("Chrome")).toBeTruthy();
+    expect(await authDashboardPage.verifyDeviceSetup(testInfo.project.name)).toBeTruthy();
 
     await authDashboardPage.addPasswordFactor();
     await authDashboardPage.verifyPasswordSetup();

@@ -15,6 +15,9 @@ jobs:
   build:
     name: Auth Dashboard - E2ETests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chrome, safari]
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -30,7 +33,7 @@ jobs:
           TESTMAIL_APP_APIKEY: ${{ secrets.TESTMAIL_APP_APIKEY }}
           MAIL_APP: ${{ secrets.MAIL_APP }}
         run: |
-          ifconfig && npm install && npx playwright install && npm run test:authdashboard
+          ifconfig && npm install && npx playwright install && npm run test:authdashboard:${{ matrix.browser }}
 
       - name: Get current timestamp
         id: get-time
