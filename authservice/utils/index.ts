@@ -637,8 +637,13 @@ async function signInByPhoneWithSMSOtp(phoneNumber: string, browser: Browser) {
   await delay(5000);
   const context2 = await browser.newContext({
     bypassCSP: true, // Bypasses Content Security Policy
+    ignoreHTTPSErrors: true,
   });
   const page2 = await context2.newPage();
+  await page2.setExtraHTTPHeaders({
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.0 Safari/537.36",
+  });
+
   await page2.goto(`https://receive-sms.cc/Finland-Phone-Number/${phoneNumber}`);
 
   let otp = "";
