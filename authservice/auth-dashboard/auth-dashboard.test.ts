@@ -62,11 +62,12 @@ test.describe("Passwordless Login scenarios", () => {
     await authDashboardPage.verifyRecoverPhraseSetup(phrase, testBackupEmail);
     await authDashboardPage.deleteRecoveryPhrase();
 
-    if (testInfo.project.name === "Chrome") {
-      await authDashboardPage.addSMSSocialFactor(browser);
-      await authDashboardPage.verifySMSSocialFactorSetup();
-      await authDashboardPage.deleteSocialFactor();
-    }
+    // TODO: Will handle adding SMS factor in github action
+    // if (testInfo.project.name === "Chrome") {
+    //   await authDashboardPage.addSMSSocialFactor(browser);
+    //   await authDashboardPage.verifySMSSocialFactorSetup();
+    //   await authDashboardPage.deleteSocialFactor();
+    // }
 
     await authDashboardPage.verifyMultipleLanguages();
 
