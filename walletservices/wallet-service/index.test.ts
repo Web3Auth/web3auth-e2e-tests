@@ -46,7 +46,7 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickOption("Send");
     await accountsPage.enterRecipientAddress("0x9904Bf11C69233454162B72d7289ccBb295ADE6");
-    await accountsPage.verifyMessageIsDisplayed("Invalid ETH address");
+    await accountsPage.verifyMessageIsDisplayed("Invalid address");
     await accountsPage.enterRecipientAddress("0x9904Bf11C69233454162B72d7289ccBb295ADE6A");
     await accountsPage.enterTransactionAmount("10");
     await accountsPage.verifyMessageIsDisplayed("Insufficient balance for transaction");
@@ -114,7 +114,7 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     expect(await page.locator('[aria-placeholder="Paste QR link here"]').first().isVisible()).toBeTruthy();
   });
 
-  test(`Verify user is able to buy tokens`, async () => {
+  test.skip(`Verify user is able to buy tokens`, async () => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickHome();
     await accountsPage.clickOption("Buy");

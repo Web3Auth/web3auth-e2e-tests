@@ -510,7 +510,7 @@ async function signInWithEmailWithTestEmailApp(page: Page, email: string, browse
     const otp = inbox.emails[0].subject.match(/\d+/)[0];
     console.info(otp);
     await pages[0].locator(`xpath=.//input[@type='text']`).first().type(otp);
-    useAutoCancel2FASetup(pages[0]);
+    // useAutoCancel2FASetup(pages[0]);
     return true;
   } catch (err) {
     console.error(err);
@@ -572,7 +572,7 @@ async function signInWithEmailWithTestEmailAppInCoreWalletServicesApp(
     const href = inbox.emails[0].subject.match(/\d+/)[0];
     console.error(href);
     await pages[1].locator(`xpath=.//input[@type='text']`).first().type(href);
-    useAutoCancel2FASetup(pages[1]);
+    // useAutoCancel2FASetup(pages[1]);
     return true;
   } catch (err) {
     console.error(err);

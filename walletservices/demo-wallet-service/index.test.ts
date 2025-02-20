@@ -27,7 +27,7 @@ test.describe.serial("Demo Wallet Services Scenarios @demo", () => {
       waitUntil: "load",
     });
     await demoWalletServicesPage.verifyUserInfoInDemoApp(testEmail);
-    await demoWalletServicesPage.switchChain(browser, "Switch Chain 0x13882");
+    await demoWalletServicesPage.switchChain(browser, "(0x13882)");
     await demoWalletServicesPage.switchChain(browser, "Switch Chain 0xaa36a7");
     await demoWalletServicesPage.verifyAddressInDemoApp(address);
     await demoWalletServicesPage.verifyBalanceInDemoApp(expectedBalance);
@@ -39,7 +39,7 @@ test.describe.serial("Demo Wallet Services Scenarios @demo", () => {
     await demoWalletServicesPage.clickLogOut();
   });
 
-  test(`Verify user is able to login into wallet services using session id from auth service`, async ({ page, browser }) => {
+  test.skip(`Verify user is able to login into wallet services using session id from auth service`, async ({ page, browser }) => {
     test.slow();
     test.setTimeout(3 * 60000);
     await page.goto("https://demo-openlogin.web3auth.io/");

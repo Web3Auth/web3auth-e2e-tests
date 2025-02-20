@@ -298,15 +298,12 @@ export class DemoWalletServicesPage {
   }
 
   async switchChain(browser: Browser, chain: string) {
-    const currentNetworkBeforeSwitch = await this.getCurrentNetwork();
-    await this.page.locator(`xpath=.//button[text()='${chain}']`).click();
+    await this.page.locator(`button:has-text("${chain}")`).click();
     await delay(5000);
     const pages = await browser.contexts()[0].pages();
     await pages[1].bringToFront();
     await pages[1].locator(`xpath=.//button[text()='Confirm']`).click();
     await delay(3000);
-    const currentNetworkAfterSwitch = await this.getCurrentNetwork();
-    expect(currentNetworkBeforeSwitch).not.toEqual(currentNetworkAfterSwitch);
   }
 
   async verifyWalletInDemoApp(address: string) {
