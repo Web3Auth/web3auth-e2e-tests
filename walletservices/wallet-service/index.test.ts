@@ -8,6 +8,7 @@ const walletServiceLoginURL = "https://develop-wallet.web3auth.io";
 const testEmail = "kelg8.wallet@inbox.testmail.app";
 
 test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
+  test.setTimeout(3 * 60000);
   let page: Page;
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
@@ -114,7 +115,7 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     expect(await page.locator('[aria-placeholder="Paste QR link here"]').first().isVisible()).toBeTruthy();
   });
 
-  test.skip(`Verify user is able to buy tokens`, async () => {
+  test(`Verify user is able to buy tokens`, async () => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickHome();
     await accountsPage.clickOption("Buy");

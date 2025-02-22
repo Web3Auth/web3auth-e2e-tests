@@ -84,6 +84,12 @@ export class WalletServicesPage {
   }
 
   async verifyBuyOption() {
+    await this.page
+      .frameLocator("iframe")
+      .first()
+      .locator(`xpath=.//input[@data-testid='buy-crypto-fiat-amount-input']`)
+      .waitFor({ state: "visible", timeout: 20000 });
+
     expect(
       await this.page.frameLocator("iframe").first().locator(`xpath=.//input[@data-testid='buy-crypto-fiat-amount-input']`).isVisible()
     ).toBeTruthy();
