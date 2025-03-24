@@ -16,7 +16,7 @@ test.describe.serial("Passwordless Login scenarios", () => {
 
     // LOGIN TO THE DASHBOARD
 
-    await loginPage.gotoLoginPage(authServiceURL);
+    await loginPage.gotoLoginPage("https://demo-auth.web3auth.io/");
     await loginPage.selectBuildEnv("testing");
     await loginPage.selectAllMFAFactor();
     await loginPage.selectMFALevel("none");
