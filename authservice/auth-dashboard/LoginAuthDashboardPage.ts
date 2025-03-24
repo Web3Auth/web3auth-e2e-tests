@@ -9,7 +9,7 @@ export class LoginAuthDashboardPage {
   }
 
   async gotoLoginAuthDashboardPage() {
-    await this.page.goto("https://develop-account.web3auth.io/");
+    await this.page.goto("https://account.web3auth.io/");
   }
 
   async clickLoginButton() {
