@@ -24,7 +24,7 @@ const env_map: { [key: string]: string } = {
   demoV4: "https://demo-openlogin-v4.web3auth.io/",
   demoV6: "https://demo-openlogin-v6.web3auth.io/",
 };
-export const authServiceURL = "https://demo-auth.web3auth.io/";
+export const authServiceURL = "https://demo-auth-v9.web3auth.io/";
 
 function delay(time: number | undefined) {
   return new Promise(function (resolve) {
