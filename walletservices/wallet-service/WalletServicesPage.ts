@@ -57,7 +57,11 @@ export class WalletServicesPage {
 
   async navigateToSettingsWithOption(option: string) {
     await delay(5000);
-    await this.page.goto("https://develop-wallet.web3auth.io/wallet/settings");
+    const currentURL = this.page.url();
+    const match = currentURL.match(/(\/v\d+\/wallet\/)/);
+    const newURL = match ? `https://wallet.web3auth.io${match[0]}settings` : "https://wallet.web3auth.io/v4/wallet/settings";
+
+    await this.page.goto(newURL);
     await this.page.waitForSelector(`xpath=.//div[text()="${option}"]`);
     await this.page.locator(`xpath=.//div[text()="${option}"]`).click();
   }
@@ -119,7 +123,7 @@ export class WalletServicesPage {
   }
 
   async clickHome() {
-    await this.page.locator(`xpath=.//a[@href='/wallet/home']`).first().click();
+    await this.page.locator(`xpath=.//a[contains(@href,'/wallet/home')]`).first().click();
   }
 
   async enterRecipientAddress(address: string) {

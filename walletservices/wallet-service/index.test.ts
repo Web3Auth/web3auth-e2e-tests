@@ -3,7 +3,7 @@ import { expect, Page, test } from "@playwright/test";
 import { catchErrorAndExit, delay, signInWithEmailWithTestEmailAppInCoreWalletServicesApp } from "../utils";
 import { WalletServicesPage } from "./WalletServicesPage";
 
-const walletServiceLoginURL = "https://develop-wallet.web3auth.io";
+const walletServiceLoginURL = "https://wallet.web3auth.io/";
 
 const testEmail = "kelg8.wallet@inbox.testmail.app";
 
@@ -12,14 +12,14 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
   let page: Page;
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
-    test.setTimeout(3000000);
     await page.goto(walletServiceLoginURL);
     const currentTimestamp = Math.floor(Date.now() / 1000);
     await signInWithEmailWithTestEmailAppInCoreWalletServicesApp(page, testEmail, browser, testEmail.split("@")[0].split(".")[1], currentTimestamp);
     const shouldExit = await catchErrorAndExit(page);
     expect(shouldExit).toBeFalsy();
-    await page.waitForURL(`${walletServiceLoginURL}/wallet/home`, {
+    await page.waitForURL(/\/v\d+\/wallet\/home$/, {
       waitUntil: "load",
+      timeout: 60000,
     });
   });
 
@@ -88,10 +88,10 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Amoy");
     await accountsPage.clickHome();
     await accountsPage.clickLink(" Activity");
-    await page.waitForURL(`${walletServiceLoginURL}/wallet/activity`, {
+    await page.waitForURL(`${walletServiceLoginURL}v4/wallet/activity`, {
       waitUntil: "load",
     });
-    await accountsPage.verifyTransactionActivity("Sent MATIC|to 0x9904bf11c69233454162b72d7289ccbb295ade6a|20:12:44 | 19 Sept 2024");
+    await accountsPage.verifyTransactionActivity("Sent POL|to 0x9904bf11c69233454162b72d7289ccbb295ade6a|20:12:48 | 19 Sept 2024");
     await accountsPage.verifyTransactionActivity("Received POL|to 0xed2130dd79960a00be8abe75962c75678af4c0a7|19:57:52 | 19 Sept 2024");
   });
 
@@ -119,7 +119,7 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickHome();
     await accountsPage.clickOption("Buy");
-    await page.waitForURL(`${walletServiceLoginURL}/wallet/checkout`, {
+    await page.waitForURL(`${walletServiceLoginURL}v4/wallet/checkout`, {
       waitUntil: "load",
     });
     await delay(5000);

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { authServiceURL, delay, generateEmailWithTag, verifyEmailPasswordlessWithVerificationCode } from "../utils";
+import { delay, generateEmailWithTag, verifyEmailPasswordlessWithVerificationCode } from "../utils";
 import { AuthServicePage } from "./AuthServicePage";
 import { DashboardPage } from "./DashboardPage";
 import { LoginPage } from "./LoginPage";
