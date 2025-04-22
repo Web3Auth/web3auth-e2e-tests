@@ -331,7 +331,7 @@ export class DemoWalletServicesPage {
     const frame = this.page.frameLocator(this.walletIframe);
     await delay(5000);
     expect(await frame?.locator(`xpath=.//input[@aria-placeholder='Paste QR link here']`).last().isVisible()).toBeTruthy();
-    await frame?.locator(`xpath=.//button[contains(@class,'absolute top-6')]`).last().click();
+    await frame?.locator(`button.absolute.top-6`).last().click();
   }
 
   async verifySignedMessages(signType: string, browser: Browser, walletAddress: string) {
