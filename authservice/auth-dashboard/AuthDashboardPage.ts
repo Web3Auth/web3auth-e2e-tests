@@ -83,7 +83,7 @@ export class AuthDashboardPage {
   }
 
   async changeDarkLightMode() {
-    await this.page.locator(`button.icon[icon]`).first().click();
+    await this.page.locator(`button[icon]`).first().click();
     await delay(1000);
   }
 
