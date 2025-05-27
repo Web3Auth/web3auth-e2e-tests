@@ -77,7 +77,7 @@ export class WalletServicesPage {
   }
 
   async enableTestNetworks() {
-    await this.page.locator(`xpath=.//*[contains(@class,'switch round')]`).first().click();
+    await this.page.locator(`//div[div/p[text()='Test networks']]//*[contains(@class,'switch')]`).first().click();
   }
 
   async selectNetwork(currentNetwork: string, newNetwork: string) {

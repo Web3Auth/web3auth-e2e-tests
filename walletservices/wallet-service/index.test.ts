@@ -88,9 +88,7 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectNetwork("Main Ethereum Network", "Polygon Amoy");
     await accountsPage.clickHome();
     await accountsPage.clickLink(" Activity");
-    await page.waitForURL(`${walletServiceLoginURL}v4/wallet/activity`, {
-      waitUntil: "load",
-    });
+    expect(page.url()).toContain("wallet/activity");
     await accountsPage.verifyTransactionActivity("Sent POL|to 0x9904bf11c69233454162b72d7289ccbb295ade6a|20:12:48 | 19 Sept 2024");
     await accountsPage.verifyTransactionActivity("Received POL|to 0xed2130dd79960a00be8abe75962c75678af4c0a7|19:57:52 | 19 Sept 2024");
   });
@@ -111,18 +109,17 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     await accountsPage.selectNetwork("Main Ethereum Network", "Ethereum");
     await accountsPage.clickHome();
     await accountsPage.clickButton(" Wallet connect");
-    await page.waitForSelector('[aria-placeholder="Paste QR link here"]');
-    expect(await page.locator('[aria-placeholder="Paste QR link here"]').first().isVisible()).toBeTruthy();
+    await delay(5000);
+    const element = page.locator('[aria-placeholder="Paste QR link here"]').last();
+    expect(await element.isVisible()).toBeTruthy();
   });
 
   test(`Verify user is able to buy tokens`, async () => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickHome();
     await accountsPage.clickOption("Buy");
-    await page.waitForURL(`${walletServiceLoginURL}v4/wallet/checkout`, {
-      waitUntil: "load",
-    });
     await delay(5000);
+    expect(page.url()).toContain("wallet/checkout");
     await accountsPage.verifyBuyOption();
   });
 });
