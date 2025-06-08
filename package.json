@@ -26,7 +26,7 @@
     "cheerio": "^1.0.0",
     "dotenv": "^16.4.5",
     "generate-password": "^1.7.1",
-    "playwright": "^1.45.3",
+    "playwright": "^1.46.0",
     "reportportal-client": "https://github.com/wiibaker/client-javascript.git#master",
     "serve-handler": "^6.1.5",
     "speakeasy": "^2.0.0",
