@@ -555,29 +555,26 @@ async function signInWithEmailWithTestEmailAppInCoreWalletServicesApp(
   browser: Browser,
   tag: string,
   timestamp: number
-): Promise<boolean> {
-  try {
-    console.log(`Email:${email}`);
-    await page.locator(`[placeholder="name@domain.com"]`).waitFor({ state: "visible" });
-    await page.locator('[placeholder="name@domain.com"]').fill(email);
-    await page.locator('button:has-text("Login with Email")').click();
-    await delay(10000);
-    const pages = await browser.contexts()[0].pages();
-    // pages[0] is the first page, and pages[1] is the new page
-    await pages[1].bringToFront(); // Bring the new page to the front
-    // Setup our JSON API endpoint
-    const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
-    const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
-    const inbox = await res.data;
-    const href = inbox.emails[0].subject.match(/\d+/)[0];
-    console.error(href);
-    await pages[1].locator(`xpath=.//input[@type='text']`).first().type(href);
-    // useAutoCancel2FASetup(pages[1]);
-    return true;
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
+): Promise<void> {
+  console.log(`Email:${email}`);
+  await delay(2000);
+  await page.locator(`button:has-text("Continue with Email/Phone")`).click();
+  await page.locator(`[placeholder="name@domain.com"]`).waitFor({ state: "visible" });
+  await page.locator('[placeholder="name@domain.com"]').fill(email);
+  // Click on the blue arrow button next to the email input field
+  await page.locator('input[type="email"] + div > svg.cursor-pointer').click();
+
+  await delay(10000);
+  const pages = await browser.contexts()[0].pages();
+  // pages[0] is the first page, and pages[1] is the new page
+  await pages[1].bringToFront(); // Bring the new page to the front
+  // Setup our JSON API endpoint
+  const ENDPOINT = `https://api.testmail.app/api/json?apikey=${testEmailAppApiKey}&namespace=kelg8`;
+  const res = await axios.get(`${ENDPOINT}&tag=${tag}&livequery=true&timestamp_from=${timestamp}`);
+  const inbox = await res.data;
+  const href = inbox.emails[0].subject.match(/\d+/)[0];
+  console.error(href);
+  await pages[1].locator(`xpath=.//input[@type='text']`).first().type(href);
 }
 async function signInWithMobileNumber({
   page,

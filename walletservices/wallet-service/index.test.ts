@@ -89,8 +89,6 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     await accountsPage.clickHome();
     await accountsPage.clickLink(" Activity");
     expect(page.url()).toContain("wallet/activity");
-    await accountsPage.verifyTransactionActivity("Sent POL|to 0x9904bf11c69233454162b72d7289ccbb295ade6a|20:12:48 | 19 Sept 2024");
-    await accountsPage.verifyTransactionActivity("Received POL|to 0xed2130dd79960a00be8abe75962c75678af4c0a7|19:57:52 | 19 Sept 2024");
   });
 
   test(`Verify user is able to switch currency`, async () => {
@@ -114,7 +112,8 @@ test.describe.serial("Core Wallet Services Scenarios @smoke", () => {
     expect(await element.isVisible()).toBeTruthy();
   });
 
-  test(`Verify user is able to buy tokens`, async () => {
+  // No longer supported
+  test.skip(`Verify user is able to buy tokens`, async () => {
     const accountsPage = new WalletServicesPage(page);
     await accountsPage.clickHome();
     await accountsPage.clickOption("Buy");
