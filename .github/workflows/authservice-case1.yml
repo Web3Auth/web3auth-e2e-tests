@@ -19,6 +19,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Trigger tests
+        id: trigger-tests
         env:
           CI: true
           CI_MODE: ${{ secrets.CI_MODE }}
@@ -48,6 +49,15 @@ jobs:
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: ${{ github.workflow}} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          status: ${{ job.status }}
+          nocontext: true
+
+      - name: Update Discord (Test Failure)
+        uses: sarisia/actions-status-discord@v1
+        if: failure() && steps.trigger-tests.outcome == 'failure'
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_ALERT }}
           title: ${{ github.workflow}} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           status: ${{ job.status }}
           nocontext: true
