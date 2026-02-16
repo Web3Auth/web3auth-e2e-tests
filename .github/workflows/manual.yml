@@ -1,0 +1,61 @@
+name: OpenLogin - TorusE2ETests - GitHub
+
+on:
+  push:
+    branches:
+      - develop
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 16
+
+jobs:
+  build:
+    name: Run OpenLogin - tests
+    strategy:
+      matrix:
+        env: [testing]
+        browser: [chrome]
+        cloudBuild: [TorusE2ETests]
+        region: [ap-southeast-1]
+    runs-on: macos-latest
+    # env:
+    #   PLATFORM: ${{ matrix.env }}
+    # outputs:
+    #   conclusion: ${{ steps.run-tests.conclusion }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          ref: develop
+      - name: Trigger tests
+        env:
+          FB_TEST_USER_EMAIL:	"jdnxqujvhk_1673407774@tfbnw.net"
+          FB_TEST_USER_PASS:	"VerySecurePassword"
+          FB_TEST_USER_NAME:	"Jennifer Alhiegffddbbg Brownman"
+          GOOGLE_ACCOUNT:	"torus.e2e@gmail.com"
+          GOOGLE_PASSWORD:	"VerySecurePassword@123"
+          GOOGLE_NAME:	"torus"
+          DISCORD_EMAIL:	"torus.e2e.tests@gmail.com"
+          DISCORD_PASSWORD:	"VerySecurePassword@123"
+          TWITTER_ACCOUNT:	"toruse2etests"
+          TWITTER_PASSWORD:	"VerySecurePassword@123"
+          TWITTER_EMAIL:	"torus.e2e.tests@gmail.com"
+          CI:	true	
+          MAILOSAUR_API_KEY:	"ulm7QQm9Rt9yFWSseOgcwH3bw6lyUOci"
+          MAILOSAUR_SERVER_ID:	"plt46knv"
+          MAILOSAUR_SERVER_DOMAIN:	"plt46knv.mailosaur.net"
+          PLATFORM:	"testing"
+          GITHUB_USER_EMAIL: "torus.e2e@gmail.com"
+          GITHUB_USER_PASSWORD: "VerySecurePassword@123"
+        run: |
+          ls && npm install && npx playwright install && npm run test:config
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          path: test-results/*
+          if-no-files-found: ignore
